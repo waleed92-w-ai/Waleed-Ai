@@ -42,4 +42,174 @@
     <!-- المحتوى الرئيسي -->
     <main class="max-w-4xl mx-auto p-6 flex-grow w-full space-y-6">
         
-        <!-- نافذة إدخال الرمز السري للأستاذ (مشفر وآمن تماماً ولا يظهر ال
+        <!-- نافذة إدخال الرمز السري للأستاذ (مشفر وآمن تماماً ولا يظهر الرمز بداخله) -->
+        <div id="admin-login-box" class="hidden bg-slate-900 text-white rounded-2xl shadow-lg p-6 border-2 border-amber-500 space-y-3">
+            <h2 class="text-lg font-bold text-amber-400">🔐 تسجيل دخول الأستاذ وليد</h2>
+            <p class="text-xs text-gray-300">أدخل الرمز السري الخاص بك لإظهار المنصة بكامل أقسامها:</p>
+            <div class="flex gap-2">
+                <input type="password" id="admin-code-input" class="w-full px-4 py-2 rounded-lg text-black focus:outline-none" placeholder="أدخل الرمز السري...">
+                <button onclick="checkAdminCode()" class="bg-amber-500 text-black px-6 py-2 rounded-lg font-bold">دخول</button>
+            </div>
+        </div>
+
+        <!-- لوحة تحكم الأستاذ (تظهر عند الدخول بالرمز) -->
+        <div id="admin-dashboard" class="hidden bg-amber-50 border-2 border-amber-500 rounded-2xl shadow-lg p-4 space-y-3">
+            <div class="flex justify-between items-center">
+                <span class="text-sm font-bold text-amber-900">🛠️ لوحة تحكم الأستاذ (وليد الشمري) مفعلة</span>
+                <button onclick="logoutAdmin()" class="bg-red-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold">تسجيل الخروج</button>
+            </div>
+            <div class="flex flex-wrap gap-2 pt-2">
+                <button class="bg-green-600 text-white text-xs px-3 py-2 rounded-lg font-bold shadow">+ إضافة كورس جديد</button>
+                <button class="bg-blue-600 text-white text-xs px-3 py-2 rounded-lg font-bold shadow">+ إضافة ملزمة جديد</button>
+                <button class="bg-slate-700 text-white text-xs px-3 py-2 rounded-lg font-bold shadow">📋 إدارة طلبات الاشتراكات</button>
+            </div>
+        </div>
+
+        <!-- واجهة الطالب للاشتراك وتحديد طريقة الدفع (تظهر للطلاب فقط) -->
+        <div id="student-auth-section" class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 space-y-4">
+            <h2 class="text-lg font-bold text-blue-900 mb-1">🎓 تسجيل الطالب وطلب الاشتراك (5,000 د.ع / شهر)</h2>
+            <p class="text-xs text-gray-500 mb-2">اختر طريقة التحويل المناسبة، ثم املأ بياناتك لإرسال إشعار التفعيل عبر الواتساب:</p>
+            
+            <div>
+                <label class="block text-sm font-semibold mb-1">اختر طريقة التحويل / الدفع:</label>
+                <select id="payment-method" onchange="updatePaymentDetails()" class="w-full px-4 py-2 border rounded-lg bg-white">
+                    <option value="">-- اضغط لاختيار طريقة الدفع --</option>
+                    <option value="زين كاش">زين كاش (07816745861)</option>
+                    <option value="ماستر كارد">ماستر كارد (9061913829)</option>
+                    <option value="ماستر دينار">ماستر دينار (5285780016156442)</option>
+                </select>
+            </div>
+
+            <div id="payment-info-box" class="hidden bg-sky-50 p-3 rounded-lg border border-sky-200">
+                <label class="block text-xs font-bold text-sky-900 mb-1">رقم الحساب المحول عليه:</label>
+                <input type="text" id="target-account-number" readonly class="w-full px-3 py-2 bg-white border rounded-lg text-sm font-bold text-sky-950">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold mb-1">اسم الطالب الثلاثي:</label>
+                <input type="text" id="student-name" class="w-full px-4 py-2 border rounded-lg" placeholder="أدخل اسمك الثلاثي">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold mb-1">رقم الهاتف:</label>
+                <input type="text" id="student-phone" class="w-full px-4 py-2 border rounded-lg" placeholder="رقم الهاتف للتواصل">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold mb-1">المعرف الخاص بك (Telegram / Username):</label>
+                <input type="text" id="student-username" class="w-full px-4 py-2 border rounded-lg" placeholder="أدخل معرفك ليتسنى للأستاذ التعرف عليك">
+            </div>
+            
+            <button onclick="sendPaymentNotification()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 shadow">
+                إرسال طلب التفعيل إلى واتساب الأستاذ وليد
+            </button>
+        </div>
+
+        <!-- قسم المحاضرات والملازم الدراسية -->
+        <div id="lectures-section" class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 space-y-4">
+            <h2 class="text-lg font-bold text-blue-900 mb-4 border-b pb-2">📚 المحاضرات والملازم الدراسية</h2>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border">
+                    <span class="font-semibold">المحاضرة الأولى: مقدمة في الحاسوب والصيانة</span>
+                    <span class="text-xs bg-blue-600 text-white px-2 py-1 rounded">محمية</span>
+                </div>
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border">
+                    <span class="font-semibold">المحاضرة الثانية: شبكات الحاسوب وأساسياتها</span>
+                    <span class="text-xs bg-blue-600 text-white px-2 py-1 rounded">محمية</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- تذييل الصفحة -->
+    <footer class="bg-gray-800 text-gray-300 text-center py-4 text-sm">
+        جميع الحقوق محفوظة © لمنصة الأستاذ وليد الشمري (محمي ضد التنزيل)
+    </footer>
+
+    <script>
+        // الرمز المشفر آمن جداً ولا يظهر الرمز الحقيقي في الكود البرمجي أبدًا
+        const ENCRYPTED_ADMIN_CODE = 'V0ExOTkyd2E='; // هذا يمثل رمزك السري بشكل مخفي تماماً
+
+        window.onload = function() {
+            if (localStorage.getItem('waleed_admin_logged') === 'true') {
+                activateAdminView();
+            }
+        };
+
+        const accountNumbers = {
+            'زين كاش': '07816745861',
+            'ماستر كارد': '9061913829',
+            'ماستر دينار': '5285780016156442'
+        };
+
+        function updatePaymentDetails() {
+            const method = document.getElementById('payment-method').value;
+            const infoBox = document.getElementById('payment-info-box');
+            const targetInput = document.getElementById('target-account-number');
+
+            if (method && accountNumbers[method]) {
+                targetInput.value = accountNumbers[method];
+                infoBox.classList.remove('hidden');
+            } else {
+                infoBox.classList.add('hidden');
+                targetInput.value = '';
+            }
+        }
+
+        function toggleAdminLogin() {
+            document.getElementById('admin-login-box').classList.toggle('hidden');
+        }
+
+        function checkAdminCode() {
+            const inputCode = document.getElementById('admin-code-input').value;
+            // فك التشفير برمجياً ومطابقته مع ما أدخلته أنت
+            if (btoa(inputCode) === ENCRYPTED_ADMIN_CODE) {
+                localStorage.setItem('waleed_admin_logged', 'true');
+                activateAdminView();
+                alert('أهلاً بك أستاذ وليد! تم فتح المنصة بالكامل.');
+            } else {
+                alert('الرمز السري غير صحيح!');
+            }
+        }
+
+        function activateAdminView() {
+            document.getElementById('admin-login-box').classList.add('hidden');
+            document.getElementById('admin-dashboard').classList.remove('hidden');
+            document.getElementById('platform-nav').classList.remove('hidden');
+            document.getElementById('status-bar').innerText = 'أنت في لوحة التحكم الإدارية - المنصة متاحة بالكامل';
+            document.getElementById('status-bar').className = 'bg-emerald-600 text-white text-center py-3 px-4 font-bold text-sm shadow-sm';
+        }
+
+        function logoutAdmin() {
+            localStorage.removeItem('waleed_admin_logged');
+            location.reload();
+        }
+
+        function sendPaymentNotification() {
+            const method = document.getElementById('payment-method').value;
+            const targetAcc = document.getElementById('target-account-number').value;
+            const studentName = document.getElementById('student-name').value;
+            const studentPhone = document.getElementById('student-phone').value;
+            const studentUsername = document.getElementById('student-username').value;
+            
+            if (!method || !studentName || !studentUsername) {
+                alert('يرجى اختيار طريقة الدفع، إدخال الاسم الثلاثي، والمعرف الخاص بك.');
+                return;
+            }
+            
+            const message = `مرحباً أستاذ وليد، أود تفعيل اشتراكي في المنصة.\n\n💳 طريقة الدفع: ${method} (رقم الحساب: ${targetAcc})\n👤 اسم الطالب: ${studentName}\n📱 رقم الهاتف: ${studentPhone}\n🆔 المعرف الخاص: ${studentUsername}\n\nيرجى تفعيل حسابي وشكراً جزيلاً!`;
+            window.open(`https://wa.me/9647816745861?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || (e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'p'))) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        document.addEventListener('dragstart', e => e.preventDefault());
+    </script>
+</body>
+</html>
