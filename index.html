@@ -51,7 +51,28 @@
                 }
             });
         }
-    </script>
+       function sendPaymentNotification() {
+        const studentName = document.getElementById('student-name') ? document.getElementById('student-name').value : '';
+        const studentPhone = document.getElementById('student-phone') ? document.getElementById('student-phone').value : '';
+        const receiptNumber = document.getElementById('receipt-number') ? document.getElementById('receipt-number').value : '';
+
+        if (!studentName || !receiptNumber) {
+            alert('يرجى كتابة اسم الطالب ورقم الوصل/العملية.');
+            return;
+        }
+
+        const myWhatsAppNumber = '9647816745861';
+        const message = `مرحباً أستاذ وليد، أود تفعيل اشتراكي في المنصة.\n\n` +
+                        `👤 اسم الطالب: ${studentName}\n` +
+                        `📱 رقم الهاتف: ${studentPhone}\n` +
+                        `🧾 رقم الوصل / العملية: ${receiptNumber}\n\n` +
+                        `يرجى تفعيل الحساب وشكراً جزيلاً!`;
+
+        const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    }
+</script>
+
 
     <script>
         tailwind.config = {
