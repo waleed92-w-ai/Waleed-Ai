@@ -21,28 +21,26 @@
 
     <!-- شريط الإشعار -->
     <div id="status-bar" class="bg-amber-500 text-black text-center py-3 px-4 font-bold text-sm shadow-sm">
-        أنت الآن في فترة التجربة المجانية (48 ساعة) - التصفح متاح ولكن التحفظ مقيد لحين الموافقة الشخصية!
+        المنصة محمية: اختر طريقة الدفع وأرسل بياناتك للتفعيل وعرض المحاضرات!
     </div>
 
-    <!-- شريط القوائم العلوي الخاص بالمنصة المتكاملة -->
+    <!-- شريط القوائم العلوي (يظهر للأستاذ فقط بعد الدخول) -->
     <nav id="platform-nav" class="hidden bg-blue-900 text-white shadow-md py-3 px-6">
         <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-2">
             <div class="flex items-center gap-4 text-sm font-bold">
-                <a href="#" class="hover:text-amber-400 flex items-center gap-1">🏠 الرئيسية</a>
-                <a href="#" class="hover:text-amber-400 flex items-center gap-1">📚 الكورسات والدروس</a>
-                <a href="#" class="hover:text-amber-400 flex items-center gap-1">📖 الكراسات والملازم</a>
-                <a href="#" class="hover:text-amber-400 flex items-center gap-1">📊 لوحتي والاشتراكات</a>
+                <a href="#" class="hover:text-amber-400">🏠 الرئيسية</a>
+                <a href="#" class="hover:text-amber-400">📚 الكورسات والدروس</a>
+                <a href="#" class="hover:text-amber-400">📖 الكراسات والملازم</a>
+                <a href="#" class="hover:text-amber-400">📊 لوحتي والاشتراكات</a>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="bg-green-600 text-white text-xs px-2.5 py-1 rounded-full">معتمد</span>
-            </div>
+            <span class="bg-green-600 text-white text-xs px-2.5 py-1 rounded-full">حساب معتمد</span>
         </div>
     </nav>
 
     <!-- المحتوى الرئيسي -->
     <main class="max-w-4xl mx-auto p-6 flex-grow w-full space-y-6">
         
-        <!-- نافذة إدخال الرمز السري للأستاذ (مشفر وآمن تماماً ولا يظهر الرمز بداخله) -->
+        <!-- نافذة إدخال الرمز السري للأستاذ (تفتح عند الضغط على زر دخول الأستاذ) -->
         <div id="admin-login-box" class="hidden bg-slate-900 text-white rounded-2xl shadow-lg p-6 border-2 border-amber-500 space-y-3">
             <h2 class="text-lg font-bold text-amber-400">🔐 تسجيل دخول الأستاذ وليد</h2>
             <p class="text-xs text-gray-300">أدخل الرمز السري الخاص بك لإظهار المنصة بكامل أقسامها:</p>
@@ -52,7 +50,7 @@
             </div>
         </div>
 
-        <!-- لوحة تحكم الأستاذ (تظهر عند الدخول بالرمز) -->
+        <!-- لوحة تحكم الأستاذ (تظهر حصراً بعد إدخال الرمز) -->
         <div id="admin-dashboard" class="hidden bg-amber-50 border-2 border-amber-500 rounded-2xl shadow-lg p-4 space-y-3">
             <div class="flex justify-between items-center">
                 <span class="text-sm font-bold text-amber-900">🛠️ لوحة تحكم الأستاذ (وليد الشمري) مفعلة</span>
@@ -65,7 +63,7 @@
             </div>
         </div>
 
-        <!-- واجهة الطالب للاشتراك وتحديد طريقة الدفع (تظهر للطلاب فقط) -->
+        <!-- واجهة الطالب للاشتراك وتحديد طريقة الدفع (تظهر طبيعية للطلاب وتختفي عن الأستاذ بعد دخوله) -->
         <div id="student-auth-section" class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 space-y-4">
             <h2 class="text-lg font-bold text-blue-900 mb-1">🎓 تسجيل الطالب وطلب الاشتراك (5,000 د.ع / شهر)</h2>
             <p class="text-xs text-gray-500 mb-2">اختر طريقة التحويل المناسبة، ثم املأ بياناتك لإرسال إشعار التفعيل عبر الواتساب:</p>
@@ -128,14 +126,8 @@
     </footer>
 
     <script>
-        // الرمز المشفر آمن جداً ولا يظهر الرمز الحقيقي في الكود البرمجي أبدًا
-        const ENCRYPTED_ADMIN_CODE = 'V0ExOTkyd2E='; // هذا يمثل رمزك السري بشكل مخفي تماماً
-
-        window.onload = function() {
-            if (localStorage.getItem('waleed_admin_logged') === 'true') {
-                activateAdminView();
-            }
-        };
+        // الرمز المشفر وآمن تماماً
+        const ENCRYPTED_ADMIN_CODE = 'V0ExOTkyd2E='; // WA1992wa
 
         const accountNumbers = {
             'زين كاش': '07816745861',
@@ -163,7 +155,6 @@
 
         function checkAdminCode() {
             const inputCode = document.getElementById('admin-code-input').value;
-            // فك التشفير برمجياً ومطابقته مع ما أدخلته أنت
             if (btoa(inputCode) === ENCRYPTED_ADMIN_CODE) {
                 localStorage.setItem('waleed_admin_logged', 'true');
                 activateAdminView();
@@ -177,6 +168,7 @@
             document.getElementById('admin-login-box').classList.add('hidden');
             document.getElementById('admin-dashboard').classList.remove('hidden');
             document.getElementById('platform-nav').classList.remove('hidden');
+            document.getElementById('student-auth-section').classList.add('hidden'); // إخفاء واجهة الطلاب لترتيب شاشتك
             document.getElementById('status-bar').innerText = 'أنت في لوحة التحكم الإدارية - المنصة متاحة بالكامل';
             document.getElementById('status-bar').className = 'bg-emerald-600 text-white text-center py-3 px-4 font-bold text-sm shadow-sm';
         }
