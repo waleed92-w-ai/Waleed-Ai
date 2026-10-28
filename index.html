@@ -4,31 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الأستاذ وليد الشمري التعليمية</title>
-    <!-- مكتبة Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0284c7',
-                            600: '#0369a1',
-                            700: '#1d4ed8',
-                            800: '#1e3a8a',
-                            900: '#0f172a'
-                        },
-                        iraq: {
-                            gold: '#d97706',
-                            green: '#16a34a',
-                            red: '#dc2626'
-                        }
+                        brand: { 50: '#f0f9ff', 500: '#0284c7', 800: '#1e3a8a', 900: '#0f172a' },
+                        iraq: { green: '#16a34a' }
                     },
-                    fontFamily: {
-                        cairo: ['Cairo', 'sans-serif']
-                    }
+                    fontFamily: { cairo: ['Cairo', 'sans-serif'] }
                 }
             }
         }
@@ -36,7 +21,6 @@
 </head>
 <body class="bg-gray-50 font-cairo text-gray-800 min-h-screen flex flex-col justify-between">
 
-    <!-- رأس الصفحة وواجهة المنصة -->
     <header class="bg-brand-900 text-white shadow-md py-4 px-6">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <h1 class="text-base sm:text-xl font-bold">منصة الأستاذ وليد الشمري</h1>
@@ -44,15 +28,12 @@
         </div>
     </header>
 
-    <!-- شريط الإشعار والتجربة -->
     <div class="bg-amber-500 text-black text-center py-3 px-4 font-bold text-sm shadow-sm">
         أنت الآن في فترة التجربة المجانية (يومان / 48 ساعة) - التصفح متاح ولكن التحميل والحفظ مقيد لحين الاشتراك الشامل!
     </div>
 
-    <!-- المحتوى الرئيسي -->
     <main class="max-w-4xl mx-auto p-6 flex-grow w-full">
-        <!-- واجهة الطالب للاشتراك (تظهر افتراضياً) -->
-        <div id="auth-section" class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
+        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
             <h2 class="text-lg font-bold text-brand-800 mb-4">تسجيل الدخول أو تفعيل الاشتراك (5,000 د.ع / شهر)</h2>
             
             <div class="space-y-4">
@@ -73,77 +54,34 @@
                     إرسال إشعار التفعيل للواتساب
                 </button>
 
-                <!-- زر دخول الأستاذ البارز -->
+                <!-- زر الانتقال للوحة الأستاذ الخاصة -->
                 <div class="pt-4 border-t border-gray-200 mt-4 text-center">
-                    <button onclick="openTeacherLogin()" class="w-full bg-brand-800 text-white py-2.5 rounded-lg font-semibold hover:bg-brand-900 transition duration-200 shadow-sm text-sm">
+                    <a href="admin.html" class="block w-full bg-brand-800 text-white py-2.5 rounded-lg font-semibold hover:bg-brand-900 transition duration-200 shadow-sm text-sm">
                         🔐 دخول الأستاذ وليد (لوحة التحكم)
-                    </button>
+                    </a>
                 </div>
-            </div>
-        </div>
-
-        <!-- محتوى لوحة تحكم الأستاذ (مخفي افتراضياً ولا يظهر إلا بكلمة المرور) -->
-        <div id="platform-content" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold text-brand-900">مرحباً بك يا أستاذ وليد في لوحة التحكم</h2>
-                <button onclick="logoutAdmin()" class="bg-iraq-red text-white text-xs px-3 py-1.5 rounded-lg font-semibold">تسجيل خروج</button>
-            </div>
-            <p class="text-gray-600 mb-4">تم فتح المنصة بالصلاحيات الكاملة بنجاح.</p>
-            <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
-                <p class="text-brand-800 font-semibold">📁 جميع كورسات وملازم ومصادر الحاسوب والصيانة الرقمية متاحة أمامك الآن للتصفح والإدارة.</p>
             </div>
         </div>
     </main>
 
-    <!-- تذييل الصفحة -->
     <footer class="bg-gray-800 text-gray-300 text-center py-4 text-sm">
         جميع الحقوق محفوظة © لمنصة الحاسوب والصيانة الرقمية الشاملة - الأستاذ وليد الشمري
     </footer>
 
-    <!-- الأكواد البرمجية والدوال (مغلقة ومحمية بالكامل داخل وسوم Script) -->
     <script>
-        // تنظيف الذاكرة المؤقتة التلقائية لضمان ظهور واجهة الطلاب أولاً
-        if (localStorage.getItem('forceReset') !== 'done') {
-            localStorage.removeItem('isSubscribed');
-            localStorage.setItem('forceReset', 'done');
-        }
-
-        // 1. دالة إشعار الدفع والتحويل للواتساب
         function sendPaymentNotification() {
-            const studentName = document.getElementById('student-name') ? document.getElementById('student-name').value : '';
-            const studentPhone = document.getElementById('student-phone') ? document.getElementById('student-phone').value : '';
-            const receiptNumber = document.getElementById('receipt-number') ? document.getElementById('receipt-number').value : '';
+            const studentName = document.getElementById('student-name').value;
+            const studentPhone = document.getElementById('student-phone').value;
+            const receiptNumber = document.getElementById('receipt-number').value;
             
             if (!studentName || !receiptNumber) {
                 alert('يرجى كتابة اسم الطالب ورقم الوصل/العملية.');
                 return;
             }
             
-            alert('تم تقديم الطلب بنجاح! سيتم تحويلك الآن إلى الواتساب لإكمال إرسال إشعار التفعيل للأستاذ.');
-            
             const myWhatsAppNumber = '9647816745861';
             const message = `مرحباً أستاذ وليد، أود تفعيل اشتراكي في المنصة.\n\n👤 اسم الطالب: ${studentName}\n📱 رقم الهاتف: ${studentPhone}\n📄 رقم الوصل / العملية: ${receiptNumber}\n\nيرجى تفعيل الحساب وشكراً جزيلاً!`;
-            const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-        }
-
-        // 2. دخول الأستاذ بكلمة المرور
-        function openTeacherLogin() {
-            const password = prompt('أدخل كلمة المرور الخاصة بالأستاذ وليد:');
-            if (password === '2026' || password === 'admin') {
-                document.getElementById('auth-section').classList.add('hidden');
-                document.getElementById('platform-content').classList.remove('hidden');
-                alert('مرحباً بك يا أستاذ وليد! تم فتح لوحة التحكم.');
-            } else if (password !== null) {
-                alert('كلمة المرور غير صحيحة!');
-            }
-        }
-
-        // 3. تسجيل الخروج لإخفاء لوحة التحكم والعودة لواجها الطلاب
-        function logoutAdmin() {
-            document.getElementById('platform-content').classList.add('hidden');
-            document.getElementById('auth-section').classList.remove('hidden');
-            alert('تم تسجيل الخروج من لوحة التحكم بنجاح.');
+            window.open(`https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(message)}`, '_blank');
         }
     </script>
 </body>
