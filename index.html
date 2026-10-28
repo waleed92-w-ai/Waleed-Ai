@@ -27,7 +27,7 @@
     <!-- المحتوى الرئيسي -->
     <main class="max-w-4xl mx-auto p-6 flex-grow w-full space-y-6">
         
-        <!-- نافذة إدخال الرمز السري للأستاذ (تفتح عند الضغط على زر دخول الأستاذ) -->
+        <!-- نافذة إدخال الرمز السري للأستاذ -->
         <div id="admin-login-box" class="hidden bg-slate-900 text-white rounded-2xl shadow-lg p-6 border-2 border-amber-500 space-y-3">
             <h2 class="text-lg font-bold text-amber-400">🔐 تسجيل دخول الأستاذ وليد</h2>
             <p class="text-xs text-gray-300">أدخل الرمز السري الخاص بك (`WA1992wa`) لإظهار المنصة بالكامل:</p>
@@ -83,8 +83,8 @@
             </button>
         </div>
 
-        <!-- قسم المحاضرات والملازم الدراسية (مخفي للطلاب، ويظهر لك عند الدخول بالرمز) -->
-        <div id="lectures-section" class="hidden bg-white rounded-2xl shadow-lg p-6 border border-gray-100 space-y-4">
+        <!-- قسم المحاضرات والملازم الدراسية (يظهر لك فوراً عند إدخال الرمز) -->
+        <div id="lectures-section" class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 space-y-4">
             <h2 class="text-lg font-bold text-blue-900 mb-4 border-b pb-2">📚 المحاضرات والملازم الدراسية</h2>
             <div class="space-y-3">
                 <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border">
@@ -136,11 +136,9 @@
         function checkAdminCode() {
             const inputCode = document.getElementById('admin-code-input').value;
             if (inputCode === ADMIN_SECRET_CODE) {
-                alert('أهلاً بك أستاذ وليد! تم إظهار المنصة والمحاضرات الخاصة بك.');
+                alert('أهلاً بك أستاذ وليد! تم فتح المنصة بالكامل.');
                 document.getElementById('admin-login-box').classList.add('hidden');
                 document.getElementById('admin-dashboard').classList.remove('hidden');
-                document.getElementById('student-auth-section').classList.add('hidden');
-                document.getElementById('lectures-section').classList.remove('hidden');
                 document.getElementById('status-bar').innerText = 'أنت في لوحة التحكم الإدارية - المنصة متاحة بالكامل';
                 document.getElementById('status-bar').className = 'bg-emerald-600 text-white text-center py-3 px-4 font-bold text-sm shadow-sm';
             } else {
@@ -150,8 +148,6 @@
 
         function logoutAdmin() {
             document.getElementById('admin-dashboard').classList.add('hidden');
-            document.getElementById('lectures-section').classList.add('hidden');
-            document.getElementById('student-auth-section').classList.remove('hidden');
             document.getElementById('admin-code-input').value = '';
             document.getElementById('status-bar').innerText = 'المنصة محمية: اختر طريقة الدفع وأرسل بياناتك للتفعيل وعرض المحاضرات!';
             document.getElementById('status-bar').className = 'bg-amber-500 text-black text-center py-3 px-4 font-bold text-sm shadow-sm';
@@ -170,9 +166,8 @@
                 return;
             }
             
-            const myWhatsAppNumber = '9647816745861';
             const message = `مرحباً أستاذ وليد، أود تفعيل اشتراكي في المنصة.\n\n💳 طريقة الدفع: ${method} (رقم الحساب: ${targetAcc})\n👤 اسم الطالب: ${studentName}\n📱 رقم الهاتف: ${studentPhone}\n🆔 المعرف الخاص: ${studentUsername}\n\nيرجى تفعيل حسابي وشكراً جزيلاً!`;
-            window.open(`https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(message)}`, '_blank');
+            window.open(`https://wa.me/9647816745861?text=${encodeURIComponent(message)}`, '_blank');
         }
 
         document.addEventListener('contextmenu', e => e.preventDefault());
