@@ -40,59 +40,26 @@
     <header class="bg-brand-900 text-white shadow-md py-4 px-6">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <h1 class="text-base sm:text-xl font-bold">منصة الأستاذ وليد الشمري</h1>
-            <span class="bg-iraq-green text-white text-xs px-3 py-1 rounded-full font-semibold">معتمد ومحمي</span>
+            <span class="bg-iraq-green text-white text-xs px-3 py-1 rounded-full font-semibold">محمي ومؤمن</span>
         </div>
     </header>
 
     <!-- شريط الإشعار والتجربة -->
     <div class="bg-amber-500 text-black text-center py-3 px-4 font-bold text-sm shadow-sm">
-        أنت الآن في فترة التجربة المجانية (يومان / 48 ساعة) - التصفح متاح ولكن التحميل والحفظ محظور ومقيد لحين الموافقة الشاملة!
+        أنت الآن في فترة التجربة المجانية - التصفح متاح ولكن التحميل والحفظ محظور ومقيد لحين الموافقة الشخصية!
     </div>
 
     <!-- المحتوى الرئيسي -->
-    <main class="max-w-4xl mx-auto p-6 flex-grow w-full">
-        <!-- واجهة الطالب للاشتراك -->
-        <div id="auth-section" class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
-            <h2 class="text-lg font-bold text-brand-800 mb-4">تسجيل الدخول أو تفعيل الاشتراك (5,000 د.ع / شهر)</h2>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-semibold mb-1">اسم الطالب:</label>
-                    <input type="text" id="student-name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="أدخل اسم الطالب الثلاثي">
+    <main class="max-w-4xl mx-auto p-6 flex-grow w-full space-y-6">
+        
+        <!-- قسم المحاضرات والملفات (يمكنك تعديله وإضافة المحاضرات هنا) -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <h2 class="text-lg font-bold text-brand-800 mb-4 border-b pb-2">📚 المحاضرات والملازم الدراسية</h2>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border">
+                    <span class="font-semibold">المحاضرة الأولى: مقدمة في الحاسوب والصيانة</span>
+                    <span class="text-xs bg-brand-500 text-white px-2 py-1 rounded">محمية</span>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-1">رقم الهاتف أو المعرف:</label>
-                    <input type="text" id="student-phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="رقم الهاتف للتواصل">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold mb-1">رقم الوصل / العملية:</label>
-                    <input type="text" id="receipt-number" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="أدخل رقم الوصل أو العملية">
-                </div>
-                
-                <button onclick="sendPaymentNotification()" class="w-full bg-iraq-green text-white py-3 rounded-lg font-bold hover:bg-green-700 transition duration-200 shadow">
-                    إرسال إشعار التفعيل للواتساب
-                </button>
-            </div>
-        </div>
-    </main>
-
-    <!-- تذييل الصفحة -->
-    <footer class="bg-gray-800 text-gray-300 text-center py-4 text-sm">
-        جميع الحقوق محفوظة © لمنصة الحاسوب والصيانة الرقمية الشاملة - الأستاذ وليد الشمري (محمي ضد التنزيل)
-    </footer>
-
-    <!-- الأكواد البرمجية والحماية التامة ضد التحميل -->
-    <script>
-        // 1. إرسال إشعار الدفع للواتساب
-        function sendPaymentNotification() {
-            const studentName = document.getElementById('student-name').value;
-            const studentPhone = document.getElementById('student-phone').value;
-            const receiptNumber = document.getElementById('receipt-number').value;
-            
-            if (!studentName || !receiptNumber) {
-                alert('يرجى كتابة اسم الطالب ورقم الوصل/العملية.');
-                return;
-            }
-            
-            const myWhatsAppNumber = '9647816745861';
-            const message = `مرحباً أستاذ وليد،
+                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border">
+                    <span class="font-semibold">المحاضرة الثانية: شبكات الحاسوب وأساسياتها</span>
+                    <span class="
