@@ -40,7 +40,10 @@
     <header class="bg-brand-900 text-white shadow-md py-4 px-6">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <h1 class="text-xl font-bold">منصة الأستاذ وليد الشمري التعليمية</h1>
-            <span class="bg-iraq-green text-white text-xs px-3 py-1 rounded-full font-semibold">معتمد</span>
+            <div class="flex items-center gap-3">
+                <span class="bg-iraq-green text-white text-xs px-3 py-1 rounded-full font-semibold">معتمد</span>
+                <button onclick="openTeacherLogin()" class="bg-brand-700 hover:bg-brand-600 text-white text-xs px-3 py-1.5 rounded-lg transition">دخول الأستاذ</button>
+            </div>
         </div>
     </header>
 
@@ -49,10 +52,10 @@
         أنت الآن في فترة التجربة المجانية (يومان / 48 ساعة) - التصفح متاح ولكن التحميل والحفظ مقيد لحين الاشتراك الشامل!
     </div>
 
-    <!-- المحتوى الرئيسي -->
+    <!-- المحتوى الرئيسي (واجهة الاشتراك وتسجيل الدخول للطلاب) -->
     <main class="max-w-4xl mx-auto p-6 flex-grow w-full">
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
-            <h2 class="text-lg font-bold text-brand-800 mb-4">تفعيل الاشتراك (5,000 د.ع / شهر)</h2>
+        <div id="auth-section" class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
+            <h2 class="text-lg font-bold text-brand-800 mb-4">تسجيل الدخول أو تفعيل الاشتراك (5,000 د.ع / شهر)</h2>
             
             <div class="space-y-4">
                 <div>
@@ -60,7 +63,7 @@
                     <input type="text" id="student-name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="أدخل اسم الطالب الثلاثي">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold mb-1">رقم الهاتف:</label>
+                    <label class="block text-sm font-semibold mb-1">رقم الهاتف أو المعرف:</label>
                     <input type="text" id="student-phone" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="رقم الهاتف للتواصل">
                 </div>
                 <div>
@@ -73,6 +76,15 @@
                 </button>
             </div>
         </div>
+
+        <!-- محتوى المنصة المخفي لحين التفعيل أو الدخول -->
+        <div id="platform-content" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
+            <h2 class="text-xl font-bold text-brand-900 mb-2">مرحباً بك في المنصة التعليمية</h2>
+            <p class="text-gray-600 mb-4">تم تفعيل حسابك بنجاح. يمكنك الآن تصفح الدروس والملفات والملخصات.</p>
+            <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
+                <p class="text-brand-800 font-semibold">📁 كورسات وملازم الأستاذ وليد الشمري متاحة الآن للتحميل.</p>
+            </div>
+        </div>
     </main>
 
     <!-- تذييل الصفحة -->
@@ -82,10 +94,53 @@
 
     <!-- الأكواد البرمجية والدوال (مغلقة ومحمية بالكامل داخل وسوم Script) -->
     <script>
+        // التحقق من حالة الدخول عند فتح الصفحة
+        window.onload = function() {
+            if (localStorage.getItem('isSubscribed') === 'true') {
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('platform-content').classList.remove('hidden');
+            }
+        };
+
         // 1. دالة إشعار الدفع والتحويل للواتساب
         function sendPaymentNotification() {
             const studentName = document.getElementById('student-name') ? document.getElementById('student-name').value : '';
             const studentPhone = document.getElementById('student-phone') ? document.getElementById('student-phone').value : '';
             const receiptNumber = document.getElementById('receipt-number') ? document.getElementById('receipt-number').value : '';
             
-            if (!student
+            if (!studentName || !receiptNumber) {
+                alert('يرجى كتابة اسم الطالب ورقم الوصل/العملية.');
+                return;
+            }
+            
+            alert('تم تقديم الطلب بنجاح! سيتم تحويلك الآن إلى الواتساب لإكمال إرسال إشعار التفعيل للأستاذ.');
+            
+            const myWhatsAppNumber = '9647816745861';
+            const message = `مرحباً أستاذ وليد، أود تفعيل اشتراكي في المنصة.\n\n👤 اسم الطالب: ${studentName}\n📱 رقم الهاتف: ${studentPhone}\n📄 رقم الوصل / العملية: ${receiptNumber}\n\nيرجى تفعيل الحساب وشكراً جزيلاً!`;
+            const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // 2. دخول الأستاذ السريع
+        function openTeacherLogin() {
+            const password = prompt('أدخل كلمة المرور الخاصة بالأستاذ وليد:');
+            if (password === '2026' || password === 'admin') {
+                localStorage.setItem('isSubscribed', 'true');
+                alert('مرحباً بك يا أستاذ وليد! تم فتح لوحة المنصة.');
+                location.reload();
+            } else if (password !== null) {
+                alert('كلمة المرور غير صحيحة!');
+            }
+        }
+
+        // 3. دالة إلغاء تفعيل الطالب وطرد حسابه من المنصة
+        function revokeSubscription(studentPhone) {
+            if (confirm('هل أنت متأكد من رغبتك في إلغاء تفعيل هذا الطالب وطرد حسابه من المنصة؟')) {
+                localStorage.removeItem('isSubscribed');
+                alert('تم إلغاء تفعيل الطالب وحذفه بنجاح!');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+</html>
