@@ -39,11 +39,8 @@
     <!-- رأس الصفحة وواجهة المنصة -->
     <header class="bg-brand-900 text-white shadow-md py-4 px-6">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold">منصة الأستاذ وليد الشمري التعليمية</h1>
-            <div class="flex items-center gap-3">
-                <span class="bg-iraq-green text-white text-xs px-3 py-1 rounded-full font-semibold">معتمد</span>
-                <button onclick="openTeacherLogin()" class="bg-brand-700 hover:bg-brand-600 text-white text-xs px-3 py-1.5 rounded-lg transition">دخول الأستاذ</button>
-            </div>
+            <h1 class="text-base sm:text-xl font-bold">منصة الأستاذ وليد الشمري</h1>
+            <span class="bg-iraq-green text-white text-xs px-3 py-1 rounded-full font-semibold">معتمد</span>
         </div>
     </header>
 
@@ -52,8 +49,9 @@
         أنت الآن في فترة التجربة المجانية (يومان / 48 ساعة) - التصفح متاح ولكن التحميل والحفظ مقيد لحين الاشتراك الشامل!
     </div>
 
-    <!-- المحتوى الرئيسي (واجهة الاشتراك وتسجيل الدخول للطلاب) -->
+    <!-- المحتوى الرئيسي -->
     <main class="max-w-4xl mx-auto p-6 flex-grow w-full">
+        <!-- واجهة الطالب للاشتراك -->
         <div id="auth-section" class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
             <h2 class="text-lg font-bold text-brand-800 mb-4">تسجيل الدخول أو تفعيل الاشتراك (5,000 د.ع / شهر)</h2>
             
@@ -74,15 +72,25 @@
                 <button onclick="sendPaymentNotification()" class="w-full bg-iraq-green text-white py-3 rounded-lg font-bold hover:bg-green-700 transition duration-200 shadow">
                     إرسال إشعار التفعيل للواتساب
                 </button>
+
+                <!-- زر دخول الأستاذ البارز والواضح -->
+                <div class="pt-4 border-t border-gray-200 mt-4 text-center">
+                    <button onclick="openTeacherLogin()" class="w-full bg-brand-800 text-white py-2.5 rounded-lg font-semibold hover:bg-brand-900 transition duration-200 shadow-sm text-sm">
+                        🔐 دخول الأستاذ وليد (لوحة التحكم)
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- محتوى المنصة المخفي لحين التفعيل أو الدخول -->
+        <!-- محتوى المنصة الخاص بك (يظهر فور تسجيل الدخول كأستاذ أو تفعيل الاشتراك) -->
         <div id="platform-content" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
-            <h2 class="text-xl font-bold text-brand-900 mb-2">مرحباً بك في المنصة التعليمية</h2>
-            <p class="text-gray-600 mb-4">تم تفعيل حسابك بنجاح. يمكنك الآن تصفح الدروس والملفات والملخصات.</p>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-brand-900">مرحباً بك يا أستاذ وليد في لوحة التحكم</h2>
+                <button onclick="logoutAdmin()" class="bg-iraq-red text-white text-xs px-3 py-1.5 rounded-lg font-semibold">تسجيل خروج</button>
+            </div>
+            <p class="text-gray-600 mb-4">تم فتح المنصة بالصلاحيات الكاملة بنجاح.</p>
             <div class="p-4 bg-blue-50 rounded-xl border border-blue-200">
-                <p class="text-brand-800 font-semibold">📁 كورسات وملازم الأستاذ وليد الشمري متاحة الآن للتحميل.</p>
+                <p class="text-brand-800 font-semibold">📁 جميع كورسات وملازم ومصادر الحاسوب والصيانة الرقمية متاحة أمامك الآن للتصفح والإدارة.</p>
             </div>
         </div>
     </main>
@@ -126,20 +134,17 @@
             const password = prompt('أدخل كلمة المرور الخاصة بالأستاذ وليد:');
             if (password === '2026' || password === 'admin') {
                 localStorage.setItem('isSubscribed', 'true');
-                alert('مرحباً بك يا أستاذ وليد! تم فتح لوحة المنصة.');
+                alert('مرحباً بك يا أستاذ وليد! تم فتح لوحة المنصة بنجاح.');
                 location.reload();
             } else if (password !== null) {
                 alert('كلمة المرور غير صحيحة!');
             }
         }
 
-        // 3. دالة إلغاء تفعيل الطالب وطرد حسابه من المنصة
-        function revokeSubscription(studentPhone) {
-            if (confirm('هل أنت متأكد من رغبتك في إلغاء تفعيل هذا الطالب وطرد حسابه من المنصة؟')) {
-                localStorage.removeItem('isSubscribed');
-                alert('تم إلغاء تفعيل الطالب وحذفه بنجاح!');
-                location.reload();
-            }
+        // 3. تسجيل الخروج للعودة لوحة الطلاب
+        function logoutAdmin() {
+            localStorage.removeItem('isSubscribed');
+            location.reload();
         }
     </script>
 </body>
