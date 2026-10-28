@@ -71,6 +71,23 @@
         const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
     }
+    // دالة إلغاء تفعيل الطالب وطرد حسابه من المنصة
+    function revokeSubscription(studentPhone) {
+        if (confirm('هل أنت متأكد من رغبتك في إلغاء تفعيل هذا الطالب وطرد حسابه من المنصة؟')) {
+            let activeUsers = JSON.parse(localStorage.getItem('activeUsers') || '[]');
+            activeUsers = activeUsers.filter(user => user.phone !== studentPhone);
+            localStorage.setItem('activeUsers', JSON.stringify(activeUsers));
+
+            if (localStorage.getItem('studentPhone') === studentPhone) {
+                localStorage.removeItem('isSubscribed');
+                localStorage.removeItem('studentName');
+                localStorage.removeItem('studentPhone');
+            }
+
+            alert('تم إلغاء تفعيل الطالب وحذفه بنجاح!');
+            location.reload();
+        }
+    }
 
     // 1. دالة إشعار الدفع والتحويل للواتساب
     function sendPaymentNotification() {
