@@ -42,43 +42,46 @@
             <h1 class="text-base sm:text-xl font-bold">منصة الأستاذ وليد الشمري</h1>
             <div class="flex items-center gap-2">
                 <span class="bg-iraq-green text-white text-xs px-3 py-1 rounded-full font-semibold">محمي ومؤمن</span>
-                <!-- زر دخول الأستاذ السري -->
-                <button onclick="toggleAdminLogin()" class="bg-amber-500 text-black text-xs px-2 py-1 rounded font-bold hover:bg-amber-400">🔑 دخول الأستاذ</button>
+                <!-- زر دخول الأستاذ -->
+                <button onclick="toggleAdminLogin()" class="bg-amber-500 text-black text-xs px-3 py-1.5 rounded-lg font-bold hover:bg-amber-400 transition shadow">🔑 دخول الأستاذ</button>
             </div>
         </div>
     </header>
 
     <!-- شريط الإشعار -->
-    <div class="bg-amber-500 text-black text-center py-3 px-4 font-bold text-sm shadow-sm">
+    <div id="status-bar" class="bg-amber-500 text-black text-center py-3 px-4 font-bold text-sm shadow-sm">
         المنصة محمية: يتطلب تفعيل الاشتراك وموافقة الأستاذ وليد لعرض المحاضرات!
     </div>
 
     <!-- المحتوى الرئيسي -->
     <main class="max-w-4xl mx-auto p-6 flex-grow w-full space-y-6">
         
-        <!-- صندوق دخول الأستاذ (مخفي افتراضياً، يفتح عند الضغط على زر دخول الأستاذ ووضع الرمز 2026) -->
+        <!-- صندوق إدخال الرمز السري للأستاذ -->
         <div id="admin-login-box" class="hidden bg-brand-900 text-white rounded-2xl shadow-lg p-6 border-2 border-amber-500">
-            <h2 class="text-lg font-bold mb-3 text-amber-400">🔐 لوحة دخول الأستاذ وليد</h2>
+            <h2 class="text-lg font-bold mb-2 text-amber-400">🔐 تسجيل دخول الأستاذ وليد</h2>
+            <p class="text-xs text-gray-300 mb-4">أدخل الرمز السري لإظهار واجهة المنصة بالكامل:</p>
             <div class="flex gap-2">
                 <input type="password" id="admin-code-input" class="w-full px-4 py-2 rounded-lg text-black focus:outline-none" placeholder="أدخل الرمز السري...">
                 <button onclick="checkAdminCode()" class="bg-amber-500 text-black px-6 py-2 rounded-lg font-bold hover:bg-amber-400">دخول</button>
             </div>
         </div>
 
-        <!-- لوحة تحكم الأستاذ (تظهر فقط بعد إدخال الرمز الصحيح) -->
-        <div id="admin-dashboard" class="hidden bg-brand-50 border-2 border-brand-600 rounded-2xl shadow-lg p-6 space-y-4">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h2 class="text-lg font-bold text-brand-900">🛠️ لوحة تحكم الأستاذ (خاصة بك)</h2>
-                <button onclick="logoutAdmin()" class="bg-red-600 text-white text-xs px-3 py-1 rounded font-bold">خروج</button>
-            </div>
-            <p class="text-sm text-brand-800 font-semibold">مرحباً بك يا أستاذ وليد. بصفتك المدير، يمكنك رؤية المحاضرات أدناه مباشرة.</p>
+        <!-- شريط تحكم الأستاذ بعد تسجيل الدخول (مخفي افتراضياً) -->
+        <div id="admin-dashboard" class="hidden bg-emerald-50 border-2 border-emerald-600 rounded-2xl shadow-lg p-4 flex justify-between items-center">
+            <span class="text-sm font-bold text-emerald-900">👨‍🏫 تم تسجيل دخول الأستاذ بنجاح - المنصة متاحة بالكامل الآن</span>
+            <button onclick="logoutAdmin()" class="bg-red-600 text-white text-xs px-3 py-1.5 rounded-lg font-bold hover:bg-red-700">تسجيل الخروج</button>
         </div>
 
-        <!-- 1. واجهة الطالب للاشتراك وتفعيل الحساب (تظهر أولاً لكل طالب جديد) -->
+        <!-- 1. واجهة الطالب لطلب التفعيل (تظهر للجميع أولاً) -->
         <div id="student-auth-section" class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-            <h2 class="text-lg font-bold text-brand-800 mb-2">🎓 تسجيل الطالب لطلب التفعيل</h2>
+            <h2 class="text-lg font-bold text-brand-800 mb-1">🎓 تسجيل الطالب لطلب التفعيل</h2>
             <p class="text-xs text-gray-500 mb-4">يرجى ملء الحقول أدناه وإرسال إشعار الدفع (5,000 د.ع / شهر) للواتساب بانتظار موافقة الأستاذ.</p>
             
             <div class="space-y-4">
                 <div>
-                    <label class="block text
+                    <label class="block text-sm font-semibold mb-1">اسم الطالب:</label>
+                    <input type="text" id="student-name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="أدخل اسم الطالب الثلاثي">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold mb-1">رقم الهاتف أو المعرف:</label>
+                    <input type="text" id="student-phone" class="w-full px-4 py-2 border rounded-lg
