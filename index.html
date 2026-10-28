@@ -71,10 +71,50 @@
         const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
     }
+<script>
+    // 1. دالة إشعار الدفع والتحويل للواتساب
+    function sendPaymentNotification() {
+        const studentName = document.getElementById('student-name') ? document.getElementById('student-name').value : '';
+        const studentPhone = document.getElementById('student-phone') ? document.getElementById('student-phone').value : '';
+        const receiptNumber = document.getElementById('receipt-number') ? document.getElementById('receipt-number').value : '';
+
+        if (!studentName || !receiptNumber) {
+            alert('يرجى كتابة اسم الطالب ورقم الوصل/العملية.');
+            return;
+        }
+
+        alert('تم تقديم الطلب بنجاح! سيتم تحويلك الآن إلى الواتساب لإكمال إرسال إشعار التفعيل للأستاذ.');
+
+        const myWhatsAppNumber = '9647816745861';
+        const message = `مرحباً أستاذ وليد، أود تفعيل اشتراكي في المنصة.\n\n` +
+                        `👤 اسم الطالب: ${studentName}\n` +
+                        `📱 رقم الهاتف: ${studentPhone}\n` +
+                        `🧾 رقم الوصل / العملية: ${receiptNumber}\n\n` +
+                        `يرجى تفعيل الحساب وشكراً جزيلاً!`;
+
+        const whatsappUrl = `https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    // 2. دالة إلغاء تفعيل الطالب وطرد حسابه من المنصة
+    function revokeSubscription(studentPhone) {
+        if (confirm('هل أنت تأكد من رغبتك في إلغاء تفعيل هذا الطالب وطرد حسابه من المنصة؟')) {
+            let activeUsers = JSON.parse(localStorage.getItem('activeUsers') || '[]');
+            activeUsers = activeUsers.filter(user => user.phone !== studentPhone);
+            localStorage.setItem('activeUsers', JSON.stringify(activeUsers));
+
+            if (localStorage.getItem('studentPhone') === studentPhone) {
+                localStorage.removeItem('isSubscribed');
+                localStorage.removeItem('studentName');
+                localStorage.removeItem('studentPhone');
+            }
+
+            alert('تم إلغاء تفعيل الطالب وحذفه بنجاح!');
+            location.reload();
+        }
+    }
 </script>
 
-
-    <script>
         tailwind.config = {
             theme: {
                 extend: {
