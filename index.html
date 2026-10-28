@@ -4,36 +4,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الأستاذ وليد الشمري التعليمية</title>
+    <!-- مكتبة Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        brand: { 50: '#f0f9ff', 500: '#0284c7', 800: '#1e3a8a', 900: '#0f172a' },
-                        iraq: { green: '#16a34a' }
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#1d4ed8',
+                            800: '#1e3a8a',
+                            900: '#0f172a'
+                        },
+                        iraq: {
+                            gold: '#d97706',
+                            green: '#16a34a',
+                            red: '#dc2626'
+                        }
                     },
-                    fontFamily: { cairo: ['Cairo', 'sans-serif'] }
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif']
+                    }
                 }
             }
         }
     </script>
 </head>
-<body class="bg-gray-50 font-cairo text-gray-800 min-h-screen flex flex-col justify-between">
+<body class="bg-gray-50 font-cairo text-gray-800 min-h-screen flex flex-col justify-between select-none">
 
+    <!-- رأس الصفحة وواجهة المنصة -->
     <header class="bg-brand-900 text-white shadow-md py-4 px-6">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <h1 class="text-base sm:text-xl font-bold">منصة الأستاذ وليد الشمري</h1>
-            <span class="bg-iraq-green text-white text-xs px-3 py-1 rounded-full font-semibold">معتمد</span>
+            <span class="bg-iraq-green text-white text-xs px-3 py-1 rounded-full font-semibold">معتمد ومحمي</span>
         </div>
     </header>
 
+    <!-- شريط الإشعار والتجربة -->
     <div class="bg-amber-500 text-black text-center py-3 px-4 font-bold text-sm shadow-sm">
-        أنت الآن في فترة التجربة المجانية (يومان / 48 ساعة) - التصفح متاح ولكن التحميل والحفظ مقيد لحين الاشتراك الشامل!
+        أنت الآن في فترة التجربة المجانية (يومان / 48 ساعة) - التصفح متاح ولكن التحميل والحفظ محظور ومقيد لحين الموافقة الشاملة!
     </div>
 
+    <!-- المحتوى الرئيسي -->
     <main class="max-w-4xl mx-auto p-6 flex-grow w-full">
-        <div class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
+        <!-- واجهة الطالب للاشتراك -->
+        <div id="auth-section" class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
             <h2 class="text-lg font-bold text-brand-800 mb-4">تسجيل الدخول أو تفعيل الاشتراك (5,000 د.ع / شهر)</h2>
             
             <div class="space-y-4">
@@ -53,22 +72,18 @@
                 <button onclick="sendPaymentNotification()" class="w-full bg-iraq-green text-white py-3 rounded-lg font-bold hover:bg-green-700 transition duration-200 shadow">
                     إرسال إشعار التفعيل للواتساب
                 </button>
-
-                <!-- زر الانتقال للوحة الأستاذ الخاصة -->
-                <div class="pt-4 border-t border-gray-200 mt-4 text-center">
-                    <a href="admin.html" class="block w-full bg-brand-800 text-white py-2.5 rounded-lg font-semibold hover:bg-brand-900 transition duration-200 shadow-sm text-sm">
-                        🔐 دخول الأستاذ وليد (لوحة التحكم)
-                    </a>
-                </div>
             </div>
         </div>
     </main>
 
+    <!-- تذييل الصفحة -->
     <footer class="bg-gray-800 text-gray-300 text-center py-4 text-sm">
-        جميع الحقوق محفوظة © لمنصة الحاسوب والصيانة الرقمية الشاملة - الأستاذ وليد الشمري
+        جميع الحقوق محفوظة © لمنصة الحاسوب والصيانة الرقمية الشاملة - الأستاذ وليد الشمري (محمي ضد التنزيل)
     </footer>
 
+    <!-- الأكواد البرمجية والحماية التامة ضد التحميل -->
     <script>
+        // 1. إرسال إشعار الدفع للواتساب
         function sendPaymentNotification() {
             const studentName = document.getElementById('student-name').value;
             const studentPhone = document.getElementById('student-phone').value;
@@ -80,9 +95,4 @@
             }
             
             const myWhatsAppNumber = '9647816745861';
-            const message = `مرحباً أستاذ وليد، أود تفعيل اشتراكي في المنصة.\n\n👤 اسم الطالب: ${studentName}\n📱 رقم الهاتف: ${studentPhone}\n📄 رقم الوصل / العملية: ${receiptNumber}\n\nيرجى تفعيل الحساب وشكراً جزيلاً!`;
-            window.open(`https://wa.me/${myWhatsAppNumber}?text=${encodeURIComponent(message)}`, '_blank');
-        }
-    </script>
-</body>
-</html>
+            const message = `مرحباً أستاذ وليد،
