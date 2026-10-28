@@ -51,7 +51,7 @@
 
     <!-- المحتوى الرئيسي -->
     <main class="max-w-4xl mx-auto p-6 flex-grow w-full">
-        <!-- واجهة الطالب للاشتراك -->
+        <!-- واجهة الطالب للاشتراك (تظهر افتراضياً) -->
         <div id="auth-section" class="bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
             <h2 class="text-lg font-bold text-brand-800 mb-4">تسجيل الدخول أو تفعيل الاشتراك (5,000 د.ع / شهر)</h2>
             
@@ -73,7 +73,7 @@
                     إرسال إشعار التفعيل للواتساب
                 </button>
 
-                <!-- زر دخول الأستاذ البارز والواضح -->
+                <!-- زر دخول الأستاذ البارز -->
                 <div class="pt-4 border-t border-gray-200 mt-4 text-center">
                     <button onclick="openTeacherLogin()" class="w-full bg-brand-800 text-white py-2.5 rounded-lg font-semibold hover:bg-brand-900 transition duration-200 shadow-sm text-sm">
                         🔐 دخول الأستاذ وليد (لوحة التحكم)
@@ -82,7 +82,7 @@
             </div>
         </div>
 
-        <!-- محتوى المنصة الخاص بك (يظهر فور تسجيل الدخول كأستاذ أو تفعيل الاشتراك) -->
+        <!-- محتوى لوحة تحكم الأستاذ (مخفي افتراضياً ولا يظهر إلا بكلمة المرور) -->
         <div id="platform-content" class="hidden bg-white rounded-2xl shadow-lg p-6 mb-6 border border-gray-100">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold text-brand-900">مرحباً بك يا أستاذ وليد في لوحة التحكم</h2>
@@ -102,13 +102,11 @@
 
     <!-- الأكواد البرمجية والدوال (مغلقة ومحمية بالكامل داخل وسوم Script) -->
     <script>
-        // التحقق من حالة الدخول عند فتح الصفحة
-        window.onload = function() {
-            if (localStorage.getItem('isSubscribed') === 'true') {
-                document.getElementById('auth-section').classList.add('hidden');
-                document.getElementById('platform-content').classList.remove('hidden');
-            }
-        };
+        // تنظيف الذاكرة المؤقتة التلقائية لضمان ظهور واجهة الطلاب أولاً
+        if (localStorage.getItem('forceReset') !== 'done') {
+            localStorage.removeItem('isSubscribed');
+            localStorage.setItem('forceReset', 'done');
+        }
 
         // 1. دالة إشعار الدفع والتحويل للواتساب
         function sendPaymentNotification() {
@@ -129,22 +127,23 @@
             window.open(whatsappUrl, '_blank');
         }
 
-        // 2. دخول الأستاذ السريع
+        // 2. دخول الأستاذ بكلمة المرور
         function openTeacherLogin() {
             const password = prompt('أدخل كلمة المرور الخاصة بالأستاذ وليد:');
             if (password === '2026' || password === 'admin') {
-                localStorage.setItem('isSubscribed', 'true');
-                alert('مرحباً بك يا أستاذ وليد! تم فتح لوحة المنصة بنجاح.');
-                location.reload();
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('platform-content').classList.remove('hidden');
+                alert('مرحباً بك يا أستاذ وليد! تم فتح لوحة التحكم.');
             } else if (password !== null) {
                 alert('كلمة المرور غير صحيحة!');
             }
         }
 
-        // 3. تسجيل الخروج للعودة لوحة الطلاب
+        // 3. تسجيل الخروج لإخفاء لوحة التحكم والعودة لواجها الطلاب
         function logoutAdmin() {
-            localStorage.removeItem('isSubscribed');
-            location.reload();
+            document.getElementById('platform-content').classList.add('hidden');
+            document.getElementById('auth-section').classList.remove('hidden');
+            alert('تم تسجيل الخروج من لوحة التحكم بنجاح.');
         }
     </script>
 </body>
