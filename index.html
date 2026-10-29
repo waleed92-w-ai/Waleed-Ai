@@ -415,15 +415,15 @@
                             <option value="ماستر دينار (5285780016156442)">ماستر دينار (5285780016156442)</option>
                         </select>
                     </div>
-                    <button type="submit" id="submitBtn" class="btn btn-success btn-block"><i class="fas fa-paper-plane"></i> إرسال الطلب والدخول</button>
+                    <button type="submit" id="submitBtn" class="btn btn-success btn-block"><i class="fas fa-paper-plane"></i> إرسال الطلب للاستاذ</button>
                 </form>
             </div>
 
             <!-- 2. تنبيه الانتظار -->
             <div class="card" id="pendingNotice" style="display: none; text-align: center; padding: 40px 20px;">
                 <i class="fas fa-hourglass-half" style="font-size: 3.5rem; color: var(--warning); margin-bottom: 15px;"></i>
-                <h3 style="color: var(--primary); margin-bottom: 10px;">طلبك قيد المراجعة</h3>
-                <p style="color: #64748b; margin-bottom: 20px;">تم استلام طلبك بنجاح، وسيتم تفعيل حسابك فور التأكد من التحويل بواسطة الأستاذ وليد.</p>
+                <h3 style="color: var(--primary); margin-bottom: 10px;">طلبك قيد المراجعة لدى الأستاذ</h3>
+                <p style="color: #64748b; margin-bottom: 20px;">تم إرسال طلبك إلى لوحة تحكم المنصة بنجاح. سيتم تفعيل حسابك فور موافقة الأستاذ وليد.</p>
                 <a href="https://t.me/WALEED92w" target="_blank" class="btn btn-primary"><i class="fab fa-telegram-plane"></i> مراسلة الأستاذ للتعجيل</a>
             </div>
 
@@ -456,7 +456,7 @@
             </div>
 
             <div class="card" id="sectionManageSubscribers" style="display: none;">
-                <div class="card-header"><i class="fas fa-user-cog"></i> التعديل على المشتركين (طرد / إلغاء اشتراك)</div>
+                <div class="card-header"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</div>
                 <div id="manageSubscribersList">جاري التحميل...</div>
             </div>
 
@@ -625,12 +625,13 @@
             });
         }
 
-        // تم جعل إرسال الطلب فورياً ومستقلاً تماماً لضمان عدم تجمد الزر نهائياً
+        // إرسال الطلب وحفظه في المنصة حصرياً بدون فتح تيليجرام
         function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
             const contactInput = document.getElementById('stContact');
             const paySelect = document.getElementById('stPayMethod');
+            const submitBtn = document.getElementById('submitBtn');
 
             const name = nameInput.value.trim();
             const contact = contactInput.value.trim();
@@ -640,6 +641,9 @@
                 alert('يرجى إكمال جميع الحقول المطلوبة');
                 return;
             }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري إرسال الطلب للمنصة...`;
 
             const cleanContact = contact.replace(/[^a-zA-Z0-9]/g, '_');
             const key = 'ST_' + Date.now() + '_' + cleanContact;
@@ -653,16 +657,19 @@
                 timestamp: Date.now()
             };
 
-            // إرسال البيانات للخلفية بدون تعطيل الزر
-            db.ref('requests/' + key).set(reqData);
+            // إرسال البيانات وحفظها في قاعدة بيانات المنصة فوراً
+            db.ref('requests/' + key).set(reqData).then(() => {
+                localStorage.setItem('wal_key', key);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للاستاذ`;
 
-            // تخزين الجلسة والانتقال الفوري بدون انتظار
-            localStorage.setItem('wal_key', key);
-            
-            const msg = encodeURIComponent(`مرحباً أستاذ وليد، قدمت طلب اشتراك في المنصة:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${pay}`);
-            window.open(`https://t.me/WALEED92w?text=${msg}`, '_blank');
-            
-            showSection('pendingNotice');
+                // الانتقال الفوري لشاشة الانتظار
+                showSection('pendingNotice');
+            }).catch(error => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للاستاذ`;
+                alert('حدث خطأ أثناء إرسال الطلب: ' + error.message);
+            });
         }
 
         function logoutStudent() {
@@ -682,7 +689,7 @@
             db.ref('requests/' + key).on('value', snapshot => {
                 const req = snapshot.val();
                 if (!req) {
-                    showSection('pendingNotice');
+                    logoutStudent();
                     return;
                 }
 
@@ -781,7 +788,7 @@
             }
         }
 
-        // استقبال وعرض الطلبات لحظياً في لوحة الإدارة
+        // استقبال الطلبات وعرضها لحظياً في لوحة الإدارة
         function listenRequestsData() {
             db.ref('requests').on('value', snapshot => {
                 const reqList = document.getElementById('requestsList');
