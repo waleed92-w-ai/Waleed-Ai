@@ -376,7 +376,7 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .modal-body-viewer iframe {
+        .modal-body-viewer object {
             width: 100%;
             height: 100%;
             border: none;
@@ -424,7 +424,7 @@
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
                 <button class="nav-item" onclick="showSection('sectionSubscribers')"><i class="fas fa-users"></i> اسماء المشتركين</button>
                 <button class="nav-item" onclick="showSection('sectionManageSubscribers')"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</button>
-                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات PDF للمشاهدة</button>
+                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات PDF كاملة</button>
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
@@ -512,7 +512,7 @@
 
             <!-- قسم رفع ملفات الـ PDF -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF (مع تفعيل روابط اليوتيوب والتمرير الكامل)</div>
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF (مع عرض كامل وتفاعل روابط يوتيوب)</div>
                 <form onsubmit="handleFastFileUpload(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
@@ -547,7 +547,7 @@
                     <div class="form-group">
                         <label>اختر ملف الـ PDF من هاتفك</label>
                         <input type="file" class="form-control" id="upFile" accept=".pdf,application/pdf" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع ملف الـ PDF وعرضه كاملاً مع تفاعل روابط اليوتيوب وفتحها مباشرة.</small>
+                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع الملف وعرضه كاملاً بجميع صفحاته مع تفاعل روابط يوتيوب.</small>
                     </div>
 
                     <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً</button>
@@ -572,7 +572,7 @@
         </main>
     </div>
 
-    <!-- نافذة عرض الـ PDF بالشاشة الكاملة مع تفاعل الروابط -->
+    <!-- نافذة عرض الـ PDF بالشاشة الكاملة باستخدام object لعرض الملف كاملاً -->
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box">
             <div class="modal-header-bar">
@@ -580,7 +580,7 @@
                 <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="closeFileModal()"><i class="fas fa-times"></i> إغلاق</button>
             </div>
             <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;">
-                <!-- يتم عرض ملف الـ PDF مع تفعيل الروابط هنا -->
+                <!-- يتم حقن عارض الـ object هنا لضمان فتح الملف كاملاً وتفعيل الروابط -->
             </div>
         </div>
     </div>
@@ -871,14 +871,15 @@
                 });
         }
 
-        // فتح نافذة العرض لعرض ملف الـ PDF كاملاً مع السماح بالتفاعل مع روابط يوتيوب الخارجية
+        // استخدام عنصر object لعرض ملف الـ PDF بالكامل مع دعم الانتقال التفاعلي لروابط يوتيوب
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
             let realData = decodeURIComponent(encodedData);
 
-            // استخدام sandbox مع السماح بالـ popups والـ scripts لضمان فتح روابط اليوتيوب عند النقر عليها
-            container.innerHTML = `<iframe src="${realData}#view=FitH&toolbar=0&navpanes=0" sandbox="allow-scripts allow-same-origin allow-popups allow-forms" width="100%" height="100%"></iframe>`;
+            container.innerHTML = `<object data="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%">
+                <embed src="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%" />
+            </object>`;
 
             document.getElementById('fileViewerModal').style.display = 'flex';
         }
@@ -1013,7 +1014,7 @@
                     uploadBtn.disabled = false;
                     uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً`;
                     if (res.ok) {
-                        alert('تم نشر ملف الـ PDF بنجاح مع تفعيل الروابط!');
+                        alert('تم نشر ملف الـ PDF بنجاح بكافة صفحاته!');
                         document.getElementById('upTitle').value = '';
                         document.getElementById('upFile').value = '';
                     } else {
