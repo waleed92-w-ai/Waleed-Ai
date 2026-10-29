@@ -100,6 +100,7 @@
             justify-content: center;
             font-size: 1.15rem;
             transition: 0.3s;
+            text-decoration: none;
         }
 
         .btn-icon:hover {
@@ -192,6 +193,8 @@
         .btn-danger { background-color: var(--danger); color: white; }
         .btn-success { background-color: var(--success); color: white; }
         .btn-secondary { background-color: #64748b; color: white; }
+        .btn-telegram { background-color: #0088cc; color: white; }
+        .btn-telegram:hover { background-color: #0077b5; }
         .btn-sm { padding: 6px 12px; font-size: 0.8rem; width: auto; }
 
         .grades-grid, .subjects-grid {
@@ -296,6 +299,10 @@
             </div>
         </div>
         <div class="header-actions">
+            <!-- زر التيليجرام بضغطة زر مباشرة -->
+            <a href="https://t.me/WALEED92w" target="_blank" class="btn-icon" title="التواصل عبر تيليجرام">
+                <i class="fab fa-telegram-plane"></i>
+            </a>
             <button class="btn-icon" id="loginBtn" onclick="openLoginModal()" title="تسجيل دخول الأستاذ">
                 <i class="fas fa-user-shield"></i>
             </button>
@@ -427,13 +434,22 @@
                         <i class="fas fa-paper-plane"></i> إرسال طلب الاشتراك
                     </button>
                 </form>
+
+                <div style="margin-top: 15px; text-align: center;">
+                    <a href="https://t.me/WALEED92w" target="_blank" class="btn btn-telegram">
+                        <i class="fab faغ-telegram-plane"></i> تواصل مع الأستاذ وليد مباشرة عبر تيليجرام
+                    </a>
+                </div>
             </div>
 
             <!-- تنبيه بانتظار الموافقة -->
             <div class="card" id="waitingNoticeCard" style="display: none; text-align: center; padding: 30px;">
                 <i class="fas fa-clock" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 15px;"></i>
                 <h3 style="color: var(--primary-color); margin-bottom: 10px;" id="waitingTitle">حسابك بانتظار موافقة الأستاذ وليد</h3>
-                <p style="color: var(--text-muted);" id="waitingDesc">تم إرسال طلبك بنجاح، وسيتم تفعيل حسابك فور مراجعة التحويل من قبل الأستاذ.</p>
+                <p style="color: var(--text-muted); margin-bottom: 15px;" id="waitingDesc">تم إرسال طلبك بنجاح، وسيتم تفعيل حسابك فور مراجعة التحويل من قبل الأستاذ.</p>
+                <a href="https://t.me/WALEED92w" target="_blank" class="btn btn-telegram" style="max-width: 250px; margin: 0 auto;">
+                    <i class="fab fa-telegram-plane"></i> مراسلة الأستاذ لحين التفعيل
+                </a>
             </div>
 
             <!-- محتوى المنصة المحمي (يظهر فقط للمفعلين) -->
