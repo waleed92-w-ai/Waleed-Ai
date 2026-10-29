@@ -18,6 +18,7 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
     <style>
         :root {
@@ -373,7 +374,7 @@
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
                 <button class="nav-item" onclick="showSection('sectionSubscribers')"><i class="fas fa-users"></i> اسماء المشتركين</button>
                 <button class="nav-item" onclick="showSection('sectionManageSubscribers')"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</button>
-                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع المحاضرات والكتاب</button>
+                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع المحاضرات والكتاب الضخم</button>
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
@@ -426,7 +427,7 @@
                 <a href="https://t.me/WALEED92w" target="_blank" class="btn btn-primary"><i class="fab fa-telegram-plane"></i> مراسلة الأستاذ للتعجيل</a>
             </div>
 
-            <!-- 3. المواد الدراسية (تظهر جميع المواد ومن ضمنها الحاسوب بشكل دائم) -->
+            <!-- 3. المواد الدراسية -->
             <div class="card" id="subjectsSection" style="display: none;">
                 <div class="card-header"><i class="fas fa-book"></i> المواد الدراسية - <span id="currentClassName"></span></div>
                 <div class="grid-cards" id="dynamicSubjectsGrid"></div>
@@ -459,8 +460,9 @@
                 <div id="manageSubscribersList">جاري التحميل...</div>
             </div>
 
+            <!-- قسم رفع الملفات الضخمة -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع المحاضرات والكتب الكبيرة (PDF)</div>
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع المحاضرات والكتب الكبيرة جداً (PDF / أية حجوم)</div>
                 <form onsubmit="handleUploadContent(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
@@ -489,13 +491,21 @@
                     </div>
                     <div class="form-group">
                         <label>عنوان المحاضرة / الكتاب</label>
-                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الحاسوب - الفصل الأول">
+                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: كتاب الحاسوب المنهجي الضخم">
                     </div>
+                    
                     <div class="form-group">
-                        <label>رابط الملف / الكتاب السحابي (Google Drive / رابط مباشر)</label>
-                        <input type="url" class="form-control" id="upUrl" required placeholder="https://...">
+                        <label>اختر ملف من جهازك (يدعم الأحجام الكبيرة جداً)</label>
+                        <input type="file" class="form-control" id="upFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.rar" style="padding: 10px;">
+                        <small style="color: #64748b; display: block; margin-top: 4px;">أو ضع رابط مباشر أدناه إن كنت تفضل روابط قوقل درايف:</small>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-cloud-upload-alt"></i> نشر المحتوى للقراءة فقط</button>
+
+                    <div class="form-group">
+                        <label>أو رابط الملف السحابي (اختياري بدلاً من الرفع المباشر)</label>
+                        <input type="url" class="form-control" id="upUrl" placeholder="https://...">
+                    </div>
+
+                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-cloud-upload-alt"></i> رفع ونشر المحتوى سحابياً</button>
                 </form>
             </div>
 
@@ -530,9 +540,10 @@
     </div>
 
     <script>
-        // إعدادات القاعدة المباشرة والفعلية لمشروعك
+        // إعدادات قاعدة البيانات الفعلية
         const firebaseConfig = {
-            databaseURL: "https://waleed-ai-default-rtdb.firebaseio.com"
+            databaseURL: "https://waleed-ai-default-rtdb.firebaseio.com",
+            storageBucket: "waleed-ai.appspot.com"
         };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
@@ -541,7 +552,6 @@
         let activeClass = "";
         let activeSub = "";
 
-        // قائمة المواد الأساسية الكاملة
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
             { name: "الرياضيات", icon: "fas fa-square-root-alt" },
@@ -614,7 +624,7 @@
             });
         }
 
-        // معالجة وإرسال الطلب بشكل مضمون وسريع
+        // إرسال الطلب وحفظه بقاعدة البيانات
         function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
@@ -710,7 +720,6 @@
             renderAllSubjectsGrid();
         }
 
-        // عرض جميع المواد بدون استثناء عند الضغط على أي صف
         function renderAllSubjectsGrid() {
             const gridContainer = document.getElementById('dynamicSubjectsGrid');
             let html = '';
@@ -779,7 +788,7 @@
             }
         }
 
-        // الاستماع اللحظي الفوري لطلبات الاشتراك والمشتركين
+        // الاستماع الفوري لطلبات الاشتراك والمشتركين
         function listenRequestsData() {
             db.ref('requests').on('value', snapshot => {
                 const reqList = document.getElementById('requestsList');
@@ -836,7 +845,7 @@
                 subList.innerHTML = subHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين مفعلين حالياً.</p>';
                 manageList.innerHTML = manageHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
             }, error => {
-                console.error("خطأ قراءة الطلبات:", error);
+                console.error("خطأ جلب الطلبات:", error);
             });
         }
 
@@ -850,14 +859,53 @@
             }
         }
 
+        // معالجة رفع الملفات الضخمة والحبيسة سحابياً
         function handleUploadContent(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
             const subject = document.getElementById('upSubject').value;
             const title = document.getElementById('upTitle').value;
-            const url = document.getElementById('upUrl').value;
-            const id = 'CONT_' + Date.now();
+            const fileInput = document.getElementById('upFile');
+            const urlInput = document.getElementById('upUrl').value.trim();
+            const uploadBtn = document.getElementById('uploadBtn');
 
+            if (fileInput.files.length === 0 && !urlInput) {
+                alert('يرجى اختيار ملف من الجهاز أو وضع رابط مباشر للملف.');
+                return;
+            }
+
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري رفع الملف الضخم...`;
+
+            const contentId = 'CONT_' + Date.now();
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const storageRef = firebase.storage().ref('lectures/' + contentId + '_' + file.name);
+                const uploadTask = storageRef.put(file);
+
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري الرفع (${Math.round(progress)}%)...`;
+                    }, 
+                    (error) => {
+                        uploadBtn.disabled = false;
+                        uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر المحتوى سحابياً`;
+                        alert('حدث خطأ أثناء الرفع: ' + error.message);
+                    }, 
+                    () => {
+                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            saveContentToDB(contentId, grade, subject, title, downloadURL);
+                        });
+                    }
+                );
+            } else {
+                saveContentToDB(contentId, grade, subject, title, urlInput);
+            }
+        }
+
+        function saveContentToDB(id, grade, subject, title, url) {
             db.ref('contents/' + id).set({
                 id: id,
                 grade: grade,
@@ -866,8 +914,12 @@
                 url: url,
                 date: new Date().toLocaleDateString('ar-EG')
             }).then(() => {
-                alert('تم نشر المحاضرة/الكتاب بنجاح!');
+                const uploadBtn = document.getElementById('uploadBtn');
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر المحتوى سحابياً`;
+                alert('تم رفع ونشر المحتوى بنجاح!');
                 document.getElementById('upTitle').value = '';
+                document.getElementById('upFile').value = '';
                 document.getElementById('upUrl').value = '';
             });
         }
