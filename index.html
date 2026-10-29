@@ -3,264 +3,575 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الأستاذ وليد الشمري التعليمية | الحاسوب وصيانته</title>
+    <title>منصة الأستاذ وليد التعليمية</title>
     
-    <!-- الأيقونة الرئيسية على شاشة الهاتف -->
+    <!-- PWA App Profile Icon Settings -->
     <link rel="icon" type="image/jpeg" href="profile.jpg">
     <link rel="apple-touch-icon" href="profile.jpg">
+    <meta name="apple-mobile-web-app-title" content="منصة وليد">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Font (Cairo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-        html { scroll-behavior: smooth; }
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #2563eb;
+            --accent-color: #f59e0b;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding-bottom: 80px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .teacher-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-img {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .app-title h1 {
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
+        .app-title p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: 0.3s;
+        }
+
+        .btn-icon:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 16px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .student-item:last-child {
+            border-bottom: none;
+        }
+
+        .student-info h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .student-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .student-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .badge-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .badge-active {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+            font-size: 0.9rem;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 400px;
+            padding: 24px;
+        }
     </style>
 </head>
-<body class="bg-slate-100 font-sans text-gray-800 min-h-screen flex flex-col justify-between select-none">
+<body>
 
-    <!-- شريط الإشعار العلوي البرتقالي -->
-    <div id="status-bar" class="bg-amber-600 text-white text-center py-2 px-4 text-xs font-bold shadow-inner flex flex-wrap justify-between items-center">
-        <span>أنت الآن في فترة التجربة المجانية (يومان / 48 ساعة) - التصفح متاح ولكن التحميل والحفظ مقيد لحين الاشتراك الشامل!</span>
-        <button onclick="scrollToSection('student-section')" class="bg-amber-800 hover:bg-amber-900 text-white px-3 py-1 rounded shadow text-xs">تفعيل الاشتراك (5,000 د.ع / شهر)</button>
-    </div>
-
-    <!-- رأس المنصة الأزرق الرئيسي -->
-    <header class="bg-blue-900 text-white shadow-md py-4 px-6">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            
-            <!-- صورة الأستاذ الشخصية والشعار -->
-            <div class="flex items-center gap-3">
-                <div class="relative w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400 shadow-md">
-                    <img src="profile.jpg" alt="الأستاذ وليد الشمري" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <div class="flex items-center gap-2">
-                        <h1 class="text-lg font-bold">الأستاذ وليد الشمري</h1>
-                        <span class="bg-emerald-600 text-white text-xs px-2 py-0.5 rounded-full font-semibold">معتمد</span>
-                    </div>
-                    <p class="text-xs text-blue-200">منصة الحاسوب والصيانة الرقمية الشاملة</p>
-                </div>
+    <header>
+        <div class="teacher-info">
+            <img src="profile.jpg" alt="الأستاذ وليد" class="profile-img" onerror="this.src='https://via.placeholder.com/55'">
+            <div class="app-title">
+                <h1>منصة الأستاذ وليد</h1>
+                <p id="userRoleText">واجهة الطالب التعليمية</p>
             </div>
-
-            <!-- شريط التنقل العلوي -->
-            <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
-                <button onclick="scrollToSection('main-header')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">🏠 الرئيسية</button>
-                <button onclick="scrollToSection('courses-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">📚 الكورسات والدروس</button>
-                <button onclick="scrollToSection('courses-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">📖 الكراسات والملازم</button>
-                <button onclick="scrollToSection('dashboard-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">📊 لوحتي والاشتراكات</button>
-                <button onclick="scrollToSection('student-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">👤 حساب الطالب</button>
-                <button id="admin-login-btn" onclick="toggleAdminLogin()" class="bg-amber-500 hover:bg-amber-600 text-black px-3 py-2 rounded-lg transition shadow">🔑 دخول الأستاذ</button>
-            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-icon" id="loginBtn" onclick="openLoginModal()" title="تسجيل دخول الأستاذ">
+                <i class="fas fa-user-shield"></i>
+            </button>
+            <button class="btn-icon" id="logoutBtn" onclick="logoutTeacher()" style="display:none;" title="تسجيل الخروج">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
         </div>
     </header>
 
-    <!-- المحتوى الرئيسي -->
-    <main id="main-header" class="max-w-5xl mx-auto p-4 md:p-6 flex-grow w-full space-y-6">
+    <div class="container">
         
-        <!-- نافذة إدخال الرمز السري للأستاذ -->
-        <div id="admin-login-box" class="hidden bg-slate-900 text-white rounded-2xl shadow-lg p-6 border-2 border-amber-500 space-y-3">
-            <h2 class="text-lg font-bold text-amber-400">🔐 تسجيل دخول الأستاذ وليد</h2>
-            <p class="text-xs text-gray-300">أدخل الرمز السري الخاص بك لإظهار لوحة التحكم والصلاحيات الكاملة:</p>
-            <div class="flex gap-2">
-                <input type="password" id="admin-code-input" class="w-full px-4 py-2 rounded-lg text-black focus:outline-none" placeholder="أدخل الرمز السري...">
-                <button onclick="checkAdminCode()" class="bg-amber-500 text-black px-6 py-2 rounded-lg font-bold">دخول</button>
-            </div>
-        </div>
-
-        <!-- لوحة تحكم الأستاذ التفاعلية -->
-        <div id="dashboard-section" class="bg-amber-50 border-2 border-amber-400 rounded-2xl shadow-md p-4 space-y-3">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <span class="text-lg">🛠️</span>
-                    <h2 class="text-sm font-bold text-amber-900">لوحة تحكم الأستاذ (وليد الشمري) مفعلة</h2>
-                </div>
-                <!-- زر تسجيل الخروج المصحح والذي يعمل بشكل كامل -->
-                <button onclick="adminLogout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2 rounded-lg font-bold shadow transition">تسجيل الخروج</button>
-            </div>
+        <!-- لوحة التحكم الخاصة بالأستاذ -->
+        <div id="teacherPanel" style="display: none;">
             
-            <!-- أزرار إضافة الكورسات والملازم مع تفعيل رفع الملفات -->
-            <div class="flex flex-wrap gap-2 pt-1">
-                <label class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-4 py-2 rounded-lg font-bold shadow cursor-pointer flex items-center gap-1">
-                    + إضافة كورس جديد
-                    <input type="file" id="course-file-input" class="hidden" onchange="handleFileUpload(event, 'كورس')">
-                </label>
-                <label class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg font-bold shadow cursor-pointer flex items-center gap-1">
-                    + إضافة ملزمة جديد
-                    <input type="file" id="book-file-input" class="hidden" onchange="handleFileUpload(event, 'ملزمة')">
-                </label>
-                <button onclick="scrollToSection('notifications-section')" class="bg-slate-700 hover:bg-slate-800 text-white text-xs px-4 py-2 rounded-lg font-bold shadow">📋 إدارة طلبات الاشتراكات</button>
+            <!-- إضافة كورس / ملزمة -->
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-upload"></i> رفع كورس / ملزمة جديدة
+                </div>
+                <form id="uploadForm" onsubmit="handleUpload(event)">
+                    <div class="form-group">
+                        <label>نوع المحتوى</label>
+                        <select class="form-control" id="contentType">
+                            <option value="course">كورس تعليمي</option>
+                            <option value="pdf">ملزمة PDF</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>عنوان المحتوى</label>
+                        <input type="text" class="form-control" id="contentTitle" required placeholder="مثال: الفصل الأول - شبكات الحاسوب">
+                    </div>
+                    <div class="form-group">
+                        <label>اختيار الملف</label>
+                        <input type="file" class="form-control" id="contentFile" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-cloud-upload-alt"></i> نشر المحتوى
+                    </button>
+                </form>
             </div>
+
+            <!-- إدارة الطلاب والاشتراكات -->
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-users-cog"></i> طلبات الاشتراك والطلاب
+                </div>
+                <div id="studentsList">
+                    <!-- سيتم تحميل قائمة الطلاب هنا -->
+                </div>
+            </div>
+
         </div>
 
-        <!-- بطاقة حساب الطالب (Anas) -->
-        <div id="student-section" class="bg-white rounded-2xl shadow-md p-5 border border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div class="space-y-1">
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="editStudentAccount()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-3 py-1 rounded-lg font-semibold">تعديل بيانات الحساب</button>
-                    <button onclick="revokeStudentSubscription()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs px-3 py-1 rounded-lg font-semibold">إلغاء الاشتراك / طرد</button>
+        <!-- واجهة الطالب العامة -->
+        <div id="studentPanel">
+            
+            <!-- نموذج طلب الاشتراك للطلاب الجدد -->
+            <div class="card" id="subscriptionCard">
+                <div class="section-title">
+                    <i class="fas fa-user-plus"></i> طلب اشتراك في المنصة
                 </div>
-                <div class="pt-2">
-                    <h3 id="student-display-name" class="text-lg font-bold text-gray-900">Anas</h3>
-                    <p class="text-xs text-gray-500">الهاتف: <span id="student-display-phone">07753484878</span></p>
-                    <span id="student-status-badge" class="inline-block mt-1 bg-emerald-100 text-emerald-800 text-xs px-3 py-0.5 rounded-full font-bold">اشتراك مدفوع نشط (شهر كامل)</span>
+                <form id="studentRegisterForm" onsubmit="handleStudentRegister(event)">
+                    <div class="form-group">
+                        <label>الاسم الثلاثي للطالب</label>
+                        <input type="text" class="form-control" id="studentName" required placeholder="أدخل اسمك الكامل">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم الهاتف</label>
+                        <input type="tel" class="form-control" id="studentPhone" required placeholder="077XXXXXXXX">
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-paper-plane"></i> إرسال طلب الاشتراك
+                    </button>
+                </form>
+            </div>
+
+            <!-- عرض المحتوى المتاح -->
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-book-open"></i> الكورسات والملازم المتاحة
+                </div>
+                <div id="publicContent">
+                    <p style="text-align: center; color: var(--text-muted); padding: 10px;">لا يوجد محتوى منشور حالياً أو بانتظار تفعيل اشتراكك.</p>
                 </div>
             </div>
-            <div class="bg-blue-900 text-white p-3 rounded-2xl shadow">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                </svg>
-            </div>
+
         </div>
 
-        <!-- قائمة الكورسات والملازم -->
-        <div id="courses-section" class="bg-white rounded-2xl shadow-md p-5 border border-gray-200 space-y-3">
-            <h3 class="text-base font-bold text-blue-900 flex items-center gap-2">
-                <span>📚</span> قائمة الكورسات والملازم المتاحة
-            </h3>
-            <div id="dynamic-courses-list" class="space-y-2">
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex justify-between items-center">
-                    <span class="text-xs sm:text-sm font-semibold text-gray-700">الكورس الأول: أساسيات صيانة الحاسوب المحترفة</span>
-                    <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded">متاح</span>
-                </div>
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex justify-between items-center">
-                    <span class="text-xs sm:text-sm font-semibold text-gray-700">الملزمة الأولى: دليل شبكات الحاسوب والروترات</span>
-                    <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded">متاح</span>
-                </div>
+    </div>
+
+    <!-- نافذة تسجيل دخول الأستاذ -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="section-title">
+                <i class="fas fa-lock"></i> تسجيل دخول الأستاذ
             </div>
-        </div>
-
-        <!-- إشعارات التحويل المالي وإدارة الموافقات -->
-        <div id="notifications-section" class="bg-white rounded-2xl shadow-md p-5 border border-gray-200 space-y-3">
-            <h3 class="text-base font-bold text-blue-900 flex items-center gap-2">
-                <span>📑</span> إشعارات التحويل المالي وإدارة الطلبات
-            </h3>
-            <div class="space-y-3">
-                
-                <!-- الطلب الأول -->
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                        <span class="text-xs font-bold text-gray-900">الطالب: Anas (REC-5522)</span>
-                        <p class="text-xs text-gray-600">رقم الإشعار: مجاني (07753484878)</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span id="req-1-status" class="bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold">مفعل</span>
-                        <button onclick="approveRequest(1)" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded-lg font-bold">موافقة</button>
-                        <button onclick="rejectRequest(1)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded-lg font-bold">رفض</button>
-                    </div>
-                </div>
-
-                <!-- الطلب الثاني -->
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div>
-                        <span class="text-xs font-bold text-gray-900">الطالب: محمد أحمد (REC-1820)</span>
-                        <p class="text-xs text-gray-600">زين كاش: (07816745861) 887654321</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span id="req-2-status" class="bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-bold">بانتظار الموافقة</span>
-                        <button onclick="approveRequest(2)" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded-lg font-bold">موافقة</button>
-                        <button onclick="rejectRequest(2)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded-lg font-bold">رفض</button>
-                    </div>
-                </div>
-
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="password" class="form-control" id="teacherPass" placeholder="أدخل رمز الدخول">
             </div>
+            <button class="btn btn-primary" onclick="verifyTeacherLogin()">دخول</button>
+            <button class="btn btn-danger" onclick="closeLoginModal()" style="margin-top: 10px; background: transparent; color: var(--text-muted);">إلغاء</button>
         </div>
+    </div>
 
-    </main>
-
-    <!-- تذييل الصفحة -->
-    <footer class="bg-gray-800 text-gray-300 text-center py-4 text-xs">
-        جميع الحقوق محفوظة © لمنصة الأستاذ وليد الشمري (محمي ضد التنزيل)
-    </footer>
+    <!-- عنصر الإشعارات -->
+    <div class="notification" id="notification"></div>
 
     <script>
-        const ENCRYPTED_ADMIN_CODE = 'V0ExOTkyd2E='; // WA1992wa
+        const ENCRYPTED_PASS = "V0ExOTkyd2E="; 
+        let isTeacherLoggedIn = false;
 
-        function scrollToSection(sectionId) {
-            const element = document.getElementById(sectionId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
+        window.onload = function() {
+            renderStudentsList();
+            renderContent();
+        };
+
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
         }
 
-        function toggleAdminLogin() {
-            const box = document.getElementById('admin-login-box');
-            box.classList.toggle('hidden');
-            if(!box.classList.contains('hidden')) {
-                box.scrollIntoView({ behavior: 'smooth' });
-            }
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('teacherPass').value = '';
         }
 
-        function checkAdminCode() {
-            const inputCode = document.getElementById('admin-code-input').value;
-            if (btoa(inputCode) === ENCRYPTED_ADMIN_CODE) {
-                document.getElementById('dashboard-section').classList.remove('hidden');
-                document.getElementById('admin-login-box').classList.add('hidden');
-                document.getElementById('admin-code-input').value = '';
-                alert('أهلاً بك أستاذ وليد! تم دخول لوحة التحكم بنجاح.');
+        function verifyTeacherLogin() {
+            const passInput = document.getElementById('teacherPass').value;
+            if (btoa(passInput) === ENCRYPTED_PASS) {
+                isTeacherLoggedIn = true;
+                document.getElementById('teacherPanel').style.display = 'block';
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'flex';
+                document.getElementById('userRoleText').innerText = "لوحة إشراف الأستاذ";
+                closeLoginModal();
+                showNotification('تم تسجيل الدخول بنجاح يا أستاذ وليد');
             } else {
-                alert('الرمز السري غير صحيح!');
+                alert('كلمة المرور غير صحيحة!');
             }
         }
 
-        // دالة تسجيل الخروج المصححة والفعالة 100%
-        function adminLogout() {
-            document.getElementById('dashboard-section').classList.add('hidden');
-            document.getElementById('admin-login-box').classList.add('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            alert('تم تسجيل الخروج بنجاح وإعادة الصفحة للوضع العام.');
+        function logoutTeacher() {
+            isTeacherLoggedIn = false;
+            document.getElementById('teacherPanel').style.display = 'none';
+            document.getElementById('loginBtn').style.display = 'flex';
+            document.getElementById('logoutBtn').style.display = 'none';
+            document.getElementById('userRoleText').innerText = "واجهة الطالب التعليمية";
+            showNotification('تم تسجيل الخروج والعودة للوضع العام');
         }
 
-        function handleFileUpload(event, type) {
-            const file = event.target.files[0];
-            if (file) {
-                const fileName = file.name;
-                const list = document.getElementById('dynamic-courses-list');
-                const newItem = document.createElement('div');
-                newItem.className = 'bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex justify-between items-center';
-                newItem.innerHTML = `<span class="text-xs sm:text-sm font-semibold text-gray-700">${type}: ${fileName}</span><span class="bg-emerald-600 text-white text-xs px-2 py-1 rounded">تم الرفع بنجاح</span>`;
-                list.appendChild(newItem);
-                alert(`تم رفع ملف الـ ${type} (${fileName}) بنجاح وإضافته للمنصة!`);
+        function handleStudentRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('studentName').value;
+            const phone = document.getElementById('studentPhone').value;
+
+            const student = {
+                id: Date.now(),
+                name: name,
+                phone: phone,
+                status: 'pending'
+            };
+
+            let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
+            students.push(student);
+            localStorage.setItem('waleed_students', JSON.stringify(students));
+            localStorage.setItem('current_student_id', student.id);
+
+            document.getElementById('studentRegisterForm').reset();
+            showNotification('تم إرسال طلب اشتراكك بنجاح! بانتظار تفعيل الأستاذ.');
+            renderStudentsList();
+        }
+
+        function renderStudentsList() {
+            const container = document.getElementById('studentsList');
+            let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
+
+            if (students.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 10px;">لا يوجد طلبات اشتراك حالياً.</p>`;
+                return;
+            }
+
+            let html = '';
+            students.forEach(student => {
+                html += `
+                    <div class="student-item">
+                        <div class="student-info">
+                            <h4>${student.name}</h4>
+                            <p>${student.phone} - <span class="badge ${student.status === 'active' ? 'badge-active' : 'badge-pending'}">${student.status === 'active' ? 'مُفعل' : 'بانتظار التفعيل'}</span></p>
+                        </div>
+                        <div class="student-actions">
+                            ${student.status === 'pending' ? 
+                                `<button class="btn btn-sm btn-success" onclick="toggleStudentStatus(${student.id}, 'active')">تفعيل</button>` : 
+                                `<button class="btn btn-sm btn-danger" onclick="kickAndRemoveStudent(${student.id})">طرد وإلغاء</button>`
+                            }
+                            ${student.status === 'pending' ? `<button class="btn btn-sm btn-danger" onclick="kickAndRemoveStudent(${student.id})">رفض والطرد</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function toggleStudentStatus(studentId, newStatus) {
+            let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
+            students = students.map(s => {
+                if (s.id === studentId) s.status = newStatus;
+                return s;
+            });
+            localStorage.setItem('waleed_students', JSON.stringify(students));
+            renderStudentsList();
+            showNotification('تم تحديث حالة اشتراك الطالب');
+        }
+
+        function kickAndRemoveStudent(studentId) {
+            if (confirm('هل أنت تأكد من طرد هذا الطالب وإلغاء اشتراكه تماماً؟')) {
+                let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
+                students = students.filter(s => s.id !== studentId);
+                localStorage.setItem('waleed_students', JSON.stringify(students));
+
+                const currentStudentId = localStorage.getItem('current_student_id');
+                if (currentStudentId == studentId) {
+                    localStorage.removeItem('current_student_id');
+                }
+
+                renderStudentsList();
+                showNotification('تم طرد الطالب وإلغاء اشتراكه بنجاح، ويمكنه التقديم مجدداً.');
             }
         }
 
-        function editStudentAccount() {
-            const newName = prompt('أدخل الاسم الجديد للطالب:', document.getElementById('student-display-name').innerText);
-            if (newName) {
-                document.getElementById('student-display-name').innerText = newName;
-                alert('تم تحديث بيانات الطالب بنجاح!');
+        function handleUpload(e) {
+            e.preventDefault();
+            const type = document.getElementById('contentType').value;
+            const title = document.getElementById('contentTitle').value;
+            const fileInput = document.getElementById('contentFile');
+
+            if (fileInput.files.length === 0) return;
+
+            const file = fileInput.files[0];
+            const item = {
+                id: Date.now(),
+                type: type,
+                title: title,
+                fileName: file.name,
+                date: new Date().toLocaleDateString('ar-EG')
+            };
+
+            let contents = JSON.parse(localStorage.getItem('waleed_contents')) || [];
+            contents.push(item);
+            localStorage.setItem('waleed_contents', JSON.stringify(contents));
+
+            document.getElementById('uploadForm').reset();
+            showNotification('تم رفع المحتوى بنجاح!');
+            renderContent();
+        }
+
+        function renderContent() {
+            const container = document.getElementById('publicContent');
+            let contents = JSON.parse(localStorage.getItem('waleed_contents')) || [];
+
+            if (contents.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 10px;">لا يوجد محتوى منشور حالياً.</p>`;
+                return;
             }
+
+            let html = '';
+            contents.forEach(item => {
+                html += `
+                    <div class="student-item">
+                        <div class="student-info">
+                            <h4><i class="${item.type === 'pdf' ? 'fas fa-file-pdf' : 'fas fa-video'}" style="color:var(--secondary-color)"></i> ${item.title}</h4>
+                            <p>${item.fileName} - ${item.date}</p>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-primary" onclick="alert('جاري تحميل الملف: ${item.fileName}')">عرض / تحميل</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
         }
 
-        function revokeStudentSubscription() {
-            if (confirm('هل أنت متأكد من رغبتك في إنهاء اشتراك هذا الطالب أو طرده من المنصة؟')) {
-                const badge = document.getElementById('student-status-badge');
-                badge.className = 'inline-block mt-1 bg-rose-100 text-rose-800 text-xs px-3 py-0.5 rounded-full font-bold';
-                badge.innerText = 'موقوف / تم إنهاء الاشتراك';
-                alert('تم إنهاء اشتراك الطالب بنجاح!');
-            }
+        function showNotification(msg) {
+            const notif = document.getElementById('notification');
+            notif.innerText = msg;
+            notif.style.display = 'block';
+            setTimeout(() => {
+                notif.style.display = 'none';
+            }, 3000);
         }
-
-        function approveRequest(id) {
-            const badge = document.getElementById(`req-${id}-status`);
-            badge.className = 'bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold';
-            badge.innerText = 'تمت الموافقة وتفعيل الاشتراك';
-            alert('تمت الموافقة على طلب الطالب وتفعيل اشتراكه بنجاح!');
-        }
-
-        function rejectRequest(id) {
-            const badge = document.getElementById(`req-${id}-status`);
-            badge.className = 'bg-rose-100 text-rose-800 text-xs px-3 py-1 rounded-full font-bold';
-            badge.innerText = 'تم الرفض';
-            alert('تم رفض الطلب بنجاح.');
-        }
-
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.key === 'F12' || (e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'p'))) {
-                e.preventDefault();
-                return false;
-            }
-        });
-        document.addEventListener('dragstart', e => e.preventDefault());
     </script>
 </body>
 </html>
