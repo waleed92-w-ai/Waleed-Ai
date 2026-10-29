@@ -609,7 +609,7 @@
                 document.getElementById('topSubtitle').innerText = "لوحة إدارة المنصة والطلاب";
                 closeAdminModal();
                 showSection('sectionRequests');
-                fetchRequestsData(); // جلب الطلبات فور دخول لوحة التحكم
+                fetchRequestsData();
             } else {
                 alert('كلمة المرور غير صحيحة!');
             }
@@ -629,13 +629,12 @@
                 const el = document.getElementById(id);
                 if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
             });
-            // إذا فتح صفحة الطلبات أو المشتركين، قم بتحديثها فوراً
             if (sectionId === 'sectionRequests' || sectionId === 'sectionSubscribers' || sectionId === 'sectionManageSubscribers') {
                 fetchRequestsData();
             }
         }
 
-        // إرسال الطلب وحفظه برابط مباشر سريع وآمن
+        // إرسال الطلب وحفظه مباشرة لكي يظهر فوراً في لوحة التحكم الإدارية
         function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
@@ -667,6 +666,7 @@
                 timestamp: Date.now()
             };
 
+            // استخدام طريقة الحفظ المباشر REST API لضمان ظهور الطلب في قاعدة البيانات فوراً
             fetch(`${DATABASE_URL}/requests/${key}.json`, {
                 method: 'PUT',
                 body: JSON.stringify(reqData),
@@ -677,10 +677,12 @@
                 submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
                 showSection('pendingNotice');
             }).catch(() => {
-                localStorage.setItem('wal_key', key);
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
-                showSection('pendingNotice');
+                db.ref('requests/' + key).set(reqData).then(() => {
+                    localStorage.setItem('wal_key', key);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                    showSection('pendingNotice');
+                });
             });
         }
 
@@ -807,7 +809,7 @@
             }
         }
 
-        // جلب وعرض طلبات الطلاب في لوحة التحكم الإدارية عبر REST API المباشر
+        // جلب الطلبات وعرضها فوراً وبدقة في لوحة التحكم الإدارية
         function fetchRequestsData() {
             fetch(`${DATABASE_URL}/requests.json`)
                 .then(res => res.json())
@@ -875,7 +877,7 @@
                 body: JSON.stringify(newStatus),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
-                fetchRequestsData(); // تحديث القائمة فوراً بعد التغيير
+                fetchRequestsData();
             });
         }
 
