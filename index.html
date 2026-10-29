@@ -37,13 +37,13 @@
                 </div>
             </div>
 
-            <!-- شريط التنقل العلوي (أزرار تفاعلية تعمل بالكامل) -->
+            <!-- شريط التنقل العلوي -->
             <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
-                <button onclick="scrollToSection('main-header')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">🏠 الرئيسية</button>
-                <button onclick="scrollToSection('courses-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">📚 الكورسات والدروس</button>
-                <button onclick="scrollToSection('courses-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">📖 الكراسات والملازم</button>
-                <button onclick="scrollToSection('dashboard-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">📊 لوحتي والاشتراكات</button>
-                <button onclick="scrollToSection('student-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">👤 حساب الطالب</button>
+                <button onclick="scrollToSection('main-header')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">🏠 الرئيسية</button>
+                <button onclick="scrollToSection('courses-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">📚 الكورسات والدروس</button>
+                <button onclick="scrollToSection('courses-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">📖 الكراسات والملازم</button>
+                <button onclick="scrollToSection('dashboard-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">📊 لوحتي والاشتراكات</button>
+                <button onclick="scrollToSection('student-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">👤 حساب الطالب</button>
                 <button onclick="toggleAdminLogin()" class="bg-amber-500 hover:bg-amber-600 text-black px-3 py-2 rounded-lg transition shadow">🔑 دخول الأستاذ</button>
             </div>
         </div>
@@ -52,7 +52,7 @@
     <!-- المحتوى الرئيسي -->
     <main id="main-header" class="max-w-5xl mx-auto p-4 md:p-6 flex-grow w-full space-y-6">
         
-        <!-- نافذة إدخال الرمز السري للأستاذ (تفتح عند الضغط على زر دخول الأستاذ) -->
+        <!-- نافذة إدخال الرمز السري للأستاذ -->
         <div id="admin-login-box" class="hidden bg-slate-900 text-white rounded-2xl shadow-lg p-6 border-2 border-amber-500 space-y-3">
             <h2 class="text-lg font-bold text-amber-400">🔐 تسجيل دخول الأستاذ وليد</h2>
             <p class="text-xs text-gray-300">أدخل الرمز السري الخاص بك لإظهار لوحة التحكم والصلاحيات الكاملة:</p>
@@ -62,30 +62,33 @@
             </div>
         </div>
 
-        <!-- لوحة تحكم الأستاذ (وليد الشمري) مفعلة -->
+        <!-- لوحة تحكم الأستاذ التفاعلية -->
         <div id="dashboard-section" class="bg-amber-50 border-2 border-amber-400 rounded-2xl shadow-md p-4 space-y-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
                     <span class="text-lg">🛠️</span>
                     <h2 class="text-sm font-bold text-amber-900">لوحة تحكم الأستاذ (وليد الشمري) مفعلة</h2>
                 </div>
-                <button onclick="alert('أنت في وضع الإدارة الكامل')" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow">تسجيل الخروج</button>
+                <button onclick="adminLogout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow">تسجيل الخروج</button>
             </div>
             <div class="flex flex-wrap gap-2 pt-1">
-                <button class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-4 py-2 rounded-lg font-bold shadow flex items-center gap-1">+ إضافة كورس جديد</button>
-                <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg font-bold shadow flex items-center gap-1">+ إضافة ملزمة جديد</button>
-                <button class="bg-slate-700 hover:bg-slate-800 text-white text-xs px-4 py-2 rounded-lg font-bold shadow flex items-center gap-1">📋 إدارة طلبات الاشتراكات</button>
+                <button onclick="addNewCourse()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-4 py-2 rounded-lg font-bold shadow">+ إضافة كورس جديد</button>
+                <button onclick="addNewBook()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg font-bold shadow">+ إضافة ملزمة جديد</button>
+                <button onclick="scrollToSection('notifications-section')" class="bg-slate-700 hover:bg-slate-800 text-white text-xs px-4 py-2 rounded-lg font-bold shadow">📋 إدارة طلبات الاشتراكات</button>
             </div>
         </div>
 
         <!-- بطاقة حساب الطالب (Anas) -->
         <div id="student-section" class="bg-white rounded-2xl shadow-md p-5 border border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div class="space-y-1">
-                <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-3 py-1 rounded-lg font-semibold">تعديل بيانات الحساب</button>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="editStudentAccount()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-3 py-1 rounded-lg font-semibold">تعديل بيانات الحساب</button>
+                    <button onclick="revokeStudentSubscription()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs px-3 py-1 rounded-lg font-semibold">إلغاء الاشتراك / طرد</button>
+                </div>
                 <div class="pt-2">
-                    <h3 class="text-lg font-bold text-gray-900">Anas</h3>
-                    <p class="text-xs text-gray-500">الهاتف: 07753484878</p>
-                    <span class="inline-block mt-1 bg-emerald-100 text-emerald-800 text-xs px-3 py-0.5 rounded-full font-bold">اشتراك مدفوع نشط (شهر كامل)</span>
+                    <h3 id="student-display-name" class="text-lg font-bold text-gray-900">Anas</h3>
+                    <p class="text-xs text-gray-500">الهاتف: <span id="student-display-phone">07753484878</span></p>
+                    <span id="student-status-badge" class="inline-block mt-1 bg-emerald-100 text-emerald-800 text-xs px-3 py-0.5 rounded-full font-bold">اشتراك مدفوع نشط (شهر كامل)</span>
                 </div>
             </div>
             <div class="bg-blue-900 text-white p-3 rounded-2xl shadow">
@@ -96,31 +99,56 @@
             </div>
         </div>
 
-        <!-- حالة الاشتراكات والخدمات المفعلة (قسم الكورسات والملازم) -->
+        <!-- قائمة الكورسات والملازم -->
         <div id="courses-section" class="bg-white rounded-2xl shadow-md p-5 border border-gray-200 space-y-3">
             <h3 class="text-base font-bold text-blue-900 flex items-center gap-2">
-                <span>📚</span> حالة الاشتراكات والخدمات المفعلة
+                <span>📚</span> قائمة الكورسات والملازم المتاحة
             </h3>
-            <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex items-center gap-3">
-                <span class="text-green-600 text-xl font-bold">✔</span>
-                <p class="text-xs sm:text-sm font-semibold text-gray-700">اشتراكك شهري كامل فعال ونشط! يمكنك تصفح وتحميل جميع الملازم والكورسات بحرية.</p>
+            <div id="dynamic-courses-list" class="space-y-2">
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex justify-between items-center">
+                    <span class="text-xs sm:text-sm font-semibold text-gray-700">الكورس الأول: أساسيات صيانة الحاسوب المحترفة</span>
+                    <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded">متاح</span>
+                </div>
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex justify-between items-center">
+                    <span class="text-xs sm:text-sm font-semibold text-gray-700">الملزمة الأولى: دليل شبكات الحاسوب والروترات</span>
+                    <span class="bg-blue-600 text-white text-xs px-2 py-1 rounded">متاح</span>
+                </div>
             </div>
         </div>
 
-        <!-- إشعارات التحويل المالي المرسلة -->
-        <div class="bg-white rounded-2xl shadow-md p-5 border border-gray-200 space-y-3">
+        <!-- إشعارات التحويل المالي وإدارة الموافقات -->
+        <div id="notifications-section" class="bg-white rounded-2xl shadow-md p-5 border border-gray-200 space-y-3">
             <h3 class="text-base font-bold text-blue-900 flex items-center gap-2">
-                <span>📑</span> إشعارات التحويل المالي المرسلة
+                <span>📑</span> إشعارات التحويل المالي وإدارة الطلبات
             </h3>
-            <div class="space-y-2">
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <span class="text-xs text-gray-600">REC-5522 • رقم الإشعار: مجاني (07753484878)</span>
-                    <span class="bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold">مفعل من الأستاذ (شهري)</span>
+            <div class="space-y-3">
+                
+                <!-- الطلب الأول -->
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <span class="text-xs font-bold text-gray-900">الطالب: Anas (REC-5522)</span>
+                        <p class="text-xs text-gray-600">رقم الإشعار: مجاني (07753484878)</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="req-1-status" class="bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold">مفعل</span>
+                        <button onclick="approveRequest(1)" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded-lg font-bold">موافقة</button>
+                        <button onclick="rejectRequest(1)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded-lg font-bold">رفض</button>
+                    </div>
                 </div>
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <span class="text-xs text-gray-600">REC-1820 • رقم الإشعار: (07816745861) 887654321</span>
-                    <span class="bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-bold">بانتظار موافقة الأستاذ</span>
+
+                <!-- الطلب الثاني -->
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <span class="text-xs font-bold text-gray-900">الطالب: محمد أحمد (REC-1820)</span>
+                        <p class="text-xs text-gray-600">زين كاش: (07816745861) 887654321</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="req-2-status" class="bg-amber-100 text-amber-800 text-xs px-3 py-1 rounded-full font-bold">بانتظار الموافقة</span>
+                        <button onclick="approveRequest(2)" class="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded-lg font-bold">موافقة</button>
+                        <button onclick="rejectRequest(2)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded-lg font-bold">رفض</button>
+                    </div>
                 </div>
+
             </div>
         </div>
 
@@ -150,11 +178,71 @@
         function checkAdminCode() {
             const inputCode = document.getElementById('admin-code-input').value;
             if (btoa(inputCode) === ENCRYPTED_ADMIN_CODE) {
-                alert('أهلاً بك أستاذ وليد! لوحة التحكم والمنصة تعمل بكامل الصلاحيات.');
+                alert('أهلاً بك أستاذ وليد! لوحة التحكم تعمل بكامل الصلاحيات.');
                 document.getElementById('admin-login-box').classList.add('hidden');
             } else {
                 alert('الرمز السري غير صحيح!');
             }
+        }
+
+        function adminLogout() {
+            alert('تم تسجيل الخروج بنجاح من لوحة التحكم.');
+            location.reload();
+        }
+
+        function addNewCourse() {
+            const courseName = prompt('أدخل عنوان الكورس الجديد:');
+            if (courseName) {
+                const list = document.getElementById('dynamic-courses-list');
+                const newItem = document.createElement('div');
+                newItem.className = 'bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex justify-between items-center';
+                newItem.innerHTML = `<span class="text-xs sm:text-sm font-semibold text-gray-700">كورس جديد: ${courseName}</span><span class="bg-emerald-600 text-white text-xs px-2 py-1 rounded">جديد</span>`;
+                list.appendChild(newItem);
+                alert('تمت إضافة الكورس بنجاح!');
+            }
+        }
+
+        function addNewBook() {
+            const bookName = prompt('أدخل عنوان الملزمة أو الكراسة الجديدة:');
+            if (bookName) {
+                const list = document.getElementById('dynamic-courses-list');
+                const newItem = document.createElement('div');
+                newItem.className = 'bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex justify-between items-center';
+                newItem.innerHTML = `<span class="text-xs sm:text-sm font-semibold text-gray-700">ملزمة جديدة: ${bookName}</span><span class="bg-emerald-600 text-white text-xs px-2 py-1 rounded">جديد</span>`;
+                list.appendChild(newItem);
+                alert('تمت إضافة الملزمة بنجاح!');
+            }
+        }
+
+        function editStudentAccount() {
+            const newName = prompt('أدخل الاسم الجديد للطالب:', document.getElementById('student-display-name').innerText);
+            if (newName) {
+                document.getElementById('student-display-name').innerText = newName;
+                alert('تم تحديث بيانات الطالب بنجاح!');
+            }
+        }
+
+        function revokeStudentSubscription() {
+            if (confirm('هل أنت متأكد من رغبتك في إنهاء اشتراك هذا الطالب أو طرده من المنصة؟')) {
+                const badge = document.getElementById('student-status-badge');
+                badge.className = 'inline-block mt-1 bg-rose-100 text-rose-800 text-xs px-3 py-0.5 rounded-full font-bold';
+                badge.innerText = 'موقوف / تم إنهاء الاشتراك';
+                alert('تم إنهاء اشتراك الطالب بنجاح!');
+            }
+        }
+
+        function approveRequest(id) {
+            const badge = document.getElementById(`req-${id}-status`);
+            badge.className = 'bg-emerald-100 text-emerald-800 text-xs px-3 py-1 rounded-full font-bold';
+            badge.innerText = 'تمت الموافقة وتفعيل الاشتراك';
+            alert('تمت الموافقة على طلب الطالب وتفعيل اشتراكه بنجاح!');
+        }
+
+        function rejectRequest(id) {
+            const badge = document.getElementById(`req-${id}-status`);
+            badge.className = 'bg-rose-100 text-rose-800 text-xs px-3 py-1 rounded-full font-bold';
+            badge.innerText = 'تم الرفض';
+            alert('تم رفض الطلب بنجاح.');
         }
 
         document.addEventListener('contextmenu', e => e.preventDefault());
