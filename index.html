@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الأستاذ وليد الشمري التعليمية | الحاسوب وصيانته</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+    </style>
 </head>
 <body class="bg-slate-100 font-sans text-gray-800 min-h-screen flex flex-col justify-between select-none">
 
     <!-- شريط الإشعار العلوي البرتقالي -->
     <div class="bg-amber-600 text-white text-center py-2 px-4 text-xs font-bold shadow-inner flex flex-wrap justify-between items-center">
-        <span>أنت الآن في فترة التجربة المجانية (يومان / 48 ساعة) - التصفح متاحة ولكن التحميل والحفظ مقيد لحين الاشتراك الشامل!</span>
-        <button class="bg-amber-800 hover:bg-amber-900 text-white px-3 py-1 rounded shadow text-xs">تفعيل الاشتراك (5,000 د.ع / شهر)</button>
+        <span>أنت الآن في فترة التجربة المجانية (يومان / 48 ساعة) - التصفح متاح ولكن التحميل والحفظ مقيد لحين الاشتراك الشامل!</span>
+        <button onclick="scrollToSection('student-section')" class="bg-amber-800 hover:bg-amber-900 text-white px-3 py-1 rounded shadow text-xs">تفعيل الاشتراك (5,000 د.ع / شهر)</button>
     </div>
 
     <!-- رأس المنصة الأزرق الرئيسي -->
@@ -34,25 +37,25 @@
                 </div>
             </div>
 
-            <!-- شريط التنقل العلوي -->
+            <!-- شريط التنقل العلوي (أزرار تفاعلية تعمل بالكامل) -->
             <div class="flex flex-wrap items-center gap-2 text-xs font-bold">
-                <a href="#" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">🏠 الرئيسية</a>
-                <a href="#" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">📚 الكورسات والدروس</a>
-                <a href="#" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">📖 الكراسات والملازم</a>
-                <a href="#" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">📊 لوحتي والاشتراكات</a>
-                <a href="#" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">👤 حساب الطالب</a>
+                <button onclick="scrollToSection('main-header')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">🏠 الرئيسية</button>
+                <button onclick="scrollToSection('courses-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">📚 الكورسات والدروس</button>
+                <button onclick="scrollToSection('courses-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">📖 الكراسات والملازم</button>
+                <button onclick="scrollToSection('dashboard-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">📊 لوحتي والاشتراكات</button>
+                <button onclick="scrollToSection('student-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition flex items-center gap-1">👤 حساب الطالب</button>
                 <button onclick="toggleAdminLogin()" class="bg-amber-500 hover:bg-amber-600 text-black px-3 py-2 rounded-lg transition shadow">🔑 دخول الأستاذ</button>
             </div>
         </div>
     </header>
 
     <!-- المحتوى الرئيسي -->
-    <main class="max-w-5xl mx-auto p-4 md:p-6 flex-grow w-full space-y-6">
+    <main id="main-header" class="max-w-5xl mx-auto p-4 md:p-6 flex-grow w-full space-y-6">
         
-        <!-- نافذة إدخال الرمز السري للأستاذ (مخفية وتفتح بالضغط على زر دخول الأستاذ) -->
+        <!-- نافذة إدخال الرمز السري للأستاذ (تفتح عند الضغط على زر دخول الأستاذ) -->
         <div id="admin-login-box" class="hidden bg-slate-900 text-white rounded-2xl shadow-lg p-6 border-2 border-amber-500 space-y-3">
             <h2 class="text-lg font-bold text-amber-400">🔐 تسجيل دخول الأستاذ وليد</h2>
-            <p class="text-xs text-gray-300">أدخل الرمز السري الخاص بك لفتح لوحة التحكم:</p>
+            <p class="text-xs text-gray-300">أدخل الرمز السري الخاص بك لإظهار لوحة التحكم والصلاحيات الكاملة:</p>
             <div class="flex gap-2">
                 <input type="password" id="admin-code-input" class="w-full px-4 py-2 rounded-lg text-black focus:outline-none" placeholder="أدخل الرمز السري...">
                 <button onclick="checkAdminCode()" class="bg-amber-500 text-black px-6 py-2 rounded-lg font-bold">دخول</button>
@@ -60,7 +63,7 @@
         </div>
 
         <!-- لوحة تحكم الأستاذ (وليد الشمري) مفعلة -->
-        <div class="bg-amber-50 border-2 border-amber-400 rounded-2xl shadow-md p-4 space-y-3">
+        <div id="dashboard-section" class="bg-amber-50 border-2 border-amber-400 rounded-2xl shadow-md p-4 space-y-3">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
                     <span class="text-lg">🛠️</span>
@@ -76,7 +79,7 @@
         </div>
 
         <!-- بطاقة حساب الطالب (Anas) -->
-        <div class="bg-white rounded-2xl shadow-md p-5 border border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div id="student-section" class="bg-white rounded-2xl shadow-md p-5 border border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div class="space-y-1">
                 <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs px-3 py-1 rounded-lg font-semibold">تعديل بيانات الحساب</button>
                 <div class="pt-2">
@@ -93,8 +96,8 @@
             </div>
         </div>
 
-        <!-- حالة الاشتراكات والخدمات المفعلة -->
-        <div class="bg-white rounded-2xl shadow-md p-5 border border-gray-200 space-y-3">
+        <!-- حالة الاشتراكات والخدمات المفعلة (قسم الكورسات والملازم) -->
+        <div id="courses-section" class="bg-white rounded-2xl shadow-md p-5 border border-gray-200 space-y-3">
             <h3 class="text-base font-bold text-blue-900 flex items-center gap-2">
                 <span>📚</span> حالة الاشتراكات والخدمات المفعلة
             </h3>
@@ -131,8 +134,17 @@
     <script>
         const ENCRYPTED_ADMIN_CODE = 'V0ExOTkyd2E='; // WA1992wa
 
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
         function toggleAdminLogin() {
-            document.getElementById('admin-login-box').classList.toggle('hidden');
+            const box = document.getElementById('admin-login-box');
+            box.classList.toggle('hidden');
+            box.scrollIntoView({ behavior: 'smooth' });
         }
 
         function checkAdminCode() {
