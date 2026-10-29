@@ -356,7 +356,6 @@
 
     <div class="layout-wrapper">
 
-        <!-- الشريط الجانبي (يتكيف حسب الصلاحيات: طالب أو أستاذ) -->
         <sidebar id="appSidebar">
             <div class="sidebar-title">الصفوف الدراسية</div>
             <div id="studentNavClasses">
@@ -368,7 +367,7 @@
                 <button class="nav-item" onclick="openClass('السادس الاعدادي')"><i class="fas fa-user-graduate"></i> السادس الإعدادي</button>
             </div>
 
-            <!-- خيارات الأستاذ (تظهر حصراً عند الدخول بكلمة المرور) -->
+            <!-- لوحة تحكم الأستاذ (مخفية تماماً عن الطلاب) -->
             <div id="adminSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة الإدارة والتحكم</div>
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
@@ -385,7 +384,7 @@
 
         <main>
 
-            <!-- 1. نموذج طلب الاشتراك والدخول -->
+            <!-- 1. نموذج طلب الاشتراك والدخول (مضمون الاستجابة) -->
             <div class="card" id="authSection">
                 <div class="card-header"><i class="fas fa-id-card"></i> طلب اشتراك في المنصة التعليمية</div>
                 
@@ -398,7 +397,7 @@
                     </div>
                 </div>
 
-                <form onsubmit="submitStudentAuth(event)">
+                <form id="studentAuthForm" onsubmit="submitStudentAuth(event)">
                     <div class="form-group">
                         <label>الاسم الثلاثي للطالب</label>
                         <input type="text" class="form-control" id="stFullName" required placeholder="أدخل اسمك الثلاثي">
@@ -415,7 +414,7 @@
                             <option value="ماستر دينار (5285780016156442)">ماستر دينار (5285780016156442)</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-paper-plane"></i> إرسال الطلب والدخول</button>
+                    <button type="submit" id="submitBtn" class="btn btn-success btn-block"><i class="fas fa-paper-plane"></i> إرسال الطلب والدخول</button>
                 </form>
             </div>
 
@@ -615,34 +614,53 @@
             });
         }
 
+        // حل جذري لمشكلة عدم استجابة زر الإرسال وعدم وصول الطلب
         function submitStudentAuth(e) {
             e.preventDefault();
-            const name = document.getElementById('stFullName').value.trim();
-            const contact = document.getElementById('stContact').value.trim();
-            const pay = document.getElementById('stPayMethod').value;
-            const key = 'ST_' + btoa(encodeURIComponent(contact)).replace(/=/g, '');
+            const nameInput = document.getElementById('stFullName');
+            const contactInput = document.getElementById('stContact');
+            const paySelect = document.getElementById('stPayMethod');
+            const submitBtn = document.getElementById('submitBtn');
 
-            db.ref('requests/' + key).once('value', snapshot => {
-                const existing = snapshot.val();
-                if (existing) {
-                    localStorage.setItem('wal_key', key);
-                    checkStudentSession();
-                } else {
-                    const reqData = {
-                        id: key,
-                        name: name,
-                        contact: contact,
-                        paymentMethod: pay,
-                        status: 'pending',
-                        timestamp: Date.now()
-                    };
-                    db.ref('requests/' + key).set(reqData).then(() => {
-                        localStorage.setItem('wal_key', key);
-                        const msg = encodeURIComponent(`مرحباً أستاذ وليد، قدمت طلب اشتراك:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${pay}`);
-                        window.open(`https://t.me/WALEED92w?text=${msg}`, '_blank');
-                        checkStudentSession();
-                    });
-                }
+            const name = nameInput.value.trim();
+            const contact = contactInput.value.trim();
+            const pay = paySelect.value;
+
+            if (!name || !contact) {
+                alert('يرجى إكمال جميع الحقول المطلوبة');
+                return;
+            }
+
+            // تعطيل الزر مؤقتاً لمنع التكرار وإظهار حالة الإرسال
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...`;
+
+            // مفتاح فريد آمن وخالي من الرموز الخاصة
+            const cleanContact = contact.replace(/[^a-zA-Z0-9]/g, '_');
+            const key = 'ST_' + cleanContact;
+
+            const reqData = {
+                id: key,
+                name: name,
+                contact: contact,
+                paymentMethod: pay,
+                status: 'pending',
+                timestamp: Date.now()
+            };
+
+            db.ref('requests/' + key).set(reqData).then(() => {
+                localStorage.setItem('wal_key', key);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب والدخول`;
+                
+                const msg = encodeURIComponent(`مرحباً أستاذ وليد، قدمت طلب اشتراك:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${pay}`);
+                window.open(`https://t.me/WALEED92w?text=${msg}`, '_blank');
+                
+                checkStudentSession();
+            }).catch(error => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب والدخول`;
+                alert('حدث خطأ في الاتصال بالسحابة: ' + error.message);
             });
         }
 
