@@ -18,6 +18,11 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- PDF.js library to render all pages -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    </script>
 
     <style>
         :root {
@@ -334,11 +339,11 @@
             color: var(--primary);
         }
 
-        /* نافذة العرض المنبثقة (Modal) للشاشة الكاملة */
+        /* نافذة العرض المنبثقة للشاشة الكاملة */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 23, 42, 0.85);
             backdrop-filter: blur(4px);
             display: none;
             align-items: center;
@@ -347,15 +352,15 @@
         }
 
         .modal-content-box {
-            background: white;
+            background: #1e293b;
             border-radius: var(--radius);
             width: 98%;
-            max-width: 1000px;
-            height: 92vh;
+            max-width: 950px;
+            height: 94vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
         .modal-header-bar {
@@ -370,18 +375,24 @@
 
         .modal-body-viewer {
             flex: 1;
-            background: #334155;
+            background: #0f172a;
             position: relative;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
 
-        .modal-body-viewer iframe, .modal-body-viewer img {
+        .modal-body-viewer img {
             width: 100%;
-            height: 100%;
-            border: none;
-            object-fit: contain;
-            min-height: 100%;
+            max-width: 800px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            background: #fff;
         }
 
         @media (max-width: 768px) {
@@ -549,7 +560,7 @@
                     <div class="form-group">
                         <label>اختر الملف من جهازك (PDF أو صور)</label>
                         <input type="file" class="form-control" id="upFile" accept=".pdf,.png,.jpg,.jpeg" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">🔒 يتم النشر كبطاقة مصغرة للمشاهدة الحصرية بدون تحميل.</small>
+                        <small style="color: #64748b; display: block; margin-top: 4px;">🔒 يتم النشر كبطاقة مصغرة وتجهيز كافة الصفحات للمشاهدة الحصرية.</small>
                     </div>
 
                     <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة</button>
@@ -574,7 +585,7 @@
         </main>
     </div>
 
-    <!-- نافذة عرض الملفات المنبثقة بشاشة كاملة -->
+    <!-- نافذة عرض الملفات لعرض كافة الصفحات متسلسلة -->
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box">
             <div class="modal-header-bar">
@@ -582,7 +593,7 @@
                 <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="closeFileModal()"><i class="fas fa-times"></i> إغلاق</button>
             </div>
             <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;">
-                <!-- يتم حقن العارض هنا -->
+                <!-- يتم تحميل كافة الصفحات هنا -->
             </div>
         </div>
     </div>
@@ -694,7 +705,6 @@
             }
         }
 
-        // إرسال طلب الاشتراك فوراً
         async function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
@@ -875,24 +885,50 @@
                 });
         }
 
-        // فتح نافذة العرض المنبثقة بشاشة كاملة مع دعم التمرير لكامل صفحات الملف
-        function openFileModal(title, encodedData, isImg) {
+        // فتح نافذة العرض وتحويل جميع صفحات الـ PDF إلى صور مرئية ومتسلسلة
+        async function openFileModal(title, encodedData, isImg) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
+            container.innerHTML = `<p style="color:white; text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin"></i> جاري تحميل كافة صفحات الملزمة...</p>`;
+            document.getElementById('fileViewerModal').style.display = 'flex';
+
             let realData = decodeURIComponent(encodedData);
 
             if (isImg) {
                 container.innerHTML = `<img src="${realData}" alt="${title}">`;
             } else {
-                container.innerHTML = `
-                    <iframe src="${realData}#view=FitH&toolbar=0&navpanes=0&scrollbar=1" oncontextmenu="return false;"></iframe>
-                    <div style="position: absolute; bottom: 10px; left: 10px; z-index: 10;">
-                        <a href="${realData}" target="_blank" class="btn btn-primary" style="font-size: 0.8rem; padding: 6px 12px;"><i class="fas fa-external-link-alt"></i> فتح في عارض المستندات الكامل</a>
-                    </div>
-                `;
-            }
+                try {
+                    const loadingTask = pdfjsLib.getDocument(realData);
+                    const pdfDoc = await loadingTask.promise;
+                    container.innerHTML = ''; // تفريغ التحميل
 
-            document.getElementById('fileViewerModal').style.display = 'flex';
+                    for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+                        const page = await pdfDoc.getPage(pageNum);
+                        const scale = 1.5; // دقة ووضوح عالية
+                        const viewport = page.getViewport({ scale: scale });
+
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+                        canvas.height = viewport.height;
+                        canvas.width = viewport.width;
+                        canvas.style.width = "100%";
+                        canvas.style.height = "auto";
+                        canvas.style.marginBottom = "10px";
+                        canvas.style.borderRadius = "8px";
+                        canvas.style.boxShadow = "0 4px 15px rgba(0,0,0,0.5)";
+
+                        await page.render({ canvasContext: context, viewport: viewport }).promise;
+                        container.appendChild(canvas);
+                    }
+                } catch (err) {
+                    container.innerHTML = `
+                        <p style="color:#ef4444; text-align:center; padding:20px;">عذراً، حدث خطأ في عرض الملف.</p>
+                        <div style="text-align:center; margin-top: 10px;">
+                            <a href="${realData}" target="_blank" class="btn btn-primary"><i class="fas fa-external-link-alt"></i> فتح الملف مباشرة</a>
+                        </div>
+                    `;
+                }
+            }
         }
 
         function closeFileModal() {
@@ -907,7 +943,6 @@
             }
         }
 
-        // جلب الطلبات وعرضها في لوحة الإدارة
         function fetchRequestsData() {
             fetch(`${DATABASE_URL}/requests.json`)
                 .then(res => res.json())
@@ -986,7 +1021,6 @@
             }
         }
 
-        // دالة الرفع الفوري السريع جداً وبدون تعليق (Base64)
         function handleFastFileUpload(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
