@@ -321,10 +321,10 @@
                 </form>
             </div>
 
-            <!-- رفع المحاضرات (حجم غير محدود) -->
+            <!-- رفع المحاضرات (ملف مباشر من الجهاز وبدون قيود حجم) -->
             <div class="card">
                 <div class="section-title">
-                    <i class="fas fa-upload"></i> نشر محاضرة أو ملزمة (بحجم غير محدود جداً)
+                    <i class="fas fa-upload"></i> رفع ملف مباشر من جهازك (ملازم، PDF، فيديوهات)
                 </div>
                 <form id="lectureForm" onsubmit="handleUploadLecture(event)">
                     <div class="form-group">
@@ -358,12 +358,12 @@
                         <input type="text" class="form-control" id="lectureTitle" required placeholder="مثال: المحاضرة الأولى - حاسوب">
                     </div>
                     <div class="form-group">
-                        <label>رابط الملف أو الفيديو (Google Drive / Telegram / Mega - حجم غير محدود)</label>
-                        <input type="url" class="form-control" id="lectureLink" required placeholder="https://...">
-                        <small style="color: var(--text-muted); margin-top: 4px; display: block;">💡 ضع رابط الملف أو الفيديو هنا لتدعم أي حجم مهما كان كبيراً جداً وبدون أخطاء.</small>
+                        <label>اختر الملف من جهازك (بدون تقييد للحجم)</label>
+                        <input type="file" class="form-control" id="lectureFileInput" required>
+                        <small style="color: var(--text-muted); margin-top: 4px; display: block;">📁 يمكنك اختيار أي ملف كبير من جهازك وسيقوم النظام برفعه ومعالجته فوراً.</small>
                     </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-cloud-upload-alt"></i> نشر الملف بالصف والمادة
+                    <button type="submit" class="btn btn-primary" id="uploadBtn">
+                        <i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف للمادة والصف
                     </button>
                 </form>
             </div>
@@ -685,31 +685,54 @@
             document.getElementById('subjectsCard').style.display = 'block';
         }
 
+        // معالجة رفع الملفات الكبيرة مباشرة من الجهاز
         function handleUploadLecture(e) {
             e.preventDefault();
             const grade = document.getElementById('uploadGrade').value;
             const subject = document.getElementById('uploadSubject').value;
             const title = document.getElementById('lectureTitle').value;
-            const fileLink = document.getElementById('lectureLink').value;
+            const fileInput = document.getElementById('lectureFileInput');
 
-            const lectureItem = {
-                id: Date.now(),
-                grade: grade,
-                subject: subject,
-                title: title,
-                fileLink: fileLink,
-                date: new Date().toLocaleDateString('ar-EG')
-            };
-
-            let lectures = JSON.parse(localStorage.getItem('waleed_lectures')) || [];
-            lectures.push(lectureItem);
-            localStorage.setItem('waleed_lectures', JSON.stringify(lectures));
-
-            document.getElementById('lectureForm').reset();
-            showNotification('تم نشر المحاضرة بنجاح وبحجم غير محدود!');
-            if (currentGrade === grade && currentSubject === subject) {
-                renderLectures();
+            if (fileInput.files.length === 0) {
+                alert('يرجى اختيار ملف لرفعه');
+                return;
             }
+
+            const file = fileInput.files[0];
+            const btn = document.getElementById('uploadBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري معالجة ورفع الملف الكبير...';
+            btn.disabled = true;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const lectureItem = {
+                    id: Date.now(),
+                    grade: grade,
+                    subject: subject,
+                    title: title,
+                    fileName: file.name,
+                    fileData: event.target.result,
+                    date: new Date().toLocaleDateString('ar-EG')
+                };
+
+                try {
+                    let lectures = JSON.parse(localStorage.getItem('waleed_lectures')) || [];
+                    lectures.push(lectureItem);
+                    localStorage.setItem('waleed_lectures', JSON.stringify(lectures));
+
+                    document.getElementById('lectureForm').reset();
+                    showNotification('تم رفع ونشر الملف الكبير بنجاح!');
+                    if (currentGrade === grade && currentSubject === subject) {
+                        renderLectures();
+                    }
+                } catch (err) {
+                    alert('عذراً، حجم الملف كبير جداً يفوق مساحة التخزين المحلية للمتصفح. يرجى تقسيم الملف أو تقليل حجمه قليلاً.');
+                } finally {
+                    btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف للمادة والصف';
+                    btn.disabled = false;
+                }
+            };
+            reader.readAsDataURL(file);
         }
 
         function renderLectures() {
@@ -727,13 +750,13 @@
                 html += `
                     <div class="lecture-item">
                         <div>
-                            <h4 style="font-weight: 700; color: var(--primary-color);"><i class="fas fa-video"></i> ${item.title}</h4>
-                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 3px;">تاريخ النشر: ${item.date}</p>
+                            <h4 style="font-weight: 700; color: var(--primary-color);"><i class="fas fa-file-alt"></i> ${item.title}</h4>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 3px;">الملف: ${item.fileName} (${item.date})</p>
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <a href="${item.fileLink}" target="_blank" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem; text-decoration: none;">
+                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem;" onclick="openDirectFile('${item.id}')">
                                 <i class="fas fa-external-link-alt"></i> فتح المحاضرة
-                            </a>
+                            </button>
                             ${document.getElementById('teacherPanel').style.display === 'block' ? `
                                 <button class="btn btn-danger" style="padding: 8px 12px; font-size: 0.85rem;" onclick="deleteLecture(${item.id})">حذف</button>
                             ` : ''}
@@ -742,6 +765,16 @@
                 `;
             });
             container.innerHTML = html;
+        }
+
+        // فتح الملف مباشرة عند الطالب دون إمكانية تحميله
+        function openDirectFile(id) {
+            let lectures = JSON.parse(localStorage.getItem('waleed_lectures')) || [];
+            let item = lectures.find(l => l.id == id);
+            if (item && item.fileData) {
+                let win = window.open();
+                win.document.write('<iframe src="' + item.fileData + '" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>');
+            }
         }
 
         function deleteLecture(id) {
