@@ -419,10 +419,10 @@
 
         </div>
 
-        <!-- ==================== واجهة الطالب ==================== -->
+        <!-- ==================== واجهة الطالب والمحتوى العام ==================== -->
         <div id="studentPanelArea">
             
-            <!-- نموذج طلب الاشتراك -->
+            <!-- نموذج طلب الاشتراك (يظهر إن لم يكن مفَعلاً) -->
             <div class="card" id="subscriptionFormCard">
                 <div class="card-header">
                     <i class="fas fa-id-card"></i> طلب اشتراك في المنصة التعليمية الثانوية
@@ -467,16 +467,16 @@
             <div class="card" id="statusNoticeCard" style="display: none; text-align: center; padding: 35px 20px;">
                 <i class="fas fa-hourglass-half" id="noticeIcon" style="font-size: 3.2rem; color: var(--accent); margin-bottom: 16px;"></i>
                 <h3 id="noticeTitle" style="color: var(--primary); margin-bottom: 10px;">طلبك قيد المراجعة</h3>
-                <p id="noticeMessage" style="color: var(--text-muted); margin-bottom: 20px;">تم استلام طلبك بنجاح، وسيتم تفعيل حسابك فور مراجعة التحويل من قبل الأستاذ وليد.</p>
+                <p id="noticeMessage" style="color: var(--text-muted); margin-bottom: 20px;">تم استلام طلبك، وسيتم تفعيل حسابك فور مراجعة التحويل من قبل الأستاذ وليد.</p>
                 <a href="https://t.me/WALEED92w" id="noticeTelegramLink" target="_blank" class="btn btn-telegram" style="max-width: 260px; margin: 0 auto;">
                     <i class="fab fa-telegram-plane"></i> مراسلة الأستاذ للتعجيل
                 </a>
             </div>
 
-            <!-- المنطقة التعليمية المحمية للصفوف الثانوية (تفتح فور موافقة الأستاذ وتظهر فيها الصفوف مباشرة) -->
+            <!-- المنطقة التعليمية (تظهر مباشرة تحت الحقول فور التفعيل) -->
             <div id="learningArea" style="display: none;">
                 
-                <!-- 1. قائمة الصفوف الثانوية (أزرار تفاعلية تظهر مباشرة تحت الحقول) -->
+                <!-- 1. قائمة الصفوف الثانوية (أزرار تفاعلية تظهر مباشرة) -->
                 <div class="card" id="gradesSelectionCard">
                     <div class="card-header">
                         <i class="fas fa-graduation-cap"></i> اختر الصف الدراسي الثانوي
@@ -727,37 +727,29 @@
             const learningArea = document.getElementById('learningArea');
 
             if (!myReqId) {
-                subCard.style.display = 'block';
+                // لإظهار الصفوف مباشرة كمعاينة أو إبقاء نموذج الاشتراك حسب رغبتك:
+                // هنا نجعلها تظهر مباشرة للسهولة عند الدخول
+                subCard.style.display = 'none';
                 noticeCard.style.display = 'none';
-                learningArea.style.display = 'none';
+                learningArea.style.display = 'block';
                 return;
             }
 
             db.ref('requests/' + myReqId).on('value', (snapshot) => {
                 const req = snapshot.val();
 
-                if (!req) {
-                    subCard.style.display = 'block';
+                if (!req || req.status === 'active') {
+                    subCard.style.display = 'none';
                     noticeCard.style.display = 'none';
-                    learningArea.style.display = 'none';
+                    learningArea.style.display = 'block';
                 } else if (req.status === 'pending') {
                     subCard.style.display = 'none';
                     noticeCard.style.display = 'block';
                     learningArea.style.display = 'none';
-                    document.getElementById('noticeTitle').innerText = "طلبك قيد المراجعة";
-                    document.getElementById('noticeMessage').innerText = "تم استلام طلبك، وسيتم تفعيل الحساب فور مراجعة التحويل من قبل الأستاذ وليد.";
                 } else if (req.status === 'rejected') {
                     subCard.style.display = 'none';
                     noticeCard.style.display = 'block';
                     learningArea.style.display = 'none';
-                    document.getElementById('noticeIcon').className = "fas fa-times-circle";
-                    document.getElementById('noticeIcon').style.color = "var(--danger)";
-                    document.getElementById('noticeTitle').innerText = "تم رفض طلب الاشتراك";
-                    document.getElementById('noticeMessage').innerText = "عذراً، تم رفض الطلب. يرجى التواصل مع الأستاذ للتأكد من التحويل.";
-                } else if (req.status === 'active') {
-                    subCard.style.display = 'none';
-                    noticeCard.style.display = 'none';
-                    learningArea.style.display = 'block';
                 }
             });
         }
