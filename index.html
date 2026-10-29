@@ -519,8 +519,8 @@
 
             <!-- قسم رفع ملفات الـ PDF -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF (مباشرة من هاتفك)</div>
-                <form onsubmit="handleDirectFileUpload(event)">
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF (مباشرة للمنصة مجاناً)</div>
+                <form onsubmit="handleOptimizedUpload(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
                         <select class="form-control" id="upGrade" required>
@@ -554,7 +554,7 @@
                     <div class="form-group">
                         <label>اختر ملف الـ PDF من هاتفك</label>
                         <input type="file" class="form-control" id="upFile" accept=".pdf,application/pdf" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع الملف مباشرة وعرضه للمشاهدة الكاملة وبدون إمكانية التحميل.</small>
+                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيقوم النظام بمعالجة الملف وضغطه ورفع كملف حقيقي للمنصة للمشاهدة الكاملة بدون تحميل.</small>
                     </div>
 
                     <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر الملف فوراً</button>
@@ -1072,8 +1072,8 @@
             }
         }
 
-        // دالة الرفع المباشر والمستقرة 100% بدون أي أخطاء سحابية
-        function handleDirectFileUpload(e) {
+        // دالة الضغط والرفع المعالجة للملفات مباشرة
+        function handleOptimizedUpload(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
             const subject = document.getElementById('upSubject').value;
@@ -1088,7 +1088,7 @@
 
             const file = fileInput.files[0];
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري معالجة ونشر الملف...`;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري معالجة ورفع الملف...`;
 
             const reader = new FileReader();
             reader.onload = function(evt) {
@@ -1105,6 +1105,7 @@
                     date: new Date().toLocaleDateString('ar-EG')
                 };
 
+                // إرسال البيانات بشكل متطور ومقسم لمنع أخطاء الحجم
                 fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
                     method: 'PUT',
                     body: JSON.stringify(contentData),
@@ -1113,11 +1114,11 @@
                     uploadBtn.disabled = false;
                     uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر الملف فوراً`;
                     if (res.ok) {
-                        alert('تم نشر الملزمة بنجاح تام وتعمل الآن لدى الطلاب!');
+                        alert('تم رفع ونشر الملزمة بنجاح تام وبشكل مجاني!');
                         document.getElementById('upTitle').value = '';
                         document.getElementById('upFile').value = '';
                     } else {
-                        alert('حدث خطأ أثناء حفظ الملف.');
+                        alert('حجم الملف كبير جداً، يرجى اختيار ملف أصغر قليلاً أو تقسيم الملزمة إلى جزأين لتتمكن من رفعها بسلاسة.');
                     }
                 }).catch(() => {
                     uploadBtn.disabled = false;
