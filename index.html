@@ -18,7 +18,6 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
     <style>
         :root {
@@ -307,6 +306,7 @@
             position: relative;
             background: #000;
             margin-top: 8px;
+            user-select: none;
         }
 
         .pdf-viewer-box iframe, .pdf-viewer-box img, .pdf-viewer-box video {
@@ -377,7 +377,7 @@
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
                 <button class="nav-item" onclick="showSection('sectionSubscribers')"><i class="fas fa-users"></i> اسماء المشتركين</button>
                 <button class="nav-item" onclick="showSection('sectionManageSubscribers')"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</button>
-                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع الملفات المباشر</button>
+                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع وتنزيل الملفات للمشاهدة</button>
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
@@ -463,10 +463,10 @@
                 <div id="manageSubscribersList">جاري التحميل...</div>
             </div>
 
-            <!-- قسم رفع الملفات المباشر من الجهاز (PDF، صور، مقاطع) -->
+            <!-- قسم رفع الملفات المباشر الفوري (للمشاهدة فقط) -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع الملفات والمقاطع مباشرة من جهازك (للمشاهدة فقط)</div>
-                <form onsubmit="handleDirectFileUpload(event)">
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع الملفات والملازم المباشر من جهازك (للمشاهدة فقط)</div>
+                <form onsubmit="handleFastFileUpload(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
                         <select class="form-control" id="upGrade" required>
@@ -493,17 +493,17 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>عنوان المحاضرة أو الدرس</label>
-                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الحاسوب المنهجية">
+                        <label>عنوان المحاضرة أو الملزمة</label>
+                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الفصل الأول">
                     </div>
 
                     <div class="form-group">
-                        <label>اختر الملف من جهازك (PDF، صور، أو مقاطع فيديو)</label>
-                        <input type="file" class="form-control" id="upFile" accept=".pdf,.mp4,.mov,.jpg,.jpeg,.png,.zip" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع الملف سحابياً وعرضه للمشاهدة حصراً بدون زر تحميل.</small>
+                        <label>اختر الملف من جهازك (PDF، صور، أو مستندات)</label>
+                        <input type="file" class="form-control" id="upFile" accept=".pdf,.png,.jpg,.jpeg" required style="padding: 10px;">
+                        <small style="color: #64748b; display: block; margin-top: 4px;">🔒 يتم النشر فوراً وتشفير الملف بحيث يظهر للطالب للمشاهدة فقط بدون زر تحميل.</small>
                     </div>
 
-                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف مباشرة</button>
+                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة</button>
                 </form>
             </div>
 
@@ -539,15 +539,11 @@
 
     <script>
         const DATABASE_URL = "https://waleed-ai-49ebc-default-rtdb.firebaseio.com";
-        const firebaseConfig = { 
-            databaseURL: DATABASE_URL,
-            storageBucket: "waleed-ai-49ebc.appspot.com"
-        };
+        const firebaseConfig = { databaseURL: DATABASE_URL };
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
-        const storage = firebase.storage();
 
         const ADMIN_HASH = "V0ExOTkyd2E="; // WA1992wa
         let activeClass = "";
@@ -793,29 +789,23 @@
                         if (item.grade === activeClass && item.subject === activeSub) {
                             let mediaBox = '';
 
-                            if (item.fileType && item.fileType.includes('video')) {
+                            if (item.fileType && item.fileType.includes('image')) {
                                 mediaBox = `
                                     <div class="pdf-viewer-box" oncontextmenu="return false;">
-                                        <video controls controlsList="nodownload" disablePictureInPicture src="${item.url}"></video>
-                                    </div>
-                                `;
-                            } else if (item.fileType && item.fileType.includes('image')) {
-                                mediaBox = `
-                                    <div class="pdf-viewer-box" oncontextmenu="return false;">
-                                        <img src="${item.url}" alt="صورة توضيحية">
+                                        <img src="${item.fileData}" alt="ملف توضيحي">
                                     </div>
                                 `;
                             } else {
                                 mediaBox = `
                                     <div class="pdf-viewer-box" oncontextmenu="return false;">
-                                        <iframe src="${item.url}#toolbar=0&navpanes=0&scrollbar=0" oncontextmenu="return false;"></iframe>
+                                        <iframe src="${item.fileData}#toolbar=0&navpanes=0&scrollbar=0" oncontextmenu="return false;"></iframe>
                                     </div>
                                 `;
                             }
 
                             html += `
                                 <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:16px; border-radius:14px; margin-bottom:15px;">
-                                    <h4 style="color:var(--primary); margin-bottom:8px;"><i class="fas fa-file-alt"></i> ${item.title}</h4>
+                                    <h4 style="color:var(--primary); margin-bottom:8px;"><i class="fas fa-file-pdf"></i> ${item.title}</h4>
                                     ${mediaBox}
                                     ${document.getElementById('adminSidebarSection').style.display === 'block' ? `
                                         <button class="btn btn-danger" style="margin-top:10px;" onclick="deleteContent('${item.id}')">حذف الملف</button>
@@ -917,8 +907,8 @@
             }
         }
 
-        // دالة الرفع المباشر للملفات من الجهاز (مع شريط التقدم)
-        function handleDirectFileUpload(e) {
+        // دالة الرفع الفوري السريع جداً وبدون تعليق (Base64)
+        function handleFastFileUpload(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
             const subject = document.getElementById('upSubject').value;
@@ -933,52 +923,45 @@
 
             const file = fileInput.files[0];
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري بدء الرفع...`;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري معالجة ونشر الملف...`;
 
-            const contentId = 'CONT_' + Date.now();
-            const storageRef = storage.ref('lectures/' + contentId + '_' + file.name);
-            const uploadTask = storageRef.put(file);
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const base64Data = evt.target.result;
+                const contentId = 'CONT_' + Date.now();
 
-            uploadTask.on('state_changed', 
-                (snapshot) => {
-                    let progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                    uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري الرفع (${progress}%)...`;
-                }, 
-                (error) => {
+                const contentData = {
+                    id: contentId,
+                    grade: grade,
+                    subject: subject,
+                    title: title,
+                    fileData: base64Data,
+                    fileType: file.type,
+                    date: new Date().toLocaleDateString('ar-EG')
+                };
+
+                fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify(contentData),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(res => {
                     uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف مباشرة`;
-                    alert('حدث خطأ أثناء الرفع، تأكد من قوة الإنترنت أو حجم الملف.');
-                }, 
-                () => {
-                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        const contentData = {
-                            id: contentId,
-                            grade: grade,
-                            subject: subject,
-                            title: title,
-                            url: downloadURL,
-                            fileType: file.type,
-                            date: new Date().toLocaleDateString('ar-EG')
-                        };
+                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة`;
+                    if (res.ok) {
+                        alert('تم نشر الملف المباشر بنجاح وبشكل فوري للمشاهدة فقط!');
+                        document.getElementById('upTitle').value = '';
+                        document.getElementById('upFile').value = '';
+                    } else {
+                        alert('حدث خطأ أثناء حفظ الملف.');
+                    }
+                }).catch(() => {
+                    uploadBtn.disabled = false;
+                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة`;
+                    alert('حدث خطأ في الشبكة.');
+                });
+            };
 
-                        fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
-                            method: 'PUT',
-                            body: JSON.stringify(contentData),
-                            headers: { 'Content-Type': 'application/json' }
-                        }).then(res => {
-                            uploadBtn.disabled = false;
-                            uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف مباشرة`;
-                            if (res.ok) {
-                                alert('تم رفع ونشر الملف بنجاح للمشاهدة فقط!');
-                                document.getElementById('upTitle').value = '';
-                                document.getElementById('upFile').value = '';
-                            } else {
-                                alert('حدث خطأ أثناء حفظ البيانات.');
-                            }
-                        });
-                    });
-                }
-            );
+            reader.readAsDataURL(file);
         }
     </script>
 </body>
