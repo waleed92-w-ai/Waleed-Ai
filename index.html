@@ -373,7 +373,7 @@
                 </form>
             </div>
 
-            <!-- قائمة طلبات الطلاب وإدارتهم -->
+            <!-- قائمة طلبات الطلاب وإدارتهم (موافقة، رفض، إنهاء اشتراك، طرد) -->
             <div class="card">
                 <div class="section-title">
                     <i class="fas fa-users-cog"></i> إدارة طلبات واشتراكات الطلاب
@@ -584,7 +584,7 @@
                 paymentMethod: paymentMethod,
                 name: name,
                 username: username,
-                status: 'pending'
+                status: 'pending' // pending, active, rejected
             };
 
             let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
@@ -592,12 +592,13 @@
             localStorage.setItem('waleed_students', JSON.stringify(students));
             localStorage.setItem('current_student_id', student.id);
 
+            // فتح تيليجرام لإرسال إشعار للأستاذ
             const text = encodeURIComponent(`مرحباً أستاذ وليد، أود الاشتراك في المنصة.\nالاسم الثلاثي: ${name}\nالمعرف: ${username}\nطريقة الدفع: ${paymentMethod}\nالمبلغ: ${price} دينار`);
             window.open(`https://t.me/WALEED92w?text=${text}`, '_blank');
 
             document.getElementById('studentRegisterForm').reset();
             checkStudentAccess();
-            showNotification('تم إرسال طلبك بنجاح!');
+            showNotification('تم إرسال طلب الاشتراك بنجاح!');
         }
 
         function renderStudentsList() {
@@ -725,7 +726,6 @@
             document.getElementById('subjectsCard').style.display = 'block';
         }
 
-        // معالجة اختيار الملفات الكبيرة وربطها برابط مباشر وآمن
         function handleUploadLecture(e) {
             e.preventDefault();
             const grade = document.getElementById('uploadGrade').value;
