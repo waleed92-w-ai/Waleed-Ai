@@ -570,23 +570,30 @@
         };
 
         function loadSettingsData() {
-            db.ref('settings').once('value').then(snapshot => {
-                const cfg = snapshot.val() || {};
-                const price = cfg.price || '5000';
-                const payments = cfg.payments || '💳 ماستر كارد: 9061913829\n📱 زين كاش: 07816745861\n💵 ماستر دينار: 5285780016156442';
+            fetch(`${DATABASE_URL}/settings.json`)
+                .then(res => res.json())
+                .then(data => {
+                    const cfg = data || {};
+                    const price = cfg.price || '5000';
+                    const payments = cfg.payments || '💳 ماستر كارد: 9061913829\n📱 زين كاش: 07816745861\n💵 ماستر دينار: 5285780016156442';
 
-                document.getElementById('dispPrice').innerText = price;
-                document.getElementById('dispPayment').innerText = payments;
-                document.getElementById('cfgPrice').value = price;
-                document.getElementById('cfgPayments').value = payments;
-            });
+                    document.getElementById('dispPrice').innerText = price;
+                    document.getElementById('dispPayment').innerText = payments;
+                    document.getElementById('cfgPrice').value = price;
+                    document.getElementById('cfgPayments').value = payments;
+                }).catch(() => {});
         }
 
         function saveSettings(e) {
             e.preventDefault();
-            db.ref('settings').set({
+            const settingsData = {
                 price: document.getElementById('cfgPrice').value,
                 payments: document.getElementById('cfgPayments').value
+            };
+            fetch(`${DATABASE_URL}/settings.json`, {
+                method: 'PUT',
+                body: JSON.stringify(settingsData),
+                headers: { 'Content-Type': 'application/json' }
             }).then(() => alert('تم حفظ الإعدادات بنجاح!'));
         }
 
@@ -627,7 +634,7 @@
             }
         }
 
-        // إرسال الطلب باستخدام Firebase SDK المباشر لضمان الحفظ الفوري بدون أي تعليق
+        // إرسال الطلب وحفظه برابط REST API المباشر لضمان عدم التعليق نهائياً
         function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
@@ -659,16 +666,33 @@
                 timestamp: Date.now()
             };
 
-            // استخدام مكتبة Firebase المباشرة لضمان وصول الطلب فوراً
-            db.ref('requests/' + key).set(reqData).then(() => {
-                localStorage.setItem('wal_key', key);
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
-                showSection('pendingNotice');
-            }).catch(error => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
-                alert('حدث خطأ في الاتصال، يرجى المحاولة مرة أخرى.');
+            fetch(`${DATABASE_URL}/requests/${key}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(reqData),
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => {
+                if (res.ok) {
+                    localStorage.setItem('wal_key', key);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                    showSection('pendingNotice');
+                } else {
+                    throw new Error('فشل الإرسال');
+                }
+            })
+            .catch(() => {
+                // محاولة احتياطية ثانية عبر Firebase SDK
+                db.ref('requests/' + key).set(reqData).then(() => {
+                    localStorage.setItem('wal_key', key);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                    showSection('pendingNotice');
+                }).catch(() => {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                    alert('حدث خطأ في الاتصال، يرجى المحاولة مرة أخرى.');
+                });
             });
         }
 
@@ -686,22 +710,25 @@
                 return;
             }
 
-            db.ref('requests/' + key).once('value').then(snapshot => {
-                const req = snapshot.val();
-                if (!req) {
-                    showSection('authSection');
-                    return;
-                }
+            fetch(`${DATABASE_URL}/requests/${key}.json`)
+                .then(res => res.json())
+                .then(req => {
+                    if (!req) {
+                        showSection('authSection');
+                        return;
+                    }
 
-                if (req.status === 'pending') {
+                    if (req.status === 'pending') {
+                        showSection('pendingNotice');
+                    } else if (req.status === 'active') {
+                        if (!activeClass) openClass('الأول المتوسط');
+                    } else if (req.status === 'rejected') {
+                        alert('عذراً، تم رفض أو إلغاء اشتراكك. يمكنك تقديم طلب جديد.');
+                        logoutStudent();
+                    }
+                }).catch(() => {
                     showSection('pendingNotice');
-                } else if (req.status === 'active') {
-                    if (!activeClass) openClass('الأول المتوسط');
-                } else if (req.status === 'rejected') {
-                    alert('عذراً، تم رفض أو إلغاء اشتراكك. يمكنك تقديم طلب جديد.');
-                    logoutStudent();
-                }
-            });
+                });
         }
 
         function openClass(className) {
@@ -751,113 +778,123 @@
             const container = document.getElementById('lecturesContainer');
             container.innerHTML = `<p style="text-align:center; color:#64748b;">جاري تحميل المحتوى...</p>`;
 
-            db.ref('contents').once('value').then(snapshot => {
-                const data = snapshot.val();
-                if (!data) {
-                    container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو كتب مرفوعة لهذه المادة حتى الآن.</p>`;
-                    return;
-                }
-
-                let html = '';
-                Object.keys(data).forEach(k => {
-                    const item = data[k];
-                    if (item.grade === activeClass && item.subject === activeSub) {
-                        let safeViewerUrl = item.url.includes('drive.google.com') ? item.url.replace('/view', '/preview') : item.url;
-
-                        html += `
-                            <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:16px; border-radius:14px; margin-bottom:15px;">
-                                <h4 style="color:var(--primary); margin-bottom:8px;"><i class="fas fa-book-open"></i> ${item.title}</h4>
-                                <div class="pdf-viewer-box">
-                                    <iframe src="${safeViewerUrl}#toolbar=0&navpanes=0" oncontextmenu="return false;"></iframe>
-                                </div>
-                                ${document.getElementById('adminSidebarSection').style.display === 'block' ? `
-                                    <button class="btn btn-danger" style="margin-top:10px;" onclick="deleteContent('${item.id}')">حذف الدرس</button>
-                                ` : ''}
-                            </div>
-                        `;
+            fetch(`${DATABASE_URL}/contents.json`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data) {
+                        container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو كتب مرفوعة لهذه المادة حتى الآن.</p>`;
+                        return;
                     }
-                });
 
-                container.innerHTML = html || `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو كتب مرفوعة لهذه المادة حتى الآن.</p>`;
-            });
+                    let html = '';
+                    Object.keys(data).forEach(k => {
+                        const item = data[k];
+                        if (item.grade === activeClass && item.subject === activeSub) {
+                            let safeViewerUrl = item.url.includes('drive.google.com') ? item.url.replace('/view', '/preview') : item.url;
+
+                            html += `
+                                <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:16px; border-radius:14px; margin-bottom:15px;">
+                                    <h4 style="color:var(--primary); margin-bottom:8px;"><i class="fas fa-book-open"></i> ${item.title}</h4>
+                                    <div class="pdf-viewer-box">
+                                        <iframe src="${safeViewerUrl}#toolbar=0&navpanes=0" oncontextmenu="return false;"></iframe>
+                                    </div>
+                                    ${document.getElementById('adminSidebarSection').style.display === 'block' ? `
+                                        <button class="btn btn-danger" style="margin-top:10px;" onclick="deleteContent('${item.id}')">حذف الدرس</button>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }
+                    });
+
+                    container.innerHTML = html || `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو كتب مرفوعة لهذه المادة حتى الآن.</p>`;
+                }).catch(() => {
+                    container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">حدث خطأ في تحميل المحتوى.</p>`;
+                });
         }
 
         function deleteContent(id) {
             if (confirm('هل تريد حذف هذا الدرس نهائياً؟')) {
-                db.ref('contents/' + id).remove().then(() => renderLectures());
+                fetch(`${DATABASE_URL}/contents/${id}.json`, { method: 'DELETE' })
+                    .then(() => renderLectures());
             }
         }
 
-        // جلب وعرض الطلبات فوراً في لوحة التحكم الإدارية
+        // جلب الطلبات وعرضها فوراً في لوحة التحكم الإدارية
         function fetchRequestsData() {
-            db.ref('requests').once('value').then(snapshot => {
-                const reqList = document.getElementById('requestsList');
-                const subList = document.getElementById('subscribersList');
-                const manageList = document.getElementById('manageSubscribersList');
-                const data = snapshot.val();
+            fetch(`${DATABASE_URL}/requests.json`)
+                .then(res => res.json())
+                .then(data => {
+                    const reqList = document.getElementById('requestsList');
+                    const subList = document.getElementById('subscribersList');
+                    const manageList = document.getElementById('manageSubscribersList');
 
-                if (!data) {
-                    reqList.innerHTML = '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة حالياً.</p>';
-                    subList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين مفعلين حالياً.</p>';
-                    manageList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
-                    return;
-                }
-
-                let reqHtml = '', subHtml = '', manageHtml = '';
-
-                Object.keys(data).forEach(k => {
-                    const r = data[k];
-
-                    if (r.status === 'pending') {
-                        reqHtml += `
-                            <div class="list-item">
-                                <div>
-                                    <strong>${r.name}</strong> (${r.contact})
-                                    <br><small style="color:#64748b;">طريقة التحويل: ${r.paymentMethod}</small>
-                                </div>
-                                <div>
-                                    <button class="btn btn-success" onclick="setReqStatus('${r.id}', 'active')">قبول وتفعيل</button>
-                                    <button class="btn btn-danger" onclick="setReqStatus('${r.id}', 'rejected')">رفض</button>
-                                </div>
-                            </div>
-                        `;
-                    } else if (r.status === 'active') {
-                        subHtml += `
-                            <div class="list-item">
-                                <div><strong>${r.name}</strong> (${r.contact})</div>
-                                <span class="badge badge-active">نشط ومُفعل</span>
-                            </div>
-                        `;
-
-                        manageHtml += `
-                            <div class="list-item">
-                                <div><strong>${r.name}</strong> (${r.contact})</div>
-                                <div>
-                                    <button class="btn btn-warning" onclick="setReqStatus('${r.id}', 'pending')">إلغاء الاشتراك</button>
-                                    <button class="btn btn-danger" onclick="deleteAndExpel('${r.id}')">طرد نهائي</button>
-                                </div>
-                            </div>
-                        `;
+                    if (!data) {
+                        reqList.innerHTML = '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة حالياً.</p>';
+                        subList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين مفعلين حالياً.</p>';
+                        manageList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
+                        return;
                     }
-                });
 
-                reqList.innerHTML = reqHtml || '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة حالياً.</p>';
-                subList.innerHTML = subHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين مفعلين حالياً.</p>';
-                manageList.innerHTML = manageHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
-            }).catch(error => {
-                document.getElementById('requestsList').innerHTML = '<p style="text-align:center; color:#64748b;">فشل جلب الطلبات.</p>';
-            });
+                    let reqHtml = '', subHtml = '', manageHtml = '';
+
+                    Object.keys(data).forEach(k => {
+                        const r = data[k];
+
+                        if (r.status === 'pending') {
+                            reqHtml += `
+                                <div class="list-item">
+                                    <div>
+                                        <strong>${r.name}</strong> (${r.contact})
+                                        <br><small style="color:#64748b;">طريقة التحويل: ${r.paymentMethod}</small>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-success" onclick="setReqStatus('${r.id}', 'active')">قبول وتفعيل</button>
+                                        <button class="btn btn-danger" onclick="setReqStatus('${r.id}', 'rejected')">رفض</button>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (r.status === 'active') {
+                            subHtml += `
+                                <div class="list-item">
+                                    <div><strong>${r.name}</strong> (${r.contact})</div>
+                                    <span class="badge badge-active">نشط ومُفعل</span>
+                                </div>
+                            `;
+
+                            manageHtml += `
+                                <div class="list-item">
+                                    <div><strong>${r.name}</strong> (${r.contact})</div>
+                                    <div>
+                                        <button class="btn btn-warning" onclick="setReqStatus('${r.id}', 'pending')">إلغاء الاشتراك</button>
+                                        <button class="btn btn-danger" onclick="deleteAndExpel('${r.id}')">طرد نهائي</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+
+                    reqList.innerHTML = reqHtml || '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة حالياً.</p>';
+                    subList.innerHTML = subHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين مفعلين حالياً.</p>';
+                    manageList.innerHTML = manageHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
+                }).catch(() => {
+                    document.getElementById('requestsList').innerHTML = '<p style="text-align:center; color:#64748b;">فشل جلب الطلبات.</p>';
+                });
         }
 
         function setReqStatus(id, newStatus) {
-            db.ref('requests/' + id + '/status').set(newStatus).then(() => {
+            fetch(`${DATABASE_URL}/requests/${id}/status.json`, {
+                method: 'PUT',
+                body: JSON.stringify(newStatus),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
                 fetchRequestsData();
             });
         }
 
         function deleteAndExpel(id) {
             if (confirm('هل أنت متأكد من طرد هذا الطالب؟ سيتمكن من إرسال طلب جديد لاحقاً.')) {
-                db.ref('requests/' + id).remove().then(() => fetchRequestsData());
+                fetch(`${DATABASE_URL}/requests/${id}.json`, { method: 'DELETE' })
+                    .then(() => fetchRequestsData());
             }
         }
 
@@ -916,7 +953,11 @@
                 date: new Date().toLocaleDateString('ar-EG')
             };
 
-            db.ref('contents/' + id).set(contentData).then(() => {
+            fetch(`${DATABASE_URL}/contents/${id}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(contentData),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
                 const uploadBtn = document.getElementById('uploadBtn');
                 uploadBtn.disabled = false;
                 uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر المحتوى سحابياً`;
