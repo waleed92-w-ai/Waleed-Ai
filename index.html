@@ -40,6 +40,8 @@
             margin: 0;
             padding: 0;
             font-family: 'Cairo', sans-serif;
+            -webkit-user-select: none; /* منع تحديد النصوص */
+            user-select: none;
         }
 
         body {
@@ -334,7 +336,7 @@
             color: var(--primary);
         }
 
-        /* نافذة العرض المنبثقة للشاشة الكاملة */
+        /* نافذة العرض المنبثقة للشاشة الكاملة مع حماية تامة */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -356,6 +358,7 @@
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            position: relative;
         }
 
         .modal-header-bar {
@@ -380,6 +383,15 @@
             width: 100%;
             height: 100%;
             border: none;
+            pointer-events: auto;
+        }
+
+        /* طبقة حماية شفافة فوق العارض لمنع أي تفاعل غير مرغوب أو سحب */
+        .pdf-shield {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 10;
+            display: none;
         }
 
         @media (max-width: 768px) {
@@ -388,7 +400,7 @@
         }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <header>
         <div class="brand-profile">
@@ -469,11 +481,11 @@
                 </form>
             </div>
 
-            <!-- 2. تنبيه الانتظار -->
+            <!-- 2. تنبيه الانتظار أو انتهاء الاشتراك -->
             <div class="card" id="pendingNotice" style="display: none; text-align: center; padding: 40px 20px;">
-                <i class="fas fa-hourglass-half" style="font-size: 3.5rem; color: var(--warning); margin-bottom: 15px;"></i>
-                <h3 style="color: var(--primary); margin-bottom: 10px;">طلبك قيد المراجعة لدى الأستاذ</h3>
-                <p style="color: #64748b; margin-bottom: 20px;">تم إرسال طلبك إلى لوحة تحكم المنصة بنجاح. سيتم تفعيل حسابك فور موافقة الأستاذ وليد.</p>
+                <i class="fas fa-hourglass-half" id="noticeIcon" style="font-size: 3.5rem; color: var(--warning); margin-bottom: 15px;"></i>
+                <h3 id="noticeTitle" style="color: var(--primary); margin-bottom: 10px;">طلبك قيد المراجعة لدى الأستاذ</h3>
+                <p id="noticeText" style="color: #64748b; margin-bottom: 20px;">تم إرسال طلبك إلى لوحة تحكم المنصة بنجاح. سيتم تفعيل حسابك فور موافقة الأستاذ وليد.</p>
                 <a href="https://t.me/WALEED92w" target="_blank" class="btn btn-primary"><i class="fab fa-telegram-plane"></i> مراسلة الأستاذ للتعجيل</a>
             </div>
 
@@ -496,7 +508,7 @@
 
             <!-- لوحة التحكم للإدارة -->
             <div class="card" id="sectionRequests" style="display: none;">
-                <div class="card-header"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد (قبول / رفض)</div>
+                <div class="card-header"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد والتجديد (قبول / رفض)</div>
                 <div id="requestsList">جاري جلب الطلبات...</div>
             </div>
 
@@ -512,7 +524,7 @@
 
             <!-- قسم رفع ملفات الـ PDF -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF (مع عرض كامل وتفاعل روابط يوتيوب)</div>
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF (مع حماية تامة وعرض كامل)</div>
                 <form onsubmit="handleFastFileUpload(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
@@ -547,7 +559,7 @@
                     <div class="form-group">
                         <label>اختر ملف الـ PDF من هاتفك</label>
                         <input type="file" class="form-control" id="upFile" accept=".pdf,application/pdf" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع الملف وعرضه كاملاً بجميع صفحاته مع تفعيل الروابط.</small>
+                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع الملف وعرضه للمشاهدة فقط بدون السماح بتنزيله نهائياً.</small>
                     </div>
 
                     <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً</button>
@@ -572,7 +584,7 @@
         </main>
     </div>
 
-    <!-- نافذة عرض الـ PDF بالشاشة الكاملة -->
+    <!-- نافذة عرض الـ PDF المحمية بالكامل -->
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box">
             <div class="modal-header-bar">
@@ -580,7 +592,7 @@
                 <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="closeFileModal()"><i class="fas fa-times"></i> إغلاق</button>
             </div>
             <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;">
-                <!-- يتم عرض ملف الـ PDF هنا -->
+                <!-- يتم حقن عارض الـ PDF هنا بدون أزرار تحميل -->
             </div>
         </div>
     </div>
@@ -626,7 +638,7 @@
             loadSettingsData();
             fetchRequestsData();
             checkStudentSession();
-            startSessionGuard(); // تفعيل الحراسة اللحظية للطالب
+            startSessionGuard();
         };
 
         function loadSettingsData() {
@@ -736,6 +748,11 @@
                     localStorage.setItem('wal_key', key);
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                    
+                    document.getElementById('noticeIcon').className = "fas fa-hourglass-half";
+                    document.getElementById('noticeIcon').style.color = "var(--warning)";
+                    document.getElementById('noticeTitle').innerText = "طلبك قيد المراجعة لدى الأستاذ";
+                    document.getElementById('noticeText').innerText = "تم إرسال طلبك إلى لوحة تحكم المنصة بنجاح. سيتم تفعيل حسابك فور موافقة الأستاذ وليد.";
                     showSection('pendingNotice');
                     startSessionGuard();
                 } else {
@@ -746,6 +763,11 @@
                     localStorage.setItem('wal_key', key);
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                    
+                    document.getElementById('noticeIcon').className = "fas fa-hourglass-half";
+                    document.getElementById('noticeIcon').style.color = "var(--warning)";
+                    document.getElementById('noticeTitle').innerText = "طلبك قيد المراجعة لدى الأستاذ";
+                    document.getElementById('noticeText').innerText = "تم إرسال طلبك إلى لوحة تحكم المنصة بنجاح. سيتم تفعيل حسابك فور موافقة الأستاذ وليد.";
                     showSection('pendingNotice');
                     startSessionGuard();
                 }).catch(() => {
@@ -776,27 +798,42 @@
                 .then(res => res.json())
                 .then(req => {
                     if (!req) {
-                        // تم الطرد أو حذف الحساب نهائياً
-                        alert('عذراً، تم إنهاء اشتراكك أو طردك من المنصة.');
                         logoutStudent();
                         return;
                     }
 
+                    if (req.status === 'active' && req.activatedAt) {
+                        const monthTime = 30 * 24 * 60 * 60 * 1000;
+                        if (Date.now() - req.activatedAt > monthTime) {
+                            fetch(`${DATABASE_URL}/requests/${key}/status.json`, {
+                                method: 'PUT',
+                                body: JSON.stringify('expired'),
+                                headers: { 'Content-Type': 'application/json' }
+                            });
+                            req.status = 'expired';
+                        }
+                    }
+
                     if (req.status === 'pending') {
+                        document.getElementById('noticeIcon').className = "fas fa-hourglass-half";
+                        document.getElementById('noticeIcon').style.color = "var(--warning)";
+                        document.getElementById('noticeTitle').innerText = "طلبك قيد المراجعة لدى الأستاذ";
+                        document.getElementById('noticeText').innerText = "تم إرسال طلبك إلى لوحة تحكم المنصة بنجاح. سيتم تفعيل حسابك فور موافقة الأستاذ وليد.";
+                        showSection('pendingNotice');
+                    } else if (req.status === 'expired' || req.status === 'rejected' || req.status === 'cancelled') {
+                        document.getElementById('noticeIcon').className = "fas fa-calendar-times";
+                        document.getElementById('noticeIcon').style.color = "var(--danger)";
+                        document.getElementById('noticeTitle').innerText = "انتهت صلاحية اشتراكك الشهري";
+                        document.getElementById('noticeText').innerText = "عذراً، لقد انقضى شهر على اشتراكك. يرجى تجديد الاشتراك والدفع لمتابعة الدراسة.";
                         showSection('pendingNotice');
                     } else if (req.status === 'active') {
                         if (!activeClass && document.getElementById('authSection').style.display === 'block') {
                             openClass('الأول المتوسط');
                         }
-                    } else if (req.status === 'rejected' || req.status === 'cancelled') {
-                        // تم إلغاء التفعيل أو الرفض
-                        alert('عذراً، تم إلغاء تفعيل حسابك من قبل الإدارة.');
-                        logoutStudent();
                     }
                 }).catch(() => {});
         }
 
-        // نظام الحراسة والمراقبة الفورية (يفحص حالة الطالب كل 4 ثواني)
         function startSessionGuard() {
             if (sessionWatchInterval) clearInterval(sessionWatchInterval);
             sessionWatchInterval = setInterval(() => {
@@ -806,8 +843,27 @@
                     fetch(`${DATABASE_URL}/requests/${key}.json`)
                         .then(res => res.json())
                         .then(req => {
-                            if (!req || req.status !== 'active') {
-                                alert('تنبيه: تم إلغاء اشتراكك أو طردك من المنصة من قبل الأستاذ.');
+                            if (!req) {
+                                logoutStudent();
+                                return;
+                            }
+
+                            if (req.status === 'active' && req.activatedAt) {
+                                const monthTime = 30 * 24 * 60 * 60 * 1000;
+                                if (Date.now() - req.activatedAt > monthTime) {
+                                    fetch(`${DATABASE_URL}/requests/${key}/status.json`, {
+                                        method: 'PUT',
+                                        body: JSON.stringify('expired'),
+                                        headers: { 'Content-Type': 'application/json' }
+                                    });
+                                    alert('انتهت مدة اشتراكك الشهري (30 يوماً). يرجى تجديد الاشتراك.');
+                                    logoutStudent();
+                                    return;
+                                }
+                            }
+
+                            if (req.status !== 'active') {
+                                alert('تم إنهاء اشتراكك أو طردك من المنصة.');
                                 logoutStudent();
                             }
                         }).catch(() => {});
@@ -899,13 +955,15 @@
                 });
         }
 
+        // فتح ملف الـ PDF مع إخفاء أزرار التنزيل ومنع الحفظ تماماً
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
             let realData = decodeURIComponent(encodedData);
 
-            container.innerHTML = `<object data="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%">
-                <embed src="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%" />
+            // البارامترات `#view=FitH&toolbar=0&navpanes=0&scrollbar=1` تخفي أزرار التحميل والطباعة تماماً
+            container.innerHTML = `<object data="${realData}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%">
+                <embed src="${realData}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%" />
             </object>`;
 
             document.getElementById('fileViewerModal').style.display = 'flex';
@@ -943,15 +1001,16 @@
                     Object.keys(data).forEach(k => {
                         const r = data[k];
 
-                        if (r.status === 'pending') {
+                        if (r.status === 'pending' || r.status === 'expired') {
+                            let titleLabel = r.status === 'expired' ? '<span style="color:var(--danger);">(منتهي الشهر - يطلب تجديد)</span>' : '';
                             reqHtml += `
                                 <div class="list-item">
                                     <div>
-                                        <strong>${r.name}</strong> (${r.contact})
-                                        <br><small style="color:#64748b;">طريقة التحويل: ${r.paymentMethod}</small>
+                                        <strong>${r.name}</strong> (${r.contact}) ${titleLabel}
+                                        <br><small style="color:#64748b;">طريقة التحويل: ${r.paymentMethod || 'غير محددة'}</small>
                                     </div>
                                     <div>
-                                        <button class="btn btn-success" onclick="setReqStatus('${r.id}', 'active')">قبول وتفعيل</button>
+                                        <button class="btn btn-success" onclick="activateSubscription('${r.id}')">قبول وتفعيل الشهر</button>
                                         <button class="btn btn-danger" onclick="setReqStatus('${r.id}', 'rejected')">رفض</button>
                                     </div>
                                 </div>
@@ -960,7 +1019,7 @@
                             subHtml += `
                                 <div class="list-item">
                                     <div><strong>${r.name}</strong> (${r.contact})</div>
-                                    <span class="badge badge-active">نشط ومُفعل</span>
+                                    <span class="badge badge-active">نشط (ساري المفعول)</span>
                                 </div>
                             `;
 
@@ -968,7 +1027,7 @@
                                 <div class="list-item">
                                     <div><strong>${r.name}</strong> (${r.contact})</div>
                                     <div>
-                                        <button class="btn btn-warning" onclick="setReqStatus('${r.id}', 'pending')">إلغاء الاشتراك</button>
+                                        <button class="btn btn-warning" onclick="setReqStatus('${r.id}', 'expired')">إنهاء اشتراكه</button>
                                         <button class="btn btn-danger" onclick="deleteAndExpel('${r.id}')">طرد نهائي</button>
                                     </div>
                                 </div>
@@ -976,12 +1035,27 @@
                         }
                     });
 
-                    reqList.innerHTML = reqHtml || '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة حالياً.</p>';
+                    reqList.innerHTML = reqHtml || '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة أو انتهت اشتراكاتها حالياً.</p>';
                     subList.innerHTML = subHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين مفعلين حالياً.</p>';
                     manageList.innerHTML = manageHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
                 }).catch(() => {
                     document.getElementById('requestsList').innerHTML = '<p style="text-align:center; color:#64748b;">فشل جلب الطلبات.</p>';
                 });
+        }
+
+        function activateSubscription(id) {
+            const updateData = {
+                status: 'active',
+                activatedAt: Date.now()
+            };
+            fetch(`${DATABASE_URL}/requests/${id}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify(updateData),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                fetchRequestsData();
+                alert('تم تفعيل اشتراك الشهر بنجاح!');
+            });
         }
 
         function setReqStatus(id, newStatus) {
@@ -995,7 +1069,7 @@
         }
 
         function deleteAndExpel(id) {
-            if (confirm('هل أنت متأكد من طرد هذا الطالب؟ سيتم إخراجه من المنصة فوراً.')) {
+            if (confirm('هل أنت متأكد من طرد هذا الطالب نهائياً؟')) {
                 fetch(`${DATABASE_URL}/requests/${id}.json`, { method: 'DELETE' })
                     .then(() => fetchRequestsData());
             }
@@ -1038,7 +1112,7 @@
                     body: JSON.stringify(contentData),
                     headers: { 'Content-Type': 'application/json' }
                 }).then(res => {
-                    uploadBtn.disabled, uploadBtn.disabled = false;
+                    uploadBtn.disabled = false;
                     uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً`;
                     if (res.ok) {
                         alert('تم نشر ملف الـ PDF بنجاح!');
