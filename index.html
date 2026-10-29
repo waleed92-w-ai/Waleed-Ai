@@ -547,7 +547,7 @@
                     <div class="form-group">
                         <label>اختر ملف الـ PDF من هاتفك</label>
                         <input type="file" class="form-control" id="upFile" accept=".pdf,application/pdf" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع الملف وعرضه كاملاً بجميع صفحاته مع تفاعل روابط يوتيوب.</small>
+                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع الملف وعرضه كاملاً بجميع صفحاته مع تفعيل الروابط.</small>
                     </div>
 
                     <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً</button>
@@ -572,7 +572,7 @@
         </main>
     </div>
 
-    <!-- نافذة عرض الـ PDF بالشاشة الكاملة باستخدام object لعرض الملف كاملاً -->
+    <!-- نافذة عرض الـ PDF بالشاشة الكاملة مع طبقة تفعيل الروابط -->
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box">
             <div class="modal-header-bar">
@@ -580,7 +580,7 @@
                 <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="closeFileModal()"><i class="fas fa-times"></i> إغلاق</button>
             </div>
             <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;">
-                <!-- يتم حقن عارض الـ object هنا لضمان فتح الملف كاملاً وتفعيل الروابط -->
+                <!-- يتم عرض ملف الـ PDF مع معالج الروابط الذكي هنا -->
             </div>
         </div>
     </div>
@@ -871,17 +871,31 @@
                 });
         }
 
-        // استخدام عنصر object لعرض ملف الـ PDF بالكامل مع دعم الانتقال التفاعلي لروابط يوتيوب
+        // دالة فتح الملف مع ميزة اعتراض وتفعيل روابط يوتيوب بضغطة واحدة
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
             let realData = decodeURIComponent(encodedData);
 
-            container.innerHTML = `<object data="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%">
+            // استخدام عنصر object لعرض الملف كاملاً
+            container.innerHTML = `<object id="pdfObject" data="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%">
                 <embed src="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%" />
             </object>`;
 
             document.getElementById('fileViewerModal').style.display = 'flex';
+
+            // تفعيل نظام الاستماع الذكي للنقرات فوق العارض لتحويل روابط يوتيوب مباشرة
+            setTimeout(() => {
+                const viewerBox = document.getElementById('modalViewerContainer');
+                viewerBox.onclick = function(e) {
+                    let selectedText = window.getSelection().toString().trim();
+                    if (selectedText.includes('youtube.com') || selectedText.includes('youtu.be') || selectedText.startsWith('http')) {
+                        let cleanUrl = selectedText;
+                        if (!cleanUrl.startsWith('http')) cleanUrl = 'https://' + cleanUrl;
+                        window.open(cleanUrl, '_blank');
+                    }
+                };
+            }, 1000);
         }
 
         function closeFileModal() {
@@ -1014,7 +1028,7 @@
                     uploadBtn.disabled = false;
                     uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً`;
                     if (res.ok) {
-                        alert('تم نشر ملف الـ PDF بنجاح بكافة صفحاته!');
+                        alert('تم نشر ملف الـ PDF بنجاح!');
                         document.getElementById('upTitle').value = '';
                         document.getElementById('upFile').value = '';
                     } else {
