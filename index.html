@@ -180,16 +180,17 @@
         .btn-primary:hover { background-color: #1d4ed8; }
         .btn-danger { background-color: var(--danger); color: white; }
         .btn-success { background-color: var(--success); color: white; }
+        .btn-secondary { background-color: #64748b; color: white; }
 
-        .grades-grid {
+        .grades-grid, .subjects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             gap: 12px;
             margin-bottom: 15px;
         }
 
-        .grade-btn {
-            padding: 12px;
+        .grid-btn {
+            padding: 14px;
             border: 2px solid #e2e8f0;
             background: #f8fafc;
             border-radius: 12px;
@@ -200,13 +201,13 @@
             color: var(--text-main);
         }
 
-        .grade-btn.active, .grade-btn:hover {
+        .grid-btn.active, .grid-btn:hover {
             border-color: var(--secondary-color);
             background: #eff6ff;
             color: var(--secondary-color);
         }
 
-        .room-item {
+        .lecture-item {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             padding: 14px;
@@ -296,30 +297,45 @@
             
             <div class="card">
                 <div class="section-title">
-                    <i class="fas fa-plus-circle"></i> إضافة غرفة / مادة جديدة للصفوف
+                    <i class="fas fa-upload"></i> رفع محاضرة أو ملزمة لمادة وصف معين
                 </div>
-                <form id="roomForm" onsubmit="handleCreateRoom(event)">
+                <form id="lectureForm" onsubmit="handleUploadLecture(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
-                        <select class="form-control" id="targetGrade" required>
-                            <option value="الاول المتوسط">الأول</option>
-                            <option value="الثاني المتوسط">الثاني</option>
-                            <option value="الثالث المتوسط">الثالث</option>
-                            <option value="الرابع الاعدادي">الرابع</option>
-                            <option value="الخامس الاعدادي">الخامس</option>
-                            <option value="السادس الاعدادي">السادس</option>
+                        <select class="form-control" id="uploadGrade" required>
+                            <option value="الأول">الأول</option>
+                            <option value="الثاني">الثاني</option>
+                            <option value="الثالث">الثالث</option>
+                            <option value="الرابع">الرابع</option>
+                            <option value="الخامس">الخامس</option>
+                            <option value="السادس">السادس</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>اسم الغرفة أو المادة</label>
-                        <input type="text" class="form-control" id="roomNameInput" required placeholder="مثال: الرياضيات - الغرفة الأولى">
+                        <label>اختر المادة الدراسية</label>
+                        <select class="form-control" id="uploadSubject" required>
+                            <option value="الحاسوب">حاسوب</option>
+                            <option value="الرياضيات">رياضيات</option>
+                            <option value="اللغة العربية">لغة عربية</option>
+                            <option value="اللغة الإنجليزية">لغة إنجليزية</option>
+                            <option value="الفيزياء">فيزياء</option>
+                            <option value="الكيمياء">كيمياء</option>
+                            <option value="الأحياء">أحياء</option>
+                            <option value="الاجتماعيات">اجتماعيات</option>
+                            <option value="الاسلامية">تربية إسلامية</option>
+                            <option value="مادة أخرى">مادة أخرى</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label>رفع ملف / ملزمة</label>
-                        <input type="file" class="form-control" id="roomFileInput" required>
+                        <label>عنوان المحاضرة أو الملف</label>
+                        <input type="text" class="form-control" id="lectureTitle" required placeholder="مثال: المحاضرة الأولى - مقدمة في البرمجة">
+                    </div>
+                    <div class="form-group">
+                        <label>رفع ملف المحاضرة/الأنشطة</label>
+                        <input type="file" class="form-control" id="lectureFile" required>
                     </div>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-cloud-upload-alt"></i> إنشاء الغرفة ونشر الملف
+                        <i class="fas fa-cloud-upload-alt"></i> نشر ونقل الملف للصف والمادة
                     </button>
                 </form>
             </div>
@@ -338,16 +354,20 @@
             
             <div class="card" id="subscriptionCard">
                 <div class="section-title">
-                    <i class="fas fa-user-plus"></i> طلب اشتراك في المنصة
+                    <i class="fas fa-user-plus"></i> طلب اشتراك في المنصة (بعد الدفع)
                 </div>
                 <form id="studentRegisterForm" onsubmit="handleStudentRegister(event)">
                     <div class="form-group">
                         <label>الاسم الثلاثي للطالب</label>
-                        <input type="text" class="form-control" id="studentName" required placeholder="أدخل اسمك الكامل">
+                        <input type="text" class="form-control" id="studentName" required placeholder="أدخل اسمك الثلاثي">
                     </div>
                     <div class="form-group">
-                        <label>رقم الهاتف</label>
-                        <input type="tel" class="form-control" id="studentPhone" required placeholder="077XXXXXXXX">
+                        <label>المعرف (يوزر تيليجرام / معرف التواصل)</label>
+                        <input type="text" class="form-control" id="studentUsername" required placeholder="@username">
+                    </div>
+                    <div class="form-group">
+                        <label>حقل الدفع (اختياري: رقم التحويل، ماستر كارد، زين كاش، أو تفاصيل الدفع)</label>
+                        <input type="text" class="form-control" id="studentPayment" placeholder="مثال: تحويل زين كاش / رقم الحوالة أو الماستر">
                     </div>
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-paper-plane"></i> إرسال طلب الاشتراك
@@ -355,37 +375,72 @@
                 </form>
             </div>
 
-            <!-- محتوى المنصة (يظهر فقط للمفعلين) -->
+            <!-- محتوى المنصة المحمي (يظهر فقط للمفعلين بعد الموافقة) -->
             <div id="protectedContentArea" style="display: none;">
-                <div class="card">
+                
+                <!-- الخطوة 1: اختيار الصف -->
+                <div class="card" id="gradesCard">
                     <div class="section-title">
                         <i class="fas fa-graduation-cap"></i> اختر الصف الدراسي
                     </div>
                     <div class="grades-grid">
-                        <div class="grade-btn active" onclick="selectGrade('الاول المتوسط', this)">الأول</div>
-                        <div class="grade-btn" onclick="selectGrade('الثاني المتوسط', this)">الثاني</div>
-                        <div class="grade-btn" onclick="selectGrade('الثالث المتوسط', this)">الثالث</div>
-                        <div class="grade-btn" onclick="selectGrade('الرابع الاعدادي', this)">الرابع</div>
-                        <div class="grade-btn" onclick="selectGrade('الخامس الاعدادي', this)">الخامس</div>
-                        <div class="grade-btn" onclick="selectGrade('السادس الاعدادي', this)">السادس</div>
+                        <div class="grid-btn" onclick="selectGrade('الأول')">الأول</div>
+                        <div class="grid-btn" onclick="selectGrade('الثاني')">الثاني</div>
+                        <div class="grid-btn" onclick="selectGrade('الثالث')">الثالث</div>
+                        <div class="grid-btn" onclick="selectGrade('الرابع')">الرابع</div>
+                        <div class="grid-btn" onclick="selectGrade('الخامس')">الخامس</div>
+                        <div class="grid-btn" onclick="selectGrade('السادس')">السادس</div>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="section-title" id="currentGradeTitle">
-                        <i class="fas fa-door-open"></i> الغرف والمواد الدراسية (الأول المتوسط)
+                <!-- الخطوة 2: اختيار المادة داخل الصف -->
+                <div class="card" id="subjectsCard" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 id="selectedGradeTitle" style="color: var(--primary-color); font-size: 1.1rem;"></h3>
+                        <button class="btn btn-secondary" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="backToGrades()">
+                            <i class="fas fa-arrow-right"></i> رجوع للصفوف
+                        </button>
                     </div>
-                    <div id="roomsContainer">
-                        <p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد غرف أو مواد منشورة لهذا الصف حالياً.</p>
+                    <div class="section-title">
+                        <i class="fas fa-book"></i> المواد الدراسية المتاحة
+                    </div>
+                    <div class="subjects-grid">
+                        <div class="grid-btn" onclick="selectSubject('الحاسوب')">💻 حاسوب</div>
+                        <div class="grid-btn" onclick="selectSubject('الرياضيات')">📐 رياضيات</div>
+                        <div class="grid-btn" onclick="selectSubject('اللغة العربية')">📖 لغة عربية</div>
+                        <div class="grid-btn" onclick="selectSubject('اللغة الإنجليزية')">🔤 لغة إنجليزية</div>
+                        <div class="grid-btn" onclick="selectSubject('الفيزياء')">⚡ فيزياء</div>
+                        <div class="grid-btn" onclick="selectSubject('الكيمياء')">🧪 كيمياء</div>
+                        <div class="grid-btn" onclick="selectSubject('الأحياء')">🧬 أحياء</div>
+                        <div class="grid-btn" onclick="selectSubject('الاجتماعيات')">🗺️ اجتماعيات</div>
+                        <div class="grid-btn" onclick="selectSubject('الاسلامية')">🕌 إسلامية</div>
+                        <div class="grid-btn" onclick="selectSubject('مادة أخرى')">📁 مواد أخرى</div>
                     </div>
                 </div>
+
+                <!-- الخطوة 3: عرض المحاضرات والملفات (فتح فقط بدون تحميل) -->
+                <div class="card" id="lecturesCard" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 id="selectedSubjectTitle" style="color: var(--primary-color); font-size: 1.1rem;"></h3>
+                        <button class="btn btn-secondary" style="width: auto; padding: 6px 12px; font-size: 0.8rem;" onclick="backToSubjects()">
+                            <i class="fas fa-arrow-right"></i> رجوع للمواد
+                        </button>
+                    </div>
+                    <div class="section-title">
+                        <i class="fas fa-file-alt"></i> المحاضرات والملفات المتاحة (فتح مباشر فقط)
+                    </div>
+                    <div id="lecturesContainer">
+                        <p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد محاضرات مرفوعة لهذه المادة حالياً.</p>
+                    </div>
+                </div>
+
             </div>
 
-            <!-- تنبيه في حال لم يتم التفعيل بعد -->
+            <!-- تنبيه بانتظار الموافقة والدفع -->
             <div class="card" id="waitingNoticeCard" style="display: none; text-align: center; padding: 30px;">
                 <i class="fas fa-clock" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 15px;"></i>
                 <h3 style="color: var(--primary-color); margin-bottom: 10px;">حسابك بانتظار موافقة الأستاذ وليد</h3>
-                <p style="color: var(--text-muted);">لا يمكنك تحميل الملفات أو مشاهدة محتوى الغرف إلا بعد تفعيل اشتراكك رسمياً من قبل الأستاذ.</p>
+                <p style="color: var(--text-muted);">تم استلام تفاصيل اشتراكك والدفع، وسيتم تفعيل حسابك لمشاهدة المواد فوراً بعد المراجعة.</p>
             </div>
 
         </div>
@@ -411,21 +466,13 @@
 
     <script>
         const ENCRYPTED_PASS = "V0ExOTkyd2E="; // WA1992wa
-        let activeGrade = "الاول المتوسط";
+        let currentGrade = "";
+        let currentSubject = "";
 
         window.onload = function() {
             renderStudentsList();
             checkStudentAccess();
-            renderRooms();
         };
-
-        function selectGrade(grade, element) {
-            activeGrade = grade;
-            document.querySelectorAll('.grade-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
-            document.getElementById('currentGradeTitle').innerHTML = `<i class="fas fa-door-open"></i> الغرف والمواد الدراسية (${grade})`;
-            renderRooms();
-        }
 
         function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
         function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; document.getElementById('teacherPass').value = ''; }
@@ -436,7 +483,6 @@
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('logoutBtn').style.display = 'flex';
                 document.getElementById('userRoleText').innerText = "لوحة إشراف الأستاذ";
-                // الأستاذ يرى كل محتوى الطلاب حتى لو لم يسجل كطالب
                 document.getElementById('protectedContentArea').style.display = 'block';
                 document.getElementById('subscriptionCard').style.display = 'none';
                 document.getElementById('waitingNoticeCard').style.display = 'none';
@@ -461,7 +507,8 @@
             const student = {
                 id: Date.now(),
                 name: document.getElementById('studentName').value,
-                phone: document.getElementById('studentPhone').value,
+                username: document.getElementById('studentUsername').value,
+                payment: document.getElementById('studentPayment').value || 'لم يُدخل تفاصيل',
                 status: 'pending'
             };
             let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
@@ -469,7 +516,7 @@
             localStorage.setItem('waleed_students', JSON.stringify(students));
             localStorage.setItem('current_student_id', student.id);
             document.getElementById('studentRegisterForm').reset();
-            showNotification('تم إرسال طلب اشتراكك بنجاح! بانتظار موافقة الأستاذ.');
+            showNotification('تم إرسال طلب الاشتراك بنجاح! بانتظار تفعيل الأستاذ.');
             renderStudentsList();
             checkStudentAccess();
         }
@@ -486,8 +533,9 @@
                 html += `
                     <div class="student-item">
                         <div>
-                            <h4>${s.name}</h4>
-                            <p>${s.phone} - <span class="badge ${s.status === 'active' ? 'badge-active' : 'badge-pending'}">${s.status === 'active' ? 'مُفعل' : 'معلق'}</span></p>
+                            <h4>${s.name} (<span style="color:var(--secondary-color)">${s.username}</span>)</h4>
+                            <p style="font-size:0.85rem; color:#475569;">الدفع: ${s.payment}</p>
+                            <p style="margin-top:2px;">الحالة: <span class="badge ${s.status === 'active' ? 'badge-active' : 'badge-pending'}">${s.status === 'active' ? 'مُفعل' : 'معلق'}</span></p>
                         </div>
                         <div style="display:flex; gap:6px;">
                             ${s.status === 'pending' ? `<button class="btn btn-sm btn-success" onclick="updateStudentStatus(${s.id}, 'active')">موافقة وتفعيل</button>` : ''}
@@ -505,7 +553,7 @@
             localStorage.setItem('waleed_students', JSON.stringify(students));
             renderStudentsList();
             checkStudentAccess();
-            showNotification('تمت الموافقة على اشتراك الطالب وتفعيل حسابه');
+            showNotification('تم تفعيل اشتراك الطالب بنجاح');
         }
 
         function kickAndRemoveStudent(id) {
@@ -522,9 +570,7 @@
             }
         }
 
-        // فحص صلاحية الطالب وهل تم الموافقة عليه أم لا
         function checkStudentAccess() {
-            // إذا كان الأستاذ مسجلاً دخوله، لا نفعل قيود الطالب
             if (document.getElementById('teacherPanel').style.display === 'block') return;
 
             const currentStudentId = localStorage.getItem('current_student_id');
@@ -536,79 +582,107 @@
             const waitingCard = document.getElementById('waitingNoticeCard');
 
             if (!currentStudent) {
-                // لم يسجل كطالب بعد
                 subCard.style.display = 'block';
                 protectedArea.style.display = 'none';
                 waitingCard.style.display = 'none';
             } else if (currentStudent.status === 'pending') {
-                // سجل لكن بانتظار موافقة الأستاذ
                 subCard.style.display = 'none';
                 protectedArea.style.display = 'none';
                 waitingCard.style.display = 'block';
             } else if (currentStudent.status === 'active') {
-                // تمت الموافقة عليه، تفتح له المنصة بالكامل
                 subCard.style.display = 'none';
                 waitingCard.style.display = 'none';
                 protectedArea.style.display = 'block';
             }
         }
 
-        function handleCreateRoom(e) {
+        function selectGrade(grade) {
+            currentGrade = grade;
+            document.getElementById('gradesCard').style.display = 'none';
+            document.getElementById('subjectsCard').style.display = 'block';
+            document.getElementById('selectedGradeTitle').innerHTML = `<i class="fas fa-layer-group"></i> الصف الدراسي: ${grade}`;
+        }
+
+        function backToGrades() {
+            currentGrade = "";
+            document.getElementById('subjectsCard').style.display = 'none';
+            document.getElementById('lecturesCard').style.display = 'none';
+            document.getElementById('gradesCard').style.display = 'block';
+        }
+
+        function selectSubject(subject) {
+            currentSubject = subject;
+            document.getElementById('subjectsCard').style.display = 'none';
+            document.getElementById('lecturesCard').style.display = 'block';
+            document.getElementById('selectedSubjectTitle').innerHTML = `<i class="fas fa-book-open"></i> الصف: ${currentGrade} | المادة: ${subject}`;
+            renderLectures();
+        }
+
+        function backToSubjects() {
+            currentSubject = "";
+            document.getElementById('lecturesCard').style.display = 'none';
+            document.getElementById('subjectsCard').style.display = 'block';
+        }
+
+        function handleUploadLecture(e) {
             e.preventDefault();
-            const grade = document.getElementById('targetGrade').value;
-            const roomName = document.getElementById('roomNameInput').value;
-            const fileInput = document.getElementById('roomFileInput');
+            const grade = document.getElementById('uploadGrade').value;
+            const subject = document.getElementById('uploadSubject').value;
+            const title = document.getElementById('lectureTitle').value;
+            const fileInput = document.getElementById('lectureFile');
 
             if (fileInput.files.length === 0) return;
             const file = fileInput.files[0];
 
             const reader = new FileReader();
             reader.onload = function(event) {
-                const fileDataUrl = event.target.result;
-                const roomItem = {
+                const lectureItem = {
                     id: Date.now(),
                     grade: grade,
-                    roomName: roomName,
+                    subject: subject,
+                    title: title,
                     fileName: file.name,
-                    fileData: fileDataUrl,
+                    fileData: event.target.result,
                     date: new Date().toLocaleDateString('ar-EG')
                 };
 
-                let rooms = JSON.parse(localStorage.getItem('waleed_rooms')) || [];
-                rooms.push(roomItem);
-                localStorage.setItem('waleed_rooms', JSON.stringify(rooms));
+                let lectures = JSON.parse(localStorage.getItem('waleed_lectures')) || [];
+                lectures.push(lectureItem);
+                localStorage.setItem('waleed_lectures', JSON.stringify(lectures));
 
-                document.getElementById('roomForm').reset();
-                showNotification('تم إنشاء الغرفة ونشر الملف بنجاح!');
-                renderRooms();
+                document.getElementById('lectureForm').reset();
+                showNotification('تم نشر المحاضرة وتوجيهها للمادة والصف بنجاح!');
+                if (currentGrade === grade && currentSubject === subject) {
+                    renderLectures();
+                }
             };
             reader.readAsDataURL(file);
         }
 
-        function renderRooms() {
-            const container = document.getElementById('roomsContainer');
-            let rooms = JSON.parse(localStorage.getItem('waleed_rooms')) || [];
-            let gradeRooms = rooms.filter(r => r.grade === activeGrade);
+        function renderLectures() {
+            const container = document.getElementById('lecturesContainer');
+            let lectures = JSON.parse(localStorage.getItem('waleed_lectures')) || [];
+            let filtered = lectures.filter(l => l.grade === currentGrade && l.subject === currentSubject);
 
-            if (gradeRooms.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد غرف أو مواد منشورة لهذا الصف حالياً.</p>`;
+            if (filtered.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد محاضرات مرفوعة لهذه المادة حتى الآن.</p>`;
                 return;
             }
 
             let html = '';
-            gradeRooms.forEach(room => {
+            filtered.forEach(item => {
                 html += `
-                    <div class="room-item">
+                    <div class="lecture-item">
                         <div>
-                            <h4 style="font-weight: 700; color: var(--primary-color);"><i class="fas fa-door-closed"></i> ${room.roomName}</h4>
-                            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 3px;">الملف: ${room.fileName} (${room.date})</p>
+                            <h4 style="font-weight: 700; color: var(--primary-color);"><i class="fas fa-video"></i> ${item.title}</h4>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 3px;">الملف: ${item.fileName} (${item.date})</p>
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <a href="${room.fileData}" download="${room.fileName}" class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem; text-decoration: none;">
-                                <i class="fas fa-download"></i> تحميل/فتح
+                            <a href="${item.fileData}" target="_blank" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem; text-decoration: none;">
+                                <i class="fas fa-external-link-alt"></i> فتح المحاضرة
                             </a>
                             ${document.getElementById('teacherPanel').style.display === 'block' ? `
-                                <button class="btn btn-danger" style="padding: 8px 12px; font-size: 0.85rem;" onclick="deleteRoom(${room.id})">حذف</button>
+                                <button class="btn btn-danger" style="padding: 8px 12px; font-size: 0.85rem;" onclick="deleteLecture(${item.id})">حذف</button>
                             ` : ''}
                         </div>
                     </div>
@@ -617,13 +691,13 @@
             container.innerHTML = html;
         }
 
-        function deleteRoom(id) {
-            if (confirm('هل تريد حذف هذه الغرفة نهائياً؟')) {
-                let rooms = JSON.parse(localStorage.getItem('waleed_rooms')) || [];
-                rooms = rooms.filter(r => r.id !== id);
-                localStorage.setItem('waleed_rooms', JSON.stringify(rooms));
-                renderRooms();
-                showNotification('تم حذف الغرفة بنجاح');
+        function deleteLecture(id) {
+            if (confirm('هل تريد حذف هذه المحاضرة نهائياً؟')) {
+                let lectures = JSON.parse(localStorage.getItem('waleed_lectures')) || [];
+                lectures = lectures.filter(l => l.id !== id);
+                localStorage.setItem('waleed_lectures', JSON.stringify(lectures));
+                renderLectures();
+                showNotification('تم حذف المحاضرة بنجاح');
             }
         }
 
