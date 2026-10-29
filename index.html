@@ -161,6 +161,21 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
+        .payment-info-box {
+            background: #f8fafc;
+            border: 1px dashed var(--secondary-color);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.88rem;
+            color: #334155;
+        }
+
+        .payment-info-box p {
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
         .btn {
             width: 100%;
             padding: 12px;
@@ -354,9 +369,28 @@
             
             <div class="card" id="subscriptionCard">
                 <div class="section-title">
-                    <i class="fas fa-user-plus"></i> طلب اشتراك في المنصة (بعد الدفع)
+                    <i class="fas fa-credit-card"></i> طلب اشتراك ودفع رسوم المنصة
                 </div>
+                
+                <div class="payment-info-box">
+                    <p><i class="fas fa-info-circle"></i> يرجى التحويل على إحدى الطرق التالية قبل إرسال الطلب:</p>
+                    <ul style="list-style: none; padding-right: 5px; margin-top: 5px; font-size: 0.85rem;">
+                        <li>💳 ماستر كارد: <code>9061913829</code></li>
+                        <li>📱 زين كاش: <code>07816745861</code></li>
+                        <li>💵 ماستر دينار: <code>5285780016156442</code></li>
+                    </ul>
+                </div>
+
                 <form id="studentRegisterForm" onsubmit="handleStudentRegister(event)">
+                    <div class="form-group">
+                        <label>اختر طريقة الدفع والتحويل</label>
+                        <select class="form-control" id="paymentMethod" required>
+                            <option value="" disabled selected>-- اختر طريقة الدفع --</option>
+                            <option value="ماستر كارد (9061913829)">ماستر كارد (9061913829)</option>
+                            <option value="زين كاش (07816745861)">زين كاش (07816745861)</option>
+                            <option value="ماستر دينار (5285780016156442)">ماستر دينار (5285780016156442)</option>
+                        </select>
+                    </div>
                     <div class="form-group">
                         <label>الاسم الثلاثي للطالب</label>
                         <input type="text" class="form-control" id="studentName" required placeholder="أدخل اسمك الثلاثي">
@@ -364,10 +398,6 @@
                     <div class="form-group">
                         <label>المعرف (يوزر تيليجرام / معرف التواصل)</label>
                         <input type="text" class="form-control" id="studentUsername" required placeholder="@username">
-                    </div>
-                    <div class="form-group">
-                        <label>حقل الدفع (اختياري: رقم التحويل، ماستر كارد، زين كاش، أو تفاصيل الدفع)</label>
-                        <input type="text" class="form-control" id="studentPayment" placeholder="مثال: تحويل زين كاش / رقم الحوالة أو الماستر">
                     </div>
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-paper-plane"></i> إرسال طلب الاشتراك
@@ -440,7 +470,7 @@
             <div class="card" id="waitingNoticeCard" style="display: none; text-align: center; padding: 30px;">
                 <i class="fas fa-clock" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 15px;"></i>
                 <h3 style="color: var(--primary-color); margin-bottom: 10px;">حسابك بانتظار موافقة الأستاذ وليد</h3>
-                <p style="color: var(--text-muted);">تم استلام تفاصيل اشتراكك والدفع، وسيتم تفعيل حسابك لمشاهدة المواد فوراً بعد المراجعة.</p>
+                <p style="color: var(--text-muted);">تم استلام طلبك وطريقة الدفع، وسيتم تفعيل حسابك لمشاهدة المواد فوراً بعد مراجعة التحويل.</p>
             </div>
 
         </div>
@@ -506,9 +536,9 @@
             e.preventDefault();
             const student = {
                 id: Date.now(),
+                paymentMethod: document.getElementById('paymentMethod').value,
                 name: document.getElementById('studentName').value,
                 username: document.getElementById('studentUsername').value,
-                payment: document.getElementById('studentPayment').value || 'لم يُدخل تفاصيل',
                 status: 'pending'
             };
             let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
@@ -534,7 +564,7 @@
                     <div class="student-item">
                         <div>
                             <h4>${s.name} (<span style="color:var(--secondary-color)">${s.username}</span>)</h4>
-                            <p style="font-size:0.85rem; color:#475569;">الدفع: ${s.payment}</p>
+                            <p style="font-size:0.85rem; color:#475569;">طريقة الدفع: ${s.paymentMethod}</p>
                             <p style="margin-top:2px;">الحالة: <span class="badge ${s.status === 'active' ? 'badge-active' : 'badge-pending'}">${s.status === 'active' ? 'مُفعل' : 'معلق'}</span></p>
                         </div>
                         <div style="display:flex; gap:6px;">
