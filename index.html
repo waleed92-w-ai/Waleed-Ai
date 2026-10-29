@@ -18,7 +18,6 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
     <style>
         :root {
@@ -374,7 +373,7 @@
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
                 <button class="nav-item" onclick="showSection('sectionSubscribers')"><i class="fas fa-users"></i> اسماء المشتركين</button>
                 <button class="nav-item" onclick="showSection('sectionManageSubscribers')"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</button>
-                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع المحاضرات والكتاب الضخم</button>
+                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> نشر المحاضرات والكتاب الضخم</button>
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
@@ -460,9 +459,9 @@
                 <div id="manageSubscribersList">جاري التحميل...</div>
             </div>
 
-            <!-- قسم رفع الملفات الضخمة -->
+            <!-- قسم نشر المحاضرات والكتب عبر الروابط السحابية المباشرة -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع المحاضرات والكتاب الضخم (PDF / أية حجوم)</div>
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> نشر المحاضرات والكتاب الضخم (عبر رابط قوقل درايف / PDF)</div>
                 <form onsubmit="handleUploadContent(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
@@ -493,19 +492,14 @@
                         <label>عنوان المحاضرة / الكتاب</label>
                         <input type="text" class="form-control" id="upTitle" required placeholder="مثال: كتاب الحاسوب المنهجي الضخم">
                     </div>
-                    
-                    <div class="form-group">
-                        <label>اختر ملف من جهازك (يدعم الأحجام الكبيرة جداً)</label>
-                        <input type="file" class="form-control" id="upFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.zip,.rar" style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">أو ضع رابط مباشر أدناه إن كنت تفضل روابط قوقل درايف:</small>
-                    </div>
 
                     <div class="form-group">
-                        <label>أو رابط الملف السحابي (اختياري بدلاً من الرفع المباشر)</label>
-                        <input type="url" class="form-control" id="upUrl" placeholder="https://...">
+                        <label>رابط الملف السحابي (رابط قوقل درايف للملف أو رابط مباشر)</label>
+                        <input type="url" class="form-control" id="upUrl" required placeholder="https://drive.google.com/file/d/.../view">
+                        <small style="color: #64748b; display: block; margin-top: 6px;">💡 نصيحة: ارفع ملف الـ PDF على قوقل درايف، واجعل صلاحية الرابط (متاح لأي شخص لديه الرابط)، ثم ألصقه هنا.</small>
                     </div>
 
-                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-cloud-upload-alt"></i> رفع ونشر المحتوى سحابياً</button>
+                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-cloud-upload-alt"></i> نشر المحتوى فوراً في المنصة</button>
                 </form>
             </div>
 
@@ -634,8 +628,8 @@
             }
         }
 
-        // إرسال الطلب وحفظه بالرابط الجديد الصحيح لضمان الإرسال الفوري بدون أي تعليق
-        function submitStudentAuth(e) {
+        // إرسال طلب الاشتراك فوراً وبدون أي تعليق
+        async function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
             const contactInput = document.getElementById('stContact');
@@ -666,13 +660,14 @@
                 timestamp: Date.now()
             };
 
-            fetch(`${DATABASE_URL}/requests/${key}.json`, {
-                method: 'PUT',
-                body: JSON.stringify(reqData),
-                headers: { 'Content-Type': 'application/json' }
-            })
-            .then(res => {
-                if (res.ok) {
+            try {
+                const response = await fetch(`${DATABASE_URL}/requests/${key}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify(reqData),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
                     localStorage.setItem('wal_key', key);
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
@@ -680,8 +675,7 @@
                 } else {
                     throw new Error('فشل الحفظ');
                 }
-            })
-            .catch(() => {
+            } catch (error) {
                 db.ref('requests/' + key).set(reqData).then(() => {
                     localStorage.setItem('wal_key', key);
                     submitBtn.disabled = false;
@@ -692,7 +686,7 @@
                     submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
                     alert('حدث خطأ في الاتصال، يرجى المحاولة مرة أخرى.');
                 });
-            });
+            }
         }
 
         function logoutStudent() {
@@ -897,73 +891,51 @@
             }
         }
 
+        // نشر المحتوى والملازم الضخمة فوراً عبر الرابط السحابي بدون أي تعليق
         function handleUploadContent(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
             const subject = document.getElementById('upSubject').value;
             const title = document.getElementById('upTitle').value;
-            const fileInput = document.getElementById('upFile');
             const urlInput = document.getElementById('upUrl').value.trim();
             const uploadBtn = document.getElementById('uploadBtn');
 
-            if (fileInput.files.length === 0 && !urlInput) {
-                alert('يرجى اختيار ملف من الجهاز أو وضع رابط مباشر للملف.');
+            if (!urlInput) {
+                alert('يرجى وضع رابط الملف السحابي.');
                 return;
             }
 
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري رفع ونشر المحتوى...`;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري النشر الفوري...`;
 
             const contentId = 'CONT_' + Date.now();
-
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const storageRef = firebase.storage().ref('lectures/' + contentId + '_' + file.name);
-                const uploadTask = storageRef.put(file);
-
-                uploadTask.on('state_changed', 
-                    (snapshot) => {
-                        let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري الرفع (${Math.round(progress)}%)...`;
-                    }, 
-                    (error) => {
-                        uploadBtn.disabled = false;
-                        uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر المحتوى سحابياً`;
-                        alert('حدث خطأ أثناء الرفع: ' + error.message);
-                    }, 
-                    () => {
-                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                            saveContentToDB(contentId, grade, subject, title, downloadURL);
-                        });
-                    }
-                );
-            } else {
-                saveContentToDB(contentId, grade, subject, title, urlInput);
-            }
-        }
-
-        function saveContentToDB(id, grade, subject, title, url) {
             const contentData = {
-                id: id,
+                id: contentId,
                 grade: grade,
                 subject: subject,
                 title: title,
-                url: url,
+                url: urlInput,
                 date: new Date().toLocaleDateString('ar-EG')
             };
 
-            fetch(`${DATABASE_URL}/contents/${id}.json`, {
+            fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
                 method: 'PUT',
                 body: JSON.stringify(contentData),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => {
-                const uploadBtn = document.getElementById('uploadBtn');
+            }).then(res => {
                 uploadBtn.disabled = false;
-                uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر المحتوى سحابياً`;
-                alert('تم رفع ونشر المحتوى بنجاح!');
-                document.getElementById('upTitle').value = '';
-                document.getElementById('upFile').value = '';
-                document.getElementById('upUrl').value = '';
+                uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> نشر المحتوى فوراً في المنصة`;
+                if (res.ok) {
+                    alert('تم نشر المحتوى بنجاح في المنصة!');
+                    document.getElementById('upTitle').value = '';
+                    document.getElementById('upUrl').value = '';
+                } else {
+                    alert('حدث خطأ أثناء النشر.');
+                }
+            }).catch(() => {
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> نشر المحتوى فوراً في المنصة`;
+                alert('حدث خطأ في الاتصال.');
             });
         }
     </script>
