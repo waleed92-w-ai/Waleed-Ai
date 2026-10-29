@@ -164,16 +164,11 @@
         .payment-info-box {
             background: #f8fafc;
             border: 1px dashed var(--secondary-color);
-            padding: 12px;
+            padding: 14px;
             border-radius: 10px;
             margin-bottom: 15px;
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             color: #334155;
-        }
-
-        .payment-info-box p {
-            margin-bottom: 4px;
-            font-weight: 600;
         }
 
         .btn {
@@ -310,6 +305,23 @@
         <!-- لوحة تحكم الأستاذ -->
         <div id="teacherPanel" style="display: none;">
             
+            <!-- إعدادات سعر الاشتراك -->
+            <div class="card">
+                <div class="section-title">
+                    <i class="fas fa-money-bill-wave"></i> تعديل سعر الاشتراك الشهري (5، 10، 15 ألف...)
+                </div>
+                <form id="priceForm" onsubmit="handleUpdatePrice(event)">
+                    <div class="form-group">
+                        <label>سعر الاشتراك (بالدينار العراقي)</label>
+                        <input type="text" class="form-control" id="subscriptionPriceInput" required placeholder="5000">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> حفظ وتحديث السعر للطلاب
+                    </button>
+                </form>
+            </div>
+
+            <!-- رفع المحاضرات -->
             <div class="card">
                 <div class="section-title">
                     <i class="fas fa-upload"></i> رفع محاضرة أو ملزمة لمادة وصف معين
@@ -343,11 +355,12 @@
                     </div>
                     <div class="form-group">
                         <label>عنوان المحاضرة أو الملف</label>
-                        <input type="text" class="form-control" id="lectureTitle" required placeholder="مثال: المحاضرة الأولى - مقدمة في البرمجة">
+                        <input type="text" class="form-control" id="lectureTitle" required placeholder="مثال: المحاضرة الأولى - حاسوب">
                     </div>
                     <div class="form-group">
-                        <label>رفع ملف المحاضرة/الأنشطة</label>
-                        <input type="file" class="form-control" id="lectureFile" required>
+                        <label>رابط الملف أو المحاضرة (Google Drive / Telegram / رابط مباشر)</label>
+                        <input type="url" class="form-control" id="lectureLink" required placeholder="https://...">
+                        <small style="color: var(--text-muted); margin-top: 4px; display: block;">ملاحظة: لضمان السرعة وعدم توقف الرفع، ضع رابط الملف (غوغل درايف أو تيليجرام).</small>
                     </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-cloud-upload-alt"></i> نشر ونقل الملف للصف والمادة
@@ -373,8 +386,11 @@
                 </div>
                 
                 <div class="payment-info-box">
-                    <p><i class="fas fa-info-circle"></i> يرجى التحويل على إحدى الطرق التالية قبل إرسال الطلب:</p>
-                    <ul style="list-style: none; padding-right: 5px; margin-top: 5px; font-size: 0.85rem;">
+                    <p style="color: var(--primary-color); font-size: 1rem; margin-bottom: 8px;">
+                        <i class="fas fa-tag"></i> قيمة الاشتراك المطلوبة: <span id="displayPrice" style="color: var(--accent-color); font-weight: 800;">5000</span> دينار
+                    </p>
+                    <p><i class="fas fa-info-circle"></i> يرجى التحويل على إحدى الحسابات التالية:</p>
+                    <ul style="list-style: none; padding-right: 5px; margin-top: 5px; font-size: 0.88rem;">
                         <li>💳 ماستر كارد: <code>9061913829</code></li>
                         <li>📱 زين كاش: <code>07816745861</code></li>
                         <li>💵 ماستر دينار: <code>5285780016156442</code></li>
@@ -500,9 +516,24 @@
         let currentSubject = "";
 
         window.onload = function() {
+            loadPrice();
             renderStudentsList();
             checkStudentAccess();
         };
+
+        function loadPrice() {
+            let savedPrice = localStorage.getItem('waleed_sub_price') || '5000';
+            document.getElementById('displayPrice').innerText = savedPrice;
+            document.getElementById('subscriptionPriceInput').value = savedPrice;
+        }
+
+        function handleUpdatePrice(e) {
+            e.preventDefault();
+            let newPrice = document.getElementById('subscriptionPriceInput').value;
+            localStorage.setItem('waleed_sub_price', newPrice);
+            document.getElementById('displayPrice').innerText = newPrice;
+            showNotification('تم تحديث سعر الاشتراك بنجاح!');
+        }
 
         function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
         function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; document.getElementById('teacherPass').value = ''; }
@@ -659,34 +690,26 @@
             const grade = document.getElementById('uploadGrade').value;
             const subject = document.getElementById('uploadSubject').value;
             const title = document.getElementById('lectureTitle').value;
-            const fileInput = document.getElementById('lectureFile');
+            const fileLink = document.getElementById('lectureLink').value;
 
-            if (fileInput.files.length === 0) return;
-            const file = fileInput.files[0];
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const lectureItem = {
-                    id: Date.now(),
-                    grade: grade,
-                    subject: subject,
-                    title: title,
-                    fileName: file.name,
-                    fileData: event.target.result,
-                    date: new Date().toLocaleDateString('ar-EG')
-                };
-
-                let lectures = JSON.parse(localStorage.getItem('waleed_lectures')) || [];
-                lectures.push(lectureItem);
-                localStorage.setItem('waleed_lectures', JSON.stringify(lectures));
-
-                document.getElementById('lectureForm').reset();
-                showNotification('تم نشر المحاضرة وتوجيهها للمادة والصف بنجاح!');
-                if (currentGrade === grade && currentSubject === subject) {
-                    renderLectures();
-                }
+            const lectureItem = {
+                id: Date.now(),
+                grade: grade,
+                subject: subject,
+                title: title,
+                fileLink: fileLink,
+                date: new Date().toLocaleDateString('ar-EG')
             };
-            reader.readAsDataURL(file);
+
+            let lectures = JSON.parse(localStorage.getItem('waleed_lectures')) || [];
+            lectures.push(lectureItem);
+            localStorage.setItem('waleed_lectures', JSON.stringify(lectures));
+
+            document.getElementById('lectureForm').reset();
+            showNotification('تم نشر المحاضرة وتوجيهها للمادة والصف بنجاح!');
+            if (currentGrade === grade && currentSubject === subject) {
+                renderLectures();
+            }
         }
 
         function renderLectures() {
@@ -705,10 +728,10 @@
                     <div class="lecture-item">
                         <div>
                             <h4 style="font-weight: 700; color: var(--primary-color);"><i class="fas fa-video"></i> ${item.title}</h4>
-                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 3px;">الملف: ${item.fileName} (${item.date})</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 3px;">تاريخ النشر: ${item.date}</p>
                         </div>
                         <div style="display: flex; gap: 8px;">
-                            <a href="${item.fileData}" target="_blank" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem; text-decoration: none;">
+                            <a href="${item.fileLink}" target="_blank" class="btn btn-primary" style="padding: 8px 16px; font-size: 0.85rem; text-decoration: none;">
                                 <i class="fas fa-external-link-alt"></i> فتح المحاضرة
                             </a>
                             ${document.getElementById('teacherPanel').style.display === 'block' ? `
