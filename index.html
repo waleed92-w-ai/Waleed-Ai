@@ -329,15 +329,15 @@
                 <form id="settingsForm" onsubmit="saveGlobalSettings(event)">
                     <div class="form-group">
                         <label>قيمة الاشتراك الشهري (بالدينار العراقي)</label>
-                        <input type="text" class="form-control" id="cfgPrice" placeholder="5000">
+                        <input type="text" class="form-control" id="cfgPrice" placeholder="5000" required>
                     </div>
                     <div class="form-group">
                         <label>أرقام وطرق الدفع</label>
-                        <textarea class="form-control" id="cfgPaymentDetails" rows="3"></textarea>
+                        <textarea class="form-control" id="cfgPaymentDetails" rows="3" required></textarea>
                     </div>
                     <div class="form-group">
                         <label>معرف التيليجرام للاستلام والتواصل</label>
-                        <input type="text" class="form-control" id="cfgTelegram" placeholder="WALEED92w">
+                        <input type="text" class="form-control" id="cfgTelegram" placeholder="WALEED92w" required>
                     </div>
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> حفظ التحديثات فوراً
@@ -345,7 +345,7 @@
                 </form>
             </div>
 
-            <!-- إدارة طلبات الطلاب -->
+            <!-- إدارة طلبات الطلاب السحابية -->
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-users-cog"></i> إدارة طلبات واشتراكات الطلاب
@@ -355,7 +355,7 @@
                 </div>
             </div>
 
-            <!-- إضافة محتوى (ملفات، روابط، وفيديوهات للمتوسطة والإعدادية) -->
+            <!-- إضافة محتوى (ملفات، روابط، وفيديوهات) -->
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-plus-circle"></i> إضافة محتوى تعليمي (ملف، فيديو، أو رابط)
@@ -367,9 +367,9 @@
                             <option value="الأول المتوسط">الأول المتوسط</option>
                             <option value="الثاني المتوسط">الثاني المتوسط</option>
                             <option value="الثالث المتوسط">الثالث المتوسط</option>
-                            <option value="الرابع الاعدادي">الرابع الاعدادي</option>
-                            <option value="الخامس الاعدادي">الخامس الاعدادي</option>
-                            <option value="السادس الاعدادي">السادس الاعدادي</option>
+                            <option value="الرابع الاعدادي">الرابع الإعدادي</option>
+                            <option value="الخامس الاعدادي">الخامس الإعدادي</option>
+                            <option value="السادس الاعدادي">السادس الإعدادي</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -399,13 +399,11 @@
                         <input type="text" class="form-control" id="contTitle" required placeholder="مثال: الدرس الأول - أساسيات الحاسوب">
                     </div>
                     
-                    <!-- حقل رفع الملف -->
                     <div class="form-group" id="fileFieldGroup">
                         <label>اختر الملف من جهازك</label>
                         <input type="file" class="form-control" id="contFile">
                     </div>
 
-                    <!-- حقل الرابط أو الفيديو -->
                     <div class="form-group" id="urlFieldGroup" style="display:none;">
                         <label id="urlFieldLabel">رابط الفيديو (يوتيوب أو رابط مباشر)</label>
                         <input type="url" class="form-control" id="contUrl" placeholder="https://...">
@@ -496,7 +494,7 @@
                         <button class="btn btn-secondary btn-sm" onclick="backToGradesView()"><i class="fas fa-arrow-right"></i> الرجوع للصفوف</button>
                     </div>
                     <div class="card-header">
-                        <i class="fas fa-book"></i> اختر المادة الدراسية
+                        <i class="fas fa-book"></i> اختر المادة الدراسية (تحتوي على الحاسوب وجميع المواد)
                     </div>
                     <div class="grid-layout">
                         <div class="grid-card" onclick="openSubject('الحاسوب')">💻 الحاسوب</div>
