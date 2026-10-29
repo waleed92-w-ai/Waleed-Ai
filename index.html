@@ -419,13 +419,13 @@
 
         </div>
 
-        <!-- ==================== واجهة الطالب (تسجيل الدخول والتحقق السحابي) ==================== -->
+        <!-- ==================== واجهة الطالب والصفوف ==================== -->
         <div id="studentPanelArea">
             
-            <!-- 1. نموذج تسجيل الدخول أو إرسال طلب جديد -->
+            <!-- نموذج طلب الاشتراك (أعلى الواجهة) -->
             <div class="card" id="subscriptionFormCard">
                 <div class="card-header">
-                    <i class="fas fa-id-card"></i> تسجيل الدخول أو طلب اشتراك المنصة الثانوية
+                    <i class="fas fa-id-card"></i> طلب اشتراك في المنصة التعليمية الثانوية
                 </div>
                 
                 <div style="background: #f1f5f9; padding: 16px; border-radius: 12px; margin-bottom: 18px; border-right: 4px solid var(--primary-light);">
@@ -439,10 +439,10 @@
                     </div>
                 </div>
 
-                <form id="studentRequestForm" onsubmit="submitOrLoginStudent(event)">
-                    <div class="form-group" id="paymentMethodGroup">
-                        <label>طريقة الدفع المحول عبرها (للطلب الجديد)</label>
-                        <select class="form-control" id="studentPaymentMethod">
+                <form id="studentRequestForm" onsubmit="submitStudentRequest(event)">
+                    <div class="form-group">
+                        <label>طريقة الدفع المحول عبرها</label>
+                        <select class="form-control" id="studentPaymentMethod" required>
                             <option value="" disabled selected>-- اختر طريقة التحويل --</option>
                             <option value="ماستر كارد (9061913829)">ماستر كارد (9061913829)</option>
                             <option value="زين كاش (07816745861)">زين كاش (07816745861)</option>
@@ -454,36 +454,19 @@
                         <input type="text" class="form-control" id="studentFullName" required placeholder="أدخل اسمك الكامل">
                     </div>
                     <div class="form-group">
-                        <label>معرف التواصل (يوزر تيليجرام أو رقم الهاتف - مفتاح الدخول)</label>
-                        <input type="text" class="form-control" id="studentContact" required placeholder="@username أو الرقم">
+                        <label>معرف التواصل (يوزر تيليجرام أو رقم الهاتف)</label>
+                        <input type="text" class="form-control" id="studentContact" required placeholder="@username">
                     </div>
                     <button type="submit" class="btn btn-success">
-                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول / إرسال طلب اشتراك
+                        <i class="fas fa-paper-plane"></i> إرسال الطلب واعتماد الاشتراك
                     </button>
                 </form>
             </div>
 
-            <!-- 2. تنبيه قيد المراجعة أو الرفض -->
-            <div class="card" id="statusNoticeCard" style="display: none; text-align: center; padding: 35px 20px;">
-                <i class="fas fa-hourglass-half" id="noticeIcon" style="font-size: 3.2rem; color: var(--accent); margin-bottom: 16px;"></i>
-                <h3 id="noticeTitle" style="color: var(--primary); margin-bottom: 10px;">طلبك قيد المراجعة</h3>
-                <p id="noticeMessage" style="color: var(--text-muted); margin-bottom: 20px;">تم استلام طلبك، وسيتم تفعيل حسابك فور مراجعة التحويل من قبل الأستاذ وليد.</p>
-                <button class="btn btn-secondary btn-sm" onclick="logoutStudent()" style="max-width: 200px; margin: 0 auto 10px auto;">تعديل المعرف / تسجيل الخروج</button>
-                <br>
-                <a href="https://t.me/WALEED92w" id="noticeTelegramLink" target="_blank" class="btn btn-telegram" style="max-width: 260px; margin: 0 auto;">
-                    <i class="fab fa-telegram-plane"></i> مراسلة الأستاذ للتعجيل
-                </a>
-            </div>
-
-            <!-- 3. المنطقة التعليمية (الصفوف والمواد - تظهر حصراً للمشترك المفعل) -->
-            <div id="learningArea" style="display: none;">
+            <!-- المنطقة التعليمية والصفوف والمواد (تظهر بشكل ثابت ومباشر للجميع) -->
+            <div id="learningArea">
                 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <span id="studentWelcomeName" style="font-weight: 800; color: var(--primary);">أهلاً بك عزيزي الطالب</span>
-                    <button class="btn btn-danger btn-sm" onclick="logoutStudent()" style="width: auto; padding: 5px 12px; font-size: 0.75rem;">تسجيل الخروج</button>
-                </div>
-
-                <!-- أزرار الصفوف الثانوية -->
+                <!-- 1. قائمة الصفوف الثانوية -->
                 <div class="card" id="gradesSelectionCard">
                     <div class="card-header">
                         <i class="fas fa-graduation-cap"></i> اختر الصف الدراسي الثانوي
@@ -498,7 +481,7 @@
                     </div>
                 </div>
 
-                <!-- المواد الدراسية لكل صف (تضم الحاسوب وجميع المواد) -->
+                <!-- 2. قائمة المواد الدراسية لكل صف -->
                 <div class="card" id="subjectsSelectionCard" style="display: none;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <h3 id="activeGradeTitle" style="color: var(--primary); font-size: 1.15rem;"></h3>
@@ -520,7 +503,7 @@
                     </div>
                 </div>
 
-                <!-- عرض المحتوى (ملازم، فيديوهات، روابط) -->
+                <!-- 3. عرض المحتوى والملازم -->
                 <div class="card" id="lecturesViewCard" style="display: none;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <h3 id="activeSubjectTitle" style="color: var(--primary); font-size: 1.15rem;"></h3>
@@ -573,7 +556,6 @@
         window.onload = function() {
             loadGlobalSettings();
             listenToRequests();
-            checkStudentLoginState();
         };
 
         function loadGlobalSettings() {
@@ -633,127 +615,36 @@
             document.getElementById('loginAdminBtn').style.display = 'flex';
             document.getElementById('logoutAdminBtn').style.display = 'none';
             document.getElementById('appSubtitle').innerText = "المرحلة الثانوية";
-            checkStudentLoginState();
             showToast('تم الخروج من لوحة الإدارة');
         }
 
-        // نظام تسجيل الدخول أو إرسال طلب جديد سحابياً بالمعرف
-        function submitOrLoginStudent(e) {
+        function submitStudentRequest(e) {
             e.preventDefault();
-            const name = document.getElementById('studentFullName').value.trim();
-            const contact = document.getElementById('studentContact').value.trim();
-            const methodSelect = document.getElementById('studentPaymentMethod');
+            const method = document.getElementById('studentPaymentMethod').value;
+            const name = document.getElementById('studentFullName').value;
+            const contact = document.getElementById('studentContact').value;
+            const requestId = 'REQ_' + Date.now();
 
-            db.ref('requests').once('value').then(snapshot => {
-                const data = snapshot.val() || {};
-                let foundKey = null;
+            const requestData = {
+                id: requestId,
+                name: name,
+                contact: contact,
+                paymentMethod: method,
+                status: 'pending',
+                timestamp: Date.now()
+            };
 
-                // البحث عما إذا كان المعرف مسجلاً مسبقاً في القاعدة
-                Object.keys(data).forEach(key => {
-                    if (data[key].contact === contact) {
-                        foundKey = key;
-                    }
-                });
+            db.ref('requests/' + requestId).set(requestData).then(() => {
+                const tgMsg = encodeURIComponent(`مرحباً أستاذ وليد، قمت بتقديم طلب اشتراك:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${method}`);
+                window.open(`https://t.me/WALEED92w?text=${tgMsg}`, '_blank');
 
-                if (foundKey) {
-                    // الطالب مسجل مسبقاً، يتم تحديث حالته وجلسة دخوله
-                    localStorage.setItem('my_student_req_id', foundKey);
-                    localStorage.setItem('my_student_contact', contact);
-                    checkStudentLoginState();
-                    showToast('تم تسجيل الدخول بنجاح!');
-                } else {
-                    // طلب جديد
-                    if (!methodSelect.value) {
-                        alert('يرجى اختيار طريقة الدفع للطلب الجديد');
-                        return;
-                    }
-                    const requestId = 'REQ_' + Date.now();
-                    const requestData = {
-                        id: requestId,
-                        name: name,
-                        contact: contact,
-                        paymentMethod: methodSelect.value,
-                        status: 'pending',
-                        timestamp: Date.now()
-                    };
-
-                    db.ref('requests/' + requestId).set(requestData).then(() => {
-                        localStorage.setItem('my_student_req_id', requestId);
-                        localStorage.setItem('my_student_contact', contact);
-                        
-                        const tgMsg = encodeURIComponent(`مرحباً أستاذ وليد، قمت بتقديم طلب اشتراك:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${methodSelect.value}`);
-                        window.open(`https://t.me/WALEED92w?text=${tgMsg}`, '_blank');
-
-                        document.getElementById('studentRequestForm').reset();
-                        checkStudentStatus(requestId);
-                        showToast('تم إرسال طلبك بنجاح، بانتظار التفعيل');
-                    });
-                }
+                document.getElementById('studentRequestForm').reset();
+                showToast('تم إرسال طلبك بنجاح للوحة التحكم');
+            }).catch((err) => {
+                alert('خطأ في إرسال الطلب: تأكد من اتصال الإنترنت.');
             });
         }
 
-        function logoutStudent() {
-            localStorage.removeItem('my_student_req_id');
-            localStorage.removeItem('my_student_contact');
-            document.getElementById('subscriptionFormCard').style.display = 'block';
-            document.getElementById('statusNoticeCard').style.display = 'none';
-            document.getElementById('learningArea').style.display = 'none';
-            document.getElementById('studentRequestForm').reset();
-            selectedGrade = "";
-            selectedSubject = "";
-        }
-
-        function checkStudentLoginState() {
-            if (document.getElementById('adminPanelArea').style.display === 'block') return;
-
-            const myReqId = localStorage.getItem('my_student_req_id');
-            if (!myReqId) {
-                document.getElementById('subscriptionFormCard').style.display = 'block';
-                document.getElementById('statusNoticeCard').style.display = 'none';
-                document.getElementById('learningArea').style.display = 'none';
-                return;
-            }
-
-            checkStudentStatus(myReqId);
-        }
-
-        function checkStudentStatus(reqId) {
-            db.ref('requests/' + reqId).on('value', (snapshot) => {
-                const req = snapshot.val();
-                const subCard = document.getElementById('subscriptionFormCard');
-                const noticeCard = document.getElementById('statusNoticeCard');
-                const learningArea = document.getElementById('learningArea');
-
-                if (!req) {
-                    logoutStudent();
-                    return;
-                }
-
-                if (req.status === 'pending') {
-                    subCard.style.display = 'none';
-                    noticeCard.style.display = 'block';
-                    learningArea.style.display = 'none';
-                    document.getElementById('noticeTitle').innerText = "طلبك قيد المراجعة";
-                    document.getElementById('noticeMessage').innerText = `أهلاً بك ${req.name}، تم استلام طلبك، وسيتم تفعيل حسابك فور مراجعة التحويل.`;
-                } else if (req.status === 'rejected') {
-                    subCard.style.display = 'none';
-                    noticeCard.style.display = 'block';
-                    learningArea.style.display = 'none';
-                    document.getElementById('noticeIcon').className = "fas fa-times-circle";
-                    document.getElementById('noticeIcon').style.color = "var(--danger)";
-                    document.getElementById('noticeTitle').innerText = "تم رفض طلب الاشتراك";
-                    document.getElementById('noticeMessage').innerText = "عذراً، تم رفض الطلب. يرجى التواصل مع الأستاذ للتأكد من التحويل.";
-                } else if (req.status === 'active') {
-                    // تفعيل الحساب وظهور الصفوف والمواد فوراً
-                    subCard.style.display = 'none';
-                    noticeCard.style.display = 'none';
-                    learningArea.style.display = 'block';
-                    document.getElementById('studentWelcomeName').innerText = "أهلاً بك: " + req.name;
-                }
-            });
-        }
-
-        // لوحة تحكم الأستاذ - استماع للطلبات
         function listenToRequests() {
             db.ref('requests').on('value', (snapshot) => {
                 const container = document.getElementById('requestsListContainer');
@@ -789,7 +680,7 @@
                                 ${req.status !== 'active' ? `<button class="btn btn-success btn-sm" onclick="changeRequestStatus('${req.id}', 'active')">موافقة وتفعيل</button>` : ''}
                                 ${req.status !== 'rejected' ? `<button class="btn btn-danger btn-sm" onclick="changeRequestStatus('${req.id}', 'rejected')">رفض الطلب</button>` : ''}
                                 ${req.status === 'active' ? `<button class="btn btn-secondary btn-sm" onclick="changeRequestStatus('${req.id}', 'pending')">إنهاء الاشتراك</button>` : ''}
-                                <button class="btn btn-danger btn-sm" style="background: #991b1b;" onclick="deleteRequest('${req.id}')">طرد نهائي</button>
+                                <button class="btn btn-danger btn-sm" style="background: #991b1b;" onclick="deleteRequest('${req.id}')">حذف الطلب</button>
                             </div>
                         </div>
                     `;
@@ -800,14 +691,14 @@
 
         function changeRequestStatus(reqId, newStatus) {
             db.ref('requests/' + reqId + '/status').set(newStatus).then(() => {
-                showToast('تم تحديث حالة الطالب بنجاح وتفعيل المنصة له');
+                showToast('تم تحديث حالة الطالب بنجاح');
             });
         }
 
         function deleteRequest(reqId) {
-            if (confirm('هل أنت متأكد من طرد هذا الطالب وحذف حسابه نهائياً؟')) {
+            if (confirm('هل أنت متأكد من حذف هذا الطلب؟')) {
                 db.ref('requests/' + reqId).remove().then(() => {
-                    showToast('تم حذف وطرد الطالب نهائياً');
+                    showToast('تم حذف الطلب بنجاح');
                 });
             }
         }
