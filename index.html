@@ -324,7 +324,7 @@
             <!-- إعدادات المنصة الشاملة -->
             <div class="card">
                 <div class="card-header">
-                    <i class="fas fa-sliders-h"></i> إعدادات المنصة الشاملة (تعديل السعر والمعلومات)
+                    <i class="fas fa-sliders-h"></i> إعدادات المنصة (تعديل السعر وطرق الدفع ومعرف تيليجرام)
                 </div>
                 <form id="settingsForm" onsubmit="saveGlobalSettings(event)">
                     <div class="form-group">
@@ -471,7 +471,7 @@
                 </a>
             </div>
 
-            <!-- المنطقة التعليمية المحمية للصفوف الثانوية -->
+            <!-- المنطقة التعليمية المحمية للصفوف الثانوية (تفتح فور موافقة الأستاذ) -->
             <div id="learningArea" style="display: none;">
                 
                 <div class="card" id="gradesSelectionCard">
@@ -819,7 +819,7 @@
             db.ref('contents/' + contentId).set(contentData).then(() => {
                 document.getElementById('contentForm').reset();
                 toggleContentTypeFields();
-                showToast('تم نشر المحتوى بنجاح!');
+                showToast('تم نشر المحتوى بنجاح للصف والوحدة المحددة!');
                 if (selectedGrade === grade && selectedSubject === subject) {
                     renderLecturesList();
                 }
@@ -857,7 +857,7 @@
 
         function renderLecturesList() {
             const container = document.getElementById('lecturesListContainer');
-            container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">جاري جلب المحتوى...</p>`;
+            container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">جاري جلب المحتوى والملازم...</p>`;
 
             db.ref('contents').on('value', (snapshot) => {
                 const data = snapshot.val();
