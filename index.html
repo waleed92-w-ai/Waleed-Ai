@@ -540,7 +540,7 @@
     </div>
 
     <script>
-        const DATABASE_URL = "https://waleed-ai-default-rtdb.firebaseio.com";
+        const DATABASE_URL = "https://waleed-ai-49ebc-default-rtdb.firebaseio.com";
         const firebaseConfig = { databaseURL: DATABASE_URL };
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
@@ -634,8 +634,8 @@
             }
         }
 
-        // إرسال الطلب وحفظه برابط REST API الفوري والمضمون 100% بدون أي تعليق
-        async function submitStudentAuth(e) {
+        // إرسال الطلب وحفظه بالرابط الجديد الصحيح لضمان الإرسال الفوري بدون أي تعليق
+        function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
             const contactInput = document.getElementById('stContact');
@@ -666,14 +666,13 @@
                 timestamp: Date.now()
             };
 
-            try {
-                const response = await fetch(`${DATABASE_URL}/requests/${key}.json`, {
-                    method: 'PUT',
-                    body: JSON.stringify(reqData),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-
-                if (response.ok) {
+            fetch(`${DATABASE_URL}/requests/${key}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(reqData),
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(res => {
+                if (res.ok) {
                     localStorage.setItem('wal_key', key);
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
@@ -681,8 +680,8 @@
                 } else {
                     throw new Error('فشل الحفظ');
                 }
-            } catch (error) {
-                // محاولة ثانية مباشرة عبر Firebase SDK في حال تعثر الـ fetch
+            })
+            .catch(() => {
                 db.ref('requests/' + key).set(reqData).then(() => {
                     localStorage.setItem('wal_key', key);
                     submitBtn.disabled = false;
@@ -693,7 +692,7 @@
                     submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
                     alert('حدث خطأ في الاتصال، يرجى المحاولة مرة أخرى.');
                 });
-            }
+            });
         }
 
         function logoutStudent() {
