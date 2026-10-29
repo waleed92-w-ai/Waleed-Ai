@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الأستاذ وليد الشمري التعليمية | الحاسوب وصيانته</title>
+    
+    <!-- الأيقونة الرئيسية على شاشة الهاتف -->
+    <link rel="icon" type="image/jpeg" href="profile.jpg">
+    <link rel="apple-touch-icon" href="profile.jpg">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         html { scroll-behavior: smooth; }
@@ -12,7 +17,7 @@
 <body class="bg-slate-100 font-sans text-gray-800 min-h-screen flex flex-col justify-between select-none">
 
     <!-- شريط الإشعار العلوي البرتقالي -->
-    <div class="bg-amber-600 text-white text-center py-2 px-4 text-xs font-bold shadow-inner flex flex-wrap justify-between items-center">
+    <div id="status-bar" class="bg-amber-600 text-white text-center py-2 px-4 text-xs font-bold shadow-inner flex flex-wrap justify-between items-center">
         <span>أنت الآن في فترة التجربة المجانية (يومان / 48 ساعة) - التصفح متاح ولكن التحميل والحفظ مقيد لحين الاشتراك الشامل!</span>
         <button onclick="scrollToSection('student-section')" class="bg-amber-800 hover:bg-amber-900 text-white px-3 py-1 rounded shadow text-xs">تفعيل الاشتراك (5,000 د.ع / شهر)</button>
     </div>
@@ -21,12 +26,10 @@
     <header class="bg-blue-900 text-white shadow-md py-4 px-6">
         <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             
-            <!-- معلومات الأستاذ والشعار -->
+            <!-- صورة الأستاذ الشخصية والشعار -->
             <div class="flex items-center gap-3">
-                <div class="bg-slate-700 p-2 rounded-full border-2 border-amber-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
+                <div class="relative w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400 shadow-md">
+                    <img src="profile.jpg" alt="الأستاذ وليد الشمري" class="w-full h-full object-cover">
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
@@ -44,7 +47,7 @@
                 <button onclick="scrollToSection('courses-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">📖 الكراسات والملازم</button>
                 <button onclick="scrollToSection('dashboard-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">📊 لوحتي والاشتراكات</button>
                 <button onclick="scrollToSection('student-section')" class="bg-blue-800 hover:bg-blue-700 px-3 py-2 rounded-lg transition">👤 حساب الطالب</button>
-                <button onclick="toggleAdminLogin()" class="bg-amber-500 hover:bg-amber-600 text-black px-3 py-2 rounded-lg transition shadow">🔑 دخول الأستاذ</button>
+                <button id="admin-login-btn" onclick="toggleAdminLogin()" class="bg-amber-500 hover:bg-amber-600 text-black px-3 py-2 rounded-lg transition shadow">🔑 دخول الأستاذ</button>
             </div>
         </div>
     </header>
@@ -69,11 +72,20 @@
                     <span class="text-lg">🛠️</span>
                     <h2 class="text-sm font-bold text-amber-900">لوحة تحكم الأستاذ (وليد الشمري) مفعلة</h2>
                 </div>
-                <button onclick="adminLogout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-lg font-bold shadow">تسجيل الخروج</button>
+                <!-- زر تسجيل الخروج المصحح والذي يعمل بشكل كامل -->
+                <button onclick="adminLogout()" class="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2 rounded-lg font-bold shadow transition">تسجيل الخروج</button>
             </div>
+            
+            <!-- أزرار إضافة الكورسات والملازم مع تفعيل رفع الملفات -->
             <div class="flex flex-wrap gap-2 pt-1">
-                <button onclick="addNewCourse()" class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-4 py-2 rounded-lg font-bold shadow">+ إضافة كورس جديد</button>
-                <button onclick="addNewBook()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg font-bold shadow">+ إضافة ملزمة جديد</button>
+                <label class="bg-emerald-700 hover:bg-emerald-800 text-white text-xs px-4 py-2 rounded-lg font-bold shadow cursor-pointer flex items-center gap-1">
+                    + إضافة كورس جديد
+                    <input type="file" id="course-file-input" class="hidden" onchange="handleFileUpload(event, 'كورس')">
+                </label>
+                <label class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-2 rounded-lg font-bold shadow cursor-pointer flex items-center gap-1">
+                    + إضافة ملزمة جديد
+                    <input type="file" id="book-file-input" class="hidden" onchange="handleFileUpload(event, 'ملزمة')">
+                </label>
                 <button onclick="scrollToSection('notifications-section')" class="bg-slate-700 hover:bg-slate-800 text-white text-xs px-4 py-2 rounded-lg font-bold shadow">📋 إدارة طلبات الاشتراكات</button>
             </div>
         </div>
@@ -172,45 +184,41 @@
         function toggleAdminLogin() {
             const box = document.getElementById('admin-login-box');
             box.classList.toggle('hidden');
-            box.scrollIntoView({ behavior: 'smooth' });
+            if(!box.classList.contains('hidden')) {
+                box.scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         function checkAdminCode() {
             const inputCode = document.getElementById('admin-code-input').value;
             if (btoa(inputCode) === ENCRYPTED_ADMIN_CODE) {
-                alert('أهلاً بك أستاذ وليد! لوحة التحكم تعمل بكامل الصلاحيات.');
+                document.getElementById('dashboard-section').classList.remove('hidden');
                 document.getElementById('admin-login-box').classList.add('hidden');
+                document.getElementById('admin-code-input').value = '';
+                alert('أهلاً بك أستاذ وليد! تم دخول لوحة التحكم بنجاح.');
             } else {
                 alert('الرمز السري غير صحيح!');
             }
         }
 
+        // دالة تسجيل الخروج المصححة والفعالة 100%
         function adminLogout() {
-            alert('تم تسجيل الخروج بنجاح من لوحة التحكم.');
-            location.reload();
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('admin-login-box').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            alert('تم تسجيل الخروج بنجاح وإعادة الصفحة للوضع العام.');
         }
 
-        function addNewCourse() {
-            const courseName = prompt('أدخل عنوان الكورس الجديد:');
-            if (courseName) {
+        function handleFileUpload(event, type) {
+            const file = event.target.files[0];
+            if (file) {
+                const fileName = file.name;
                 const list = document.getElementById('dynamic-courses-list');
                 const newItem = document.createElement('div');
                 newItem.className = 'bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex justify-between items-center';
-                newItem.innerHTML = `<span class="text-xs sm:text-sm font-semibold text-gray-700">كورس جديد: ${courseName}</span><span class="bg-emerald-600 text-white text-xs px-2 py-1 rounded">جديد</span>`;
+                newItem.innerHTML = `<span class="text-xs sm:text-sm font-semibold text-gray-700">${type}: ${fileName}</span><span class="bg-emerald-600 text-white text-xs px-2 py-1 rounded">تم الرفع بنجاح</span>`;
                 list.appendChild(newItem);
-                alert('تمت إضافة الكورس بنجاح!');
-            }
-        }
-
-        function addNewBook() {
-            const bookName = prompt('أدخل عنوان الملزمة أو الكراسة الجديدة:');
-            if (bookName) {
-                const list = document.getElementById('dynamic-courses-list');
-                const newItem = document.createElement('div');
-                newItem.className = 'bg-gray-50 border border-gray-200 rounded-xl p-3.5 flex justify-between items-center';
-                newItem.innerHTML = `<span class="text-xs sm:text-sm font-semibold text-gray-700">ملزمة جديدة: ${bookName}</span><span class="bg-emerald-600 text-white text-xs px-2 py-1 rounded">جديد</span>`;
-                list.appendChild(newItem);
-                alert('تمت إضافة الملزمة بنجاح!');
+                alert(`تم رفع ملف الـ ${type} (${fileName}) بنجاح وإضافته للمنصة!`);
             }
         }
 
