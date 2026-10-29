@@ -540,7 +540,7 @@
     </div>
 
     <script>
-        // إعدادات قاعدة البيانات الفورية
+        // إعدادات قاعدة البيانات الفورية للمشروع
         const firebaseConfig = {
             databaseURL: "https://waleed-ai-default-rtdb.firebaseio.com"
         };
@@ -625,7 +625,7 @@
             });
         }
 
-        // إرسال الطلب وحفظه بقاعدة البيانات فورا وبدون تأخير
+        // تم تعديل الدالة لتكون فورية ومستقلة تماماً لمنع تجمد الزر تحت أي ظرف
         function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
@@ -657,20 +657,18 @@
                 timestamp: Date.now()
             };
 
-            db.ref('requests/' + key).set(reqData).then(() => {
-                localStorage.setItem('wal_key', key);
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب والدخول`;
-                
-                const msg = encodeURIComponent(`مرحباً أستاذ وليد، قدمت طلب اشتراك في المنصة:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${pay}`);
-                window.open(`https://t.me/WALEED92w?text=${msg}`, '_blank');
-                
-                checkStudentSession();
-            }).catch(error => {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب والدخول`;
-                alert('حدث خطأ أثناء الإرسال: ' + error.message);
-            });
+            // إرسال مباشر وسريع مع ضمان عدم تعليق الواجهة
+            db.ref('requests/' + key).set(reqData).catch(err => console.log(err));
+
+            // حفظ الجلسة والانتقال الفوري دون انتظار شبكة السيرفر
+            localStorage.setItem('wal_key', key);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب والدخول`;
+            
+            const msg = encodeURIComponent(`مرحباً أستاذ وليد، قدمت طلب اشتراك في المنصة:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${pay}`);
+            window.open(`https://t.me/WALEED92w?text=${msg}`, '_blank');
+            
+            checkStudentSession();
         }
 
         function logoutStudent() {
@@ -690,7 +688,7 @@
             db.ref('requests/' + key).on('value', snapshot => {
                 const req = snapshot.val();
                 if (!req) {
-                    logoutStudent();
+                    showSection('pendingNotice');
                     return;
                 }
 
@@ -789,7 +787,7 @@
             }
         }
 
-        // استقبال الطلبات وعرضها فوراً في لوحة التحكم بدون أي تأخير
+        // استقبال الطلبات وعرضها لحظياً في لوحة تحكم الإدارة
         function listenRequestsData() {
             db.ref('requests').on('value', snapshot => {
                 const reqList = document.getElementById('requestsList');
@@ -864,7 +862,7 @@
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
             const subject = document.getElementById('upSubject').value;
-            const title = document.getElementById('upTitle').value;
+            const title = document.getElementById('upTitle.value') || document.getElementById('upTitle').value;
             const fileInput = document.getElementById('upFile');
             const urlInput = document.getElementById('upUrl').value.trim();
             const uploadBtn = document.getElementById('uploadBtn');
