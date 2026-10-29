@@ -297,29 +297,48 @@
         }
         .badge-active { background: #d1fae5; color: #059669; }
 
-        .pdf-viewer-box {
-            width: 100%;
-            height: 600px;
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            background: #000;
-            margin-top: 8px;
-            user-select: none;
+        /* تصميم البطاقة المصغرة الأنيقة للملفات */
+        .file-mini-card {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 14px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: 0.25s;
+            margin-bottom: 12px;
         }
 
-        .pdf-viewer-box iframe, .pdf-viewer-box img, .pdf-viewer-box video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border: none;
+        .file-mini-card:hover {
+            border-color: var(--accent);
+            background: #eff6ff;
+            transform: translateY(-2px);
         }
 
+        .file-mini-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .file-mini-info i {
+            font-size: 2rem;
+            color: #ef4444;
+        }
+
+        .file-mini-info h4 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        /* نافذة العرض المنبثقة (Modal) للملفات */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(4px);
             display: none;
             align-items: center;
@@ -327,12 +346,39 @@
             z-index: 2000;
         }
 
-        .modal-body {
+        .modal-content-box {
             background: white;
             border-radius: var(--radius);
-            width: 90%;
-            max-width: 420px;
-            padding: 24px;
+            width: 95%;
+            max-width: 900px;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .modal-header-bar {
+            background: var(--primary);
+            color: white;
+            padding: 14px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 800;
+        }
+
+        .modal-body-viewer {
+            flex: 1;
+            background: #000;
+            position: relative;
+        }
+
+        .modal-body-viewer iframe, .modal-body-viewer img {
+            width: 100%;
+            height: 100%;
+            border: none;
+            object-fit: contain;
         }
 
         @media (max-width: 768px) {
@@ -377,7 +423,7 @@
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
                 <button class="nav-item" onclick="showSection('sectionSubscribers')"><i class="fas fa-users"></i> اسماء المشتركين</button>
                 <button class="nav-item" onclick="showSection('sectionManageSubscribers')"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</button>
-                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع وتنزيل الملفات للمشاهدة</button>
+                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع الملفات للمشاهدة</button>
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
@@ -436,7 +482,7 @@
                 <div class="grid-cards" id="dynamicSubjectsGrid"></div>
             </div>
 
-            <!-- 4. عرض المحاضرات والملازم والفيديوهات (للمشاهدة فقط بدون تحميل) -->
+            <!-- 4. عرض المحاضرات والملفات المصغرة -->
             <div class="card" id="lecturesSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 id="currentSubTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
@@ -463,7 +509,7 @@
                 <div id="manageSubscribersList">جاري التحميل...</div>
             </div>
 
-            <!-- قسم رفع الملفات المباشر الفوري (للمشاهدة فقط) -->
+            <!-- قسم رفع الملفات المباشر الفوري -->
             <div class="card" id="sectionUpload" style="display: none;">
                 <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع الملفات والملازم المباشر من جهازك (للمشاهدة فقط)</div>
                 <form onsubmit="handleFastFileUpload(event)">
@@ -498,9 +544,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label>اختر الملف من جهازك (PDF، صور، أو مستندات)</label>
+                        <label>اختر الملف من جهازك (PDF أو صور)</label>
                         <input type="file" class="form-control" id="upFile" accept=".pdf,.png,.jpg,.jpeg" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">🔒 يتم النشر فوراً وتشفير الملف بحيث يظهر للطالب للمشاهدة فقط بدون زر تحميل.</small>
+                        <small style="color: #64748b; display: block; margin-top: 4px;">🔒 يتم النشر كبطاقة مصغرة للمشاهدة الحصرية بدون تحميل.</small>
                     </div>
 
                     <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة</button>
@@ -525,8 +571,21 @@
         </main>
     </div>
 
+    <!-- نافذة عرض الملفات المنبثقة (Modal) عند الضغط على البطاقة المصغرة -->
+    <div class="modal" id="fileViewerModal">
+        <div class="modal-content-box">
+            <div class="modal-header-bar">
+                <span id="modalFileTitle">عرض الملف</span>
+                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="closeFileModal()"><i class="fas fa-times"></i> إغلاق</button>
+            </div>
+            <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;">
+                <!-- يتم حقن العارض هنا -->
+            </div>
+        </div>
+    </div>
+
     <div class="modal" id="adminModal">
-        <div class="modal-body">
+        <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 420px; padding: 24px;">
             <div class="card-header"><i class="fas fa-lock"></i> دخول لوحة الأستاذ وليد</div>
             <div class="form-group">
                 <label>كلمة المرور السريّة</label>
@@ -787,29 +846,22 @@
                     Object.keys(data).forEach(k => {
                         const item = data[k];
                         if (item.grade === activeClass && item.subject === activeSub) {
-                            let mediaBox = '';
-
-                            if (item.fileType && item.fileType.includes('image')) {
-                                mediaBox = `
-                                    <div class="pdf-viewer-box" oncontextmenu="return false;">
-                                        <img src="${item.fileData}" alt="ملف توضيحي">
-                                    </div>
-                                `;
-                            } else {
-                                mediaBox = `
-                                    <div class="pdf-viewer-box" oncontextmenu="return false;">
-                                        <iframe src="${item.fileData}#toolbar=0&navpanes=0&scrollbar=0" oncontextmenu="return false;"></iframe>
-                                    </div>
-                                `;
-                            }
+                            // تخزين بيانات الملف لعرضه عند الضغط على البطاقة المصغرة
+                            let safeData = encodeURIComponent(item.fileData);
+                            let isImg = item.fileType && item.fileType.includes('image');
 
                             html += `
-                                <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:16px; border-radius:14px; margin-bottom:15px;">
-                                    <h4 style="color:var(--primary); margin-bottom:8px;"><i class="fas fa-file-pdf"></i> ${item.title}</h4>
-                                    ${mediaBox}
-                                    ${document.getElementById('adminSidebarSection').style.display === 'block' ? `
-                                        <button class="btn btn-danger" style="margin-top:10px;" onclick="deleteContent('${item.id}')">حذف الملف</button>
-                                    ` : ''}
+                                <div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}', ${isImg})">
+                                    <div class="file-mini-info">
+                                        <i class="fas ${isImg ? 'fa-image' : 'fa-file-pdf'}"></i>
+                                        <h4>${item.title}</h4>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <span class="badge badge-active"><i class="fas fa-eye"></i> اضغط للعرض</span>
+                                        ${document.getElementById('adminSidebarSection').style.display === 'block' ? `
+                                            <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="event.stopPropagation(); deleteContent('${item.id}')">حذف</button>
+                                        ` : ''}
+                                    </div>
                                 </div>
                             `;
                         }
@@ -819,6 +871,26 @@
                 }).catch(() => {
                     container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">حدث خطأ في تحميل المحتوى.</p>`;
                 });
+        }
+
+        // فتح نافذة العرض المنبثقة للملف
+        function openFileModal(title, encodedData, isImg) {
+            document.getElementById('modalFileTitle').innerText = title;
+            const container = document.getElementById('modalViewerContainer');
+            let realData = decodeURIComponent(encodedData);
+
+            if (isImg) {
+                container.innerHTML = `<img src="${realData}" alt="${title}">`;
+            } else {
+                container.innerHTML = `<iframe src="${realData}#toolbar=0&navpanes=0&scrollbar=0" oncontextmenu="return false;"></iframe>`;
+            }
+
+            document.getElementById('fileViewerModal').style.display = 'flex';
+        }
+
+        function closeFileModal() {
+            document.getElementById('fileViewerModal').style.display = 'none';
+            document.getElementById('modalViewerContainer').innerHTML = '';
         }
 
         function deleteContent(id) {
@@ -948,7 +1020,7 @@
                     uploadBtn.disabled = false;
                     uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة`;
                     if (res.ok) {
-                        alert('تم نشر الملف المباشر بنجاح وبشكل فوري للمشاهدة فقط!');
+                        alert('تم نشر الملف كبطاقة مصغرة بنجاح وبشكل فوري!');
                         document.getElementById('upTitle').value = '';
                         document.getElementById('upFile').value = '';
                     } else {
