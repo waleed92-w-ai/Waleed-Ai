@@ -436,7 +436,7 @@
                 <div class="grid-cards" id="dynamicSubjectsGrid"></div>
             </div>
 
-            <!-- 4. عرض المحاضرات والملازم والفيديوهات -->
+            <!-- 4. عرض المحاضرات والملازم والفيديوهات (للمشاهدة فقط بدون تحميل) -->
             <div class="card" id="lecturesSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 id="currentSubTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
@@ -465,7 +465,7 @@
 
             <!-- قسم رفع الملفات المباشر من الجهاز (PDF، صور، مقاطع) -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع الملفات والمقاطع مباشرة من جهازك</div>
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع الملفات والمقاطع مباشرة من جهازك (للمشاهدة فقط)</div>
                 <form onsubmit="handleDirectFileUpload(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
@@ -500,7 +500,7 @@
                     <div class="form-group">
                         <label>اختر الملف من جهازك (PDF، صور، أو مقاطع فيديو)</label>
                         <input type="file" class="form-control" id="upFile" accept=".pdf,.mp4,.mov,.jpg,.jpeg,.png,.zip" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 اختر الملف وسيقوم النظام برفعه سحابياً وعرضه مباشرة للطلاب.</small>
+                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع الملف سحابياً وعرضه للمشاهدة حصراً بدون زر تحميل.</small>
                     </div>
 
                     <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف مباشرة</button>
@@ -795,21 +795,20 @@
 
                             if (item.fileType && item.fileType.includes('video')) {
                                 mediaBox = `
-                                    <div class="pdf-viewer-box">
-                                        <video controls src="${item.url}"></video>
+                                    <div class="pdf-viewer-box" oncontextmenu="return false;">
+                                        <video controls controlsList="nodownload" disablePictureInPicture src="${item.url}"></video>
                                     </div>
                                 `;
                             } else if (item.fileType && item.fileType.includes('image')) {
                                 mediaBox = `
-                                    <div class="pdf-viewer-box">
+                                    <div class="pdf-viewer-box" oncontextmenu="return false;">
                                         <img src="${item.url}" alt="صورة توضيحية">
                                     </div>
                                 `;
                             } else {
-                                let safeViewerUrl = item.url.includes('drive.google.com') ? item.url.replace('/view', '/preview') : item.url;
                                 mediaBox = `
-                                    <div class="pdf-viewer-box">
-                                        <iframe src="${safeViewerUrl}#toolbar=0&navpanes=0" oncontextmenu="return false;"></iframe>
+                                    <div class="pdf-viewer-box" oncontextmenu="return false;">
+                                        <iframe src="${item.url}#toolbar=0&navpanes=0&scrollbar=0" oncontextmenu="return false;"></iframe>
                                     </div>
                                 `;
                             }
@@ -918,7 +917,7 @@
             }
         }
 
-        // دالة الرفع المباشر للملفات من الجهاز (مع شريط التقدم السريع)
+        // دالة الرفع المباشر للملفات من الجهاز (مع شريط التقدم)
         function handleDirectFileUpload(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
@@ -970,7 +969,7 @@
                             uploadBtn.disabled = false;
                             uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف مباشرة`;
                             if (res.ok) {
-                                alert('تم رفع ونشر الملف بنجاح في المنصة!');
+                                alert('تم رفع ونشر الملف بنجاح للمشاهدة فقط!');
                                 document.getElementById('upTitle').value = '';
                                 document.getElementById('upFile').value = '';
                             } else {
