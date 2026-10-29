@@ -15,9 +15,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs (App, Database, & Storage for Large Files) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
     <style>
         :root {
@@ -428,7 +429,7 @@
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
                 <button class="nav-item" onclick="showSection('sectionSubscribers')"><i class="fas fa-users"></i> اسماء المشتركين</button>
                 <button class="nav-item" onclick="showSection('sectionManageSubscribers')"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</button>
-                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات PDF كاملة</button>
+                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات PDF كبيرة الحجم</button>
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
@@ -517,10 +518,10 @@
                 <div id="manageSubscribersList">جاري التحميل...</div>
             </div>
 
-            <!-- قسم رفع ملفات الـ PDF -->
+            <!-- قسم رفع ملفات الـ PDF الكبيرة -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF (مع حماية تامة وعرض كامل)</div>
-                <form onsubmit="handleFastFileUpload(event)">
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF الكبيرة (مباشرة من هاتفك)</div>
+                <form onsubmit="handleLargeFileUpload(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
                         <select class="form-control" id="upGrade" required>
@@ -548,16 +549,16 @@
                     </div>
                     <div class="form-group">
                         <label>عنوان الملزمة أو الكتاب</label>
-                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الحاسوب كاملة">
+                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الحاسوب الشاملة">
                     </div>
 
                     <div class="form-group">
-                        <label>اختر ملف الـ PDF من هاتفك</label>
+                        <label>اختر ملف الـ PDF من هاتفك (بحجم كبير وبدون قيود)</label>
                         <input type="file" class="form-control" id="upFile" accept=".pdf,application/pdf" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع الملف وعرضه للمشاهدة فقط بدون السماح بتنزيله نهائياً.</small>
+                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 يمكنك رفع ملفات ضخمة وكبيرة مباشرة، سيتم رفعها للسحابة وعرضها بجميع صفحاتها للمشاهدة فقط.</small>
                     </div>
 
-                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً</button>
+                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف الكبير فوراً</button>
                 </form>
             </div>
 
@@ -606,11 +607,15 @@
 
     <script>
         const DATABASE_URL = "https://waleed-ai-49ebc-default-rtdb.firebaseio.com";
-        const firebaseConfig = { databaseURL: DATABASE_URL };
+        const firebaseConfig = { 
+            databaseURL: DATABASE_URL,
+            storageBucket: "waleed-ai-49ebc.appspot.com"
+        };
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
+        const storage = firebase.storage();
 
         const ADMIN_HASH = "V0ExOTkyd2E="; // WA1992wa
         let activeClass = "";
@@ -793,7 +798,6 @@
                 .then(res => res.json())
                 .then(req => {
                     if (!req) {
-                        // إذا تم طرد الحساب تماماً من قاعدة البيانات، نقوم بتنظيف المتصفح وإظهار استمارة التسجيل فوراً
                         localStorage.removeItem('wal_key');
                         showSection('authSection');
                         return;
@@ -841,7 +845,6 @@
                         .then(res => res.json())
                         .then(req => {
                             if (!req) {
-                                // الحساب غير موجود في القاعدة (تم طرده)، نرجع الطالب للاستمارة
                                 localStorage.removeItem('wal_key');
                                 showSection('authSection');
                                 return;
@@ -861,7 +864,6 @@
                             }
 
                             if (req.status === 'active') {
-                                // إذا تم الموافقة عليه للتو وكان واقفاً على شاشة الانتظار، نفتحه على الصفوف تلقائياً!
                                 if (document.getElementById('pendingNotice').style.display === 'block' || document.getElementById('authSection').style.display === 'block') {
                                     if (!activeClass) openClass('الأول المتوسط');
                                 }
@@ -932,10 +934,10 @@
                     Object.keys(data).forEach(k => {
                         const item = data[k];
                         if (item.grade === activeClass && item.subject === activeSub) {
-                            let safeData = encodeURIComponent(item.fileData);
+                            let fileUrl = encodeURIComponent(item.fileUrl);
 
                             html += `
-                                <div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}')">
+                                <div class="file-mini-card" onclick="openFileModal('${item.title}', '${fileUrl}')">
                                     <div class="file-mini-info">
                                         <i class="fas fa-file-pdf"></i>
                                         <h4>${item.title}</h4>
@@ -943,7 +945,7 @@
                                     <div style="display: flex; align-items: center; gap: 10px;">
                                         <span class="badge badge-active"><i class="fas fa-eye"></i> عرض الملزمة كاملة</span>
                                         ${document.getElementById('adminSidebarSection').style.display === 'block' ? `
-                                            <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="event.stopPropagation(); deleteContent('${item.id}')">حذف</button>
+                                            <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="event.stopPropagation(); deleteContent('${item.id}', '${item.storagePath || ''}')">حذف</button>
                                         ` : ''}
                                     </div>
                                 </div>
@@ -957,13 +959,13 @@
                 });
         }
 
-        function openFileModal(title, encodedData) {
+        function openFileModal(title, encodedUrl) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
-            let realData = decodeURIComponent(encodedData);
+            let realUrl = decodeURIComponent(encodedUrl);
 
-            container.innerHTML = `<object data="${realData}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%">
-                <embed src="${realData}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%" />
+            container.innerHTML = `<object data="${realUrl}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%">
+                <embed src="${realUrl}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%" />
             </object>`;
 
             document.getElementById('fileViewerModal').style.display = 'flex';
@@ -974,10 +976,15 @@
             document.getElementById('modalViewerContainer').innerHTML = '';
         }
 
-        function deleteContent(id) {
+        function deleteContent(id, storagePath) {
             if (confirm('هل تريد حذف هذه الملزمة نهائياً؟')) {
                 fetch(`${DATABASE_URL}/contents/${id}.json`, { method: 'DELETE' })
-                    .then(() => renderLectures());
+                    .then(() => {
+                        if (storagePath) {
+                            storage.ref(storagePath).delete().catch(() => {});
+                        }
+                        renderLectures();
+                    });
             }
         }
 
@@ -1075,7 +1082,8 @@
             }
         }
 
-        function handleFastFileUpload(e) {
+        // دالة رفع الملفات الكبيرة إلى سحابة Firebase Storage مباشرة كملف PDF
+        function handleLargeFileUpload(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
             const subject = document.getElementById('upSubject').value;
@@ -1090,45 +1098,53 @@
 
             const file = fileInput.files[0];
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري رفع ونشر ملف الـ PDF...`;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري رفع الملف الكبير للسحابة...`;
 
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                const base64Data = evt.target.result;
-                const contentId = 'CONT_' + Date.now();
+            const storagePath = 'pdfs/' + Date.now() + '_' + file.name;
+            const storageRef = storage.ref(storagePath);
+            const uploadTask = storageRef.put(file);
 
-                const contentData = {
-                    id: contentId,
-                    grade: grade,
-                    subject: subject,
-                    title: title,
-                    fileData: base64Data,
-                    fileType: file.type,
-                    date: new Date().toLocaleDateString('ar-EG')
-                };
-
-                fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
-                    method: 'PUT',
-                    body: JSON.stringify(contentData),
-                    headers: { 'Content-Type': 'application/json' }
-                }).then(res => {
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري الرفع (${Math.round(progress)}%)...`;
+                }, 
+                (error) => {
                     uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً`;
-                    if (res.ok) {
-                        alert('تم نشر ملف الـ PDF بنجاح!');
-                        document.getElementById('upTitle' ).value = '';
-                        document.getElementById('upFile').value = '';
-                    } else {
-                        alert('حدث خطأ أثناء حفظ الملف.');
-                    }
-                }).catch(() => {
-                    uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً`;
-                    alert('حدث خطأ في الشبكة.');
-                });
-            };
+                    uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف الكبير فوراً`;
+                    alert('حدث خطأ أثناء رفع الملف: ' + error.message);
+                }, 
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        const contentId = 'CONT_' + Date.now();
+                        const contentData = {
+                            id: contentId,
+                            grade: grade,
+                            subject: subject,
+                            title: title,
+                            fileUrl: downloadURL,
+                            storagePath: storagePath,
+                            date: new Date().toLocaleDateString('ar-EG')
+                        };
 
-            reader.readAsDataURL(file);
+                        fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
+                            method: 'PUT',
+                            body: JSON.stringify(contentData),
+                            headers: { 'Content-Type': 'application/json' }
+                        }).then(res => {
+                            uploadBtn.disabled = false;
+                            uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف الكبير فوراً`;
+                            if (res.ok) {
+                                alert('تم رفع ونشر ملف الـ PDF الكبير بنجاح وبشكل كامل!');
+                                document.getElementById('upTitle').value = '';
+                                document.getElementById('upFile').value = '';
+                            } else {
+                                alert('حدث خطأ أثناء حفظ معلومات الملف في القاعدة.');
+                            }
+                        });
+                    });
+                }
+            );
         }
     </script>
 </body>
