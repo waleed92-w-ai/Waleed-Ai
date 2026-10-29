@@ -297,7 +297,7 @@
         }
         .badge-active { background: #d1fae5; color: #059669; }
 
-        /* تصميم البطاقة المصغرة الأنيقة للملفات */
+        /* بطاقة الملف المصغرة */
         .file-mini-card {
             background: #f8fafc;
             border: 2px solid #cbd5e1;
@@ -334,11 +334,11 @@
             color: var(--primary);
         }
 
-        /* نافذة العرض المنبثقة (Modal) للملفات */
+        /* نافذة العرض المنبثقة (Modal) للشاشة الكاملة */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.7);
+            background: rgba(15, 23, 42, 0.8);
             backdrop-filter: blur(4px);
             display: none;
             align-items: center;
@@ -349,9 +349,9 @@
         .modal-content-box {
             background: white;
             border-radius: var(--radius);
-            width: 95%;
-            max-width: 900px;
-            height: 85vh;
+            width: 98%;
+            max-width: 1000px;
+            height: 92vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -370,8 +370,10 @@
 
         .modal-body-viewer {
             flex: 1;
-            background: #000;
+            background: #334155;
             position: relative;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .modal-body-viewer iframe, .modal-body-viewer img {
@@ -379,6 +381,7 @@
             height: 100%;
             border: none;
             object-fit: contain;
+            min-height: 100%;
         }
 
         @media (max-width: 768px) {
@@ -417,7 +420,7 @@
                 <button class="nav-item" onclick="openClass('السادس الاعدادي')"><i class="fas fa-user-graduate"></i> السادس الإعدادي</button>
             </div>
 
-            <!-- لوحة تحكم الأستاذ (مخفية كلياً عن الطلاب) -->
+            <!-- لوحة تحكم الأستاذ -->
             <div id="adminSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة الإدارة والتحكم</div>
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
@@ -571,7 +574,7 @@
         </main>
     </div>
 
-    <!-- نافذة عرض الملفات المنبثقة (Modal) عند الضغط على البطاقة المصغرة -->
+    <!-- نافذة عرض الملفات المنبثقة بشاشة كاملة -->
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box">
             <div class="modal-header-bar">
@@ -846,7 +849,6 @@
                     Object.keys(data).forEach(k => {
                         const item = data[k];
                         if (item.grade === activeClass && item.subject === activeSub) {
-                            // تخزين بيانات الملف لعرضه عند الضغط على البطاقة المصغرة
                             let safeData = encodeURIComponent(item.fileData);
                             let isImg = item.fileType && item.fileType.includes('image');
 
@@ -873,7 +875,7 @@
                 });
         }
 
-        // فتح نافذة العرض المنبثقة للملف
+        // فتح نافذة العرض المنبثقة بشاشة كاملة مع دعم التمرير لكامل صفحات الملف
         function openFileModal(title, encodedData, isImg) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
@@ -882,7 +884,12 @@
             if (isImg) {
                 container.innerHTML = `<img src="${realData}" alt="${title}">`;
             } else {
-                container.innerHTML = `<iframe src="${realData}#toolbar=0&navpanes=0&scrollbar=0" oncontextmenu="return false;"></iframe>`;
+                container.innerHTML = `
+                    <iframe src="${realData}#view=FitH&toolbar=0&navpanes=0&scrollbar=1" oncontextmenu="return false;"></iframe>
+                    <div style="position: absolute; bottom: 10px; left: 10px; z-index: 10;">
+                        <a href="${realData}" target="_blank" class="btn btn-primary" style="font-size: 0.8rem; padding: 6px 12px;"><i class="fas fa-external-link-alt"></i> فتح في عارض المستندات الكامل</a>
+                    </div>
+                `;
             }
 
             document.getElementById('fileViewerModal').style.display = 'flex';
