@@ -23,7 +23,7 @@
             --primary-color: #1e3a8a;
             --secondary-color: #2563eb;
             --accent-color: #f59e0b;
-            --bg-color: #f8fafc;
+            --bg-color: #f1f5f9;
             --card-bg: #ffffff;
             --text-main: #0f172a;
             --text-muted: #64748b;
@@ -46,12 +46,12 @@
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
             color: white;
-            padding: 20px;
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
-            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.15);
+            padding: 22px 16px;
+            border-bottom-left-radius: 28px;
+            border-bottom-right-radius: 28px;
+            box-shadow: 0 8px 25px rgba(30, 58, 138, 0.2);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -64,16 +64,16 @@
         }
 
         .profile-img {
-            width: 55px;
-            height: 55px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: 3px solid rgba(255,255,255,0.9);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         }
 
         .app-title h1 {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 800;
         }
 
@@ -91,23 +91,23 @@
             background: rgba(255,255,255,0.2);
             color: white;
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             transition: 0.3s;
         }
 
         .btn-icon:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.35);
         }
 
         .container {
-            max-width: 800px;
+            max-width: 850px;
             margin: 20px auto;
             padding: 0 16px;
         }
@@ -115,23 +115,26 @@
         .card {
             background: var(--card-bg);
             border-radius: var(--border-radius);
-            padding: 20px;
+            padding: 22px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
         }
 
         .section-title {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
             color: var(--primary-color);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 8px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
         .form-group label {
@@ -139,19 +142,23 @@
             margin-bottom: 6px;
             font-weight: 600;
             font-size: 0.9rem;
+            color: #334155;
         }
 
         .form-control {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #e2e8f0;
+            padding: 12px 14px;
+            border: 1px solid #cbd5e1;
             border-radius: 10px;
             font-size: 0.95rem;
             outline: none;
+            background: #fff;
+            transition: 0.3s;
         }
 
         .form-control:focus {
             border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .btn {
@@ -169,19 +176,46 @@
             gap: 8px;
         }
 
-        .btn-primary {
-            background-color: var(--secondary-color);
-            color: white;
+        .btn-primary { background-color: var(--secondary-color); color: white; }
+        .btn-primary:hover { background-color: #1d4ed8; }
+        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-success { background-color: var(--success); color: white; }
+
+        /* صفوف وغرف المواد */
+        .grades-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
         }
 
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
+        .grade-btn {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            background: #f8fafc;
+            border-radius: 12px;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            color: var(--text-main);
         }
 
-        .btn-success {
-            background-color: var(--success);
-            color: white;
+        .grade-btn.active, .grade-btn:hover {
+            border-color: var(--secondary-color);
+            background: #eff6ff;
+            color: var(--secondary-color);
+        }
+
+        .room-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .student-item {
@@ -191,31 +225,7 @@
             padding: 12px;
             border-bottom: 1px solid #f1f5f9;
         }
-
-        .student-item:last-child {
-            border-bottom: none;
-        }
-
-        .student-info h4 {
-            font-size: 0.95rem;
-            font-weight: 700;
-        }
-
-        .student-info p {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .student-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            border-radius: 6px;
-        }
+        .student-item:last-child { border-bottom: none; }
 
         .badge {
             padding: 4px 8px;
@@ -223,27 +233,19 @@
             font-size: 0.75rem;
             font-weight: 700;
         }
-
-        .badge-pending {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .badge-active {
-            background: #d1fae5;
-            color: #059669;
-        }
+        .badge-pending { background: #fef3c7; color: #d97706; }
+        .badge-active { background: #d1fae5; color: #059669; }
 
         .notification {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: #1e293b;
+            background: #0f172a;
             color: white;
             padding: 12px 24px;
             border-radius: 30px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.25);
             display: none;
             z-index: 1000;
             font-size: 0.9rem;
@@ -251,10 +253,7 @@
 
         .modal {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.5);
             display: none;
             align-items: center;
@@ -262,7 +261,6 @@
             z-index: 2000;
             padding: 20px;
         }
-
         .modal-content {
             background: white;
             border-radius: var(--border-radius);
@@ -276,7 +274,7 @@
 
     <header>
         <div class="teacher-info">
-            <img src="IMG_1507.jpeg" alt="الأستاذ وليد" class="profile-img" onerror="this.src='https://via.placeholder.com/55'">
+            <img src="IMG_1507.jpeg" alt="الأستاذ وليد" class="profile-img" onerror="this.src='https://via.placeholder.com/60'">
             <div class="app-title">
                 <h1>منصة الأستاذ وليد</h1>
                 <p id="userRoleText">واجهة الطالب التعليمية</p>
@@ -294,52 +292,54 @@
 
     <div class="container">
         
-        <!-- لوحة التحكم الخاصة بالأستاذ -->
+        <!-- لوحة تحكم الأستاذ -->
         <div id="teacherPanel" style="display: none;">
             
-            <!-- إضافة كورس / ملزمة -->
+            <!-- إضافة غرفة/مادة جديدة لصف معين -->
             <div class="card">
                 <div class="section-title">
-                    <i class="fas fa-upload"></i> رفع كورس / ملزمة جديدة
+                    <i class="fas fa-plus-circle"></i> إضافة غرفة / مادة جديدة للصفوف
                 </div>
-                <form id="uploadForm" onsubmit="handleUpload(event)">
+                <form id="roomForm" onsubmit="handleCreateRoom(event)">
                     <div class="form-group">
-                        <label>نوع المحتوى</label>
-                        <select class="form-control" id="contentType">
-                            <option value="course">كورس تعليمي</option>
-                            <option value="pdf">ملزمة PDF</option>
+                        <label>اختر الصف الدراسي</label>
+                        <select class="form-control" id="targetGrade" required>
+                            <option value="الاول المتوسط">الأول</option>
+                            <option value="الثاني المتوسط">الثاني</option>
+                            <option value="الثالث المتوسط">الثالث</option>
+                            <option value="الرابع الاعدادي">الرابع</option>
+                            <option value="الخامس الاعدادي">الخامس</option>
+                            <option value="السادس الاعدادي">السادس</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>عنوان المحتوى</label>
-                        <input type="text" class="form-control" id="contentTitle" required placeholder="مثال: الفصل الأول - شبكات الحاسوب">
+                        <label>اسم الغرفة أو المادة (مثال: الرياضيات - الغرفة الأولى)</label>
+                        <input type="text" class="form-control" id="roomNameInput" required placeholder="أدخل اسم المادة أو الغرفة">
                     </div>
                     <div class="form-group">
-                        <label>اختيار الملف</label>
-                        <input type="file" class="form-control" id="contentFile" required>
+                        <label>رفع ملف / ملزمة / كورس لهذه الغرفة</label>
+                        <input type="file" class="form-control" id="roomFileInput" required>
                     </div>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-cloud-upload-alt"></i> نشر المحتوى
+                        <i class="fas fa-cloud-upload-alt"></i> إنشاء الغرفة ونشر الملف
                     </button>
                 </form>
             </div>
 
-            <!-- إدارة الطلاب والاشتراكات -->
+            <!-- إدارة الطلاب والاشتراكات (طرد وإخفاء مع إتاحة إعادة التقديم) -->
             <div class="card">
                 <div class="section-title">
-                    <i class="fas fa-users-cog"></i> طلبات الاشتراك والطلاب
+                    <i class="fas fa-users-cog"></i> طلبات اشتراك الطلاب
                 </div>
-                <div id="studentsList">
-                    <!-- سيتم تحميل قائمة الطلاب هنا -->
-                </div>
+                <div id="studentsList"></div>
             </div>
 
         </div>
 
-        <!-- واجهة الطالب العامة -->
+        <!-- واجهة الطالب -->
         <div id="studentPanel">
             
-            <!-- نموذج طلب الاشتراك للطلاب الجدد -->
+            <!-- نموذج تسجيل الطالب -->
             <div class="card" id="subscriptionCard">
                 <div class="section-title">
                     <i class="fas fa-user-plus"></i> طلب اشتراك في المنصة
@@ -359,13 +359,28 @@
                 </form>
             </div>
 
-            <!-- عرض المحتوى المتاح -->
+            <!-- اختيار الصفوف -->
             <div class="card">
                 <div class="section-title">
-                    <i class="fas fa-book-open"></i> الكورسات والملازم المتاحة
+                    <i class="fas fa-graduation-cap"></i> اختر الصف الدراسي
                 </div>
-                <div id="publicContent">
-                    <p style="text-align: center; color: var(--text-muted); padding: 10px;">لا يوجد محتوى منشور حالياً أو بانتظار تفعيل اشتراكك.</p>
+                <div class="grades-grid">
+                    <div class="grade-btn active" onclick="selectGrade('الاول المتوسط', this)">الأول</div>
+                    <div class="grade-btn" onclick="selectGrade('الثاني المتوسط', this)">الثاني</div>
+                    <div class="grade-btn" onclick="selectGrade('الثالث المتوسط', this)">الثالث</div>
+                    <div class="grade-btn" onclick="selectGrade('الرابع الاعدادي', this)">الرابع</div>
+                    <div class="grade-btn" onclick="selectGrade('الخامس الاعدادي', this)">الخامس</div>
+                    <div class="grade-btn" onclick="selectGrade('السادس الاعدادي', this)">السادس</div>
+                </div>
+            </div>
+
+            <!-- عرض الغرف والمحتويات الخاصة بالصف المحدد -->
+            <div class="card">
+                <div class="section-title" id="currentGradeTitle">
+                    <i class="fas fa-door-open"></i> الغرف والمواد الدراسية (الأول المتوسط)
+                </div>
+                <div id="roomsContainer">
+                    <p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد غرف أو مواد منشورة لهذا الصف حالياً.</p>
                 </div>
             </div>
 
@@ -373,7 +388,7 @@
 
     </div>
 
-    <!-- نافذة تسجيل دخول الأستاذ -->
+    <!-- نافذة دخول الأستاذ -->
     <div class="modal" id="loginModal">
         <div class="modal-content">
             <div class="section-title">
@@ -388,31 +403,30 @@
         </div>
     </div>
 
-    <!-- عنصر الإشعارات -->
     <div class="notification" id="notification"></div>
 
     <script>
-        const ENCRYPTED_PASS = "V0ExOTkyd2E="; 
-        let isTeacherLoggedIn = false;
+        const ENCRYPTED_PASS = "V0ExOTkyd2E="; // WA1992wa
+        let activeGrade = "الاول المتوسط";
 
         window.onload = function() {
             renderStudentsList();
-            renderContent();
+            renderRooms();
         };
 
-        function openLoginModal() {
-            document.getElementById('loginModal').style.display = 'flex';
+        function selectGrade(grade, element) {
+            activeGrade = grade;
+            document.querySelectorAll('.grade-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('currentGradeTitle').innerHTML = `<i class="fas fa-door-open"></i> الغرف والمواد الدراسية (${grade})`;
+            renderRooms();
         }
 
-        function closeLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('teacherPass').value = '';
-        }
+        function openLoginModal() { document.getElementById('loginModal').style.display = 'flex'; }
+        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; document.getElementById('teacherPass').value = ''; }
 
         function verifyTeacherLogin() {
-            const passInput = document.getElementById('teacherPass').value;
-            if (btoa(passInput) === ENCRYPTED_PASS) {
-                isTeacherLoggedIn = true;
+            if (btoa(document.getElementById('teacherPass').value) === ENCRYPTED_PASS) {
                 document.getElementById('teacherPanel').style.display = 'block';
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('logoutBtn').style.display = 'flex';
@@ -425,59 +439,50 @@
         }
 
         function logoutTeacher() {
-            isTeacherLoggedIn = false;
             document.getElementById('teacherPanel').style.display = 'none';
             document.getElementById('loginBtn').style.display = 'flex';
             document.getElementById('logoutBtn').style.display = 'none';
             document.getElementById('userRoleText').innerText = "واجهة الطالب التعليمية";
-            showNotification('تم تسجيل الخروج والعودة للوضع العام');
+            showNotification('تم تسجيل الخروج بنجاح');
         }
 
+        // تسجيل الطالب
         function handleStudentRegister(e) {
             e.preventDefault();
-            const name = document.getElementById('studentName').value;
-            const phone = document.getElementById('studentPhone').value;
-
             const student = {
                 id: Date.now(),
-                name: name,
-                phone: phone,
+                name: document.getElementById('studentName').value,
+                phone: document.getElementById('studentPhone').value,
                 status: 'pending'
             };
-
             let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
             students.push(student);
             localStorage.setItem('waleed_students', JSON.stringify(students));
             localStorage.setItem('current_student_id', student.id);
-
             document.getElementById('studentRegisterForm').reset();
-            showNotification('تم إرسال طلب اشتراكك بنجاح! بانتظار تفعيل الأستاذ.');
+            showNotification('تم إرسال طلب اشتراكك بنجاح! بانتظار التفعيل.');
             renderStudentsList();
         }
 
+        // عرض قائمة الطلاب للتحكم والطرد الفوري مع إتاحة إعادة التقديم
         function renderStudentsList() {
             const container = document.getElementById('studentsList');
             let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
-
             if (students.length === 0) {
                 container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 10px;">لا يوجد طلبات اشتراك حالياً.</p>`;
                 return;
             }
-
             let html = '';
-            students.forEach(student => {
+            students.forEach(s => {
                 html += `
                     <div class="student-item">
-                        <div class="student-info">
-                            <h4>${student.name}</h4>
-                            <p>${student.phone} - <span class="badge ${student.status === 'active' ? 'badge-active' : 'badge-pending'}">${student.status === 'active' ? 'مُفعل' : 'بانتظار التفعيل'}</span></p>
+                        <div>
+                            <h4>${s.name}</h4>
+                            <p>${s.phone} - <span class="badge ${s.status === 'active' ? 'badge-active' : 'badge-pending'}">${s.status === 'active' ? 'مُفعل' : 'معلق'}</span></p>
                         </div>
-                        <div class="student-actions">
-                            ${student.status === 'pending' ? 
-                                `<button class="btn btn-sm btn-success" onclick="toggleStudentStatus(${student.id}, 'active')">تفعيل</button>` : 
-                                `<button class="btn btn-sm btn-danger" onclick="kickAndRemoveStudent(${student.id})">طرد وإلغاء</button>`
-                            }
-                            ${student.status === 'pending' ? `<button class="btn btn-sm btn-danger" onclick="kickAndRemoveStudent(${student.id})">رفض والطرد</button>` : ''}
+                        <div style="display:flex; gap:6px;">
+                            ${s.status === 'pending' ? `<button class="btn btn-sm btn-success" onclick="updateStudentStatus(${s.id}, 'active')">تفعيل</button>` : ''}
+                            <button class="btn btn-sm btn-danger" onclick="kickAndRemoveStudent(${s.id})">طرد وإلغاء</button>
                         </div>
                     </div>
                 `;
@@ -485,92 +490,109 @@
             container.innerHTML = html;
         }
 
-        function toggleStudentStatus(studentId, newStatus) {
+        function updateStudentStatus(id, status) {
             let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
-            students = students.map(s => {
-                if (s.id === studentId) s.status = newStatus;
-                return s;
-            });
+            students = students.map(s => { if (s.id === id) s.status = status; return s; });
             localStorage.setItem('waleed_students', JSON.stringify(students));
             renderStudentsList();
-            showNotification('تم تحديث حالة اشتراك الطالب');
+            showNotification('تم تحديث حالة الطالب بنجاح');
         }
 
-        function kickAndRemoveStudent(studentId) {
-            if (confirm('هل أنت تأكد من طرد هذا الطالب وإلغاء اشتراكه تماماً؟')) {
+        // دالة الطرد والإلغاء وإخفاء الطالب تماماً مع إتاحة التقديم مجدداً
+        function kickAndRemoveStudent(id) {
+            if (confirm('هل أنت متأكد من طرد هذا الطالب وإلغاء اشتراكه تماماً؟')) {
                 let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
-                students = students.filter(s => s.id !== studentId);
+                students = students.filter(s => s.id !== id);
                 localStorage.setItem('waleed_students', JSON.stringify(students));
-
-                const currentStudentId = localStorage.getItem('current_student_id');
-                if (currentStudentId == studentId) {
+                if (localStorage.getItem('current_student_id') == id) {
                     localStorage.removeItem('current_student_id');
                 }
-
                 renderStudentsList();
-                showNotification('تم طرد الطالب وإلغاء اشتراكه بنجاح، ويمكنه التقديم مجدداً.');
+                showNotification('تم طرد الطالب بنجاح، ويمكنه التقديم مرة أخرى.');
             }
         }
 
-        function handleUpload(e) {
+        // إنشاء غرفة جديدة لصف معين مع دعم رفع الملفات بحل مشكلة عدم الفتح (Blob URLs)
+        function handleCreateRoom(e) {
             e.preventDefault();
-            const type = document.getElementById('contentType').value;
-            const title = document.getElementById('contentTitle').value;
-            const fileInput = document.getElementById('contentFile');
+            const grade = document.getElementById('targetGrade').value;
+            const roomName = document.getElementById('roomNameInput').value;
+            const fileInput = document.getElementById('roomFileInput');
 
             if (fileInput.files.length === 0) return;
-
             const file = fileInput.files[0];
-            const item = {
-                id: Date.now(),
-                type: type,
-                title: title,
-                fileName: file.name,
-                date: new Date().toLocaleDateString('ar-EG')
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const fileDataUrl = event.target.result; // لحفظ الملف بشكل دائم ويعمل بضغطة زر
+                const roomItem = {
+                    id: Date.now(),
+                    grade: grade,
+                    roomName: roomName,
+                    fileName: file.name,
+                    fileData: fileDataUrl,
+                    date: new Date().toLocaleDateString('ar-EG')
+                };
+
+                let rooms = JSON.parse(localStorage.getItem('waleed_rooms')) || [];
+                rooms.push(roomItem);
+                localStorage.setItem('waleed_rooms', JSON.stringify(rooms));
+
+                document.getElementById('roomForm').reset();
+                showNotification('تم إنشاء الغرفة ونشر الملف بنجاح!');
+                renderRooms();
             };
-
-            let contents = JSON.parse(localStorage.getItem('waleed_contents')) || [];
-            contents.push(item);
-            localStorage.setItem('waleed_contents', JSON.stringify(contents));
-
-            document.getElementById('uploadForm').reset();
-            showNotification('تم رفع المحتوى بنجاح!');
-            renderContent();
+            reader.readAsDataURL(file);
         }
 
-        function renderContent() {
-            const container = document.getElementById('publicContent');
-            let contents = JSON.parse(localStorage.getItem('waleed_contents')) || [];
+        // عرض الغرف حسب الصف المحدد مع تفعيل فتح وتحميل الملفات مباشرة
+        function renderRooms() {
+            const container = document.getElementById('roomsContainer');
+            let rooms = JSON.parse(localStorage.getItem('waleed_rooms')) || [];
+            let gradeRooms = rooms.filter(r => r.grade === activeGrade);
 
-            if (contents.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 10px;">لا يوجد محتوى منشور حالياً.</p>`;
+            if (gradeRooms.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد غرف أو مواد منشورة لهذا الصف حالياً.</p>`;
                 return;
             }
 
             let html = '';
-            contents.forEach(item => {
+            gradeRooms.forEach(room => {
                 html += `
-                    <div class="student-item">
-                        <div class="student-info">
-                            <h4><i class="${item.type === 'pdf' ? 'fas fa-file-pdf' : 'fas fa-video'}" style="color:var(--secondary-color)"></i> ${item.title}</h4>
-                            <p>${item.fileName} - ${item.date}</p>
-                        </div>
+                    <div class="room-item">
                         <div>
-                            <button class="btn btn-sm btn-primary" onclick="alert('جاري تحميل الملف: ${item.fileName}')">عرض / تحميل</button>
+                            <h4 style="font-weight: 700; color: var(--primary-color);"><i class="fas fa-door-closed"></i> ${room.roomName}</h4>
+                            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 3px;">الملف: ${room.fileName} (${room.date})</p>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <a href="${room.fileData}" download="${room.fileName}" class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem; text-decoration: none;">
+                                <i class="fas fa-download"></i> تحميل/فتح
+                            </a>
+                            ${document.getElementById('teacherPanel').style.display === 'block' ? `
+                                <button class="btn btn-danger" style="padding: 8px 12px; font-size: 0.85rem;" onclick="deleteRoom(${room.id})">حذف</button>
+                            ` : ''}
                         </div>
                     </div>
                 `;
             });
             container.innerHTML = html;
+        }
+
+        function deleteRoom(id) {
+            if (confirm('هل تريد حذف هذه الغرفة نهائياً؟')) {
+                let rooms = JSON.parse(localStorage.getItem('waleed_rooms')) || [];
+                rooms = rooms.filter(r => r.id !== id);
+                localStorage.setItem('waleed_rooms', JSON.stringify(rooms));
+                renderRooms();
+                showNotification('تم حذف الغرفة بنجاح');
+            }
         }
 
         function showNotification(msg) {
             const notif = document.getElementById('notification');
             notif.innerText = msg;
             notif.style.display = 'block';
-            setTimeout(() => {
-                notif.style.display = 'none';
-            }, 3000);
+            setTimeout(() => { notif.style.display = 'none'; }, 3000);
         }
     </script>
 </body>
