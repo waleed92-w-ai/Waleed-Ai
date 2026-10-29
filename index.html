@@ -236,7 +236,7 @@
         }
 
         .grid-card {
-            padding: 16px;
+            padding: 18px;
             border: 2px solid #e2e8f0;
             background: #f8fafc;
             border-radius: 14px;
@@ -245,6 +245,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             color: var(--text-dark);
+            font-size: 1.05rem;
         }
 
         .grid-card:hover, .grid-card.active {
@@ -252,6 +253,7 @@
             background: #eff6ff;
             color: var(--primary-light);
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
         }
 
         .modal {
@@ -474,20 +476,22 @@
             <!-- المنطقة التعليمية المحمية للصفوف الثانوية (تفتح فور موافقة الأستاذ) -->
             <div id="learningArea" style="display: none;">
                 
+                <!-- 1. قائمة الصفوف الثانوية (أزرار تفاعلية) -->
                 <div class="card" id="gradesSelectionCard">
                     <div class="card-header">
                         <i class="fas fa-graduation-cap"></i> اختر الصف الدراسي الثانوي
                     </div>
                     <div class="grid-layout">
-                        <div class="grid-card" onclick="openGrade('الأول المتوسط')">الأول المتوسط</div>
-                        <div class="grid-card" onclick="openGrade('الثاني المتوسط')">الثاني المتوسط</div>
-                        <div class="grid-card" onclick="openGrade('الثالث المتوسط')">الثالث المتوسط</div>
-                        <div class="grid-card" onclick="openGrade('الرابع الاعدادي')">الرابع الإعدادي</div>
-                        <div class="grid-card" onclick="openGrade('الخامس الاعدادي')">الخامس الإعدادي</div>
-                        <div class="grid-card" onclick="openGrade('السادس الاعدادي')">السادس الإعدادي</div>
+                        <div class="grid-card" onclick="openGrade('الأول المتوسط')">📘 الأول المتوسط</div>
+                        <div class="grid-card" onclick="openGrade('الثاني المتوسط')">📘 الثاني المتوسط</div>
+                        <div class="grid-card" onclick="openGrade('الثالث المتوسط')">📘 الثالث المتوسط</div>
+                        <div class="grid-card" onclick="openGrade('الرابع الاعدادي')">📗 الرابع الإعدادي</div>
+                        <div class="grid-card" onclick="openGrade('الخامس الاعدادي')">📗 الخامس الإعدادي</div>
+                        <div class="grid-card" onclick="openGrade('السادس الاعدادي')">📗 السادس الإعدادي</div>
                     </div>
                 </div>
 
+                <!-- 2. قائمة المواد الدراسية لكل صف (تحتوي على الحاسوب وجميع المواد) -->
                 <div class="card" id="subjectsSelectionCard" style="display: none;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <h3 id="activeGradeTitle" style="color: var(--primary); font-size: 1.15rem;"></h3>
@@ -509,6 +513,7 @@
                     </div>
                 </div>
 
+                <!-- 3. عرض الملازم والفيديوهات والروابط الخاصة بالمادة والصف -->
                 <div class="card" id="lecturesViewCard" style="display: none;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <h3 id="activeSubjectTitle" style="color: var(--primary); font-size: 1.15rem;"></h3>
@@ -819,7 +824,7 @@
             db.ref('contents/' + contentId).set(contentData).then(() => {
                 document.getElementById('contentForm').reset();
                 toggleContentTypeFields();
-                showToast('تم نشر المحتوى بنجاح للصف والوحدة المحددة!');
+                showToast('تم نشر المحتوى بنجاح للصف والمادة المحددة!');
                 if (selectedGrade === grade && selectedSubject === subject) {
                     renderLecturesList();
                 }
