@@ -565,28 +565,35 @@
 
         window.onload = function() {
             loadSettingsData();
-            listenRequestsData();
+            fetchRequestsData();
             checkStudentSession();
         };
 
         function loadSettingsData() {
-            db.ref('settings').on('value', snapshot => {
-                const data = snapshot.val() || {};
-                const price = data.price || '5000';
-                const payments = data.payments || '💳 ماستر كارد: 9061913829\n📱 زين كاش: 07816745861\n💵 ماستر دينار: 5285780016156442';
+            fetch(`${DATABASE_URL}/settings.json`)
+                .then(res => res.json())
+                .then(data => {
+                    const cfg = data || {};
+                    const price = cfg.price || '5000';
+                    const payments = cfg.payments || '💳 ماستر كارد: 9061913829\n📱 زين كاش: 07816745861\n💵 ماستر دينار: 5285780016156442';
 
-                document.getElementById('dispPrice').innerText = price;
-                document.getElementById('dispPayment').innerText = payments;
-                document.getElementById('cfgPrice').value = price;
-                document.getElementById('cfgPayments').value = payments;
-            });
+                    document.getElementById('dispPrice').innerText = price;
+                    document.getElementById('dispPayment').innerText = payments;
+                    document.getElementById('cfgPrice').value = price;
+                    document.getElementById('cfgPayments').value = payments;
+                }).catch(() => {});
         }
 
         function saveSettings(e) {
             e.preventDefault();
-            db.ref('settings').set({
+            const settingsData = {
                 price: document.getElementById('cfgPrice').value,
                 payments: document.getElementById('cfgPayments').value
+            };
+            fetch(`${DATABASE_URL}/settings.json`, {
+                method: 'PUT',
+                body: JSON.stringify(settingsData),
+                headers: { 'Content-Type': 'application/json' }
             }).then(() => alert('تم حفظ الإعدادات بنجاح!'));
         }
 
@@ -602,6 +609,7 @@
                 document.getElementById('topSubtitle').innerText = "لوحة إدارة المنصة والطلاب";
                 closeAdminModal();
                 showSection('sectionRequests');
+                fetchRequestsData(); // جلب الطلبات فور دخول لوحة التحكم
             } else {
                 alert('كلمة المرور غير صحيحة!');
             }
@@ -621,6 +629,10 @@
                 const el = document.getElementById(id);
                 if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
             });
+            // إذا فتح صفحة الطلبات أو المشتركين، قم بتحديثها فوراً
+            if (sectionId === 'sectionRequests' || sectionId === 'sectionSubscribers' || sectionId === 'sectionManageSubscribers') {
+                fetchRequestsData();
+            }
         }
 
         // إرسال الطلب وحفظه برابط مباشر سريع وآمن
@@ -664,18 +676,11 @@
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
                 showSection('pendingNotice');
-            }).catch(error => {
-                db.ref('requests/' + key).set(reqData).then(() => {
-                    localStorage.setItem('wal_key', key);
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
-                    showSection('pendingNotice');
-                }).catch(err => {
-                    localStorage.setItem('wal_key', key);
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
-                    showSection('pendingNotice');
-                });
+            }).catch(() => {
+                localStorage.setItem('wal_key', key);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                showSection('pendingNotice');
             });
         }
 
@@ -693,22 +698,25 @@
                 return;
             }
 
-            db.ref('requests/' + key).on('value', snapshot => {
-                const req = snapshot.val();
-                if (!req) {
-                    showSection('pendingNotice');
-                    return;
-                }
+            fetch(`${DATABASE_URL}/requests/${key}.json`)
+                .then(res => res.json())
+                .then(req => {
+                    if (!req) {
+                        showSection('pendingNotice');
+                        return;
+                    }
 
-                if (req.status === 'pending') {
+                    if (req.status === 'pending') {
+                        showSection('pendingNotice');
+                    } else if (req.status === 'active') {
+                        if (!activeClass) openClass('الأول المتوسط');
+                    } else if (req.status === 'rejected') {
+                        alert('عذراً، تم رفض أو إلغاء اشتراكك. يمكنك تقديم طلب جديد.');
+                        logoutStudent();
+                    }
+                }).catch(() => {
                     showSection('pendingNotice');
-                } else if (req.status === 'active') {
-                    if (!activeClass) openClass('الأول المتوسط');
-                } else if (req.status === 'rejected') {
-                    alert('عذراً، تم رفض أو إلغاء اشتراكك. يمكنك تقديم طلب جديد.');
-                    logoutStudent();
-                }
-            });
+                });
         }
 
         function openClass(className) {
@@ -758,144 +766,123 @@
             const container = document.getElementById('lecturesContainer');
             container.innerHTML = `<p style="text-align:center; color:#64748b;">جاري تحميل المحتوى...</p>`;
 
-            db.ref('contents').on('value', snapshot => {
-                const data = snapshot.val();
-                if (!data) {
-                    container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو كتب مرفوعة لهذه المادة حتى الآن.</p>`;
-                    return;
-                }
-
-                let html = '';
-                Object.keys(data).forEach(k => {
-                    const item = data[k];
-                    if (item.grade === activeClass && item.subject === activeSub) {
-                        let safeViewerUrl = item.url.includes('drive.google.com') ? item.url.replace('/view', '/preview') : item.url;
-
-                        html += `
-                            <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:16px; border-radius:14px; margin-bottom:15px;">
-                                <h4 style="color:var(--primary); margin-bottom:8px;"><i class="fas fa-book-open"></i> ${item.title}</h4>
-                                <div class="pdf-viewer-box">
-                                    <iframe src="${safeViewerUrl}#toolbar=0&navpanes=0" oncontextmenu="return false;"></iframe>
-                                </div>
-                                ${document.getElementById('adminSidebarSection').style.display === 'block' ? `
-                                    <button class="btn btn-danger" style="margin-top:10px;" onclick="deleteContent('${item.id}')">حذف الدرس</button>
-                                ` : ''}
-                            </div>
-                        `;
+            fetch(`${DATABASE_URL}/contents.json`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data) {
+                        container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو كتب مرفوعة لهذه المادة حتى الآن.</p>`;
+                        return;
                     }
-                });
 
-                container.innerHTML = html || `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو كتب مرفوعة لهذه المادة حتى الآن.</p>`;
-            });
+                    let html = '';
+                    Object.keys(data).forEach(k => {
+                        const item = data[k];
+                        if (item.grade === activeClass && item.subject === activeSub) {
+                            let safeViewerUrl = item.url.includes('drive.google.com') ? item.url.replace('/view', '/preview') : item.url;
+
+                            html += `
+                                <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:16px; border-radius:14px; margin-bottom:15px;">
+                                    <h4 style="color:var(--primary); margin-bottom:8px;"><i class="fas fa-book-open"></i> ${item.title}</h4>
+                                    <div class="pdf-viewer-box">
+                                        <iframe src="${safeViewerUrl}#toolbar=0&navpanes=0" oncontextmenu="return false;"></iframe>
+                                    </div>
+                                    ${document.getElementById('adminSidebarSection').style.display === 'block' ? `
+                                        <button class="btn btn-danger" style="margin-top:10px;" onclick="deleteContent('${item.id}')">حذف الدرس</button>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }
+                    });
+
+                    container.innerHTML = html || `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو كتب مرفوعة لهذه المادة حتى الآن.</p>`;
+                }).catch(() => {
+                    container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">حدث خطأ في تحميل المحتوى.</p>`;
+                });
         }
 
         function deleteContent(id) {
             if (confirm('هل تريد حذف هذا الدرس نهائياً؟')) {
-                db.ref('contents/' + id).remove();
+                fetch(`${DATABASE_URL}/contents/${id}.json`, { method: 'DELETE' })
+                    .then(() => renderLectures());
             }
         }
 
-        // استقبال وجلب وعرض الطلبات فوراً في لوحة التحكم الإدارية
-        function listenRequestsData() {
-            db.ref('requests').on('value', snapshot => {
-                const reqList = document.getElementById('requestsList');
-                const subList = document.getElementById('subscribersList');
-                const manageList = document.getElementById('manageSubscribersList');
-                const data = snapshot.val();
+        // جلب وعرض طلبات الطلاب في لوحة التحكم الإدارية عبر REST API المباشر
+        function fetchRequestsData() {
+            fetch(`${DATABASE_URL}/requests.json`)
+                .then(res => res.json())
+                .then(data => {
+                    const reqList = document.getElementById('requestsList');
+                    const subList = document.getElementById('subscribersList');
+                    const manageList = document.getElementById('manageSubscribersList');
 
-                if (!data) {
-                    reqList.innerHTML = '<p style="text-align:center; color:#64748b;">لا توجد طلبات حالياً.</p>';
-                    subList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين حالياً.</p>';
-                    manageList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل.</p>';
-                    return;
-                }
-
-                let reqHtml = '', subHtml = '', manageHtml = '';
-
-                Object.keys(data).forEach(k => {
-                    const r = data[k];
-
-                    if (r.status === 'pending') {
-                        reqHtml += `
-                            <div class="list-item">
-                                <div>
-                                    <strong>${r.name}</strong> (${r.contact})
-                                    <br><small style="color:#64748b;">طريقة التحويل: ${r.paymentMethod}</small>
-                                </div>
-                                <div>
-                                    <button class="btn btn-success" onclick="setReqStatus('${r.id}', 'active')">قبول وتفعيل</button>
-                                    <button class="btn btn-danger" onclick="setReqStatus('${r.id}', 'rejected')">رفض</button>
-                                </div>
-                            </div>
-                        `;
-                    } else if (r.status === 'active') {
-                        subHtml += `
-                            <div class="list-item">
-                                <div><strong>${r.name}</strong> (${r.contact})</div>
-                                <span class="badge badge-active">نشط ومُفعل</span>
-                            </div>
-                        `;
-
-                        manageHtml += `
-                            <div class="list-item">
-                                <div><strong>${r.name}</strong> (${r.contact})</div>
-                                <div>
-                                    <button class="btn btn-warning" onclick="setReqStatus('${r.id}', 'pending')">إلغاء الاشتراك</button>
-                                    <button class="btn btn-danger" onclick="deleteAndExpel('${r.id}')">طرد نهائي</button>
-                                </div>
-                            </div>
-                        `;
+                    if (!data) {
+                        reqList.innerHTML = '<p style="text-align:center; color:#64748b;">لا توجد طلبات حالياً.</p>';
+                        subList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين حالياً.</p>';
+                        manageList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل.</p>';
+                        return;
                     }
-                });
 
-                reqList.innerHTML = reqHtml || '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة حالياً.</p>';
-                subList.innerHTML = subHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين مفعلين حالياً.</p>';
-                manageList.innerHTML = manageHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
-            }, error => {
-                console.error("خطأ جلب الطلبات:", error);
-                // محاولة احتياطية ثانية في حال فشل الاستماع المباشر
-                fetch(`${DATABASE_URL}/requests.json`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data) {
-                            let reqHtml = '';
-                            Object.keys(data).forEach(k => {
-                                const r = data[k];
-                                if (r.status === 'pending') {
-                                    reqHtml += `
-                                        <div class="list-item">
-                                            <div>
-                                                <strong>${r.name}</strong> (${r.contact})
-                                                <br><small style="color:#64748b;">طريقة التحويل: ${r.paymentMethod}</small>
-                                            </div>
-                                            <div>
-                                                <button class="btn btn-success" onclick="setReqStatus('${r.id}', 'active')">قبول وتفعيل</button>
-                                                <button class="btn btn-danger" onclick="setReqStatus('${r.id}', 'rejected')">رفض</button>
-                                            </div>
-                                        </div>
-                                    `;
-                                }
-                            });
-                            document.getElementById('requestsList').innerHTML = reqHtml || '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة حالياً.</p>';
+                    let reqHtml = '', subHtml = '', manageHtml = '';
+
+                    Object.keys(data).forEach(k => {
+                        const r = data[k];
+
+                        if (r.status === 'pending') {
+                            reqHtml += `
+                                <div class="list-item">
+                                    <div>
+                                        <strong>${r.name}</strong> (${r.contact})
+                                        <br><small style="color:#64748b;">طريقة التحويل: ${r.paymentMethod}</small>
+                                    </div>
+                                    <div>
+                                        <button class="btn btn-success" onclick="setReqStatus('${r.id}', 'active')">قبول وتفعيل</button>
+                                        <button class="btn btn-danger" onclick="setReqStatus('${r.id}', 'rejected')">رفض</button>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (r.status === 'active') {
+                            subHtml += `
+                                <div class="list-item">
+                                    <div><strong>${r.name}</strong> (${r.contact})</div>
+                                    <span class="badge badge-active">نشط ومُفعل</span>
+                                </div>
+                            `;
+
+                            manageHtml += `
+                                <div class="list-item">
+                                    <div><strong>${r.name}</strong> (${r.contact})</div>
+                                    <div>
+                                        <button class="btn btn-warning" onclick="setReqStatus('${r.id}', 'pending')">إلغاء الاشتراك</button>
+                                        <button class="btn btn-danger" onclick="deleteAndExpel('${r.id}')">طرد نهائي</button>
+                                    </div>
+                                </div>
+                            `;
                         }
                     });
-            });
+
+                    reqList.innerHTML = reqHtml || '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة حالياً.</p>';
+                    subList.innerHTML = subHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين مفعلين حالياً.</p>';
+                    manageList.innerHTML = manageHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
+                }).catch(() => {
+                    document.getElementById('requestsList').innerHTML = '<p style="text-align:center; color:#64748b;">فشل جلب الطلبات.</p>';
+                });
         }
 
         function setReqStatus(id, newStatus) {
-            db.ref('requests/' + id + '/status').set(newStatus).then(() => {
-                // تحديث مباشر بالـ REST لضمان السرعة القصوى
-                fetch(`${DATABASE_URL}/requests/${id}/status.json`, {
-                    method: 'PUT',
-                    body: JSON.stringify(newStatus),
-                    headers: { 'Content-Type': 'application/json' }
-                });
+            fetch(`${DATABASE_URL}/requests/${id}/status.json`, {
+                method: 'PUT',
+                body: JSON.stringify(newStatus),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                fetchRequestsData(); // تحديث القائمة فوراً بعد التغيير
             });
         }
 
         function deleteAndExpel(id) {
             if (confirm('هل أنت متأكد من طرد هذا الطالب؟ سيتمكن من إرسال طلب جديد لاحقاً.')) {
-                db.ref('requests/' + id).remove();
+                fetch(`${DATABASE_URL}/requests/${id}.json`, { method: 'DELETE' })
+                    .then(() => fetchRequestsData());
             }
         }
 
@@ -945,13 +932,19 @@
         }
 
         function saveContentToDB(id, grade, subject, title, url) {
-            db.ref('contents/' + id).set({
+            const contentData = {
                 id: id,
                 grade: grade,
                 subject: subject,
                 title: title,
                 url: url,
                 date: new Date().toLocaleDateString('ar-EG')
+            };
+
+            fetch(`${DATABASE_URL}/contents/${id}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(contentData),
+                headers: { 'Content-Type': 'application/json' }
             }).then(() => {
                 const uploadBtn = document.getElementById('uploadBtn');
                 uploadBtn.disabled = false;
