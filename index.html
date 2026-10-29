@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Firebase SDKs (نسخة مستقرة ومتوافقة تماماً) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
@@ -540,7 +540,7 @@
     </div>
 
     <script>
-        // إعدادات قاعدة البيانات المباشرة للمشروع
+        // إعدادات قاعدة البيانات الفورية
         const firebaseConfig = {
             databaseURL: "https://waleed-ai-default-rtdb.firebaseio.com"
         };
@@ -625,7 +625,7 @@
             });
         }
 
-        // إرسال الطلب وحفظه بقاعدة البيانات بسلاسة فائقة
+        // إرسال الطلب وحفظه بقاعدة البيانات فورا وبدون تأخير
         function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
@@ -789,7 +789,7 @@
             }
         }
 
-        // الاستقبال الفوري للطلبات والمشتركين في لوحة التحكم
+        // استقبال الطلبات وعرضها فوراً في لوحة التحكم بدون أي تأخير
         function listenRequestsData() {
             db.ref('requests').on('value', snapshot => {
                 const reqList = document.getElementById('requestsList');
@@ -860,7 +860,6 @@
             }
         }
 
-        // رفع الملفات الضخمة والكتب سحابياً
         function handleUploadContent(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
@@ -876,7 +875,7 @@
             }
 
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري نشر المحتوى...`;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري رفع ونشر المحتوى...`;
 
             const contentId = 'CONT_' + Date.now();
 
