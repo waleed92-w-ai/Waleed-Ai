@@ -540,7 +540,7 @@
     </div>
 
     <script>
-        // إعدادات قاعدة البيانات الفورية للمشروع
+        // إعدادات قاعدة البيانات الفورية
         const firebaseConfig = {
             databaseURL: "https://waleed-ai-default-rtdb.firebaseio.com"
         };
@@ -625,13 +625,12 @@
             });
         }
 
-        // تم تعديل الدالة لتكون فورية ومستقلة تماماً لمنع تجمد الزر تحت أي ظرف
+        // تم جعل إرسال الطلب فورياً ومستقلاً تماماً لضمان عدم تجمد الزر نهائياً
         function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
             const contactInput = document.getElementById('stContact');
             const paySelect = document.getElementById('stPayMethod');
-            const submitBtn = document.getElementById('submitBtn');
 
             const name = nameInput.value.trim();
             const contact = contactInput.value.trim();
@@ -641,9 +640,6 @@
                 alert('يرجى إكمال جميع الحقول المطلوبة');
                 return;
             }
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري إرسال الطلب...`;
 
             const cleanContact = contact.replace(/[^a-zA-Z0-9]/g, '_');
             const key = 'ST_' + Date.now() + '_' + cleanContact;
@@ -657,18 +653,16 @@
                 timestamp: Date.now()
             };
 
-            // إرسال مباشر وسريع مع ضمان عدم تعليق الواجهة
-            db.ref('requests/' + key).set(reqData).catch(err => console.log(err));
+            // إرسال البيانات للخلفية بدون تعطيل الزر
+            db.ref('requests/' + key).set(reqData);
 
-            // حفظ الجلسة والانتقال الفوري دون انتظار شبكة السيرفر
+            // تخزين الجلسة والانتقال الفوري بدون انتظار
             localStorage.setItem('wal_key', key);
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب والدخول`;
             
             const msg = encodeURIComponent(`مرحباً أستاذ وليد، قدمت طلب اشتراك في المنصة:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${pay}`);
             window.open(`https://t.me/WALEED92w?text=${msg}`, '_blank');
             
-            checkStudentSession();
+            showSection('pendingNotice');
         }
 
         function logoutStudent() {
@@ -787,7 +781,7 @@
             }
         }
 
-        // استقبال الطلبات وعرضها لحظياً في لوحة تحكم الإدارة
+        // استقبال وعرض الطلبات لحظياً في لوحة الإدارة
         function listenRequestsData() {
             db.ref('requests').on('value', snapshot => {
                 const reqList = document.getElementById('requestsList');
@@ -862,7 +856,7 @@
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
             const subject = document.getElementById('upSubject').value;
-            const title = document.getElementById('upTitle.value') || document.getElementById('upTitle').value;
+            const title = document.getElementById('upTitle').value;
             const fileInput = document.getElementById('upFile');
             const urlInput = document.getElementById('upUrl').value.trim();
             const uploadBtn = document.getElementById('uploadBtn');
