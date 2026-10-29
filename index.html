@@ -367,7 +367,7 @@
                 <button class="nav-item" onclick="openClass('السادس الاعدادي')"><i class="fas fa-user-graduate"></i> السادس الإعدادي</button>
             </div>
 
-            <!-- لوحة تحكم الأستاذ (مخفية تماماً عن الطلاب) -->
+            <!-- لوحة تحكم الأستاذ (مخفية كلياً عن الطلاب) -->
             <div id="adminSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة الإدارة والتحكم</div>
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
@@ -384,7 +384,7 @@
 
         <main>
 
-            <!-- 1. نموذج طلب الاشتراك والدخول (مضمون الاستجابة) -->
+            <!-- 1. نموذج طلب الاشتراك والدخول -->
             <div class="card" id="authSection">
                 <div class="card-header"><i class="fas fa-id-card"></i> طلب اشتراك في المنصة التعليمية</div>
                 
@@ -426,15 +426,13 @@
                 <a href="https://t.me/WALEED92w" target="_blank" class="btn btn-primary"><i class="fab fa-telegram-plane"></i> مراسلة الأستاذ للتعجيل</a>
             </div>
 
-            <!-- 3. المواد الدراسية (تظهر حصراً المواد التي فيها محتوى مرفوع) -->
+            <!-- 3. المواد الدراسية (تظهر جميع المواد ومن ضمنها الحاسوب بشكل دائم) -->
             <div class="card" id="subjectsSection" style="display: none;">
-                <div class="card-header"><i class="fas fa-book"></i> المواد الدراسية المتاحة - <span id="currentClassName"></span></div>
-                <div class="grid-cards" id="dynamicSubjectsGrid">
-                    <p style="color:#64748b; text-align:center; grid-column: 1 / -1;">جاري جلب المواد المتاحة...</p>
-                </div>
+                <div class="card-header"><i class="fas fa-book"></i> المواد الدراسية - <span id="currentClassName"></span></div>
+                <div class="grid-cards" id="dynamicSubjectsGrid"></div>
             </div>
 
-            <!-- 4. عرض المحاضرات والملازم (قراءة فقط) -->
+            <!-- 4. عرض المحاضرات والملازم -->
             <div class="card" id="lecturesSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 id="currentSubTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
@@ -445,7 +443,7 @@
                 </div>
             </div>
 
-            <!-- لوحة التحكم للإدارة (مخفية عن الطلاب كلياً) -->
+            <!-- لوحة التحكم للإدارة -->
             <div class="card" id="sectionRequests" style="display: none;">
                 <div class="card-header"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد (قبول / رفض)</div>
                 <div id="requestsList">جاري جلب الطلبات...</div>
@@ -491,7 +489,7 @@
                     </div>
                     <div class="form-group">
                         <label>عنوان المحاضرة / الكتاب</label>
-                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: كتاب الحاسوب الكامل">
+                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الحاسوب - الفصل الأول">
                     </div>
                     <div class="form-group">
                         <label>رابط الملف / الكتاب السحابي (Google Drive / رابط مباشر)</label>
@@ -532,8 +530,9 @@
     </div>
 
     <script>
+        // إعدادات القاعدة المباشرة والفعلية لمشروعك
         const firebaseConfig = {
-            databaseURL: "https://waleed-ai-platform-default-rtdb.firebaseio.com"
+            databaseURL: "https://waleed-ai-default-rtdb.firebaseio.com"
         };
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
@@ -542,6 +541,7 @@
         let activeClass = "";
         let activeSub = "";
 
+        // قائمة المواد الأساسية الكاملة
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
             { name: "الرياضيات", icon: "fas fa-square-root-alt" },
@@ -614,7 +614,7 @@
             });
         }
 
-        // حل جذري لمشكلة عدم استجابة زر الإرسال وعدم وصول الطلب
+        // معالجة وإرسال الطلب بشكل مضمون وسريع
         function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
@@ -631,13 +631,11 @@
                 return;
             }
 
-            // تعطيل الزر مؤقتاً لمنع التكرار وإظهار حالة الإرسال
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...`;
+            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري إرسال الطلب...`;
 
-            // مفتاح فريد آمن وخالي من الرموز الخاصة
             const cleanContact = contact.replace(/[^a-zA-Z0-9]/g, '_');
-            const key = 'ST_' + cleanContact;
+            const key = 'ST_' + Date.now() + '_' + cleanContact;
 
             const reqData = {
                 id: key,
@@ -653,14 +651,14 @@
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب والدخول`;
                 
-                const msg = encodeURIComponent(`مرحباً أستاذ وليد، قدمت طلب اشتراك:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${pay}`);
+                const msg = encodeURIComponent(`مرحباً أستاذ وليد، قدمت طلب اشتراك في المنصة:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${pay}`);
                 window.open(`https://t.me/WALEED92w?text=${msg}`, '_blank');
                 
                 checkStudentSession();
             }).catch(error => {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب والدخول`;
-                alert('حدث خطأ في الاتصال بالسحابة: ' + error.message);
+                alert('حدث خطأ أثناء الإرسال: ' + error.message);
             });
         }
 
@@ -709,42 +707,24 @@
             activeClass = className;
             document.getElementById('currentClassName').innerText = className;
             showSection('subjectsSection');
-            renderAvailableSubjectsForClass(className);
+            renderAllSubjectsGrid();
         }
 
-        function renderAvailableSubjectsForClass(className) {
+        // عرض جميع المواد بدون استثناء عند الضغط على أي صف
+        function renderAllSubjectsGrid() {
             const gridContainer = document.getElementById('dynamicSubjectsGrid');
-            gridContainer.innerHTML = `<p style="color:#64748b; text-align:center; grid-column: 1 / -1;">جاري التحقق من المواد المتاحة...</p>`;
+            let html = '';
 
-            db.ref('contents').once('value', snapshot => {
-                const data = snapshot.val() || {};
-                const activeSubjectsSet = new Set();
-
-                Object.keys(data).forEach(k => {
-                    const item = data[k];
-                    if (item.grade === className) {
-                        activeSubjectsSet.add(item.subject);
-                    }
-                });
-
-                let html = '';
-                allSubjectsList.forEach(sub => {
-                    if (activeSubjectsSet.has(sub.name)) {
-                        html += `
-                            <div class="sub-card" onclick="openSubject('${sub.name}')">
-                                <i class="${sub.icon}"></i>
-                                <span>${sub.name}</span>
-                            </div>
-                        `;
-                    }
-                });
-
-                if (!html) {
-                    gridContainer.innerHTML = `<p style="color:#64748b; text-align:center; grid-column: 1 / -1; padding: 20px;">لا توجد مواد مرفوعة لها محتوى في هذا الصف حالياً.</p>`;
-                } else {
-                    gridContainer.innerHTML = html;
-                }
+            allSubjectsList.forEach(sub => {
+                html += `
+                    <div class="sub-card" onclick="openSubject('${sub.name}')">
+                        <i class="${sub.icon}"></i>
+                        <span>${sub.name}</span>
+                    </div>
+                `;
             });
+
+            gridContainer.innerHTML = html;
         }
 
         function openSubject(subName) {
@@ -765,7 +745,7 @@
             db.ref('contents').on('value', snapshot => {
                 const data = snapshot.val();
                 if (!data) {
-                    container.innerHTML = `<p style="text-align:center; color:#64748b;">لا توجد محاضرات أو ملازم مرفوعة لهذه المادة حالياً.</p>`;
+                    container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو كتب مرفوعة لهذه المادة حتى الآن.</p>`;
                     return;
                 }
 
@@ -789,7 +769,7 @@
                     }
                 });
 
-                container.innerHTML = html || `<p style="text-align:center; color:#64748b;">لا توجد محاضرات أو ملازم مرفوعة لهذه المادة حالياً.</p>`;
+                container.innerHTML = html || `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو كتب مرفوعة لهذه المادة حتى الآن.</p>`;
             });
         }
 
@@ -799,6 +779,7 @@
             }
         }
 
+        // الاستماع اللحظي الفوري لطلبات الاشتراك والمشتركين
         function listenRequestsData() {
             db.ref('requests').on('value', snapshot => {
                 const reqList = document.getElementById('requestsList');
@@ -807,9 +788,9 @@
                 const data = snapshot.val();
 
                 if (!data) {
-                    reqList.innerHTML = '<p>لا توجد طلبات حالياً.</p>';
-                    subList.innerHTML = '<p>لا يوجد مشتركين حالياً.</p>';
-                    manageList.innerHTML = '<p>لا يوجد مشتركين للتعديل.</p>';
+                    reqList.innerHTML = '<p style="text-align:center; color:#64748b;">لا توجد طلبات حالياً.</p>';
+                    subList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين حالياً.</p>';
+                    manageList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل.</p>';
                     return;
                 }
 
@@ -844,7 +825,7 @@
                                 <div><strong>${r.name}</strong> (${r.contact})</div>
                                 <div>
                                     <button class="btn btn-warning" onclick="setReqStatus('${r.id}', 'pending')">إلغاء الاشتراك</button>
-                                    <button class="btn btn-danger" onclick="deleteAndExpel('${r.id}')">طرد نهائي (يمكنه طلب جديد)</button>
+                                    <button class="btn btn-danger" onclick="deleteAndExpel('${r.id}')">طرد نهائي</button>
                                 </div>
                             </div>
                         `;
@@ -853,7 +834,9 @@
 
                 reqList.innerHTML = reqHtml || '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة حالياً.</p>';
                 subList.innerHTML = subHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين مفعلين حالياً.</p>';
-                manageList.innerHTML = manageHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل علي حساباتهم.</p>';
+                manageList.innerHTML = manageHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
+            }, error => {
+                console.error("خطأ قراءة الطلبات:", error);
             });
         }
 
