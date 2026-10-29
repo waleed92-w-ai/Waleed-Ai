@@ -462,7 +462,7 @@
 
             <!-- قسم رفع الملفات الضخمة -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع المحاضرات والكتب الكبيرة جداً (PDF / أية حجوم)</div>
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع المحاضرات والكتاب الضخم (PDF / أية حجوم)</div>
                 <form onsubmit="handleUploadContent(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
@@ -623,7 +623,7 @@
             });
         }
 
-        // إرسال الطلب بالطريقة المباشرة والفورية (تمنع تجمد الزر نهائياً)
+        // إرسال الطلب وحفظه برابط مباشر سريع وآمن
         function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
@@ -655,7 +655,6 @@
                 timestamp: Date.now()
             };
 
-            // استخدام الاتصال المباشر (Fetch API) لضمان إرسال الطلب وعدم تجمد الزر أبداً
             fetch(`${DATABASE_URL}/requests/${key}.json`, {
                 method: 'PUT',
                 body: JSON.stringify(reqData),
@@ -666,11 +665,17 @@
                 submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
                 showSection('pendingNotice');
             }).catch(error => {
-                // حفظ محلي واحتياطي لضمان عمل الطالب حتى بدون اتصال سيرفر فوري
-                localStorage.setItem('wal_key', key);
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
-                showSection('pendingNotice');
+                db.ref('requests/' + key).set(reqData).then(() => {
+                    localStorage.setItem('wal_key', key);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                    showSection('pendingNotice');
+                }).catch(err => {
+                    localStorage.setItem('wal_key', key);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                    showSection('pendingNotice');
+                });
             });
         }
 
@@ -790,7 +795,7 @@
             }
         }
 
-        // استقبال وعرض الطلبات لحظياً في لوحة الإدارة
+        // استقبال وجلب وعرض الطلبات فوراً في لوحة التحكم الإدارية
         function listenRequestsData() {
             db.ref('requests').on('value', snapshot => {
                 const reqList = document.getElementById('requestsList');
@@ -848,11 +853,44 @@
                 manageList.innerHTML = manageHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
             }, error => {
                 console.error("خطأ جلب الطلبات:", error);
+                // محاولة احتياطية ثانية في حال فشل الاستماع المباشر
+                fetch(`${DATABASE_URL}/requests.json`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data) {
+                            let reqHtml = '';
+                            Object.keys(data).forEach(k => {
+                                const r = data[k];
+                                if (r.status === 'pending') {
+                                    reqHtml += `
+                                        <div class="list-item">
+                                            <div>
+                                                <strong>${r.name}</strong> (${r.contact})
+                                                <br><small style="color:#64748b;">طريقة التحويل: ${r.paymentMethod}</small>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-success" onclick="setReqStatus('${r.id}', 'active')">قبول وتفعيل</button>
+                                                <button class="btn btn-danger" onclick="setReqStatus('${r.id}', 'rejected')">رفض</button>
+                                            </div>
+                                        </div>
+                                    `;
+                                }
+                            });
+                            document.getElementById('requestsList').innerHTML = reqHtml || '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة حالياً.</p>';
+                        }
+                    });
             });
         }
 
         function setReqStatus(id, newStatus) {
-            db.ref('requests/' + id + '/status').set(newStatus);
+            db.ref('requests/' + id + '/status').set(newStatus).then(() => {
+                // تحديث مباشر بالـ REST لضمان السرعة القصوى
+                fetch(`${DATABASE_URL}/requests/${id}/status.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify(newStatus),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            });
         }
 
         function deleteAndExpel(id) {
