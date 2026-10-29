@@ -18,11 +18,6 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <!-- PDF.js library to render all pages -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
-    </script>
 
     <style>
         :root {
@@ -330,7 +325,7 @@
 
         .file-mini-info i {
             font-size: 2rem;
-            color: #ef4444;
+            color: #2563eb;
         }
 
         .file-mini-info h4 {
@@ -393,6 +388,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             background: #fff;
+            object-fit: contain;
         }
 
         @media (max-width: 768px) {
@@ -437,7 +433,7 @@
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
                 <button class="nav-item" onclick="showSection('sectionSubscribers')"><i class="fas fa-users"></i> اسماء المشتركين</button>
                 <button class="nav-item" onclick="showSection('sectionManageSubscribers')"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</button>
-                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع الملفات للمشاهدة</button>
+                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع الصور والملفات</button>
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
@@ -523,9 +519,9 @@
                 <div id="manageSubscribersList">جاري التحميل...</div>
             </div>
 
-            <!-- قسم رفع الملفات المباشر الفوري -->
+            <!-- قسم رفع الملفات أو الصور (يمكنك رفع عدة صور لصفحات الملزمة معاً) -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع الملفات والملازم المباشر من جهازك (للمشاهدة فقط)</div>
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع صور الملزمة أو الكتاب (اختر صورة أو عدة صور صفحات)</div>
                 <form onsubmit="handleFastFileUpload(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
@@ -554,16 +550,16 @@
                     </div>
                     <div class="form-group">
                         <label>عنوان المحاضرة أو الملزمة</label>
-                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الفصل الأول">
+                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الفصل الأول (اختر الصور متسلسلة)">
                     </div>
 
                     <div class="form-group">
-                        <label>اختر الملف من جهازك (PDF أو صور)</label>
-                        <input type="file" class="form-control" id="upFile" accept=".pdf,.png,.jpg,.jpeg" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">🔒 يتم النشر كبطاقة مصغرة وتجهيز كافة الصفحات للمشاهدة الحصرية.</small>
+                        <label>اختر صور صفحات الملزمة من جهازك (يمكنك تحديد عدة صور معاً)</label>
+                        <input type="file" class="form-control" id="upFile" accept="image/*" multiple required style="padding: 10px;">
+                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 حدد كل صفحات الملزمة دفعة واحدة (اضغط باستمرار لتحديد عدة صور)، وستظهر للطالب متسلسلة وتعمل بسلاسة.</small>
                     </div>
 
-                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة</button>
+                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر الملزمة فوراً في المنصة</button>
                 </form>
             </div>
 
@@ -585,15 +581,15 @@
         </main>
     </div>
 
-    <!-- نافذة عرض الملفات لعرض كافة الصفحات متسلسلة -->
+    <!-- نافذة عرض الملفات لعرض كافة الصور متسلسلة -->
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box">
             <div class="modal-header-bar">
-                <span id="modalFileTitle">عرض الملف</span>
+                <span id="modalFileTitle">عرض الملزمة</span>
                 <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="closeFileModal()"><i class="fas fa-times"></i> إغلاق</button>
             </div>
             <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;">
-                <!-- يتم تحميل كافة الصفحات هنا -->
+                <!-- يتم تحميل الصور متسلسلة هنا -->
             </div>
         </div>
     </div>
@@ -859,13 +855,12 @@
                     Object.keys(data).forEach(k => {
                         const item = data[k];
                         if (item.grade === activeClass && item.subject === activeSub) {
-                            let safeData = encodeURIComponent(item.fileData);
-                            let isImg = item.fileType && item.fileType.includes('image');
+                            let imagesJson = encodeURIComponent(JSON.stringify(item.imagesArray || [item.fileData]));
 
                             html += `
-                                <div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}', ${isImg})">
+                                <div class="file-mini-card" onclick="openFileModal('${item.title}', '${imagesJson}')">
                                     <div class="file-mini-info">
-                                        <i class="fas ${isImg ? 'fa-image' : 'fa-file-pdf'}"></i>
+                                        <i class="fas fa-images"></i>
                                         <h4>${item.title}</h4>
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -885,50 +880,24 @@
                 });
         }
 
-        // فتح نافذة العرض وتحويل جميع صفحات الـ PDF إلى صور مرئية ومتسلسلة
-        async function openFileModal(title, encodedData, isImg) {
+        // فتح نافذة العرض لعرض كافة صفحات الصور متسلسلة تحت بعضها
+        function openFileModal(title, encodedImages) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
-            container.innerHTML = `<p style="color:white; text-align:center; padding:30px;"><i class="fas fa-spinner fa-spin"></i> جاري تحميل كافة صفحات الملزمة...</p>`;
-            document.getElementById('fileViewerModal').style.display = 'flex';
+            container.innerHTML = '';
 
-            let realData = decodeURIComponent(encodedData);
-
-            if (isImg) {
-                container.innerHTML = `<img src="${realData}" alt="${title}">`;
-            } else {
-                try {
-                    const loadingTask = pdfjsLib.getDocument(realData);
-                    const pdfDoc = await loadingTask.promise;
-                    container.innerHTML = ''; // تفريغ التحميل
-
-                    for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
-                        const page = await pdfDoc.getPage(pageNum);
-                        const scale = 1.5; // دقة ووضوح عالية
-                        const viewport = page.getViewport({ scale: scale });
-
-                        const canvas = document.createElement('canvas');
-                        const context = canvas.getContext('2d');
-                        canvas.height = viewport.height;
-                        canvas.width = viewport.width;
-                        canvas.style.width = "100%";
-                        canvas.style.height = "auto";
-                        canvas.style.marginBottom = "10px";
-                        canvas.style.borderRadius = "8px";
-                        canvas.style.boxShadow = "0 4px 15px rgba(0,0,0,0.5)";
-
-                        await page.render({ canvasContext: context, viewport: viewport }).promise;
-                        container.appendChild(canvas);
-                    }
-                } catch (err) {
-                    container.innerHTML = `
-                        <p style="color:#ef4444; text-align:center; padding:20px;">عذراً، حدث خطأ في عرض الملف.</p>
-                        <div style="text-align:center; margin-top: 10px;">
-                            <a href="${realData}" target="_blank" class="btn btn-primary"><i class="fas fa-external-link-alt"></i> فتح الملف مباشرة</a>
-                        </div>
-                    `;
-                }
+            try {
+                let imagesArray = JSON.parse(decodeURIComponent(encodedImages));
+                imagesArray.forEach(imgSrc => {
+                    let imgEl = document.createElement('img');
+                    imgEl.src = imgSrc;
+                    container.appendChild(imgEl);
+                });
+            } catch (e) {
+                container.innerHTML = `<p style="color:white; text-align:center; padding:20px;">خطأ في عرض الصور.</p>`;
             }
+
+            document.getElementById('fileViewerModal').style.display = 'flex';
         }
 
         function closeFileModal() {
@@ -1021,6 +990,7 @@
             }
         }
 
+        // دالة قراءة ورفع عدة صور لصفحات الملزمة دفعة واحدة وبسرعة فائقة
         function handleFastFileUpload(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
@@ -1030,51 +1000,57 @@
             const uploadBtn = document.getElementById('uploadBtn');
 
             if (fileInput.files.length === 0) {
-                alert('يرجى اختيار ملف من جهازك.');
+                alert('يرجى اختيار صور صفحات الملزمة.');
                 return;
             }
 
-            const file = fileInput.files[0];
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري معالجة ونشر الملف...`;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري معالجة ورفع الصفحات...`;
 
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                const base64Data = evt.target.result;
-                const contentId = 'CONT_' + Date.now();
+            const files = Array.from(fileInput.files);
+            let imagesArray = [];
+            let processed = 0;
 
-                const contentData = {
-                    id: contentId,
-                    grade: grade,
-                    subject: subject,
-                    title: title,
-                    fileData: base64Data,
-                    fileType: file.type,
-                    date: new Date().toLocaleDateString('ar-EG')
-                };
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    imagesArray[index] = evt.target.result;
+                    processed++;
 
-                fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
-                    method: 'PUT',
-                    body: JSON.stringify(contentData),
-                    headers: { 'Content-Type': 'application/json' }
-                }).then(res => {
-                    uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة`;
-                    if (res.ok) {
-                        alert('تم نشر الملف كبطاقة مصغرة بنجاح وبشكل فوري!');
-                        document.getElementById('upTitle').value = '';
-                        document.getElementById('upFile').value = '';
-                    } else {
-                        alert('حدث خطأ أثناء حفظ الملف.');
+                    if (processed === files.length) {
+                        const contentId = 'CONT_' + Date.now();
+                        const contentData = {
+                            id: contentId,
+                            grade: grade,
+                            subject: subject,
+                            title: title,
+                            imagesArray: imagesArray,
+                            date: new Date().toLocaleDateString('ar-EG')
+                        };
+
+                        fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
+                            method: 'PUT',
+                            body: JSON.stringify(contentData),
+                            headers: { 'Content-Type': 'application/json' }
+                        }).then(res => {
+                            uploadBtn.disabled = false;
+                            uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر الملزمة فوراً في المنصة`;
+                            if (res.ok) {
+                                alert('تم نشر الملزمة بكافة صفحاتها بنجاح!');
+                                document.getElementById('upTitle').value = '';
+                                document.getElementById('upFile').value = '';
+                            } else {
+                                alert('حدث خطأ أثناء الحفظ.');
+                            }
+                        }).catch(() => {
+                            uploadBtn.disabled = false;
+                            uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر الملزمة فوراً في المنصة`;
+                            alert('حدث خطأ في الشبكة.');
+                        });
                     }
-                }).catch(() => {
-                    uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة`;
-                    alert('حدث خطأ في الشبكة.');
-                });
-            };
-
-            reader.readAsDataURL(file);
+                };
+                reader.readAsDataURL(file);
+            });
         }
     </script>
 </body>
