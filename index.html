@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs (نسخة مستقرة ومتوافقة تماماً) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
@@ -540,12 +540,13 @@
     </div>
 
     <script>
-        // إعدادات قاعدة البيانات الفعلية
+        // إعدادات قاعدة البيانات المباشرة للمشروع
         const firebaseConfig = {
-            databaseURL: "https://waleed-ai-default-rtdb.firebaseio.com",
-            storageBucket: "waleed-ai.appspot.com"
+            databaseURL: "https://waleed-ai-default-rtdb.firebaseio.com"
         };
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.database();
 
         const ADMIN_HASH = "V0ExOTkyd2E="; // WA1992wa
@@ -624,7 +625,7 @@
             });
         }
 
-        // إرسال الطلب وحفظه بقاعدة البيانات
+        // إرسال الطلب وحفظه بقاعدة البيانات بسلاسة فائقة
         function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
@@ -788,7 +789,7 @@
             }
         }
 
-        // الاستماع الفوري لطلبات الاشتراك والمشتركين
+        // الاستقبال الفوري للطلبات والمشتركين في لوحة التحكم
         function listenRequestsData() {
             db.ref('requests').on('value', snapshot => {
                 const reqList = document.getElementById('requestsList');
@@ -859,7 +860,7 @@
             }
         }
 
-        // معالجة رفع الملفات الضخمة والحبيسة سحابياً
+        // رفع الملفات الضخمة والكتب سحابياً
         function handleUploadContent(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
@@ -875,7 +876,7 @@
             }
 
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري رفع الملف الضخم...`;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري نشر المحتوى...`;
 
             const contentId = 'CONT_' + Date.now();
 
