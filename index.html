@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الأستاذ وليد التعليمية - المرحلة الثانوية</title>
     
-    <!-- PWA App Profile Icon -->
+    <!-- PWA profile icon -->
     <link rel="icon" type="image/jpeg" href="IMG_1507.jpeg">
     <link rel="apple-touch-icon" href="IMG_1507.jpeg">
     <meta name="apple-mobile-web-app-title" content="منصة وليد">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-    <!-- Icons & Fonts -->
+    <!-- Fonts & Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
@@ -23,15 +23,16 @@
     <style>
         :root {
             --primary: #1e3a8a;
-            --primary-light: #3b82f6;
+            --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #2563eb 100%);
             --accent: #f59e0b;
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
-            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
             --success: #10b981;
-            --radius: 18px;
+            --danger: #ef4444;
+            --shadow: 0 10px 30px -5px rgba(0,0,0,0.08);
+            --radius: 20px;
         }
 
         * {
@@ -42,94 +43,97 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-dark);
-            padding-bottom: 90px;
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: 50px;
         }
 
+        /* Top Header */
         header {
-            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            background: var(--primary-gradient);
             color: white;
-            padding: 20px 18px;
+            padding: 18px;
             border-bottom-left-radius: 28px;
             border-bottom-right-radius: 28px;
-            box-shadow: 0 10px 30px rgba(30, 58, 138, 0.25);
+            box-shadow: 0 10px 25px rgba(30, 58, 138, 0.25);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .teacher-profile {
+        .profile-box {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 12px;
         }
 
-        .profile-avatar {
-            width: 62px;
-            height: 62px;
+        .avatar {
+            width: 58px;
+            height: 58px;
             border-radius: 50%;
             object-fit: cover;
             border: 3px solid rgba(255,255,255,0.9);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         }
 
-        .header-title h1 {
-            font-size: 1.3rem;
+        .header-info h1 {
+            font-size: 1.25rem;
             font-weight: 800;
         }
 
-        .header-title p {
-            font-size: 0.82rem;
+        .header-info p {
+            font-size: 0.8rem;
             opacity: 0.9;
         }
 
-        .nav-buttons {
+        .header-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .nav-btn {
-            background: rgba(255,255,255,0.2);
+        .icon-btn {
+            background: rgba(255,255,255,0.18);
             color: white;
             border: none;
-            width: 44px;
-            height: 44px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            transition: 0.3s;
             text-decoration: none;
         }
 
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.35);
-            transform: translateY(-2px);
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
         }
 
+        /* Container */
         .container {
-            max-width: 900px;
-            margin: 22px auto;
+            max-width: 850px;
+            margin: 20px auto;
             padding: 0 16px;
         }
 
+        /* Cards */
         .card {
-            background: var(--card-bg);
+            background: var(--card);
             border-radius: var(--radius);
             padding: 24px;
-            margin-bottom: 22px;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
             border: 1px solid #e2e8f0;
         }
 
-        .card-header {
-            font-size: 1.2rem;
+        .card-title {
+            font-size: 1.15rem;
             font-weight: 800;
-            margin-bottom: 20px;
             color: var(--primary);
+            margin-bottom: 18px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -137,34 +141,37 @@
             padding-bottom: 10px;
         }
 
+        /* Forms */
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 7px;
+            margin-bottom: 6px;
             font-weight: 700;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             color: #334155;
         }
 
         .form-control {
             width: 100%;
             padding: 13px 16px;
-            border: 1px solid #cbd5e1;
+            border: 1.5px solid #cbd5e1;
             border-radius: 12px;
-            font-size: 0.98rem;
+            font-size: 0.95rem;
             outline: none;
-            background: #fff;
+            background: #f8fafc;
             transition: 0.3s;
         }
 
         .form-control:focus {
-            border-color: var(--primary-light);
+            border-color: #3b82f6;
+            background: #fff;
             box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
         }
 
+        /* Buttons */
         .btn {
             width: 100%;
             padding: 14px;
@@ -173,94 +180,89 @@
             font-weight: 800;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             text-decoration: none;
         }
 
-        .btn-primary { background: var(--primary-light); color: white; }
+        .btn-primary { background: #3b82f6; color: white; }
         .btn-primary:hover { background: #2563eb; }
         .btn-success { background: var(--success); color: white; }
         .btn-success:hover { background: #059669; }
         .btn-danger { background: var(--danger); color: white; }
-        .btn-danger:hover { background: #dc2626; }
         .btn-secondary { background: #64748b; color: white; }
         .btn-telegram { background: #0088cc; color: white; }
-        .btn-sm { padding: 7px 14px; font-size: 0.82rem; width: auto; border-radius: 8px; }
+        .btn-sm { padding: 8px 14px; font-size: 0.82rem; width: auto; border-radius: 10px; }
 
+        /* Grid Cards for Grades & Subjects */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+            gap: 14px;
+        }
+
+        .grid-btn {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px 10px;
+            text-align: center;
+            font-weight: 800;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.98rem;
+        }
+
+        .grid-btn i {
+            font-size: 1.6rem;
+            color: #3b82f6;
+        }
+
+        .grid-btn:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(59, 130, 246, 0.15);
+        }
+
+        /* Requests Management Items */
         .student-item {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
             border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
-        }
-
-        .student-info h4 {
-            color: var(--primary);
-            font-size: 1.05rem;
-            font-weight: 800;
-        }
-
-        .student-info p {
-            font-size: 0.88rem;
-            color: #475569;
-            margin-top: 3px;
+            gap: 10px;
         }
 
         .badge {
-            display: inline-block;
             padding: 4px 10px;
             border-radius: 8px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 800;
-            margin-top: 5px;
         }
         .badge-pending { background: #fef3c7; color: #d97706; }
         .badge-active { background: #d1fae5; color: #059669; }
         .badge-rejected { background: #fee2e2; color: #dc2626; }
 
-        .grid-layout {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 14px;
-            margin-bottom: 15px;
-        }
-
-        .grid-card {
-            padding: 18px;
-            border: 2px solid #e2e8f0;
-            background: #f8fafc;
-            border-radius: 14px;
-            font-weight: 800;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--text-dark);
-            font-size: 1.05rem;
-        }
-
-        .grid-card:hover, .grid-card.active {
-            border-color: var(--primary-light);
-            background: #eff6ff;
-            color: var(--primary-light);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-        }
-
+        /* Modals & Notifications */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(5px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -272,47 +274,47 @@
             background: white;
             border-radius: var(--radius);
             width: 100%;
-            max-width: 420px;
-            padding: 26px;
+            max-width: 400px;
+            padding: 24px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
 
-        .notification {
+        .toast {
             position: fixed;
-            bottom: 24px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--text-dark);
+            background: var(--text-main);
             color: white;
-            padding: 12px 28px;
+            padding: 10px 24px;
             border-radius: 30px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             display: none;
             z-index: 4000;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             font-weight: 700;
         }
     </style>
 </head>
 <body>
 
-    <!-- الهيدر -->
+    <!-- Header -->
     <header>
-        <div class="teacher-profile">
-            <img src="IMG_1507.jpeg" alt="الأستاذ وليد" class="profile-avatar" onerror="this.src='https://via.placeholder.com/62'">
-            <div class="header-title">
+        <div class="profile-box">
+            <img src="IMG_1507.jpeg" alt="الأستاذ وليد" class="avatar" onerror="this.src='https://via.placeholder.com/58'">
+            <div class="header-info">
                 <h1>منصة الأستاذ وليد التعليمية</h1>
-                <p id="appSubtitle">المرحلة الثانوية</p>
+                <p id="subHeaderTitle">المرحلة الثانوية</p>
             </div>
         </div>
-        <div class="nav-buttons">
-            <a href="https://t.me/WALEED92w" target="_blank" class="nav-btn" title="التواصل عبر تيليجرام">
+        <div class="header-actions">
+            <a href="https://t.me/WALEED92w" target="_blank" class="icon-btn" title="تواصل تيليجرام">
                 <i class="fab fa-telegram-plane"></i>
             </a>
-            <button class="nav-btn" id="loginAdminBtn" onclick="openAdminModal()" title="لوحة التحكم">
-                <i class="fas fa-user-shield"></i>
+            <button class="icon-btn" id="loginAdminBtn" onclick="openAdminModal()" title="لوحة التحكم">
+                <i class="fas fa-lock"></i>
             </button>
-            <button class="nav-btn" id="logoutAdminBtn" onclick="logoutAdmin()" style="display:none;" title="تسجيل الخروج">
+            <button class="icon-btn" id="logoutAdminBtn" onclick="logoutAdmin()" style="display:none;" title="خروج الإدارة">
                 <i class="fas fa-sign-out-alt"></i>
             </button>
         </div>
@@ -320,52 +322,44 @@
 
     <div class="container">
 
-        <!-- ==================== لوحة تحكم الأستاذ ==================== -->
-        <div id="adminPanelArea" style="display: none;">
+        <!-- ==================== 1. لوحة تحكم المدرس ==================== -->
+        <div id="adminArea" style="display: none;">
             
-            <!-- إعدادات المنصة الشاملة -->
+            <!-- إعدادات المنصة -->
             <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-sliders-h"></i> إعدادات المنصة (تعديل السعر وطرق الدفع ومعرف تيليجرام)
-                </div>
-                <form id="settingsForm" onsubmit="saveGlobalSettings(event)">
+                <div class="card-title"><i class="fas fa-cog"></i> إعدادات الاشتراك وطرق الدفع</div>
+                <form onsubmit="savePlatformSettings(event)">
                     <div class="form-group">
-                        <label>قيمة الاشتراك الشهري (بالدينار العراقي)</label>
-                        <input type="text" class="form-control" id="cfgPrice" placeholder="5000" required>
+                        <label>قيمة الاشتراك (بالدينار)</label>
+                        <input type="text" class="form-control" id="cfgPrice" required>
                     </div>
                     <div class="form-group">
-                        <label>أرقام وطرق الدفع</label>
+                        <label>بيانات وطرق الدفع</label>
                         <textarea class="form-control" id="cfgPaymentDetails" rows="3" required></textarea>
                     </div>
                     <div class="form-group">
-                        <label>معرف التيليجرام للاستلام والتواصل</label>
-                        <input type="text" class="form-control" id="cfgTelegram" placeholder="WALEED92w" required>
+                        <label>معرف التواصل تيليجرام</label>
+                        <input type="text" class="form-control" id="cfgTelegram" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> حفظ التحديثات فوراً
-                    </button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> حفظ الإعدادات السحابية</button>
                 </form>
             </div>
 
-            <!-- إدارة طلبات واشتراكات الطلاب -->
+            <!-- إدارة طلبات الطلاب السحابية -->
             <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-users-cog"></i> إدارة طلبات واشتراكات الطلاب
-                </div>
-                <div id="requestsListContainer">
-                    <p style="text-align: center; color: var(--text-muted); padding: 15px;">جاري تحميل الطلبات...</p>
+                <div class="card-title"><i class="fas fa-users-cog"></i> إدارة طلبات اشتراك الطلاب</div>
+                <div id="requestsList">
+                    <p style="text-align:center; color:var(--text-sub);">جاري جلب الطلبات السحابية...</p>
                 </div>
             </div>
 
-            <!-- إضافة محتوى (ملفات، روابط، وفيديوهات) -->
+            <!-- رفع الملازم والمحاضرات -->
             <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-plus-circle"></i> إضافة محتوى تعليمي (ملف، فيديو، أو رابط)
-                </div>
-                <form id="contentForm" onsubmit="handleContentUpload(event)">
+                <div class="card-title"><i class="fas fa-cloud-upload-alt"></i> نشر محتوى تعليمي (ملزمة / فيديو)</div>
+                <form onsubmit="handleContentUpload(event)">
                     <div class="form-group">
-                        <label>اختر الصف الدراسي الثانوي</label>
-                        <select class="form-control" id="contGrade" required>
+                        <label>اختر الصف الدراسي</label>
+                        <select class="form-control" id="uploadGrade" required>
                             <option value="الأول المتوسط">الأول المتوسط</option>
                             <option value="الثاني المتوسط">الثاني المتوسط</option>
                             <option value="الثالث المتوسط">الثالث المتوسط</option>
@@ -375,8 +369,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>المادة الدراسية (تحتوي على الحاسوب وجميع المواد)</label>
-                        <select class="form-control" id="contSubject" required>
+                        <label>المادة الدراسية</label>
+                        <select class="form-control" id="uploadSubject" required>
                             <option value="الحاسوب">💻 الحاسوب</option>
                             <option value="الرياضيات">📐 الرياضيات</option>
                             <option value="اللغة العربية">📖 اللغة العربية</option>
@@ -390,130 +384,126 @@
                     </div>
                     <div class="form-group">
                         <label>نوع المحتوى</label>
-                        <select class="form-control" id="contType" onchange="toggleContentTypeFields()" required>
-                            <option value="file">📁 ملف أو ملزمة من الجهاز (PDF/صور)</option>
-                            <option value="video">🎥 مقطع فيديو (رابط يوتيوب أو فيديو مباشر)</option>
-                            <option value="link">🔗 رابط خارجي أو موقع تعليمي</option>
+                        <select class="form-control" id="uploadType" onchange="toggleUploadTypeFields()" required>
+                            <option value="file">📁 ملف من الجهاز (PDF / صورة)</option>
+                            <option value="url">🔗 رابط خارجي أو فيديو (YouTube)</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>عنوان المحتوى / المحاضرة</label>
-                        <input type="text" class="form-control" id="contTitle" required placeholder="مثال: الدرس الأول - أساسيات الحاسوب">
+                        <label>عنوان الدرس / المحاضرة</label>
+                        <input type="text" class="form-control" id="uploadTitle" placeholder="مثال: الدرس الأول - الحاسوب" required>
                     </div>
-                    
-                    <div class="form-group" id="fileFieldGroup">
-                        <label>اختر الملف من جهازك</label>
-                        <input type="file" class="form-control" id="contFile">
+                    <div class="form-group" id="fileGroup">
+                        <label>اختر الملف</label>
+                        <input type="file" class="form-control" id="uploadFileInput">
                     </div>
-
-                    <div class="form-group" id="urlFieldGroup" style="display:none;">
-                        <label id="urlFieldLabel">رابط الفيديو (يوتيوب أو رابط مباشر)</label>
-                        <input type="url" class="form-control" id="contUrl" placeholder="https://...">
+                    <div class="form-group" id="urlGroup" style="display: none;">
+                        <label>الرابط</label>
+                        <input type="url" class="form-control" id="uploadUrlInput" placeholder="https://...">
                     </div>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-cloud-upload-alt"></i> نشر المحتوى للمنصة
-                    </button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> نشر المحتوى فوراً</button>
                 </form>
             </div>
 
         </div>
 
-        <!-- ==================== واجهة الطالب والصفوف ==================== -->
-        <div id="studentPanelArea">
-            
-            <!-- نموذج طلب الاشتراك (أعلى الواجهة) -->
-            <div class="card" id="subscriptionFormCard">
-                <div class="card-header">
-                    <i class="fas fa-id-card"></i> طلب اشتراك في المنصة التعليمية الثانوية
-                </div>
+        <!-- ==================== 2. واجهة الطالب والتسجيل ==================== -->
+        <div id="studentArea">
+
+            <!-- شاشة الدخول والاشتراك -->
+            <div class="card" id="loginCard">
+                <div class="card-title"><i class="fas fa-user-graduate"></i> الاشتراك والدخول للمنصة</div>
                 
-                <div style="background: #f1f5f9; padding: 16px; border-radius: 12px; margin-bottom: 18px; border-right: 4px solid var(--primary-light);">
-                    <p style="font-weight: 800; font-size: 1.05rem; color: var(--primary);">
-                        <i class="fas fa-tag"></i> رسم الاشتراك: <span id="displayPriceText">5000</span> دينار عراقي
-                    </p>
-                    <div id="displayPaymentMethods" style="font-size: 0.9rem; margin-top: 8px; color: #334155; white-space: pre-line;">
+                <div style="background: #f1f5f9; padding: 14px; border-radius: 12px; margin-bottom: 16px; border-right: 4px solid #3b82f6;">
+                    <p style="font-weight:800; color:var(--primary);"><i class="fas fa-tag"></i> رسوم الاشتراك الشهري: <span id="priceDisplay">5000</span> دينار</p>
+                    <div id="paymentDisplay" style="font-size:0.88rem; margin-top:6px; color:#334155; white-space:pre-line;">
                         💳 ماستر كارد: 9061913829
                         📱 زين كاش: 07816745861
                         💵 ماستر دينار: 5285780016156442
                     </div>
                 </div>
 
-                <form id="studentRequestForm" onsubmit="submitStudentRequest(event)">
+                <form onsubmit="handleStudentAuth(event)">
+                    <div class="form-group">
+                        <label>الاسم الثلاثي للطالب</label>
+                        <input type="text" class="form-control" id="stName" placeholder="أدخل اسمك الثلاثي" required>
+                    </div>
+                    <div class="form-group">
+                        <label>معرف التواصل (رقم الهاتف أو معرف التيليجرام)</label>
+                        <input type="text" class="form-control" id="stContact" placeholder="@username أو رقم الهاتف" required>
+                    </div>
                     <div class="form-group">
                         <label>طريقة الدفع المحول عبرها</label>
-                        <select class="form-control" id="studentPaymentMethod" required>
-                            <option value="" disabled selected>-- اختر طريقة التحويل --</option>
-                            <option value="ماستر كارد (9061913829)">ماستر كارد (9061913829)</option>
+                        <select class="form-control" id="stPayment">
                             <option value="زين كاش (07816745861)">زين كاش (07816745861)</option>
+                            <option value="ماستر كارد (9061913829)">ماستر كارد (9061913829)</option>
                             <option value="ماستر دينار (5285780016156442)">ماستر دينار (5285780016156442)</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>الاسم الثلاثي للطالب</label>
-                        <input type="text" class="form-control" id="studentFullName" required placeholder="أدخل اسمك الكامل">
-                    </div>
-                    <div class="form-group">
-                        <label>معرف التواصل (يوزر تيليجرام أو رقم الهاتف)</label>
-                        <input type="text" class="form-control" id="studentContact" required placeholder="@username">
-                    </div>
-                    <button type="submit" class="btn btn-success">
-                        <i class="fas fa-paper-plane"></i> إرسال الطلب واعتماد الاشتراك
-                    </button>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-key"></i> إرسال الطلب / تسجيل الدخول</button>
                 </form>
             </div>
 
-            <!-- المنطقة التعليمية والصفوف والمواد (تظهر بشكل ثابت ومباشر للجميع) -->
-            <div id="learningArea">
+            <!-- شاشة الانتظار والمراجعة -->
+            <div class="card" id="pendingCard" style="display: none; text-align: center; padding: 30px 15px;">
+                <i class="fas fa-hourglass-half" id="statusIcon" style="font-size: 3rem; color: var(--accent); margin-bottom: 12px;"></i>
+                <h3 id="statusTitle" style="color: var(--primary); margin-bottom: 8px;">طلبك قيد المراجعة</h3>
+                <p id="statusDesc" style="color: var(--text-sub); margin-bottom: 18px;">تم استلام طلبك، وسيقوم الأستاذ وليد بتفعيل حسابك فور التأكد من التحويل.</p>
+                <button class="btn btn-secondary btn-sm" onclick="logoutStudent()" style="margin: 0 auto 10px auto;"><i class="fas fa-edit"></i> تعديل البيانات</button>
+                <br>
+                <a href="https://t.me/WALEED92w" target="_blank" class="btn btn-telegram" style="max-width: 250px; margin: 0 auto;"><i class="fab fa-telegram-plane"></i> مراسلة الأستاذ للتفعيل</a>
+            </div>
+
+            <!-- ==================== 3. المنطقة التعليمية والصفوف (تظهر حصراً بعد القبول) ==================== -->
+            <div id="learningArea" style="display: none;">
                 
-                <!-- 1. قائمة الصفوف الثانوية -->
-                <div class="card" id="gradesSelectionCard">
-                    <div class="card-header">
-                        <i class="fas fa-graduation-cap"></i> اختر الصف الدراسي الثانوي
-                    </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <span id="welcomeText" style="font-weight: 800; color: var(--primary);">أهلاً بك عزيزي الطالب</span>
+                    <button class="btn btn-danger btn-sm" onclick="logoutStudent()"><i class="fas fa-sign-out-alt"></i> خروج</button>
+                </div>
+
+                <!-- 1. أزرار الصفوف -->
+                <div class="card" id="gradesCard">
+                    <div class="card-title"><i class="fas fa-graduation-cap"></i> اختر الصف الدراسي الثانوي</div>
                     <div class="grid-layout">
-                        <div class="grid-card" onclick="openGrade('الأول المتوسط')">📘 الأول المتوسط</div>
-                        <div class="grid-card" onclick="openGrade('الثاني المتوسط')">📘 الثاني المتوسط</div>
-                        <div class="grid-card" onclick="openGrade('الثالث المتوسط')">📘 الثالث المتوسط</div>
-                        <div class="grid-card" onclick="openGrade('الرابع الاعدادي')">📗 الرابع الإعدادي</div>
-                        <div class="grid-card" onclick="openGrade('الخامس الاعدادي')">📗 الخامس الإعدادي</div>
-                        <div class="grid-card" onclick="openGrade('السادس الاعدادي')">📗 السادس الإعدادي</div>
+                        <div class="grid-btn" onclick="selectGrade('الأول المتوسط')"><i class="fas fa-book"></i> الأول المتوسط</div>
+                        <div class="grid-btn" onclick="selectGrade('الثاني المتوسط')"><i class="fas fa-book"></i> الثاني المتوسط</div>
+                        <div class="grid-btn" onclick="selectGrade('الثالث المتوسط')"><i class="fas fa-book"></i> الثالث المتوسط</div>
+                        <div class="grid-btn" onclick="selectGrade('الرابع الاعدادي')"><i class="fas fa-book-reader"></i> الرابع الإعدادي</div>
+                        <div class="grid-btn" onclick="selectGrade('الخامس الاعدادي')"><i class="fas fa-book-reader"></i> الخامس الإعدادي</div>
+                        <div class="grid-btn" onclick="selectGrade('السادس الاعدادي')"><i class="fas fa-user-graduate"></i> السادس الإعدادي</div>
                     </div>
                 </div>
 
-                <!-- 2. قائمة المواد الدراسية لكل صف -->
-                <div class="card" id="subjectsSelectionCard" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                        <h3 id="activeGradeTitle" style="color: var(--primary); font-size: 1.15rem;"></h3>
-                        <button class="btn btn-secondary btn-sm" onclick="backToGradesView()"><i class="fas fa-arrow-right"></i> الرجوع للصفوف</button>
+                <!-- 2. أزرار المواد -->
+                <div class="card" id="subjectsCard" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 id="currentGradeLabel" style="color: var(--primary); font-size: 1.1rem;"></h3>
+                        <button class="btn btn-secondary btn-sm" onclick="backToGrades()"><i class="fas fa-arrow-right"></i> الرجوع للصفوف</button>
                     </div>
-                    <div class="card-header">
-                        <i class="fas fa-book"></i> اختر المادة الدراسية (تحتوي على الحاسوب وجميع المواد)
-                    </div>
+                    <div class="card-title"><i class="fas fa-book-open"></i> اختر المادة الدراسية</div>
                     <div class="grid-layout">
-                        <div class="grid-card" onclick="openSubject('الحاسوب')">💻 الحاسوب</div>
-                        <div class="grid-card" onclick="openSubject('الرياضيات')">📐 الرياضيات</div>
-                        <div class="grid-card" onclick="openSubject('اللغة العربية')">📖 اللغة العربية</div>
-                        <div class="grid-card" onclick="openSubject('اللغة الإنجليزية')">🔤 الإنجليزية</div>
-                        <div class="grid-card" onclick="openSubject('الفيزياء')">⚡ الفيزياء</div>
-                        <div class="grid-card" onclick="openSubject('الكيمياء')">🧪 الكيمياء</div>
-                        <div class="grid-card" onclick="openSubject('الأحياء')">🧬 الأحياء</div>
-                        <div class="grid-card" onclick="openSubject('الاجتماعيات')">🗺️ الاجتماعيات</div>
-                        <div class="grid-card" onclick="openSubject('التربية الإسلامية')">🕌 الإسلامية</div>
+                        <div class="grid-btn" onclick="selectSubject('الحاسوب')"><i class="fas fa-laptop-code"></i> الحاسوب</div>
+                        <div class="grid-btn" onclick="selectSubject('الرياضيات')"><i class="fas fa-square-root-alt"></i> الرياضيات</div>
+                        <div class="grid-btn" onclick="selectSubject('اللغة العربية')"><i class="fas fa-font"></i> اللغة العربية</div>
+                        <div class="grid-btn" onclick="selectSubject('اللغة الإنجليزية')"><i class="fas fa-language"></i> الإنجليزية</div>
+                        <div class="grid-btn" onclick="selectSubject('الفيزياء')"><i class="fas fa-atom"></i> الفيزياء</div>
+                        <div class="grid-btn" onclick="selectSubject('الكيمياء')"><i class="fas fa-flask"></i> الكيمياء</div>
+                        <div class="grid-btn" onclick="selectSubject('الأحياء')"><i class="fas fa-dna"></i> الأحياء</div>
+                        <div class="grid-btn" onclick="selectSubject('الاجتماعيات')"><i class="fas fa-globe-americas"></i> الاجتماعيات</div>
+                        <div class="grid-btn" onclick="selectSubject('التربية الإسلامية')"><i class="fas fa-mosque"></i> الإسلامية</div>
                     </div>
                 </div>
 
-                <!-- 3. عرض المحتوى والملازم -->
-                <div class="card" id="lecturesViewCard" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                        <h3 id="activeSubjectTitle" style="color: var(--primary); font-size: 1.15rem;"></h3>
-                        <button class="btn btn-secondary btn-sm" onclick="backToSubjectsView()"><i class="fas fa-arrow-right"></i> الرجوع للمواد</button>
+                <!-- 3. عرض المحاضرات والملازم -->
+                <div class="card" id="lecturesCard" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h3 id="currentSubjectLabel" style="color: var(--primary); font-size: 1.1rem;"></h3>
+                        <button class="btn btn-secondary btn-sm" onclick="backToSubjects()"><i class="fas fa-arrow-right"></i> الرجوع للمواد</button>
                     </div>
-                    <div class="card-header">
-                        <i class="fas fa-folder-open"></i> المحتوى والملازم والفيديوهات المتاحة
-                    </div>
-                    <div id="lecturesListContainer">
-                        <p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد مواد مرفوعة لهذه المادة حالياً.</p>
+                    <div class="card-title"><i class="fas fa-folder-open"></i> المحتوى التعليمي المتاح</div>
+                    <div id="lecturesContainer">
+                        <p style="text-align:center; color:var(--text-sub);">جاري تحميل المحتوى...</p>
                     </div>
                 </div>
 
@@ -523,22 +513,20 @@
 
     </div>
 
-    <!-- نافذة دخول الأستاذ -->
+    <!-- Modal دخول المدرس -->
     <div class="modal" id="adminModal">
         <div class="modal-body">
-            <div class="card-header">
-                <i class="fas fa-lock"></i> دخول لوحة التحكم
-            </div>
+            <div class="card-title"><i class="fas fa-user-shield"></i> دخول لوحة التحكم</div>
             <div class="form-group">
                 <label>كلمة مرور الإدارة</label>
-                <input type="password" class="form-control" id="adminPasswordInput" placeholder="أدخل كلمة المرور">
+                <input type="password" class="form-control" id="adminPassInput" placeholder="أدخل كلمة المرور">
             </div>
-            <button class="btn btn-primary" onclick="verifyAdminLogin()">دخول اللوحة</button>
-            <button class="btn btn-danger" onclick="closeAdminModal()" style="margin-top: 10px; background: transparent; color: var(--text-muted);">إلغاء</button>
+            <button class="btn btn-primary" onclick="verifyAdminLogin()"><i class="fas fa-sign-in-alt"></i> دخول</button>
+            <button class="btn btn-danger" onclick="closeAdminModal()" style="margin-top: 8px; background: transparent; color: var(--text-sub);">إلغاء</button>
         </div>
     </div>
 
-    <div class="notification" id="toastNotif"></div>
+    <div class="toast" id="toastMsg"></div>
 
     <script>
         const firebaseConfig = {
@@ -549,138 +537,182 @@
         }
         const db = firebase.database();
 
-        const TEACHER_PASS_HASH = "V0ExOTkyd2E="; // WA1992wa
-        let selectedGrade = "";
-        let selectedSubject = "";
+        const ADMIN_HASH = "V0ExOTkyd2E="; // WA1992wa
+        let activeGrade = "";
+        let activeSubject = "";
 
         window.onload = function() {
-            loadGlobalSettings();
-            listenToRequests();
+            loadSettings();
+            listenRequests();
+            syncStudentState();
         };
 
-        function loadGlobalSettings() {
-            db.ref('settings').on('value', (snapshot) => {
+        function loadSettings() {
+            db.ref('settings').on('value', snapshot => {
                 const data = snapshot.val() || {};
                 const price = data.price || '5000';
                 const payments = data.payments || '💳 ماستر كارد: 9061913829\n📱 زين كاش: 07816745861\n💵 ماستر دينار: 5285780016156442';
                 const tg = data.telegram || 'WALEED92w';
 
-                document.getElementById('displayPriceText').innerText = price;
-                document.getElementById('displayPaymentMethods').innerText = payments;
-                
+                document.getElementById('priceDisplay').innerText = price;
+                document.getElementById('paymentDisplay').innerText = payments;
+
                 document.getElementById('cfgPrice').value = price;
                 document.getElementById('cfgPaymentDetails').value = payments;
                 document.getElementById('cfgTelegram').value = tg;
             });
         }
 
-        function saveGlobalSettings(e) {
+        function savePlatformSettings(e) {
             e.preventDefault();
-            const price = document.getElementById('cfgPrice').value;
-            const payments = document.getElementById('cfgPaymentDetails').value;
-            const tg = document.getElementById('cfgTelegram').value;
-
             db.ref('settings').set({
-                price: price,
-                payments: payments,
-                telegram: tg
-            }).then(() => {
-                showToast('تم حفظ تحديثات المنصة بنجاح!');
-            }).catch(err => {
-                alert('خطأ في الحفظ بالسحابة: ' + err.message);
-            });
+                price: document.getElementById('cfgPrice').value,
+                payments: document.getElementById('cfgPaymentDetails').value,
+                telegram: document.getElementById('cfgTelegram').value
+            }).then(() => showToast('تم حفظ الإعدادات السحابية!'));
         }
 
         function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
-        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; document.getElementById('adminPasswordInput').value = ''; }
+        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; document.getElementById('adminPassInput').value = ''; }
 
         function verifyAdminLogin() {
-            const input = document.getElementById('adminPasswordInput').value;
-            if (btoa(input) === TEACHER_PASS_HASH) {
-                document.getElementById('adminPanelArea').style.display = 'block';
-                document.getElementById('studentPanelArea').style.display = 'none';
+            const pass = document.getElementById('adminPassInput').value;
+            if (btoa(pass) === ADMIN_HASH) {
+                document.getElementById('adminArea').style.display = 'block';
+                document.getElementById('studentArea').style.display = 'none';
                 document.getElementById('loginAdminBtn').style.display = 'none';
                 document.getElementById('logoutAdminBtn').style.display = 'flex';
-                document.getElementById('appSubtitle').innerText = "لوحة إدارة المنصة والطلبات";
+                document.getElementById('subHeaderTitle').innerText = "لوحة التحكم والإدارة";
                 closeAdminModal();
-                showToast('أهلاً بك أستاذ وليد في لوحة التحكم');
+                showToast('أهلاً بك أستاذ وليد');
             } else {
                 alert('كلمة المرور غير صحيحة!');
             }
         }
 
         function logoutAdmin() {
-            document.getElementById('adminPanelArea').style.display = 'none';
-            document.getElementById('studentPanelArea').style.display = 'block';
+            document.getElementById('adminArea').style.display = 'none';
+            document.getElementById('studentArea').style.display = 'block';
             document.getElementById('loginAdminBtn').style.display = 'flex';
             document.getElementById('logoutAdminBtn').style.display = 'none';
-            document.getElementById('appSubtitle').innerText = "المرحلة الثانوية";
-            showToast('تم الخروج من لوحة الإدارة');
+            document.getElementById('subHeaderTitle').innerText = "المرحلة الثانوية";
+            syncStudentState();
         }
 
-        function submitStudentRequest(e) {
+        // التعامل مع الطلاب
+        function handleStudentAuth(e) {
             e.preventDefault();
-            const method = document.getElementById('studentPaymentMethod').value;
-            const name = document.getElementById('studentFullName').value;
-            const contact = document.getElementById('studentContact').value;
-            const requestId = 'REQ_' + Date.now();
+            const name = document.getElementById('stName').value.trim();
+            const contact = document.getElementById('stContact').value.trim();
+            const payment = document.getElementById('stPayment').value;
 
-            const requestData = {
-                id: requestId,
-                name: name,
-                contact: contact,
-                paymentMethod: method,
-                status: 'pending',
-                timestamp: Date.now()
-            };
+            // توليد مفتاح آمن ثابت بناء على المعرف
+            const reqKey = 'ST_' + btoa(encodeURIComponent(contact)).replace(/=/g, '');
 
-            db.ref('requests/' + requestId).set(requestData).then(() => {
-                const tgMsg = encodeURIComponent(`مرحباً أستاذ وليد، قمت بتقديم طلب اشتراك:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${method}`);
-                window.open(`https://t.me/WALEED92w?text=${tgMsg}`, '_blank');
-
-                document.getElementById('studentRequestForm').reset();
-                showToast('تم إرسال طلبك بنجاح للوحة التحكم');
-            }).catch((err) => {
-                alert('خطأ في إرسال الطلب: تأكد من اتصال الإنترنت.');
+            db.ref('requests/' + reqKey).once('value', snapshot => {
+                const existing = snapshot.val();
+                if (existing) {
+                    localStorage.setItem('wal_st_key', reqKey);
+                    syncStudentState();
+                    showToast('مرحباً بك مجدداً');
+                } else {
+                    const reqData = {
+                        id: reqKey,
+                        name: name,
+                        contact: contact,
+                        paymentMethod: payment,
+                        status: 'pending',
+                        timestamp: Date.now()
+                    };
+                    db.ref('requests/' + reqKey).set(reqData).then(() => {
+                        localStorage.setItem('wal_st_key', reqKey);
+                        const msg = encodeURIComponent(`مرحباً أستاذ وليد، قدمت طلب اشتراك:\nالاسم: ${name}\nالمعرف: ${contact}\nطريقة التحويل: ${payment}`);
+                        window.open(`https://t.me/WALEED92w?text=${msg}`, '_blank');
+                        syncStudentState();
+                        showToast('تم إرسال الطلب بنجاح');
+                    });
+                }
             });
         }
 
-        function listenToRequests() {
-            db.ref('requests').on('value', (snapshot) => {
-                const container = document.getElementById('requestsListContainer');
-                const data = snapshot.val();
+        function logoutStudent() {
+            localStorage.removeItem('wal_st_key');
+            document.getElementById('loginCard').style.display = 'block';
+            document.getElementById('pendingCard').style.display = 'none';
+            document.getElementById('learningArea').style.display = 'none';
+        }
 
+        function syncStudentState() {
+            if (document.getElementById('adminArea').style.display === 'block') return;
+
+            const stKey = localStorage.getItem('wal_st_key');
+            if (!stKey) {
+                document.getElementById('loginCard').style.display = 'block';
+                document.getElementById('pendingCard').style.display = 'none';
+                document.getElementById('learningArea').style.display = 'none';
+                return;
+            }
+
+            db.ref('requests/' + stKey).on('value', snapshot => {
+                const req = snapshot.val();
+                if (!req) {
+                    logoutStudent();
+                    return;
+                }
+
+                if (req.status === 'pending') {
+                    document.getElementById('loginCard').style.display = 'none';
+                    document.getElementById('pendingCard').style.display = 'block';
+                    document.getElementById('learningArea').style.display = 'none';
+                    document.getElementById('statusTitle').innerText = "طلبك قيد المراجعة";
+                    document.getElementById('statusDesc').innerText = `أهلاً بك ${req.name}، طلبك قيد المراجعة حالياً من قبل الأستاذ وليد.`;
+                } else if (req.status === 'rejected') {
+                    document.getElementById('loginCard').style.display = 'none';
+                    document.getElementById('pendingCard').style.display = 'block';
+                    document.getElementById('learningArea').style.display = 'none';
+                    document.getElementById('statusIcon').className = "fas fa-times-circle";
+                    document.getElementById('statusIcon').style.color = "var(--danger)";
+                    document.getElementById('statusTitle').innerText = "تم رفض الطلب";
+                    document.getElementById('statusDesc').innerText = "عذراً، لم يتم تفعيل الحساب. يرجى التواصل مع الأستاذ للتأكد من التحويل.";
+                } else if (req.status === 'active') {
+                    document.getElementById('loginCard').style.display = 'none';
+                    document.getElementById('pendingCard').style.display = 'none';
+                    document.getElementById('learningArea').style.display = 'block';
+                    document.getElementById('welcomeText').innerText = "أهلاً بك الطالب المشترك: " + req.name;
+                }
+            });
+        }
+
+        function listenRequests() {
+            db.ref('requests').on('value', snapshot => {
+                const container = document.getElementById('requestsList');
+                const data = snapshot.val();
                 if (!data) {
-                    container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد طلبات اشتراك حالياً.</p>`;
+                    container.innerHTML = `<p style="text-align:center; color:var(--text-sub);">لا توجد طلبات حالياً.</p>`;
                     return;
                 }
 
                 let html = '';
                 Object.keys(data).forEach(key => {
                     const req = data[key];
-                    let badgeStyle = 'badge-pending';
-                    let statusLabel = 'بانتظار الموافقة';
-                    
-                    if (req.status === 'active') {
-                        badgeStyle = 'badge-active';
-                        statusLabel = 'نشط ومُفعل';
-                    } else if (req.status === 'rejected') {
-                        badgeStyle = 'badge-rejected';
-                        statusLabel = 'مرفوض';
-                    }
+                    let badge = 'badge-pending';
+                    let stLabel = 'قيد الانتظار';
+
+                    if (req.status === 'active') { badge = 'badge-active'; stLabel = 'مُفعل'; }
+                    else if (req.status === 'rejected') { badge = 'badge-rejected'; stLabel = 'مرفوض'; }
 
                     html += `
                         <div class="student-item">
-                            <div class="student-info">
-                                <h4>${req.name} <span style="font-size: 0.85rem; color: var(--primary-light);">(${req.contact})</span></h4>
-                                <p>طريقة التحويل: ${req.paymentMethod}</p>
-                                <span class="badge ${badgeStyle}">${statusLabel}</span>
+                            <div>
+                                <h4 style="color:var(--primary);">${req.name} <small style="color:var(--text-sub);">(${req.contact})</small></h4>
+                                <p style="font-size:0.85rem; color:#475569;">طريقة الدفع: ${req.paymentMethod}</p>
+                                <span class="badge ${badge}">${stLabel}</span>
                             </div>
-                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                                ${req.status !== 'active' ? `<button class="btn btn-success btn-sm" onclick="changeRequestStatus('${req.id}', 'active')">موافقة وتفعيل</button>` : ''}
-                                ${req.status !== 'rejected' ? `<button class="btn btn-danger btn-sm" onclick="changeRequestStatus('${req.id}', 'rejected')">رفض الطلب</button>` : ''}
-                                ${req.status === 'active' ? `<button class="btn btn-secondary btn-sm" onclick="changeRequestStatus('${req.id}', 'pending')">إنهاء الاشتراك</button>` : ''}
-                                <button class="btn btn-danger btn-sm" style="background: #991b1b;" onclick="deleteRequest('${req.id}')">حذف الطلب</button>
+                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                ${req.status !== 'active' ? `<button class="btn btn-success btn-sm" onclick="setReqStatus('${req.id}', 'active')">موافقة وتفعيل</button>` : ''}
+                                ${req.status !== 'rejected' ? `<button class="btn btn-danger btn-sm" onclick="setReqStatus('${req.id}', 'rejected')">رفض</button>` : ''}
+                                ${req.status === 'active' ? `<button class="btn btn-secondary btn-sm" onclick="setReqStatus('${req.id}', 'pending')">إنهاء الاشتراك</button>` : ''}
+                                <button class="btn btn-danger btn-sm" style="background:#991b1b;" onclick="deleteReq('${req.id}')">طرد نهائي</button>
                             </div>
                         </div>
                     `;
@@ -689,180 +721,128 @@
             });
         }
 
-        function changeRequestStatus(reqId, newStatus) {
-            db.ref('requests/' + reqId + '/status').set(newStatus).then(() => {
-                showToast('تم تحديث حالة الطالب بنجاح');
-            });
+        function setReqStatus(id, newStatus) {
+            db.ref('requests/' + id + '/status').set(newStatus).then(() => showToast('تم تحديث حالة الطالب'));
         }
 
-        function deleteRequest(reqId) {
-            if (confirm('هل أنت متأكد من حذف هذا الطلب؟')) {
-                db.ref('requests/' + reqId).remove().then(() => {
-                    showToast('تم حذف الطلب بنجاح');
-                });
+        function deleteReq(id) {
+            if (confirm('هل أنت متأكد من طرد هذا الطالب نهائياً؟')) {
+                db.ref('requests/' + id).remove().then(() => showToast('تم حذف وطرد الطالب'));
             }
         }
 
-        function toggleContentTypeFields() {
-            const type = document.getElementById('contType').value;
-            const fileGroup = document.getElementById('fileFieldGroup');
-            const urlGroup = document.getElementById('urlFieldGroup');
-            const urlLabel = document.getElementById('urlFieldLabel');
-
-            if (type === 'file') {
-                fileGroup.style.display = 'block';
-                urlGroup.style.display = 'none';
-            } else if (type === 'video') {
-                fileGroup.style.display = 'none';
-                urlGroup.style.display = 'block';
-                urlLabel.innerText = "رابط مقطع الفيديو (يوتيوب أو رابط مباشر)";
-            } else if (type === 'link') {
-                fileGroup.style.display = 'none';
-                urlGroup.style.display = 'block';
-                urlLabel.innerText = "رابط الموقع أو المصدر الخارجي";
-            }
+        // إداريات رفع المحتوى
+        function toggleUploadTypeFields() {
+            const type = document.getElementById('uploadType').value;
+            document.getElementById('fileGroup').style.display = type === 'file' ? 'block' : 'none';
+            document.getElementById('urlGroup').style.display = type === 'url' ? 'block' : 'none';
         }
 
         function handleContentUpload(e) {
             e.preventDefault();
-            const grade = document.getElementById('contGrade').value;
-            const subject = document.getElementById('contSubject').value;
-            const type = document.getElementById('contType').value;
-            const title = document.getElementById('contTitle').value;
-            
-            let contentUrl = "";
+            const grade = document.getElementById('uploadGrade').value;
+            const subject = document.getElementById('uploadSubject').value;
+            const type = document.getElementById('uploadType').value;
+            const title = document.getElementById('uploadTitle').value;
+
+            let finalUrl = "";
             let fileName = "";
 
             if (type === 'file') {
-                const fileInput = document.getElementById('contFile');
-                if (fileInput.files.length === 0) {
-                    alert('يرجى اختيار ملف');
-                    return;
-                }
-                const file = fileInput.files[0];
-                contentUrl = URL.createObjectURL(file);
-                fileName = file.name;
+                const fileInput = document.getElementById('uploadFileInput');
+                if (!fileInput.files.length) { alert('اختر ملف أولاً'); return; }
+                finalUrl = URL.createObjectURL(fileInput.files[0]);
+                fileName = fileInput.files[0].name;
             } else {
-                contentUrl = document.getElementById('contUrl').value;
-                if (!contentUrl) {
-                    alert('يرجى إدخال الرابط');
-                    return;
-                }
+                finalUrl = document.getElementById('uploadUrlInput').value;
             }
 
-            const contentId = 'CONT_' + Date.now();
-            const contentData = {
-                id: contentId,
+            const itemKey = 'CONT_' + Date.now();
+            db.ref('contents/' + itemKey).set({
+                id: itemKey,
                 grade: grade,
                 subject: subject,
                 type: type,
                 title: title,
-                url: contentUrl,
+                url: finalUrl,
                 fileName: fileName,
                 date: new Date().toLocaleDateString('ar-EG')
-            };
-
-            db.ref('contents/' + contentId).set(contentData).then(() => {
-                document.getElementById('contentForm').reset();
-                toggleContentTypeFields();
-                showToast('تم نشر المحتوى بنجاح للصف والمادة المحددة!');
-                if (selectedGrade === grade && selectedSubject === subject) {
-                    renderLecturesList();
-                }
-            }).catch(err => {
-                alert('خطأ في رفع المحتوى: ' + err.message);
+            }).then(() => {
+                showToast('تم نشر المحتوى بنجاح!');
+                if (activeGrade === grade && activeSubject === subject) renderLectures();
             });
         }
 
-        function openGrade(grade) {
-            selectedGrade = grade;
-            document.getElementById('gradesSelectionCard').style.display = 'none';
-            document.getElementById('subjectsSelectionCard').style.display = 'block';
-            document.getElementById('activeGradeTitle').innerText = "الصف الدراسي: " + grade;
+        // التصفح والصفوف
+        function selectGrade(grade) {
+            activeGrade = grade;
+            document.getElementById('gradesCard').style.display = 'none';
+            document.getElementById('subjectsCard').style.display = 'block';
+            document.getElementById('currentGradeLabel').innerText = "الصف: " + grade;
         }
 
-        function backToGradesView() {
-            selectedGrade = "";
-            document.getElementById('subjectsSelectionCard').style.display = 'none';
-            document.getElementById('gradesSelectionCard').style.display = 'block';
+        function backToGrades() {
+            activeGrade = "";
+            document.getElementById('subjectsCard').style.display = 'none';
+            document.getElementById('gradesCard').style.display = 'block';
         }
 
-        function openSubject(subject) {
-            selectedSubject = subject;
-            document.getElementById('subjectsSelectionCard').style.display = 'none';
-            document.getElementById('lecturesViewCard').style.display = 'block';
-            document.getElementById('activeSubjectTitle').innerText = "المادة: " + subject + " (" + selectedGrade + ")";
-            renderLecturesList();
+        function selectSubject(subject) {
+            activeSubject = subject;
+            document.getElementById('subjectsCard').style.display = 'none';
+            document.getElementById('lecturesCard').style.display = 'block';
+            document.getElementById('currentSubjectLabel').innerText = "المادة: " + subject + " (" + activeGrade + ")";
+            renderLectures();
         }
 
-        function backToSubjectsView() {
-            selectedSubject = "";
-            document.getElementById('lecturesViewCard').style.display = 'none';
-            document.getElementById('subjectsSelectionCard').style.display = 'block';
+        function backToSubjects() {
+            activeSubject = "";
+            document.getElementById('lecturesCard').style.display = 'none';
+            document.getElementById('subjectsCard').style.display = 'block';
         }
 
-        function renderLecturesList() {
-            const container = document.getElementById('lecturesListContainer');
-            container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">جاري جلب المحتوى والملازم...</p>`;
+        function renderLectures() {
+            const container = document.getElementById('lecturesContainer');
+            container.innerHTML = `<p style="text-align:center; color:var(--text-sub);">جاري جلب المحاضرات والملازم...</p>`;
 
-            db.ref('contents').on('value', (snapshot) => {
+            db.ref('contents').on('value', snapshot => {
                 const data = snapshot.val();
                 if (!data) {
-                    container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد مواد مرفوعة لهذه المادة حالياً.</p>`;
+                    container.innerHTML = `<p style="text-align:center; color:var(--text-sub); padding:15px;">لا توجد محاضرات أو ملازم مرفوعة لهذه المادة حالياً.</p>`;
                     return;
                 }
 
                 let html = '';
-                Object.keys(data).forEach(key => {
-                    const item = data[key];
-                    if (item.grade === selectedGrade && item.subject === selectedSubject) {
-                        let icon = "fa-file-pdf";
-                        let btnText = "فتح الملف";
-                        if (item.type === 'video') {
-                            icon = "fa-video";
-                            btnText = "مشاهدة الفيديو";
-                        } else if (item.type === 'link') {
-                            icon = "fa-external-link-alt";
-                            btnText = "زيارة الرابط";
-                        }
-
+                Object.keys(data).forEach(k => {
+                    const item = data[k];
+                    if (item.grade === activeGrade && item.subject === activeSubject) {
                         html += `
-                            <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:14px; border-radius:12px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                            <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px 16px; border-radius:12px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
                                 <div>
-                                    <h4 style="color:var(--primary); font-weight:800;"><i class="fas ${icon}"></i> ${item.title}</h4>
-                                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:3px;">التاريخ: ${item.date} ${item.fileName ? ' | الملف: ' + item.fileName : ''}</p>
+                                    <h4 style="color:var(--primary);"><i class="fas ${item.type === 'file' ? 'fa-file-pdf' : 'fa-video'}"></i> ${item.title}</h4>
+                                    <p style="font-size:0.8rem; color:var(--text-sub);">تاريخ النشر: ${item.date}</p>
                                 </div>
-                                <div style="display:flex; gap:8px;">
-                                    <a href="${item.url}" target="_blank" class="btn btn-primary btn-sm" style="text-decoration:none;">
-                                        <i class="fas fa-external-link-alt"></i> ${btnText}
-                                    </a>
-                                    ${document.getElementById('adminPanelArea').style.display === 'block' ? `
-                                        <button class="btn btn-danger btn-sm" onclick="deleteContent('${item.id}')">حذف</button>
-                                    ` : ''}
+                                <div style="display:flex; gap:6px;">
+                                    <a href="${item.url}" target="_blank" class="btn btn-primary btn-sm"><i class="fas fa-external-link-alt"></i> فتح المحتوى</a>
+                                    ${document.getElementById('adminArea').style.display === 'block' ? `<button class="btn btn-danger btn-sm" onclick="deleteContent('${item.id}')">حذف</button>` : ''}
                                 </div>
                             </div>
                         `;
                     }
                 });
 
-                if (!html) {
-                    container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد مواد مرفوعة لهذه المادة حالياً.</p>`;
-                } else {
-                    container.innerHTML = html;
-                }
+                container.innerHTML = html || `<p style="text-align:center; color:var(--text-sub); padding:15px;">لا توجد محاضرات أو ملازم مرفوعة لهذه المادة حالياً.</p>`;
             });
         }
 
         function deleteContent(id) {
-            if (confirm('هل تريد حذف هذا المحتوى نهائياً؟')) {
-                db.ref('contents/' + id).remove().then(() => {
-                    showToast('تم حذف المحتوى بنجاح');
-                });
+            if (confirm('هل تريد حذف المحتوى؟')) {
+                db.ref('contents/' + id).remove().then(() => showToast('تم الحذف'));
             }
         }
 
         function showToast(msg) {
-            const toast = document.getElementById('toastNotif');
+            const toast = document.getElementById('toastMsg');
             toast.innerText = msg;
             toast.style.display = 'block';
             setTimeout(() => { toast.style.display = 'none'; }, 3000);
