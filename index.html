@@ -572,7 +572,7 @@
         </main>
     </div>
 
-    <!-- نافذة عرض الـ PDF بالشاشة الكاملة مع طبقة تفعيل الروابط -->
+    <!-- نافذة عرض الـ PDF بالشاشة الكاملة -->
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box">
             <div class="modal-header-bar">
@@ -580,7 +580,7 @@
                 <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="closeFileModal()"><i class="fas fa-times"></i> إغلاق</button>
             </div>
             <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;">
-                <!-- يتم عرض ملف الـ PDF مع معالج الروابط الذكي هنا -->
+                <!-- يتم عرض ملف الـ PDF هنا -->
             </div>
         </div>
     </div>
@@ -608,6 +608,7 @@
         const ADMIN_HASH = "V0ExOTkyd2E="; // WA1992wa
         let activeClass = "";
         let activeSub = "";
+        let sessionWatchInterval = null;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -625,6 +626,7 @@
             loadSettingsData();
             fetchRequestsData();
             checkStudentSession();
+            startSessionGuard(); // تفعيل الحراسة اللحظية للطالب
         };
 
         function loadSettingsData() {
@@ -735,6 +737,7 @@
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
                     showSection('pendingNotice');
+                    startSessionGuard();
                 } else {
                     throw new Error('فشل الحفظ');
                 }
@@ -744,6 +747,7 @@
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
                     showSection('pendingNotice');
+                    startSessionGuard();
                 }).catch(() => {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
@@ -754,6 +758,8 @@
 
         function logoutStudent() {
             localStorage.removeItem('wal_key');
+            if (sessionWatchInterval) clearInterval(sessionWatchInterval);
+            closeFileModal();
             showSection('authSection');
         }
 
@@ -770,21 +776,43 @@
                 .then(res => res.json())
                 .then(req => {
                     if (!req) {
-                        showSection('authSection');
+                        // تم الطرد أو حذف الحساب نهائياً
+                        alert('عذراً، تم إنهاء اشتراكك أو طردك من المنصة.');
+                        logoutStudent();
                         return;
                     }
 
                     if (req.status === 'pending') {
                         showSection('pendingNotice');
                     } else if (req.status === 'active') {
-                        if (!activeClass) openClass('الأول المتوسط');
-                    } else if (req.status === 'rejected') {
-                        alert('عذراً، تم رفض أو إلغاء اشتراكك. يمكنك تقديم طلب جديد.');
+                        if (!activeClass && document.getElementById('authSection').style.display === 'block') {
+                            openClass('الأول المتوسط');
+                        }
+                    } else if (req.status === 'rejected' || req.status === 'cancelled') {
+                        // تم إلغاء التفعيل أو الرفض
+                        alert('عذراً، تم إلغاء تفعيل حسابك من قبل الإدارة.');
                         logoutStudent();
                     }
-                }).catch(() => {
-                    showSection('pendingNotice');
-                });
+                }).catch(() => {});
+        }
+
+        // نظام الحراسة والمراقبة الفورية (يفحص حالة الطالب كل 4 ثواني)
+        function startSessionGuard() {
+            if (sessionWatchInterval) clearInterval(sessionWatchInterval);
+            sessionWatchInterval = setInterval(() => {
+                if (document.getElementById('adminSidebarSection').style.display === 'block') return;
+                const key = localStorage.getItem('wal_key');
+                if (key) {
+                    fetch(`${DATABASE_URL}/requests/${key}.json`)
+                        .then(res => res.json())
+                        .then(req => {
+                            if (!req || req.status !== 'active') {
+                                alert('تنبيه: تم إلغاء اشتراكك أو طردك من المنصة من قبل الأستاذ.');
+                                logoutStudent();
+                            }
+                        }).catch(() => {});
+                }
+            }, 4000);
         }
 
         function openClass(className) {
@@ -871,31 +899,16 @@
                 });
         }
 
-        // دالة فتح الملف مع ميزة اعتراض وتفعيل روابط يوتيوب بضغطة واحدة
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
             let realData = decodeURIComponent(encodedData);
 
-            // استخدام عنصر object لعرض الملف كاملاً
-            container.innerHTML = `<object id="pdfObject" data="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%">
+            container.innerHTML = `<object data="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%">
                 <embed src="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%" />
             </object>`;
 
             document.getElementById('fileViewerModal').style.display = 'flex';
-
-            // تفعيل نظام الاستماع الذكي للنقرات فوق العارض لتحويل روابط يوتيوب مباشرة
-            setTimeout(() => {
-                const viewerBox = document.getElementById('modalViewerContainer');
-                viewerBox.onclick = function(e) {
-                    let selectedText = window.getSelection().toString().trim();
-                    if (selectedText.includes('youtube.com') || selectedText.includes('youtu.be') || selectedText.startsWith('http')) {
-                        let cleanUrl = selectedText;
-                        if (!cleanUrl.startsWith('http')) cleanUrl = 'https://' + cleanUrl;
-                        window.open(cleanUrl, '_blank');
-                    }
-                };
-            }, 1000);
         }
 
         function closeFileModal() {
@@ -982,7 +995,7 @@
         }
 
         function deleteAndExpel(id) {
-            if (confirm('هل أنت متأكد من طرد هذا الطالب؟ سيتمكن من إرسال طلب جديد لاحقاً.')) {
+            if (confirm('هل أنت متأكد من طرد هذا الطالب؟ سيتم إخراجه من المنصة فوراً.')) {
                 fetch(`${DATABASE_URL}/requests/${id}.json`, { method: 'DELETE' })
                     .then(() => fetchRequestsData());
             }
@@ -1025,7 +1038,7 @@
                     body: JSON.stringify(contentData),
                     headers: { 'Content-Type': 'application/json' }
                 }).then(res => {
-                    uploadBtn.disabled = false;
+                    uploadBtn.disabled, uploadBtn.disabled = false;
                     uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً`;
                     if (res.ok) {
                         alert('تم نشر ملف الـ PDF بنجاح!');
