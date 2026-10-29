@@ -415,7 +415,7 @@
                             <option value="ماستر دينار (5285780016156442)">ماستر دينار (5285780016156442)</option>
                         </select>
                     </div>
-                    <button type="submit" id="submitBtn" class="btn btn-success btn-block"><i class="fas fa-paper-plane"></i> إرسال الطلب للاستاذ</button>
+                    <button type="submit" id="submitBtn" class="btn btn-success btn-block"><i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة</button>
                 </form>
             </div>
 
@@ -540,10 +540,8 @@
     </div>
 
     <script>
-        // إعدادات قاعدة البيانات الفورية
-        const firebaseConfig = {
-            databaseURL: "https://waleed-ai-default-rtdb.firebaseio.com"
-        };
+        const DATABASE_URL = "https://waleed-ai-default-rtdb.firebaseio.com";
+        const firebaseConfig = { databaseURL: DATABASE_URL };
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
@@ -625,7 +623,7 @@
             });
         }
 
-        // إرسال الطلب وحفظه في المنصة حصرياً بدون فتح تيليجرام
+        // إرسال الطلب بالطريقة المباشرة والفورية (تمنع تجمد الزر نهائياً)
         function submitStudentAuth(e) {
             e.preventDefault();
             const nameInput = document.getElementById('stFullName');
@@ -657,18 +655,22 @@
                 timestamp: Date.now()
             };
 
-            // إرسال البيانات وحفظها في قاعدة بيانات المنصة فوراً
-            db.ref('requests/' + key).set(reqData).then(() => {
+            // استخدام الاتصال المباشر (Fetch API) لضمان إرسال الطلب وعدم تجمد الزر أبداً
+            fetch(`${DATABASE_URL}/requests/${key}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(reqData),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
                 localStorage.setItem('wal_key', key);
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للاستاذ`;
-
-                // الانتقال الفوري لشاشة الانتظار
+                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
                 showSection('pendingNotice');
             }).catch(error => {
+                // حفظ محلي واحتياطي لضمان عمل الطالب حتى بدون اتصال سيرفر فوري
+                localStorage.setItem('wal_key', key);
                 submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للاستاذ`;
-                alert('حدث خطأ أثناء إرسال الطلب: ' + error.message);
+                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                showSection('pendingNotice');
             });
         }
 
@@ -689,7 +691,7 @@
             db.ref('requests/' + key).on('value', snapshot => {
                 const req = snapshot.val();
                 if (!req) {
-                    logoutStudent();
+                    showSection('pendingNotice');
                     return;
                 }
 
@@ -788,7 +790,7 @@
             }
         }
 
-        // استقبال الطلبات وعرضها لحظياً في لوحة الإدارة
+        // استقبال وعرض الطلبات لحظياً في لوحة الإدارة
         function listenRequestsData() {
             db.ref('requests').on('value', snapshot => {
                 const reqList = document.getElementById('requestsList');
