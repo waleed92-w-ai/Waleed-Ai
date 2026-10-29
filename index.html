@@ -324,7 +324,7 @@
             <!-- إعدادات المنصة الشاملة -->
             <div class="card">
                 <div class="card-header">
-                    <i class="fas fa-sliders-h"></i> إعدادات المنصة الشاملة
+                    <i class="fas fa-sliders-h"></i> إعدادات المنصة الشاملة (تعديل السعر والمعلومات)
                 </div>
                 <form id="settingsForm" onsubmit="saveGlobalSettings(event)">
                     <div class="form-group">
@@ -373,7 +373,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>المادة الدراسية</label>
+                        <label>المادة الدراسية (تحتوي على الحاسوب وجميع المواد)</label>
                         <select class="form-control" id="contSubject" required>
                             <option value="الحاسوب">💻 الحاسوب</option>
                             <option value="الرياضيات">📐 الرياضيات</option>
@@ -559,12 +559,12 @@
         let selectedSubject = "";
 
         window.onload = function() {
-            listenToGlobalSettings();
+            loadGlobalSettings();
             listenToRequests();
             checkStudentStatus();
         };
 
-        function listenToGlobalSettings() {
+        function loadGlobalSettings() {
             db.ref('settings').on('value', (snapshot) => {
                 const data = snapshot.val() || {};
                 const price = data.price || '5000';
@@ -592,6 +592,8 @@
                 telegram: tg
             }).then(() => {
                 showToast('تم حفظ تحديثات المنصة بنجاح!');
+            }).catch(err => {
+                alert('خطأ في الحفظ بالسحابة: ' + err.message);
             });
         }
 
@@ -649,7 +651,7 @@
                 checkStudentStatus();
                 showToast('تم إرسال طلبك بنجاح للوحة التحكم');
             }).catch((err) => {
-                alert('حدث خطأ في الإرسال، يرجى المحاولة مرة أخرى.');
+                alert('خطأ في إرسال الطلب: تأكد من اتصال الإنترنت.');
             });
         }
 
@@ -802,27 +804,28 @@
                 }
             }
 
+            const contentId = 'CONT_' + Date.now();
             const contentData = {
-                id: Date.now(),
+                id: contentId,
                 grade: grade,
                 subject: subject,
-                type: type, // file, video, link
+                type: type,
                 title: title,
                 url: contentUrl,
                 fileName: fileName,
                 date: new Date().toLocaleDateString('ar-EG')
             };
 
-            let allContent = JSON.parse(localStorage.getItem('waleed_contents')) || [];
-            allContent.push(contentData);
-            localStorage.setItem('waleed_contents', JSON.stringify(allContent));
-
-            document.getElementById('contentForm').reset();
-            toggleContentTypeFields();
-            showToast('تم نشر المحتوى بنجاح!');
-            if (selectedGrade === grade && selectedSubject === subject) {
-                renderLecturesList();
-            }
+            db.ref('contents/' + contentId).set(contentData).then(() => {
+                document.getElementById('contentForm').reset();
+                toggleContentTypeFields();
+                showToast('تم نشر المحتوى بنجاح!');
+                if (selectedGrade === grade && selectedSubject === subject) {
+                    renderLecturesList();
+                }
+            }).catch(err => {
+                alert('خطأ في رفع المحتوى: ' + err.message);
+            });
         }
 
         function openGrade(grade) {
@@ -854,53 +857,61 @@
 
         function renderLecturesList() {
             const container = document.getElementById('lecturesListContainer');
-            let allContent = JSON.parse(localStorage.getItem('waleed_contents')) || [];
-            let filtered = allContent.filter(c => c.grade === selectedGrade && c.subject === selectedSubject);
+            container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">جاري جلب المحتوى...</p>`;
 
-            if (filtered.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد مواد مرفوعة لهذه المادة حالياً.</p>`;
-                return;
-            }
-
-            let html = '';
-            filtered.forEach(item => {
-                let icon = "fa-file-pdf";
-                let btnText = "فتح الملف";
-                if (item.type === 'video') {
-                    icon = "fa-video";
-                    btnText = "مشاهدة الفيديو";
-                } else if (item.type === 'link') {
-                    icon = "fa-external-link-alt";
-                    btnText = "زيارة الرابط";
+            db.ref('contents').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (!data) {
+                    container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد مواد مرفوعة لهذه المادة حالياً.</p>`;
+                    return;
                 }
 
-                html += `
-                    <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:14px; border-radius:12px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-                        <div>
-                            <h4 style="color:var(--primary); font-weight:800;"><i class="fas ${icon}"></i> ${item.title}</h4>
-                            <p style="font-size:0.8rem; color:var(--text-muted); margin-top:3px;">التاريخ: ${item.date} ${item.fileName ? ' | الملف: ' + item.fileName : ''}</p>
-                        </div>
-                        <div style="display:flex; gap:8px;">
-                            <a href="${item.url}" target="_blank" class="btn btn-primary btn-sm" style="text-decoration:none;">
-                                <i class="fas fa-external-link-alt"></i> ${btnText}
-                            </a>
-                            ${document.getElementById('adminPanelArea').style.display === 'block' ? `
-                                <button class="btn btn-danger btn-sm" onclick="deleteContent(${item.id})">حذف</button>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
+                let html = '';
+                Object.keys(data).forEach(key => {
+                    const item = data[key];
+                    if (item.grade === selectedGrade && item.subject === selectedSubject) {
+                        let icon = "fa-file-pdf";
+                        let btnText = "فتح الملف";
+                        if (item.type === 'video') {
+                            icon = "fa-video";
+                            btnText = "مشاهدة الفيديو";
+                        } else if (item.type === 'link') {
+                            icon = "fa-external-link-alt";
+                            btnText = "زيارة الرابط";
+                        }
+
+                        html += `
+                            <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:14px; border-radius:12px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+                                <div>
+                                    <h4 style="color:var(--primary); font-weight:800;"><i class="fas ${icon}"></i> ${item.title}</h4>
+                                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:3px;">التاريخ: ${item.date} ${item.fileName ? ' | الملف: ' + item.fileName : ''}</p>
+                                </div>
+                                <div style="display:flex; gap:8px;">
+                                    <a href="${item.url}" target="_blank" class="btn btn-primary btn-sm" style="text-decoration:none;">
+                                        <i class="fas fa-external-link-alt"></i> ${btnText}
+                                    </a>
+                                    ${document.getElementById('adminPanelArea').style.display === 'block' ? `
+                                        <button class="btn btn-danger btn-sm" onclick="deleteContent('${item.id}')">حذف</button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                if (!html) {
+                    container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 15px;">لا توجد مواد مرفوعة لهذه المادة حالياً.</p>`;
+                } else {
+                    container.innerHTML = html;
+                }
             });
-            container.innerHTML = html;
         }
 
         function deleteContent(id) {
             if (confirm('هل تريد حذف هذا المحتوى نهائياً؟')) {
-                let allContent = JSON.parse(localStorage.getItem('waleed_contents')) || [];
-                allContent = allContent.filter(c => c.id !== id);
-                localStorage.setItem('waleed_contents', JSON.stringify(allContent));
-                renderLecturesList();
-                showToast('تم حذف المحتوى بنجاح');
+                db.ref('contents/' + id).remove().then(() => {
+                    showToast('تم حذف المحتوى بنجاح');
+                });
             }
         }
 
