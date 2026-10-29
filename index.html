@@ -40,7 +40,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Cairo', sans-serif;
-            -webkit-user-select: none; /* منع تحديد النصوص */
+            -webkit-user-select: none;
             user-select: none;
         }
 
@@ -336,7 +336,7 @@
             color: var(--primary);
         }
 
-        /* نافذة العرض المنبثقة للشاشة الكاملة مع حماية تامة */
+        /* نافذة العرض المنبثقة للشاشة الكاملة */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -384,14 +384,6 @@
             height: 100%;
             border: none;
             pointer-events: auto;
-        }
-
-        /* طبقة حماية شفافة فوق العارض لمنع أي تفاعل غير مرغوب أو سحب */
-        .pdf-shield {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10;
-            display: none;
         }
 
         @media (max-width: 768px) {
@@ -486,7 +478,10 @@
                 <i class="fas fa-hourglass-half" id="noticeIcon" style="font-size: 3.5rem; color: var(--warning); margin-bottom: 15px;"></i>
                 <h3 id="noticeTitle" style="color: var(--primary); margin-bottom: 10px;">طلبك قيد المراجعة لدى الأستاذ</h3>
                 <p id="noticeText" style="color: #64748b; margin-bottom: 20px;">تم إرسال طلبك إلى لوحة تحكم المنصة بنجاح. سيتم تفعيل حسابك فور موافقة الأستاذ وليد.</p>
-                <a href="https://t.me/WALEED92w" target="_blank" class="btn btn-primary"><i class="fab fa-telegram-plane"></i> مراسلة الأستاذ للتعجيل</a>
+                <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                    <a href="https://t.me/WALEED92w" target="_blank" class="btn btn-primary"><i class="fab fa-telegram-plane"></i> مراسلة الأستاذ للتعجيل</a>
+                    <button class="btn btn-secondary" onclick="logoutStudent()"><i class="fas fa-redo"></i> تقديم طلب جديد / تغيير اليوزر</button>
+                </div>
             </div>
 
             <!-- 3. المواد الدراسية -->
@@ -592,7 +587,7 @@
                 <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="closeFileModal()"><i class="fas fa-times"></i> إغلاق</button>
             </div>
             <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;">
-                <!-- يتم حقن عارض الـ PDF هنا بدون أزرار تحميل -->
+                <!-- يتم حقن عارض الـ PDF هنا -->
             </div>
         </div>
     </div>
@@ -798,7 +793,9 @@
                 .then(res => res.json())
                 .then(req => {
                     if (!req) {
-                        logoutStudent();
+                        // إذا تم طرد الحساب تماماً من قاعدة البيانات، نقوم بتنظيف المتصفح وإظهار استمارة التسجيل فوراً
+                        localStorage.removeItem('wal_key');
+                        showSection('authSection');
                         return;
                     }
 
@@ -827,7 +824,7 @@
                         document.getElementById('noticeText').innerText = "عذراً، لقد انقضى شهر على اشتراكك. يرجى تجديد الاشتراك والدفع لمتابعة الدراسة.";
                         showSection('pendingNotice');
                     } else if (req.status === 'active') {
-                        if (!activeClass && document.getElementById('authSection').style.display === 'block') {
+                        if (!activeClass || document.getElementById('authSection').style.display === 'block' || document.getElementById('pendingNotice').style.display === 'block') {
                             openClass('الأول المتوسط');
                         }
                     }
@@ -844,7 +841,9 @@
                         .then(res => res.json())
                         .then(req => {
                             if (!req) {
-                                logoutStudent();
+                                // الحساب غير موجود في القاعدة (تم طرده)، نرجع الطالب للاستمارة
+                                localStorage.removeItem('wal_key');
+                                showSection('authSection');
                                 return;
                             }
 
@@ -856,19 +855,22 @@
                                         body: JSON.stringify('expired'),
                                         headers: { 'Content-Type': 'application/json' }
                                     });
-                                    alert('انتهت مدة اشتراكك الشهري (30 يوماً). يرجى تجديد الاشتراك.');
-                                    logoutStudent();
+                                    checkStudentSession();
                                     return;
                                 }
                             }
 
-                            if (req.status !== 'active') {
-                                alert('تم إنهاء اشتراكك أو طردك من المنصة.');
-                                logoutStudent();
+                            if (req.status === 'active') {
+                                // إذا تم الموافقة عليه للتو وكان واقفاً على شاشة الانتظار، نفتحه على الصفوف تلقائياً!
+                                if (document.getElementById('pendingNotice').style.display === 'block' || document.getElementById('authSection').style.display === 'block') {
+                                    if (!activeClass) openClass('الأول المتوسط');
+                                }
+                            } else {
+                                checkStudentSession();
                             }
                         }).catch(() => {});
                 }
-            }, 4000);
+            }, 3000);
         }
 
         function openClass(className) {
@@ -955,13 +957,11 @@
                 });
         }
 
-        // فتح ملف الـ PDF مع إخفاء أزرار التنزيل ومنع الحفظ تماماً
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
             let realData = decodeURIComponent(encodedData);
 
-            // البارامترات `#view=FitH&toolbar=0&navpanes=0&scrollbar=1` تخفي أزرار التحميل والطباعة تماماً
             container.innerHTML = `<object data="${realData}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%">
                 <embed src="${realData}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%" />
             </object>`;
@@ -1116,7 +1116,7 @@
                     uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً`;
                     if (res.ok) {
                         alert('تم نشر ملف الـ PDF بنجاح!');
-                        document.getElementById('upTitle').value = '';
+                        document.getElementById('upTitle' ).value = '';
                         document.getElementById('upFile').value = '';
                     } else {
                         alert('حدث خطأ أثناء حفظ الملف.');
