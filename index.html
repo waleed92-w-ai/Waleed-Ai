@@ -347,7 +347,7 @@
                 </form>
             </div>
 
-            <!-- إدارة طلبات واشتراكات الطلاب (موافقة، رفض، إنهاء، طرد) -->
+            <!-- إدارة طلبات واشتراكات الطلاب -->
             <div class="card">
                 <div class="card-header">
                     <i class="fas fa-users-cog"></i> إدارة طلبات واشتراكات الطلاب
@@ -419,10 +419,10 @@
 
         </div>
 
-        <!-- ==================== واجهة الطالب ==================== -->
+        <!-- ==================== واجهة الطالب (محمية بالكامل) ==================== -->
         <div id="studentPanelArea">
             
-            <!-- نموذج طلب الاشتراك (يظهر للطالب قبل التفعيل) -->
+            <!-- نموذج طلب الاشتراك -->
             <div class="card" id="subscriptionFormCard">
                 <div class="card-header">
                     <i class="fas fa-id-card"></i> طلب اشتراك في المنصة التعليمية الثانوية
@@ -461,12 +461,6 @@
                         <i class="fas fa-paper-plane"></i> إرسال الطلب واعتماد الاشتراك
                     </button>
                 </form>
-
-                <div style="text-align: center; margin-top: 15px;">
-                    <button type="button" class="btn btn-secondary btn-sm" onclick="bypassForTesting()" style="width: 100%;">
-                        <i class="fas fa-eye"></i> دخول مباشر للمنصة (للمعاينة)
-                    </button>
-                </div>
             </div>
 
             <!-- تنبيه الانتظار / الرفض -->
@@ -481,11 +475,11 @@
                 </a>
             </div>
 
-            <!-- المنطقة التعليمية (تظهر حصراً بعد تسجيل الدخول وتفعيل الطالب أو الضغط على المعاينة) -->
+            <!-- المنطقة التعليمية (تظهر حصراً بعد موافقة الأستاذ من لوحة التحكم) -->
             <div id="learningArea" style="display: none;">
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span id="studentWelcomeName" style="font-weight: 800; color: var(--primary);">أهلاً بك عزيزي الطالب</span>
+                    <span id="studentWelcomeName" style="font-weight: 800; color: var(--primary);">أهلاً بك عزيزي الطالب المشترك</span>
                     <button class="btn btn-danger btn-sm" onclick="cancelStudentRequest()" style="width: auto; padding: 5px 10px; font-size: 0.75rem;">تسجيل الخروج</button>
                 </div>
 
@@ -672,14 +666,6 @@
             }).catch((err) => {
                 alert('خطأ في إرسال الطلب: تأكد من اتصال الإنترنت.');
             });
-        }
-
-        function bypassForTesting() {
-            localStorage.setItem('my_student_name', 'طالب معاينة');
-            document.getElementById('subscriptionFormCard').style.display = 'none';
-            document.getElementById('statusNoticeCard').style.display = 'none';
-            document.getElementById('learningArea').style.display = 'block';
-            document.getElementById('studentWelcomeName').innerText = "مرحباً بك: طالب معاينة";
         }
 
         function cancelStudentRequest() {
