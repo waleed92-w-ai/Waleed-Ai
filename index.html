@@ -297,7 +297,7 @@
         }
         .badge-active { background: #d1fae5; color: #059669; }
 
-        /* بطاقة الملف المصغرة */
+        /* بطاقة الملزمة المصغرة */
         .file-mini-card {
             background: #f8fafc;
             border: 2px solid #cbd5e1;
@@ -376,11 +376,10 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .modal-body-viewer iframe, .modal-body-viewer img {
+        .modal-body-viewer object, .modal-body-viewer embed, .modal-body-viewer iframe {
             width: 100%;
             height: 100%;
             border: none;
-            object-fit: contain;
         }
 
         @media (max-width: 768px) {
@@ -425,7 +424,7 @@
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
                 <button class="nav-item" onclick="showSection('sectionSubscribers')"><i class="fas fa-users"></i> اسماء المشتركين</button>
                 <button class="nav-item" onclick="showSection('sectionManageSubscribers')"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</button>
-                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات PDF والمستندات</button>
+                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات PDF للمشاهدة</button>
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
@@ -511,9 +510,9 @@
                 <div id="manageSubscribersList">جاري التحميل...</div>
             </div>
 
-            <!-- قسم رفع الملفات المباشر (مفتوح للـ PDF والصور والمستندات) -->
+            <!-- قسم رفع ملفات الـ PDF -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات PDF أو الصور من جهازك (للمشاهدة فقط)</div>
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF (للمشاهدة الكاملة فقط)</div>
                 <form onsubmit="handleFastFileUpload(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
@@ -541,17 +540,17 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>عنوان المحاضرة أو الملزمة</label>
-                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الفصل الأول">
+                        <label>عنوان الملزمة أو الكتاب</label>
+                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الحاسوب كاملة">
                     </div>
 
                     <div class="form-group">
-                        <label>اختر ملف الـ PDF أو الصورة من جهازك</label>
-                        <input type="file" class="form-control" id="upFile" accept=".pdf,application/pdf,image/*" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 يمكنك الآن تحديد أي ملف PDF أو صورة من تطبيق الملفات في هاتفك مباشرة.</small>
+                        <label>اختر ملف الـ PDF من هاتفك</label>
+                        <input type="file" class="form-control" id="upFile" accept=".pdf,application/pdf" required style="padding: 10px;">
+                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع ملف الـ PDF وعرضه للمشاهدة الكاملة بجميع صفحاته.</small>
                     </div>
 
-                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة</button>
+                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً</button>
                 </form>
             </div>
 
@@ -573,15 +572,15 @@
         </main>
     </div>
 
-    <!-- نافذة العرض المنبثقة -->
+    <!-- نافذة عرض الـ PDF بالشاشة الكاملة -->
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box">
             <div class="modal-header-bar">
-                <span id="modalFileTitle">عرض الملف</span>
+                <span id="modalFileTitle">عرض الملزمة</span>
                 <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="closeFileModal()"><i class="fas fa-times"></i> إغلاق</button>
             </div>
             <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;">
-                <!-- يتم حقن المحتوى هنا -->
+                <!-- يتم عرض ملف الـ PDF بالكامل هنا -->
             </div>
         </div>
     </div>
@@ -848,16 +847,15 @@
                         const item = data[k];
                         if (item.grade === activeClass && item.subject === activeSub) {
                             let safeData = encodeURIComponent(item.fileData);
-                            let isImg = item.fileType && item.fileType.includes('image');
 
                             html += `
-                                <div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}', ${isImg})">
+                                <div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}')">
                                     <div class="file-mini-info">
-                                        <i class="fas ${isImg ? 'fa-image' : 'fa-file-pdf'}"></i>
+                                        <i class="fas fa-file-pdf"></i>
                                         <h4>${item.title}</h4>
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 10px;">
-                                        <span class="badge badge-active"><i class="fas fa-eye"></i> اضغط للعرض</span>
+                                        <span class="badge badge-active"><i class="fas fa-eye"></i> عرض الملزمة كاملة</span>
                                         ${document.getElementById('adminSidebarSection').style.display === 'block' ? `
                                             <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="event.stopPropagation(); deleteContent('${item.id}')">حذف</button>
                                         ` : ''}
@@ -873,16 +871,14 @@
                 });
         }
 
-        function openFileModal(title, encodedData, isImg) {
+        // فتح نافذة العرض لعرض ملف الـ PDF بالكامل باستخدام عنصر object
+        function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
             let realData = decodeURIComponent(encodedData);
 
-            if (isImg) {
-                container.innerHTML = `<img src="${realData}" alt="${title}">`;
-            } else {
-                container.innerHTML = `<iframe src="${realData}#toolbar=0&navpanes=0&scrollbar=1" oncontextmenu="return false;"></iframe>`;
-            }
+            // استخدام عنصر object لفتح الـ PDF كامل بجميع صفحاته عبر عارض المتصفح الداخلي
+            container.innerHTML = `<object data="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%"><embed src="${realData}#view=FitH&toolbar=0&navpanes=0" type="application/pdf" width="100%" height="100%" /></object>`;
 
             document.getElementById('fileViewerModal').style.display = 'flex';
         }
@@ -893,7 +889,7 @@
         }
 
         function deleteContent(id) {
-            if (confirm('هل تريد حذف هذا الملف نهائياً؟')) {
+            if (confirm('هل تريد حذف هذه الملزمة نهائياً؟')) {
                 fetch(`${DATABASE_URL}/contents/${id}.json`, { method: 'DELETE' })
                     .then(() => renderLectures());
             }
@@ -977,7 +973,7 @@
             }
         }
 
-        // دالة الرفع السريع لملفات الـ PDF والصور من الآيفون
+        // رفع ملف الـ PDF ومعالجته فوراً
         function handleFastFileUpload(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
@@ -987,13 +983,13 @@
             const uploadBtn = document.getElementById('uploadBtn');
 
             if (fileInput.files.length === 0) {
-                alert('يرجى اختيار ملف من الجهاز.');
+                alert('يرجى اختيار ملف الـ PDF.');
                 return;
             }
 
             const file = fileInput.files[0];
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري معالجة ونشر الملف...`;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري رفع ونشر ملف الـ PDF...`;
 
             const reader = new FileReader();
             reader.onload = function(evt) {
@@ -1016,9 +1012,9 @@
                     headers: { 'Content-Type': 'application/json' }
                 }).then(res => {
                     uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة`;
+                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً`;
                     if (res.ok) {
-                        alert('تم نشر الملف بنجاح كبطاقة مصغرة للمشاهدة فقط!');
+                        alert('تم نشر ملف الـ PDF بنجاح وبشكل كامل!');
                         document.getElementById('upTitle').value = '';
                         document.getElementById('upFile').value = '';
                     } else {
@@ -1026,7 +1022,7 @@
                     }
                 }).catch(() => {
                     uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر الملف فوراً في المنصة`;
+                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً`;
                     alert('حدث خطأ في الشبكة.');
                 });
             };
