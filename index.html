@@ -376,7 +376,7 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        .modal-body-viewer object, .modal-body-viewer embed {
+        .modal-body-viewer iframe {
             width: 100%;
             height: 100%;
             border: none;
@@ -512,7 +512,7 @@
 
             <!-- قسم رفع ملفات الـ PDF -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF (مع دعم روابط اليوتيوب)</div>
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF (مع تفعيل روابط اليوتيوب والتمرير الكامل)</div>
                 <form onsubmit="handleFastFileUpload(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
@@ -547,7 +547,7 @@
                     <div class="form-group">
                         <label>اختر ملف الـ PDF من هاتفك</label>
                         <input type="file" class="form-control" id="upFile" accept=".pdf,application/pdf" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع ملف الـ PDF وعرضه بالكامل مع تفاعل روابط اليوتيوب.</small>
+                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع ملف الـ PDF وعرضه كاملاً مع تفاعل روابط اليوتيوب وفتحها مباشرة.</small>
                     </div>
 
                     <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً</button>
@@ -572,7 +572,7 @@
         </main>
     </div>
 
-    <!-- نافذة عرض الـ PDF بالشاشة الكاملة مع تفعيل الروابط -->
+    <!-- نافذة عرض الـ PDF بالشاشة الكاملة مع تفاعل الروابط -->
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box">
             <div class="modal-header-bar">
@@ -580,7 +580,7 @@
                 <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="closeFileModal()"><i class="fas fa-times"></i> إغلاق</button>
             </div>
             <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;">
-                <!-- يتم عرض ملف الـ PDF مع الروابط التفاعلية هنا -->
+                <!-- يتم عرض ملف الـ PDF مع تفعيل الروابط هنا -->
             </div>
         </div>
     </div>
@@ -871,13 +871,13 @@
                 });
         }
 
-        // فتح نافذة العرض مع السماح بتفاعل الروابط الخارجية مثل يوتيوب
+        // فتح نافذة العرض لعرض ملف الـ PDF كاملاً مع السماح بالتفاعل مع روابط يوتيوب الخارجية
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
             let realData = decodeURIComponent(encodedData);
 
-            // إضافة خصائص السماح بالروابط وفتحها بملء العرض
+            // استخدام sandbox مع السماح بالـ popups والـ scripts لضمان فتح روابط اليوتيوب عند النقر عليها
             container.innerHTML = `<iframe src="${realData}#view=FitH&toolbar=0&navpanes=0" sandbox="allow-scripts allow-same-origin allow-popups allow-forms" width="100%" height="100%"></iframe>`;
 
             document.getElementById('fileViewerModal').style.display = 'flex';
@@ -1020,7 +1020,7 @@
                         alert('حدث خطأ أثناء حفظ الملف.');
                     }
                 }).catch(() => {
-                    uploadBtn.disabled, uploadBtn.disabled = false;
+                    uploadBtn.disabled = false;
                     uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر ملف الـ PDF فوراً`;
                     alert('حدث خطأ في الشبكة.');
                 });
