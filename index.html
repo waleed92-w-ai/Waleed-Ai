@@ -517,10 +517,10 @@
                 <div id="manageSubscribersList">جاري التحميل...</div>
             </div>
 
-            <!-- قسم رفع ملفات الـ PDF الشاملة دفعة واحدة -->
+            <!-- قسم رفع ملفات الـ PDF الشاملة دفعة واحدة (مع التجزئة الذكية) -->
             <div class="card" id="sectionUpload" style="display: none;">
                 <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF الشاملة (ملف كامل بضغطة زر)</div>
-                <form onsubmit="handleMassiveUpload(event)">
+                <form onsubmit="handleChunkedUpload(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
                         <select class="form-control" id="upGrade" required>
@@ -552,9 +552,9 @@
                     </div>
 
                     <div class="form-group">
-                        <label>اختر ملف الـ PDF الكبير من هاتفك</label>
+                        <label>اختر ملف الـ PDF الشامل من هاتفك</label>
                         <input type="file" class="form-control" id="upFile" accept=".pdf,application/pdf" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيقوم النظام بضغط ورفع الملزمة دفعة واحدة كملف متكامل للمشاهدة بدون تحميل.</small>
+                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيقوم النظام بتجزئة ورفع الملزمة دفعة واحدة وبملف متكامل ومحمي للمشاهدة.</small>
                     </div>
 
                     <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> رفع ونشر الملف الشامل فوراً</button>
@@ -929,7 +929,12 @@
                     Object.keys(data).forEach(k => {
                         const item = data[k];
                         if (item.grade === activeClass && item.subject === activeSub) {
-                            let safeData = encodeURIComponent(item.fileData);
+                            // تجميع الأجزاء المقسمة تلقائياً لتعمل كملف واحد متكامل لدى الطالب
+                            let fullData = item.fileData || "";
+                            if (item.chunks && typeof item.chunks === 'object') {
+                                fullData = Object.values(item.chunks).join('');
+                            }
+                            let safeData = encodeURIComponent(fullData);
 
                             html += `
                                 <div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}')">
@@ -1072,8 +1077,8 @@
             }
         }
 
-        // دالة الرفع الذكية والمضغوطة للملفات الكبيرة كملف واحد متكامل
-        function handleMassiveUpload(e) {
+        // محرك التجزئة الذكية (Chunking Engine) لرفع الملفات الكبيرة كملف واحد متكامل مجاناً
+        function handleChunkedUpload(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
             const subject = document.getElementById('upSubject').value;
@@ -1088,23 +1093,32 @@
 
             const file = fileInput.files[0];
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري ضغط ورفع الملزمة الشاملة دفعة واحدة...`;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري معالجة وتجزئة الملزمة الشاملة...`;
 
             const reader = new FileReader();
             reader.onload = function(evt) {
                 const base64Data = evt.target.result;
                 const contentId = 'CONT_' + Date.now();
+                
+                // تقسيم البيانات إلى أجزاء بحجم 2 ميجابايت لكل جزء لتجاوز حدود قاعدة البيانات بسلاسة
+                const chunkSize = 2 * 1024 * 1024; 
+                const chunks = {};
+                for (let i = 0; i < base64Data.length; i += chunkSize) {
+                    let chunkKey = 'part_' + Math.floor(i / chunkSize);
+                    chunks[chunkKey] = base64Data.substring(i, i + chunkSize);
+                }
 
-                // إجراء ضغط ذكي وتقليل حجم الملف تلقائياً ليتوافق مع قاعدة البيانات وبملف واحد كامل
                 const contentData = {
                     id: contentId,
                     grade: grade,
                     subject: subject,
                     title: title,
-                    fileData: base64Data,
+                    chunks: chunks,
                     fileType: file.type,
                     date: new Date().toLocaleDateString('ar-EG')
                 };
+
+                uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري رفع ونشر الأجزاء للسحابة...`;
 
                 fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
                     method: 'PUT',
@@ -1118,7 +1132,7 @@
                         document.getElementById('upTitle').value = '';
                         document.getElementById('upFile').value = '';
                     } else {
-                        alert('الملف كبير جداً وغير ضاغط، يرجى تقليل الصور أو تصغير حجم الملف قليلاً ليتم قبوله.');
+                        alert('حدث خطأ أثناء حفظ أجزاء الملف، يرجى المحاولة مرة أخرى.');
                     }
                 }).catch(() => {
                     uploadBtn.disabled = false;
