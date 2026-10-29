@@ -309,7 +309,7 @@
             margin-top: 8px;
         }
 
-        .pdf-viewer-box iframe, .pdf-viewer-box video, .pdf-viewer-box img {
+        .pdf-viewer-box iframe, .pdf-viewer-box img, .pdf-viewer-box video {
             width: 100%;
             height: 100%;
             object-fit: contain;
@@ -377,7 +377,7 @@
                 <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
                 <button class="nav-item" onclick="showSection('sectionSubscribers')"><i class="fas fa-users"></i> اسماء المشتركين</button>
                 <button class="nav-item" onclick="showSection('sectionManageSubscribers')"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</button>
-                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> إضافة الملفات والفيديوهات</button>
+                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع الملفات المباشر</button>
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
@@ -463,10 +463,10 @@
                 <div id="manageSubscribersList">جاري التحميل...</div>
             </div>
 
-            <!-- قسم إضافة المحتوى (ملفات من الجهاز أو روابط وفيديوهات) -->
+            <!-- قسم رفع الملفات المباشر من الجهاز (PDF، صور، مقاطع) -->
             <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> إضافة ملفات (PDF / صور) أو فيديوهات وروابط</div>
-                <form onsubmit="handleContentUpload(event)">
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع الملفات والمقاطع مباشرة من جهازك</div>
+                <form onsubmit="handleDirectFileUpload(event)">
                     <div class="form-group">
                         <label>اختر الصف الدراسي</label>
                         <select class="form-control" id="upGrade" required>
@@ -493,31 +493,17 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>نوع الإضافة</label>
-                        <select class="form-control" id="upType" onchange="toggleInputType()" required>
-                            <option value="file">📄 رفع ملف من جهازي (PDF أو صور)</option>
-                            <option value="link">🎥 رابط فيديو (يوتيوب أو رابط سحابي)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label>عنوان المحاضرة أو الدرس</label>
-                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: شرح فصل الحاسوب الأول">
+                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الحاسوب المنهجية">
                     </div>
 
-                    <!-- حقل اختيار الملف من الجهاز -->
-                    <div class="form-group" id="fileGroup">
-                        <label>اختر الملف من جهازك (PDF، صور، مستندات)</label>
-                        <input type="file" class="form-control" id="upFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.jpg,.jpeg,.png,.zip" style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيتم رفع الملف وحفظه فوراً في المنصة.</small>
+                    <div class="form-group">
+                        <label>اختر الملف من جهازك (PDF، صور، أو مقاطع فيديو)</label>
+                        <input type="file" class="form-control" id="upFile" accept=".pdf,.mp4,.mov,.jpg,.jpeg,.png,.zip" required style="padding: 10px;">
+                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 اختر الملف وسيقوم النظام برفعه سحابياً وعرضه مباشرة للطلاب.</small>
                     </div>
 
-                    <!-- حقل إدخال الرابط -->
-                    <div class="form-group" id="linkGroup" style="display: none;">
-                        <label>رابط الفيديو أو المحتوى (يوتيوب / رابط مباشر)</label>
-                        <input type="url" class="form-control" id="upUrl" placeholder="https://youtube.com/...">
-                    </div>
-
-                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> نشر المحتوى فوراً في المنصة</button>
+                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف مباشرة</button>
                 </form>
             </div>
 
@@ -584,17 +570,6 @@
             fetchRequestsData();
             checkStudentSession();
         };
-
-        function toggleInputType() {
-            const type = document.getElementById('upType').value;
-            if (type === 'file') {
-                document.getElementById('fileGroup').style.display = 'block';
-                document.getElementById('linkGroup').style.display = 'none';
-            } else {
-                document.getElementById('fileGroup').style.display = 'none';
-                document.getElementById('linkGroup').style.display = 'block';
-            }
-        }
 
         function loadSettingsData() {
             fetch(`${DATABASE_URL}/settings.json`)
@@ -818,20 +793,13 @@
                         if (item.grade === activeClass && item.subject === activeSub) {
                             let mediaBox = '';
 
-                            if (item.type === 'link') {
-                                let embedUrl = item.url;
-                                if (item.url.includes('youtube.com/watch?v=')) {
-                                    embedUrl = item.url.replace('watch?v=', 'embed/');
-                                } else if (item.url.includes('youtu.be/')) {
-                                    embedUrl = item.url.replace('youtu.be/', 'youtube.com/embed/');
-                                }
-
+                            if (item.fileType && item.fileType.includes('video')) {
                                 mediaBox = `
                                     <div class="pdf-viewer-box">
-                                        <iframe src="${embedUrl}" allowfullscreen></iframe>
+                                        <video controls src="${item.url}"></video>
                                     </div>
                                 `;
-                            } else if (item.url && (item.url.match(/\.(jpeg|jpg|png)$/i) || item.isImage)) {
+                            } else if (item.fileType && item.fileType.includes('image')) {
                                 mediaBox = `
                                     <div class="pdf-viewer-box">
                                         <img src="${item.url}" alt="صورة توضيحية">
@@ -848,10 +816,10 @@
 
                             html += `
                                 <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:16px; border-radius:14px; margin-bottom:15px;">
-                                    <h4 style="color:var(--primary); margin-bottom:8px;"><i class="${item.type === 'link' ? 'fas fa-video' : 'fas fa-file-pdf'}"></i> ${item.title}</h4>
+                                    <h4 style="color:var(--primary); margin-bottom:8px;"><i class="fas fa-file-alt"></i> ${item.title}</h4>
                                     ${mediaBox}
                                     ${document.getElementById('adminSidebarSection').style.display === 'block' ? `
-                                        <button class="btn btn-danger" style="margin-top:10px;" onclick="deleteContent('${item.id}')">حذف المحتوى</button>
+                                        <button class="btn btn-danger" style="margin-top:10px;" onclick="deleteContent('${item.id}')">حذف الملف</button>
                                     ` : ''}
                                 </div>
                             `;
@@ -865,7 +833,7 @@
         }
 
         function deleteContent(id) {
-            if (confirm('هل تريد حذف هذا المحتوى نهائياً؟')) {
+            if (confirm('هل تريد حذف هذا الملف نهائياً؟')) {
                 fetch(`${DATABASE_URL}/contents/${id}.json`, { method: 'DELETE' })
                     .then(() => renderLectures());
             }
@@ -950,95 +918,68 @@
             }
         }
 
-        // دالة رفع الملفات المباشرة أو نشر الروابط الفورية
-        function handleContentUpload(e) {
+        // دالة الرفع المباشر للملفات من الجهاز (مع شريط التقدم السريع)
+        function handleDirectFileUpload(e) {
             e.preventDefault();
             const grade = document.getElementById('upGrade').value;
             const subject = document.getElementById('upSubject').value;
-            const type = document.getElementById('upType').value;
             const title = document.getElementById('upTitle').value;
+            const fileInput = document.getElementById('upFile');
             const uploadBtn = document.getElementById('uploadBtn');
 
-            const contentId = 'CONT_' + Date.now();
-
-            if (type === 'file') {
-                const fileInput = document.getElementById('upFile');
-                if (fileInput.files.length === 0) {
-                    alert('يرجى اختيار ملف من جهازك.');
-                    return;
-                }
-
-                const file = fileInput.files[0];
-                uploadBtn.disabled = true;
-                uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري الرفع المباشر...`;
-
-                const storageRef = storage.ref('lectures/' + contentId + '_' + file.name);
-                const uploadTask = storageRef.put(file);
-
-                uploadTask.on('state_changed', 
-                    (snapshot) => {
-                        let progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                        uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري الرفع (${progress}%)...`;
-                    }, 
-                    (error) => {
-                        uploadBtn.disabled = false;
-                        uploadBtn.innerHTML = `<i class="fas fa-paper-plane"></i> نشر المحتوى فوراً في المنصة`;
-                        alert('حدث خطأ أثناء الرفع، تأكد من الاتصال.');
-                    }, 
-                    () => {
-                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                            let isImg = file.type.startsWith('image/');
-                            saveContentData(contentId, grade, subject, type, title, downloadURL, isImg);
-                        });
-                    }
-                );
-            } else {
-                const urlInput = document.getElementById('upUrl').value.trim();
-                if (!urlInput) {
-                    alert('يرجى وضع رابط المحتوى.');
-                    return;
-                }
-
-                uploadBtn.disabled = true;
-                uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري النشر الفوري...`;
-                saveContentData(contentId, grade, subject, type, title, urlInput, false);
+            if (fileInput.files.length === 0) {
+                alert('يرجى اختيار ملف من جهازك.');
+                return;
             }
-        }
 
-        function saveContentData(id, grade, subject, type, title, url, isImage) {
-            const contentData = {
-                id: id,
-                grade: grade,
-                subject: subject,
-                type: type,
-                title: title,
-                url: url,
-                isImage: isImage,
-                date: new Date().toLocaleDateString('ar-EG')
-            };
+            const file = fileInput.files[0];
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري بدء الرفع...`;
 
-            fetch(`${DATABASE_URL}/contents/${id}.json`, {
-                method: 'PUT',
-                body: JSON.stringify(contentData),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(res => {
-                const uploadBtn = document.getElementById('uploadBtn');
-                uploadBtn.disabled = false;
-                uploadBtn.innerHTML = `<i class="fas fa-paper-plane"></i> نشر المحتوى فوراً في المنصة`;
-                if (res.ok) {
-                    alert('تم نشر المحتوى بنجاح في المنصة!');
-                    document.getElementById('upTitle').value = '';
-                    document.getElementById('upFile').value = '';
-                    document.getElementById('upUrl').value = '';
-                } else {
-                    alert('حدث خطأ أثناء حفظ البيانات.');
+            const contentId = 'CONT_' + Date.now();
+            const storageRef = storage.ref('lectures/' + contentId + '_' + file.name);
+            const uploadTask = storageRef.put(file);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    let progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                    uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري الرفع (${progress}%)...`;
+                }, 
+                (error) => {
+                    uploadBtn.disabled = false;
+                    uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف مباشرة`;
+                    alert('حدث خطأ أثناء الرفع، تأكد من قوة الإنترنت أو حجم الملف.');
+                }, 
+                () => {
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        const contentData = {
+                            id: contentId,
+                            grade: grade,
+                            subject: subject,
+                            title: title,
+                            url: downloadURL,
+                            fileType: file.type,
+                            date: new Date().toLocaleDateString('ar-EG')
+                        };
+
+                        fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
+                            method: 'PUT',
+                            body: JSON.stringify(contentData),
+                            headers: { 'Content-Type': 'application/json' }
+                        }).then(res => {
+                            uploadBtn.disabled = false;
+                            uploadBtn.innerHTML = `<i class="fas fa-cloud-upload-alt"></i> رفع ونشر الملف مباشرة`;
+                            if (res.ok) {
+                                alert('تم رفع ونشر الملف بنجاح في المنصة!');
+                                document.getElementById('upTitle').value = '';
+                                document.getElementById('upFile').value = '';
+                            } else {
+                                alert('حدث خطأ أثناء حفظ البيانات.');
+                            }
+                        });
+                    });
                 }
-            }).catch(() => {
-                const uploadBtn = document.getElementById('uploadBtn');
-                uploadBtn.disabled = false;
-                uploadBtn.innerHTML = `<i class="fas fa-paper-plane"></i> نشر المحتوى فوراً في المنصة`;
-                alert('حدث خطأ في الاتصال.');
-            });
+            );
         }
     </script>
 </body>
