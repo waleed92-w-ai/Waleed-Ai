@@ -184,6 +184,7 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            text-decoration: none;
         }
 
         .btn-primary { background-color: var(--secondary-color); color: white; }
@@ -321,7 +322,7 @@
                 </form>
             </div>
 
-            <!-- نشر الملفات والمحاضرات -->
+            <!-- نشر المحاضرات -->
             <div class="card">
                 <div class="section-title">
                     <i class="fas fa-upload"></i> نشر ملف أو محاضرة بحجم غير محدود
@@ -368,9 +369,10 @@
                 </form>
             </div>
 
+            <!-- تفعيل الطلاب يدوياً من جهاز الأستاذ -->
             <div class="card">
                 <div class="section-title">
-                    <i class="fas fa-users-cog"></i> طلبات اشتراك الطلاب (موافقة / طرد)
+                    <i class="fas fa-users-cog"></i> تفعيل اشتراكات الطلاب أو إلغاؤها
                 </div>
                 <div id="studentsList"></div>
             </div>
@@ -416,12 +418,22 @@
                         <input type="text" class="form-control" id="studentUsername" required placeholder="@username">
                     </div>
                     <button type="submit" class="btn btn-success">
-                        <i class="fas fa-paper-plane"></i> إرسال طلب الاشتراك
+                        <i class="fab fa-telegram-plane"></i> إرسال الطلب وإشعار الأستاذ عبر تيليجرام
                     </button>
                 </form>
             </div>
 
-            <!-- محتوى المنصة المحمي (يظهر فقط للمفعلين بعد الموافقة) -->
+            <!-- زر تفعيل سريع للطالب بعد مراسلة الأستاذ -->
+            <div class="card" id="waitingNoticeCard" style="display: none; text-align: center; padding: 25px;">
+                <i class="fas fa-paper-plane" style="font-size: 2.5rem; color: var(--secondary-color); margin-bottom: 12px;"></i>
+                <h3 style="color: var(--primary-color); margin-bottom: 8px;">تم إرسال تفاصيلك إلى تيليجرام الأستاذ وليد</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">بعد إتمام مراسلة الأستاذ وتحويل المبلغ، اضغط الزر أدناه لتفعيل حسابك ودخول المنصة فوراً:</p>
+                <button class="btn btn-success" onclick="manualActivateStudent()">
+                    <i class="fas fa-check-circle"></i> تفعيل حسابي ودخول المنصة الآن
+                </button>
+            </div>
+
+            <!-- محتوى المنصة المحمي (يظهر فقط للمفعلين) -->
             <div id="protectedContentArea" style="display: none;">
                 
                 <!-- الخطوة 1: اختيار الصف -->
@@ -480,13 +492,6 @@
                     </div>
                 </div>
 
-            </div>
-
-            <!-- تنبيه بانتظار الموافقة والدفع -->
-            <div class="card" id="waitingNoticeCard" style="display: none; text-align: center; padding: 30px;">
-                <i class="fas fa-clock" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 15px;"></i>
-                <h3 style="color: var(--primary-color); margin-bottom: 10px;">حسابك بانتظار موافقة الأستاذ وليد</h3>
-                <p style="color: var(--text-muted);">تم استلام طلبك وطريقة الدفع، وسيتم تفعيل حسابك لمشاهدة المواد فوراً بعد مراجعة التحويل.</p>
             </div>
 
         </div>
@@ -565,28 +570,45 @@
 
         function handleStudentRegister(e) {
             e.preventDefault();
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const name = document.getElementById('studentName').value;
+            const username = document.getElementById('studentUsername').value;
+            const price = localStorage.getItem('waleed_sub_price') || '5000';
+
             const student = {
                 id: Date.now(),
-                paymentMethod: document.getElementById('paymentMethod').value,
-                name: document.getElementById('studentName').value,
-                username: document.getElementById('studentUsername').value,
+                paymentMethod: paymentMethod,
+                name: name,
+                username: username,
                 status: 'pending'
             };
             let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
             students.push(student);
             localStorage.setItem('waleed_students', JSON.stringify(students));
             localStorage.setItem('current_student_id', student.id);
+
+            // توجيه الطالب مباشرة إلى تيليجرام الأستاذ مع رسالة جاهزة
+            const text = encodeURIComponent(`مرحباً أستاذ وليد، أود الاشتراك في المنصة.\nالاسم الثلاثي: ${name}\nالمعرف: ${username}\nطريقة الدفع: ${paymentMethod}\nالمبلغ: ${price} دينار`);
+            window.open(`https://t.me/WALEED92w?text=${text}`, '_blank');
+
             document.getElementById('studentRegisterForm').reset();
-            showNotification('تم إرسال طلب الاشتراك بنجاح! بانتظار تفعيل الأستاذ.');
-            renderStudentsList();
             checkStudentAccess();
+        }
+
+        function manualActivateStudent() {
+            const currentStudentId = localStorage.getItem('current_student_id');
+            let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
+            students = students.map(s => { if (s.id == currentStudentId) s.status = 'active'; return s; });
+            localStorage.setItem('waleed_students', JSON.stringify(students));
+            checkStudentAccess();
+            showNotification('تم تفعيل حسابك بنجاح! أهلاً بك في المنصة.');
         }
 
         function renderStudentsList() {
             const container = document.getElementById('studentsList');
             let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
             if (students.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 10px;">لا يوجد طلبات اشتراك حالياً.</p>`;
+                container.innerHTML = `<p style="text-align: center; color: var(--text-muted); padding: 10px;">لا يوجد طلاب مسجلين حالياً.</p>`;
                 return;
             }
             let html = '';
@@ -599,7 +621,7 @@
                             <p style="margin-top:2px;">الحالة: <span class="badge ${s.status === 'active' ? 'badge-active' : 'badge-pending'}">${s.status === 'active' ? 'مُفعل' : 'معلق'}</span></p>
                         </div>
                         <div style="display:flex; gap:6px;">
-                            ${s.status === 'pending' ? `<button class="btn btn-sm btn-success" onclick="updateStudentStatus(${s.id}, 'active')">موافقة وتفعيل</button>` : ''}
+                            ${s.status === 'pending' ? `<button class="btn btn-sm btn-success" onclick="updateStudentStatus(${s.id}, 'active')">تفعيل</button>` : ''}
                             <button class="btn btn-sm btn-danger" onclick="kickAndRemoveStudent(${s.id})">طرد وإلغاء</button>
                         </div>
                     </div>
@@ -613,12 +635,11 @@
             students = students.map(s => { if (s.id === id) s.status = status; return s; });
             localStorage.setItem('waleed_students', JSON.stringify(students));
             renderStudentsList();
-            checkStudentAccess();
-            showNotification('تم تفعيل اشتراك الطالب بنجاح');
+            showNotification('تم تفعيل الطالب بنجاح');
         }
 
         function kickAndRemoveStudent(id) {
-            if (confirm('هل أنت متأكد من طرد هذا الطالب وإلغاء اشتراكه تماماً؟')) {
+            if (confirm('هل أنت متأكد من طرد هذا الطالب وإلغاء اشتراكه؟')) {
                 let students = JSON.parse(localStorage.getItem('waleed_students')) || [];
                 students = students.filter(s => s.id !== id);
                 localStorage.setItem('waleed_students', JSON.stringify(students));
@@ -627,7 +648,7 @@
                 }
                 renderStudentsList();
                 checkStudentAccess();
-                showNotification('تم طرد الطالب بنجاح، ويمكنه التقديم مرة أخرى.');
+                showNotification('تم طرد الطالب بنجاح.');
             }
         }
 
@@ -706,7 +727,7 @@
             localStorage.setItem('waleed_lectures', JSON.stringify(lectures));
 
             document.getElementById('lectureForm').reset();
-            showNotification('تم نشر المحاضرة بنجاح وبحجم غير محدود!');
+            showNotification('تم نشر المحاضرة بنجاح!');
             if (currentGrade === grade && currentSubject === subject) {
                 renderLectures();
             }
