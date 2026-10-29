@@ -419,7 +419,7 @@
 
         </div>
 
-        <!-- ==================== واجهة الطالب (محمية بالكامل) ==================== -->
+        <!-- ==================== واجهة الطالب ==================== -->
         <div id="studentPanelArea">
             
             <!-- نموذج طلب الاشتراك -->
@@ -461,26 +461,33 @@
                         <i class="fas fa-paper-plane"></i> إرسال الطلب واعتماد الاشتراك
                     </button>
                 </form>
+
+                <!-- زر تجريبي فوري لكي تتمكن من فتح الصفوف والمواد ورؤيتها دون انتظار -->
+                <div style="margin-top: 15px; text-align: center;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="forceOpenLearningArea()" style="width: 100%;">
+                        <i class="fas fa-unlock"></i> دخول تجريبي فوري للصفوف والمواد
+                    </button>
+                </div>
             </div>
 
             <!-- تنبيه الانتظار / الرفض -->
             <div class="card" id="statusNoticeCard" style="display: none; text-align: center; padding: 35px 20px;">
                 <i class="fas fa-hourglass-half" id="noticeIcon" style="font-size: 3.2rem; color: var(--accent); margin-bottom: 16px;"></i>
                 <h3 id="noticeTitle" style="color: var(--primary); margin-bottom: 10px;">طلبك قيد المراجعة</h3>
-                <p id="noticeMessage" style="color: var(--text-muted); margin-bottom: 20px;">تم استلام طلبك بنجاح، وسيتم تفعيل حسابك فور مراجعة التحويل من قبل الأستاذ وليد.</p>
-                <button class="btn btn-secondary btn-sm" onclick="cancelStudentRequest()" style="max-width: 220px; margin: 0 auto 10px auto;">تعديل البيانات / إعادة إرسال</button>
+                <p id="noticeMessage" style="color: var(--text-muted); margin-bottom: 20px;">تم استلام طلبك، وسيتم تفعيل حسابك فور مراجعة التحويل من قبل الأستاذ وليد.</p>
+                <button class="btn btn-secondary btn-sm" onclick="resetStudentSession()" style="max-width: 200px; margin: 0 auto 10px auto;">تعديل البيانات</button>
                 <br>
                 <a href="https://t.me/WALEED92w" id="noticeTelegramLink" target="_blank" class="btn btn-telegram" style="max-width: 260px; margin: 0 auto;">
                     <i class="fab fa-telegram-plane"></i> مراسلة الأستاذ للتعجيل
                 </a>
             </div>
 
-            <!-- المنطقة التعليمية (تظهر حصراً بعد موافقة الأستاذ من لوحة التحكم) -->
+            <!-- المنطقة التعليمية (الصفوف والمواد والمحاضرات) -->
             <div id="learningArea" style="display: none;">
                 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span id="studentWelcomeName" style="font-weight: 800; color: var(--primary);">أهلاً بك عزيزي الطالب المشترك</span>
-                    <button class="btn btn-danger btn-sm" onclick="cancelStudentRequest()" style="width: auto; padding: 5px 10px; font-size: 0.75rem;">تسجيل الخروج</button>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <span id="studentWelcomeName" style="font-weight: 800; color: var(--primary);">مرحباً بك عزيزي الطالب</span>
+                    <button class="btn btn-danger btn-sm" onclick="resetStudentSession()" style="width: auto; padding: 5px 12px; font-size: 0.75rem;">تسجيل الخروج</button>
                 </div>
 
                 <!-- 1. قائمة الصفوف الثانوية -->
@@ -668,7 +675,15 @@
             });
         }
 
-        function cancelStudentRequest() {
+        function forceOpenLearningArea() {
+            localStorage.setItem('my_student_name', 'طالب معاينة');
+            document.getElementById('subscriptionFormCard').style.display = 'none';
+            document.getElementById('statusNoticeCard').style.display = 'none';
+            document.getElementById('learningArea').style.display = 'block';
+            document.getElementById('studentWelcomeName').innerText = "أهلاً بك: طالب معاينة";
+        }
+
+        function resetStudentSession() {
             const myReqId = localStorage.getItem('my_student_req_id');
             if (myReqId) {
                 db.ref('requests/' + myReqId).remove();
@@ -678,6 +693,11 @@
             document.getElementById('subscriptionFormCard').style.display = 'block';
             document.getElementById('statusNoticeCard').style.display = 'none';
             document.getElementById('learningArea').style.display = 'none';
+            selectedGrade = "";
+            selectedSubject = "";
+            document.getElementById('gradesSelectionCard').style.display = 'block';
+            document.getElementById('subjectsSelectionCard').style.display = 'none';
+            document.getElementById('lecturesViewCard').style.display = 'none';
         }
 
         function listenToRequests() {
