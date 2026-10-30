@@ -73,11 +73,17 @@
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
 
-        /* حاوية البث (صوت افتراضياً، كاميرا مغلقة وتُفتح عند ضغط زر التشغيل، وتكبير كامل للشاشة) */
-        .lightweight-live-box { width: 100%; height: 450px; background: #0f172a; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; border: 2px solid #334155; }
-        .lightweight-live-box video { width: 100%; height: 100%; object-fit: cover; display: none; }
+        /* حاوية شبكة البث الدائرية للمشاركين (أستاذ وطلاب) */
+        .lightweight-live-box { width: 100%; min-height: 450px; background: #0f172a; border-radius: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; padding: 20px; position: relative; overflow: auto; border: 2px solid #334155; }
         
-        /* ضبط وضع ملء الشاشة تماماً ليملا الشاشة عرضاً وارتفاعاً بدون أي فراغات */
+        /* تصميم الدائرة لكل مشارك في البث */
+        .participant-circle-card { display: flex; flex-direction: column; align-items: center; gap: 8px; background: rgba(30, 41, 59, 0.7); padding: 12px; border-radius: 20px; border: 1px solid #334155; width: 160px; text-align: center; }
+        .participant-avatar-circle { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--success); overflow: hidden; background: #1e293b; display: flex; align-items: center; justify-content: center; position: relative; }
+        .participant-avatar-circle img, .participant-avatar-circle video { width: 100%; height: 100%; object-fit: cover; }
+        .participant-name-tag { color: #fff; font-size: 0.85rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .participant-role-tag { font-size: 0.7rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 8px; border-radius: 6px; }
+
+        /* وضع تكبير الشاشة الكاملة الحقيقي للبث */
         .lightweight-live-box:fullscreen { width: 100vw; height: 100vh; border-radius: 0; border: none; background: #000; }
         .lightweight-live-box:-webkit-full-screen { width: 100vw; height: 100vh; border-radius: 0; border: none; background: #000; }
         .lightweight-live-box:-moz-full-screen { width: 100vw; height: 100vh; border-radius: 0; border: none; background: #000; }
@@ -92,7 +98,7 @@
         .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; -webkit-overflow-scrolling: touch; display: flex; align-items: center; justify-content: center; }
         .watermark-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around; opacity: 0.15; overflow: hidden; font-weight: 900; font-size: 1.1rem; color: #ffffff; transform: rotate(-25deg); }
         
-        @media (max-width: 768px) { .layout-wrapper { flex-direction: column; } sidebar { width: 100%; } .lightweight-live-box { height: 300px; } }
+        @media (max-width: 768px) { .layout-wrapper { flex-direction: column; } sidebar { width: 100%; } .lightweight-live-box { min-height: 320px; } }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -267,22 +273,27 @@
                     <button class="btn btn-secondary" onclick="backToRoomMenu()"><i class="fas fa-arrow-right"></i> رجوع لأقسام الغرفة</button>
                 </div>
 
-                <!-- أ. قسم البث المباشر (صوت افتراضياً، زر تشغيل الكاميرا وإيقافها متاح للجميع، تكبير حقيقي) -->
+                <!-- أ. قسم البث المباشر التفاعلي (عرض الأستاذ والطلاب بدوائر مع أسمائهم) -->
                 <div class="room-section-pane" id="paneLive">
                     <div style="background: #1e293b; padding: 14px; border-radius: var(--radius);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #fff; flex-wrap: wrap; gap: 8px;">
-                            <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-video" style="color: #38bdf8;"></i> غرفة البث المشترك (صوت وصورة)</span>
-                            <div style="display: flex; gap: 8px; align-items: center;" id="liveControlButtons">
-                                <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا</button>
-                                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="stopWebcam()"><i class="fas fa-video-slash"></i> إيقاف الكاميرا</button>
-                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير الشاشة</button>
-                            </div>
+                            <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-video" style="color: #38bdf8;"></i> البث المباشر: <span id="liveRoomTitleDisplay">غرفة الدرس</span></span>
+                            <div style="display: flex; gap: 8px; align-items: center;" id="liveControlButtons"></div>
                         </div>
+
+                        <!-- صندوق لوحة إدارة طلبات الانضمام الخاصة بالأستاذ/المشرف -->
+                        <div id="teacherLiveAdminBox" style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; margin-bottom: 12px; display: none;">
+                            <h5 style="color: #38bdf8; font-size: 0.9rem; margin-bottom: 8px;"><i class="fas fa-users"></i> طلبات الطلاب للانضمام للبث:</h5>
+                            <div id="liveRequestsListContainer" style="max-height: 120px; overflow-y: auto;"><p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p></div>
+                        </div>
+
+                        <!-- حاوية دوائر المشاركين في البث -->
                         <div class="lightweight-live-box" id="liveContainerBox">
-                            <video id="webcamVideo" autoplay playsinline muted></video>
-                            <div id="liveStatusMsg" style="color: #94a3b8; font-weight: 700; position: absolute; text-align: center; padding: 0 15px;">
-                                <i class="fas fa-microphone-alt" style="font-size: 2.2rem; margin-bottom: 10px; color: var(--success); display: block;"></i>
-                                الصوت متصل وجاهز للاستماع.<br>الكاميرا مغلقة افتراضياً (يمكنك تشغيل الكاميرا والصورة بالضغط على زر تشغيل الكاميرا).
+                            <div id="participantsGridContainer" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; width: 100%;">
+                                <div style="color: #94a3b8; font-weight: 700; text-align: center; padding: 30px;">
+                                    <i class="fas fa-broadcast-tower" style="font-size: 2.5rem; margin-bottom: 10px; color: var(--success); display: block;"></i>
+                                    <span id="liveStatusText">البث جاهز. بانتظار بدء الأستاذ أو انضمام المشاركين.</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -517,11 +528,11 @@
         const ADMIN_HASH = "V0ExOTkyd2E="; // WA1992wa
         let activeClass = ""; let activeSub = ""; let activeRoomId = ""; let activeRoomTitleStr = "";
         let currentRole = ""; let loggedTeacherData = null;
-        let previousNotificationsCount = 0;
         let currentStudentName = "";
         let pendingRoomData = null;
         let currentPdfScale = 1.0;
         let localStream = null;
+        let isStudentInLive = false;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -947,12 +958,15 @@
 
         function openRoomSection(paneId) {
             document.getElementById('currentRoomContentTitle').innerText = `غرفة: ${activeRoomTitleStr}`;
+            document.getElementById('liveRoomTitleDisplay').innerText = activeRoomTitleStr;
             showSection('lecturesSection');
             
             document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
             document.getElementById(paneId).classList.add('active');
 
             if (paneId === 'paneLive') {
+                setupLiveControlsAndListeners();
+                renderParticipantsGrid();
                 if (currentRole === 'admin' || currentRole === 'teacher') {
                     document.getElementById('teacherGradeAddBox').style.display = 'flex';
                 } else {
@@ -966,25 +980,172 @@
             if (paneId === 'paneGrades') { renderRoomGrades(); }
         }
 
-        function startWebcam() {
-            navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-                localStream = stream;
-                const vid = document.getElementById('webcamVideo');
-                vid.srcObject = stream;
-                vid.style.display = 'block';
-                document.getElementById('liveStatusMsg').style.display = 'none';
-            }).catch(() => alert('تعذر الوصول للكاميرا أو الميكروفون! تأكد من منح الصلاحية للمتصفح.'));
+        // إعداد أزرار وحالة البث بناءً على دور المستخدم
+        function setupLiveControlsAndListeners() {
+            const ctrlBox = document.getElementById('liveControlButtons');
+            const adminBox = document.getElementById('teacherLiveAdminBox');
+
+            if (currentRole === 'admin' || currentRole === 'teacher') {
+                adminBox.style.display = 'block';
+                ctrlBox.innerHTML = `
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startTeacherLive()"><i class="fas fa-play"></i> بدء البث</button>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل/إيقاف الكاميرا</button>
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
+                `;
+                listenToStudentJoinRequests();
+            } else {
+                adminBox.style.display = 'none';
+                checkStudentJoinStatus();
+            }
+            listenToLiveParticipants();
         }
 
-        function stopWebcam() {
-            if (localStream) {
+        // الأستاذ يبدأ البث
+        function startTeacherLive() {
+            const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+            db.ref(`live_participants/${activeRoomId}/teacher`).set({
+                name: tName,
+                role: 'الأستاذ',
+                hasVideo: false,
+                timestamp: Date.now()
+            }).then(() => {
+                alert('تم بدء البث المباشر بنجاح وتواجدك كأستاذ!');
+                renderParticipantsGrid();
+            });
+        }
+
+        // الطالب يطلب الانضمام للبث
+        function requestJoinLive() {
+            if (!currentStudentName) { alert('يجب تسجيل الدخول كطالب أولاً!'); return; }
+            const reqId = 'REQ_' + Date.now();
+            db.ref(`live_requests/${activeRoomId}/${reqId}`).set({
+                id: reqId,
+                studentName: currentStudentName,
+                status: 'pending',
+                timestamp: Date.now()
+            }).then(() => {
+                alert('تم إرسال طلب الانضمام للبث للأستاذ. بانتظار الموافقة...');
+            });
+        }
+
+        // استماع الأستاذ لطلبات انضمام الطلاب
+        function listenToStudentJoinRequests() {
+            db.ref(`live_requests/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const req = data[k];
+                        if (req.status === 'pending') {
+                            html += `
+                                <div style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px;">
+                                    <span style="color: #fff; font-size: 0.85rem; font-weight: 700;">👤 ${req.studentName} يطلب الانضمام</span>
+                                    <div style="display: flex; gap: 6px;">
+                                        <button class="btn btn-success" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleLiveRequest('${req.id}', '${req.studentName}', 'approved')">قبول</button>
+                                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleLiveRequest('${req.id}', '${req.studentName}', 'rejected')">رفض</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                document.getElementById('liveRequestsListContainer').innerHTML = html || '<p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p>';
+            });
+        }
+
+        // قبول أو رفض الطلب وإدخال الطالب لقائمة المشاركين الدائرية
+        function handleLiveRequest(reqId, studentName, status) {
+            db.ref(`live_requests/${activeRoomId}/${reqId}`).update({ status: status });
+            if (status === 'approved') {
+                const sKey = 'student_' + Date.now();
+                db.ref(`live_participants/${activeRoomId}/${sKey}`).set({
+                    name: studentName,
+                    role: 'طالب مشارك',
+                    hasVideo: false,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        // متابعة الطالب لحالة طلبه بالبث
+        function checkStudentJoinStatus() {
+            const ctrlBox = document.getElementById('liveControlButtons');
+            ctrlBox.innerHTML = `
+                <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="requestJoinLive()"><i class="fas fa-sign-in-alt"></i> طلب الانضمام للبث</button>
+                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
+            `;
+
+            db.ref(`live_requests/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                if (data && currentStudentName) {
+                    Object.keys(data).forEach(k => {
+                        const req = data[k];
+                        if (req.studentName === currentStudentName && req.status === 'approved' && !isStudentInLive) {
+                            isStudentInLive = true;
+                            alert('تم قبول طلبك من قبل الأستاذ! أنت الآن داخل البث.');
+                            ctrlBox.innerHTML = `
+                                <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا</button>
+                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
+                            `;
+                        }
+                    });
+                }
+            });
+        }
+
+        // الاستماع للمشاركين في البث لتحديث دوائرهم وأسمائهم تلقائياً
+        function listenToLiveParticipants() {
+            db.ref(`live_participants/${activeRoomId}`).on('value', snapshot => {
+                renderParticipantsGrid(snapshot.val());
+            });
+        }
+
+        // رسم دوائر المشاركين (المدرس والطلاب المقبولين) مع أسمائهم وصورهم/فيديوهم
+        function renderParticipantsGrid(participantsData) {
+            const container = document.getElementById('participantsGridContainer');
+            if (!participantsData) {
+                container.innerHTML = `
+                    <div style="color: #94a3b8; font-weight: 700; text-align: center; padding: 30px;">
+                        <i class="fas fa-broadcast-tower" style="font-size: 2.5rem; margin-bottom: 10px; color: var(--success); display: block;"></i>
+                        <span>البث بانتظار التفعيل أو انضمام المشاركين...</span>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            Object.keys(participantsData).forEach(key => {
+                const p = participantsData[key];
+                html += `
+                    <div class="participant-circle-card">
+                        <div class="participant-avatar-circle" id="circle_${key}">
+                            <img src="IMG_1507.jpeg" alt="${p.name}" onerror="this.src='https://via.placeholder.com/90'">
+                        </div>
+                        <span class="participant-name-tag" title="${p.name}">${p.name}</span>
+                        <span class="participant-role-tag">${p.role}</span>
+                        ${(currentRole === 'admin' || currentRole === 'teacher') && key !== 'teacher' ? `<button class="btn btn-danger" style="padding:2px 6px; font-size:0.65rem;" onclick="kickParticipant('${key}')">طرد</button>` : ''}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // تشغيل الكاميرا الاختيارية لكل مستخدم
+        function toggleWebcam() {
+            if (!localStream) {
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+                    localStream = stream;
+                    alert('تم تفعيل الكاميرا والميكروفون بنجاح!');
+                }).catch(() => alert('تعذر الوصول للكاميرا! تأكد من منح الصلاحية.'));
+            } else {
                 localStream.getTracks().forEach(track => track.stop());
                 localStream = null;
+                alert('تم إيقاف الكاميرا.');
             }
-            const vid = document.getElementById('webcamVideo');
-            vid.srcObject = null;
-            vid.style.display = 'none';
-            document.getElementById('liveStatusMsg').style.display = 'block';
+        }
+
+        function kickParticipant(pKey) {
+            db.ref(`live_participants/${activeRoomId}/${pKey}`).remove();
         }
 
         // تكبير الشاشة الكاملة الحقيقية
