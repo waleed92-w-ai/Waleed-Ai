@@ -122,7 +122,7 @@
             <div id="adminSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة الأدمن (الأستاذ وليد)</div>
                 <button class="nav-item" onclick="showSection('sectionNotifications')">
-                    <i class="fas fa-bell"></i> الإشعارات والطلبات المباشرة
+                    <i class="fas fa-bell"></i> إشعارات وطلبات الطلاب
                     <span class="notif-badge" id="sidebarNotifBadge" style="position:static; margin-right:auto; display:none;">0</span>
                 </button>
                 <button class="nav-item" onclick="showSection('sectionVouchers')"><i class="fas fa-ticket-alt"></i> إدارة وتوليد كودات التفعيل</button>
@@ -515,7 +515,6 @@
             if (sectionId === 'sectionAdminReports') fetchAdminReports();
         }
 
-        // إرسال إشعار الدفع المباشر من الطالب
         function sendPaymentNotification(e) {
             e.preventDefault();
             const name = document.getElementById('nStudentName').value.trim();
@@ -534,7 +533,6 @@
             });
         }
 
-        // الاستماع المباشر للإشعارات الصوتية والفورية في Realtime
         function listenToNotificationsRealtime() {
             db.ref('notifications').on('value', snapshot => {
                 const data = snapshot.val();
@@ -552,7 +550,7 @@
                                         <small>طريقة التحويل: ${notif.payMethod} | رقم العملية: <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:800;">${notif.refNum}</code></small>
                                     </div>
                                     <div style="display:flex; gap:8px;">
-                                        <button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="approvePaymentNotif('${notif.id}', '${notif.name}')">قبول وتفعيل كود</button>
+                                        <button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="approvePaymentNotif('${notif.id}', '${notif.name}')">قبول وتوليد كود</button>
                                         <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('notifications', '${notif.id}', listenToNotificationsRealtime)">رفض</button>
                                     </div>
                                 </div>
@@ -561,7 +559,6 @@
                     });
                 }
 
-                // تنبيه صوتي وعداد الإشعارات
                 if (count > previousNotificationsCount && previousNotificationsCount !== 0) {
                     playBeepSound();
                 }
@@ -596,7 +593,6 @@
         function approvePaymentNotif(notifId, studentName) {
             const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000) + '-' + Math.floor(1000 + Math.random() * 9000);
             
-            // إضافة الكود للكروت وتحديث حالة الإشعار
             fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
                 method: 'PUT',
                 body: JSON.stringify({ code: randomCode, isUsed: false, createdAt: Date.now() }),
@@ -847,7 +843,7 @@
                         html += `<div class="list-item"><div><strong>${t.name}</strong> - مادة: ${t.subject}</div><button class="btn btn-danger" onclick="deleteItem('teachers', '${t.id}', fetchTeachersList)">حذف المدرس</button></div>`;
                     });
                 }
-                document.getElementById('teachersManageList').innerHTML = html || '<p style="color:#64748b; text-align:center;">لا يوجد مدرسين.</p>';
+                document.getElementById('teachersManageList').innerHTML = html || '<p style="text-align:center; color:#64748b;">لا يوجد مدرسين.</p>';
             });
         }
 
