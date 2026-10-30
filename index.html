@@ -99,7 +99,6 @@
             border: none !important;
         }
 
-        /* القسم الأيمن: شاشة المتحدثين والتحكم */
         .tiktok-stage-area {
             flex: 1;
             display: flex;
@@ -129,7 +128,6 @@
             box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
         }
 
-        /* شبكة المتحدثين النشطين في البث */
         .tiktok-speakers-grid {
             display: flex;
             flex-wrap: wrap;
@@ -200,7 +198,6 @@
         .speaker-name { color: #fff; font-size: 0.8rem; font-weight: 800; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .speaker-role { font-size: 0.65rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 6px; border-radius: 6px; }
 
-        /* شريط التحكم السفلي في البث */
         .tiktok-control-bar {
             display: flex;
             gap: 10px;
@@ -213,7 +210,6 @@
             flex-wrap: wrap;
         }
 
-        /* القسم الأيسر: لوحة الحضور (كل المتواجدين) وطلبات الانضمام */
         .tiktok-sidebar-panel {
             width: 320px;
             background: rgba(15, 23, 42, 0.95);
@@ -829,6 +825,7 @@
         let localAudioStream = null;
         let isMicMuted = false;
         let isStudentInLive = false;
+        let activePresenceRef = null; // مرجع تتبع الوجود للطالب في الفايربيس
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -1084,6 +1081,10 @@
                     localAudioStream.getTracks().forEach(track => track.stop());
                     localAudioStream = null;
                 }
+                if (activePresenceRef) {
+                    activePresenceRef.remove();
+                    activePresenceRef = null;
+                }
             } catch (err) {
                 console.error(err);
             }
@@ -1109,6 +1110,12 @@
         }
 
         function showSection(sectionId) {
+            // إذا كان الطالب ينتقل من أقسام الغرفة إلى مكان آخر، نزيل وجوده تلقائياً
+            if (sectionId !== 'roomMenuSection' && sectionId !== 'lecturesSection' && activePresenceRef) {
+                activePresenceRef.remove();
+                activePresenceRef = null;
+            }
+
             ['authSection', 'subjectsSection', 'teachersRoomsSection', 'roomMenuSection', 'lecturesSection', 'sectionCreateRoom', 'sectionManageRooms', 'sectionNotifications', 'sectionPlatformUsers', 'sectionVouchers', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionUniversalUpload', 'sectionTeacherReports'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
@@ -1567,7 +1574,6 @@
                 }
 
                 if (!roomData || roomData.accessType === 'free' || !roomData.pin) {
-                    registerStudentPresence(roomId);
                     openRoomMenu(roomId, roomTitle);
                     return;
                 }
@@ -1613,7 +1619,6 @@
                     }
                     
                     closePinModal();
-                    registerStudentPresence(rId);
                     openRoomMenu(rId, rTitle);
                 } else {
                     alert('رمز PIN الخاص بالدرس الخصوصي غير صحيح!');
@@ -1621,14 +1626,36 @@
             }
         }
 
+        // ==================== نظام تتبع الوجود الفوري (دخول وخروج الطالب) ====================
         function registerStudentPresence(roomId) {
-            if (!currentStudentName) return;
+            if (!currentStudentName || currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') return;
+            
+            // إذا كان مسجلاً مسبقاً في غرفة أخرى، نزيلها أولاً
+            if (activePresenceRef) {
+                activePresenceRef.remove();
+            }
+
             const studentKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
-            db.ref(`active_students/${roomId}/${studentKey}`).set({
+            activePresenceRef = db.ref(`active_students/${roomId}/${studentKey}`);
+            
+            const studentData = {
                 name: currentStudentName,
                 joinedAt: Date.now(),
                 status: 'نشط'
-            });
+            };
+
+            // وضع البيانات عند الدخول
+            activePresenceRef.set(studentData);
+            
+            // أمر Firebase التلقائي: عند خروج الطالب من الصفحة أو انقطاع الاتصال أو إغلاق التطبيق، يتم حذفه فوراً من الغرفة
+            activePresenceRef.onDisconnect().remove();
+        }
+
+        function removeStudentPresence() {
+            if (activePresenceRef) {
+                activePresenceRef.remove();
+                activePresenceRef = null;
+            }
         }
 
         function handleCreateCustomRoom(e) {
@@ -1722,6 +1749,10 @@
             activeRoomId = roomId;
             activeRoomTitleStr = roomTitle;
             document.getElementById('currentRoomMenuTitle').innerText = `غرفة: ${roomTitle}`;
+            
+            // تسجيل حضور الطالب فور دخوله للغرفة
+            registerStudentPresence(roomId);
+
             showSection('roomMenuSection');
             
             if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher' && currentStudentName) {
@@ -1729,7 +1760,9 @@
             }
         }
 
-        function backToRoomMenu() { showSection('roomMenuSection'); }
+        function backToRoomMenu() { 
+            showSection('roomMenuSection'); 
+        }
 
         function openRoomSection(paneId) {
             document.getElementById('currentRoomContentTitle').innerText = `غرفة: ${activeRoomTitleStr}`;
@@ -1819,7 +1852,10 @@
         function listenToStudentKickStatus(roomId) {
             const studentKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
             db.ref(`room_kicked/${roomId}/${studentKey}`).on('value', snapshot => {
-                if (snapshot.exists()) { document.getElementById('kickedModal').style.display = 'flex'; }
+                if (snapshot.exists()) { 
+                    removeStudentPresence();
+                    document.getElementById('kickedModal').style.display = 'flex'; 
+                }
             });
         }
 
@@ -1827,6 +1863,7 @@
             const studentKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
             db.ref(`room_kicked/${activeRoomId}/${studentKey}`).remove();
             document.getElementById('kickedModal').style.display = 'none';
+            registerStudentPresence(activeRoomId);
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
@@ -1976,7 +2013,6 @@
                 } 
             }).then(stream => {
                 localAudioStream = stream;
-                // منع تشغيل المايك المحلي على سماعة نفس الجهاز لتفادي الصدى
                 stream.getAudioTracks().forEach(track => { track.enabled = true; });
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
         }
@@ -2060,8 +2096,8 @@
             alert(`تم تعيين الطالب ${studentName} مشرفاً مساعداً في البث.`);
         }
 
-        function backToSubjectsView() { showSection('subjectsSection'); }
-        function backToRoomsView() { showSection('teachersRoomsSection'); }
+        function backToSubjectsView() { removeStudentPresence(); showSection('subjectsSection'); }
+        function backToRoomsView() { removeStudentPresence(); showSection('teachersRoomsSection'); }
 
         function sendStudentQuestion() {
             const text = document.getElementById('studentQuestionInput').value.trim();
