@@ -57,7 +57,7 @@
         .form-group label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.9rem; color: #334155; }
         .form-control { width: 100%; padding: 12px 16px; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 0.95rem; outline: none; background: #f8fafc; }
         .form-control:focus { border-color: var(--accent); background: #fff; }
-        .btn { padding: 12px 20px; border: none; border-radius: 12px; font-weight: 800; font-size: 0.95rem; cursor: pointer; transition: 0.25s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .btn { padding: 10px 18px; border: none; border-radius: 12px; font-weight: 800; font-size: 0.9rem; cursor: pointer; transition: 0.25s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
         .btn-primary { background: var(--accent); color: white; }
         .btn-success { background: var(--success); color: white; }
         .btn-danger { background: var(--danger); color: white; }
@@ -69,13 +69,17 @@
         .sub-card i { font-size: 1.8rem; color: var(--accent); }
         .sub-card:hover { border-color: var(--accent); background: #eff6ff; transform: translateY(-3px); }
         .list-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .badge { padding: 4px 10px; border-radius: 8px; font-size: 0.78rem; font-weight: 800; }
-        .badge-active { background: #d1fae5; color: #059669; }
-        .file-mini-card { background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 14px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.25s; margin-bottom: 12px; }
-        .file-mini-card:hover { border-color: var(--accent); background: #eff6ff; transform: translateY(-2px); }
-        .file-mini-info { display: flex; align-items: center; gap: 14px; }
-        .file-mini-info i { font-size: 2rem; color: #ef4444; }
-        .file-mini-info h4 { font-size: 1.05rem; font-weight: 800; color: var(--primary); }
+        
+        /* تبيوبات أقسام الغرفة الداخلية */
+        .room-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap: wrap; }
+        .room-tab-btn { background: #f8fafc; border: 1.5px solid #cbd5e1; color: #334155; padding: 8px 16px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .room-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+        .room-section-pane { display: none; }
+        .room-section-pane.active { display: block; }
+
+        /* مشغل البث الداخلي الخفيف والخالي من التعقيد */
+        .lightweight-live-box { width: 100%; height: 420px; background: #0f172a; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; border: 2px solid #334155; }
+        .lightweight-live-box video { width: 100%; height: 100%; object-fit: cover; }
         
         #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         #maintenanceScreen i { font-size: 4rem; color: var(--warning); margin-bottom: 20px; animation: bounce 2s infinite; }
@@ -87,10 +91,7 @@
         .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; -webkit-overflow-scrolling: touch; display: flex; align-items: center; justify-content: center; }
         .watermark-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around; opacity: 0.15; overflow: hidden; font-weight: 900; font-size: 1.1rem; color: #ffffff; transform: rotate(-25deg); }
         
-        .internal-live-container { width: 100%; height: 500px; background: #000; border-radius: 12px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .internal-live-container iframe { width: 100%; height: 100%; border: none; }
-        
-        @media (max-width: 768px) { .layout-wrapper { flex-direction: column; } sidebar { width: 100%; } .internal-live-container { height: 320px; } }
+        @media (max-width: 768px) { .layout-wrapper { flex-direction: column; } sidebar { width: 100%; } .lightweight-live-box { height: 280px; } }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -137,9 +138,9 @@
                 <button class="nav-item" onclick="showSection('sectionManageRooms')"><i class="fas fa-edit" style="color:#f59e0b;"></i> إدارة وتعديل غرفتي</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF لغرفتي</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherRecordings')"><i class="fas fa-film"></i> رفع محاضرة مسجلة</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherQuiz')"><i class="fas fa-question-circle"></i> إنشاء اختبار إلكتروني</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherQuiz')"><i class="fas fa-question-circle"></i> إنشاء اختبار</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherHomework')"><i class="fas fa-tasks"></i> إضافة واجب بيتي</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherReports')"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار/تقرير طالب</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherReports')"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار طالب</button>
             </div>
 
             <div id="adminSidebarSection" style="display: none;">
@@ -227,56 +228,86 @@
                 <div class="grid-cards" id="teachersRoomsGrid"></div>
             </div>
 
-            <!-- واجهة الغرفة الخاصة (مطابقة لخانة المادة مع البث والملفات والتكبير والتصغير) -->
+            <!-- واجهة الغرفة المقسمة بالكامل حسب طلبك (أقسام منظمة) -->
             <div class="card" id="lecturesSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 id="currentRoomTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
                     <button class="btn btn-secondary" onclick="backToRoomsView()"><i class="fas fa-arrow-right"></i> رجوع للغرف</button>
                 </div>
 
-                <!-- شاشة البث الداخلي داخل الغرفة مع تكبير وتصغير -->
-                <div style="background: #1e293b; padding: 14px; border-radius: var(--radius); margin-bottom: 25px;" id="liveRoomWrapper">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #fff; flex-wrap: wrap; gap: 8px;">
-                        <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-broadcast-tower" style="color: #38bdf8;"></i> البث المباشر للغرفة</span>
-                        <div style="display: flex; gap: 8px;" id="liveControlButtons">
-                            <!-- أزرار التحكم تظهر للمدرس فقط -->
+                <!-- شريط أقسام الغرفة (Tabs) -->
+                <div class="room-tabs">
+                    <button class="room-tab-btn active" onclick="switchRoomTab('paneLive', this)"><i class="fas fa-broadcast-tower"></i> البث المباشر</button>
+                    <button class="room-tab-btn" onclick="switchRoomTab('paneLectures', this)"><i class="fas fa-book-reader"></i> المحاضرات والملازم</button>
+                    <button class="room-tab-btn" onclick="switchRoomTab('paneQuestions', this)"><i class="fas fa-comments"></i> الأسئلة والنقاش</button>
+                    <button class="room-tab-btn" onclick="switchRoomTab('paneQuizzes', this)"><i class="fas fa-question-circle"></i> الاختبارات</button>
+                    <button class="room-tab-btn" onclick="switchRoomTab('paneGrades', this)"><i class="fas fa-star"></i> التقييم وأسماء الطلاب</button>
+                </div>
+
+                <!-- 1. قسم البث المباشر الداخلي الخفيف -->
+                <div class="room-section-pane active" id="paneLive">
+                    <div style="background: #1e293b; padding: 14px; border-radius: var(--radius);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #fff; flex-wrap: wrap; gap: 8px;">
+                            <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-video" style="color: #38bdf8;"></i> البث المباشر الداخلي الخفيف</span>
+                            <div id="liveControlButtons"></div>
+                        </div>
+                        <div class="lightweight-live-box" id="liveContainerBox">
+                            <!-- كاميرا خفيفة تعمل مباشرة داخل المنصة بدون برامج خارجية -->
+                            <video id="webcamVideo" autoplay playsinline muted></video>
+                            <div id="liveStatusMsg" style="color: #94a3b8; font-weight: 700; position: absolute;">البث غير متصل حالياً. ينتظر بدء الأستاذ...</div>
                         </div>
                     </div>
-                    <div class="internal-live-container" id="liveContainerBox">
-                        <iframe id="internalLiveIframe" allow="camera; microphone; fullscreen; display-capture; autoplay"></iframe>
+                </div>
+
+                <!-- 2. قسم المحاضرات والملازم (تكبير وتصغير) -->
+                <div class="room-section-pane" id="paneLectures">
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم المادة</h4>
+                        <div id="lecturesContainer"><p style="color: #64748b;">جاري التحميل...</p></div>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-film"></i> المحاضرات المسجلة</h4>
+                        <div id="recordingsContainer"><p style="color: #64748b;">لا توجد محاضرات مسجلة.</p></div>
                     </div>
                 </div>
 
-                <div style="margin-bottom: 25px;">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم الغرفة (مع إمكانية التكبير والتصغير)</h4>
-                    <div id="lecturesContainer"><p style="color: #64748b;">جاري التحميل...</p></div>
+                <!-- 3. قسم الأسئلة والنقاش -->
+                <div class="room-section-pane" id="paneQuestions">
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-comments"></i> أسئلة واستفسارات الطلاب</h4>
+                    <div style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 15px;">
+                        <textarea class="form-control" id="studentQuestionInput" rows="3" placeholder="اكتب سؤالك أو استفسارك هنا للأستاذ..."></textarea>
+                        <button class="btn btn-primary" style="margin-top: 10px;" onclick="sendStudentQuestion()">إرسال السؤال</button>
+                    </div>
+                    <div id="questionsListContainer"><p style="color: #64748b;">لا توجد أسئلة مرسلة.</p></div>
                 </div>
 
-                <div style="margin-bottom: 25px;">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-film"></i> المحاضرات المسجلة والفيديوهات</h4>
-                    <div id="recordingsContainer"><p style="color: #64748b;">لا توجد محاضرات مسجلة.</p></div>
-                </div>
-
-                <div style="margin-bottom: 25px;">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-tasks"></i> الواجبات البيتية والتسليم</h4>
-                    <div id="homeworkContainer"><p style="color: #64748b;">لا توجد واجبات مطلوبة حالياً.</p></div>
-                </div>
-
-                <div>
+                <!-- 4. قسم الاختبارات -->
+                <div class="room-section-pane" id="paneQuizzes">
                     <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-question-circle"></i> الاختبارات الإلكترونية</h4>
                     <div id="quizzesContainer"><p style="color: #64748b;">لا توجد اختبارات.</p></div>
+                    <div style="margin-top: 25px;">
+                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-tasks"></i> الواجبات البيتية</h4>
+                        <div id="homeworkContainer"><p style="color: #64748b;">لا توجد واجبات حالياً.</p></div>
+                    </div>
+                </div>
+
+                <!-- 5. قسم التقييم وأسماء الطلاب (كل طالب وأمامه تقييمه) -->
+                <div class="room-section-pane" id="paneGrades">
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-star" style="color:var(--warning);"></i> سجل أسماء الطلاب وتقييماتهم في الغرفة</h4>
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px;" id="teacherGradeAddBox" style="display:none;">
+                        <input type="text" class="form-control" id="gradeStudentName" placeholder="اسم الطالب">
+                        <input type="text" class="form-control" id="gradeStudentVal" placeholder="التقييم / الدرجة (مثلاً: ممتاز / 95%)">
+                        <button class="btn btn-success" onclick="saveStudentGrade()">حفظ التقييم</button>
+                    </div>
+                    <div id="studentsGradesList"><p style="color: #64748b;">جاري جلب تقييمات الطلاب...</p></div>
                 </div>
             </div>
 
             <div class="card" id="sectionCreateRoom" style="display: none;">
                 <div class="card-header"><i class="fas fa-plus-circle" style="color:var(--success);"></i> إنشاء غرفة خاصة برمز PIN سري</div>
                 <form onsubmit="handleCreateCustomRoom(event)">
-                    <div class="form-group">
-                        <label>عنوان الغرفة (مثلاً: رياضيات السادس - الأستاذ وليد)</label>
-                        <input type="text" class="form-control" id="crTitle" required placeholder="عنوان الغرفة">
-                    </div>
-                    <div class="form-group">
-                        <label>اختر الصف الدراسي</label>
+                    <div class="form-group"><label>عنوان الغرفة</label><input type="text" class="form-control" id="crTitle" required placeholder="عنوان الغرفة"></div>
+                    <div class="form-group"><label>الصف الدراسي</label>
                         <select class="form-control" id="crGrade">
                             <option value="الأول المتوسط">الأول المتوسط</option>
                             <option value="الثاني المتوسط">الثاني المتوسط</option>
@@ -286,114 +317,88 @@
                             <option value="السادس الاعدادي">السادس الإعدادي</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>اختر المادة</label>
+                    <div class="form-group"><label>المادة</label>
                         <select class="form-control" id="crSubject">
-                            <option value="الحاسوب">💻 الحاسوب</option>
+                            <option value="الحاسوب">💻 الحاسوب[span_0](start_span)[span_0](end_span)</option>
                             <option value="الرياضيات">📐 الرياضيات</option>
                             <option value="اللغة العربية">📖 اللغة العربية</option>
                             <option value="اللغة الإنجليزية">🔤 اللغة الإنجليزية</option>
                             <option value="الفيزياء">⚡ الفيزياء</option>
                             <option value="الكيمياء">🧪 الكيمياء</option>
                             <option value="الأحياء">🧬 الأحياء</option>
-                            <option value="الاجتماعيات">🗺️ الاجتماعيات</option>
-                            <option value="التربية الإسلامية">🕌 التربية الإسلامية</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>رمز الدخول السري (PIN) لحماية الغرفة</label>
-                        <input type="text" class="form-control" id="crPin" required placeholder="مثلاً: 1234">
-                    </div>
-                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-lock"></i> إنشاء الغرفة المحمية ونشرها</button>
+                    <div class="form-group"><label>رمز الدخول السري (PIN)</label><input type="text" class="form-control" id="crPin" required placeholder="1234"></div>
+                    <button type="submit" class="btn btn-success btn-block">إنشاء الغرفة المحمية</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionManageRooms" style="display: none;">
-                <div class="card-header"><i class="fas fa-edit" style="color:var(--warning);"></i> إدارة وتعديل غرفتي الخاصة</div>
-                <div id="myRoomsListContainer">جاري جلب غرفك...</div>
-            </div>
-
-            <div class="card" id="sectionVouchers" style="display: none;">
-                <div class="card-header"><i class="fas fa-ticket-alt"></i> إدارة وتوليد كودات التفعيل الخاصة بك</div>
-                <form onsubmit="generateVoucher(event)" style="margin-bottom: 20px; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1;">
-                    <div class="form-group">
-                        <label>عدد الكودات المراد توليدها الآن</label>
-                        <input type="number" class="form-control" id="vCount" value="5" min="1" max="50" required>
-                    </div>
-                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-plus-circle"></i> توليد كودات تفعيل جديدة</button>
-                </form>
-                <div id="vouchersList">جاري جلب الكودات...</div>
-            </div>
-
-            <div class="card" id="sectionTeachersManage" style="display: none;"><div class="card-header"><i class="fas fa-chalkboard-teacher"></i> إدارة المدرسين وغرفهم</div><div id="teachersManageList">جاري التحميل...</div></div>
-            <div class="card" id="sectionScheduleManage" style="display: none;"><div class="card-header"><i class="fas fa-calendar-alt"></i> جدول الحصص الأسبوعي</div><div id="scheduleContainer"></div></div>
-            <div class="card" id="sectionAdminReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> سجل إنذارات الطلاب</div><div id="adminReportsList"></div></div>
+            <div class="card" id="sectionManageRooms" style="display: none;"><div class="card-header"><i class="fas fa-edit"></i> إدارة وتعديل غرفتي</div><div id="myRoomsListContainer">جاري التحميل...</div></div>
+            <div class="card" id="sectionVouchers" style="display: none;"><div class="card-header"><i class="fas fa-ticket-alt"></i> كودات التفعيل</div><div id="vouchersList"></div></div>
+            <div class="card" id="sectionTeachersManage" style="display: none;"><div class="card-header"><i class="fas fa-chalkboard-teacher"></i> المدرسون</div><div id="teachersManageList"></div></div>
+            <div class="card" id="sectionScheduleManage" style="display: none;"><div class="card-header"><i class="fas fa-calendar-alt"></i> جدول الحصص</div><div id="scheduleContainer"></div></div>
+            <div class="card" id="sectionAdminReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> التقارير</div><div id="adminReportsList"></div></div>
             
             <div class="card" id="sectionSettings" style="display: none;">
                 <div class="card-header"><i class="fas fa-sliders-h"></i> إعدادات المنصة والصيانة</div>
                 <form onsubmit="saveSettings(event)">
                     <div class="form-group"><label>سعر الاشتراك</label><input type="text" class="form-control" id="cfgPrice" required></div>
-                    <div class="form-group"><label>طرق الدفع (زين كاش / ماستر كارد)</label><textarea class="form-control" id="cfgPayments" rows="3" required></textarea></div>
-                    <div class="form-group">
-                        <label>حالة المنصة</label>
+                    <div class="form-group"><label>طرق الدفع</label><textarea class="form-control" id="cfgPayments" rows="3" required></textarea></div>
+                    <div class="form-group"><label>حالة الصيانة</label>
                         <select class="form-control" id="cfgMaintenance">
-                            <option value="false">🟢 المنصة تعمل بشكل طبيعي</option>
-                            <option value="true">🛠️ وضع الصيانة (إظهار شاشة الصيانة للجميع)</option>
+                            <option value="false">🟢 تعمل طبيعي</option>
+                            <option value="true">🛠️ وضع الصيانة</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">حفظ الإعدادات وتحديث الحالة</button>
+                    <button type="submit" class="btn btn-primary btn-block">حفظ</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionTeacherUpload" style="display: none;"><div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF لغرفتي الخاصة</div>
+            <div class="card" id="sectionTeacherUpload" style="display: none;"><div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF</div>
                 <form onsubmit="handleTeacherUpload(event)">
-                    <div class="form-group"><label>اختر الغرفة / المادة الخاصة بك</label>
-                        <select class="form-control" id="tUpRoomId">
-                            {/* يتم تعبئتها تلقائياً بغرف المدرس */}
-                        </select>
-                    </div>
-                    <div class="form-group"><label>عنوان الملزمة</label><input type="text" class="form-control" id="tUpTitle" required placeholder="عنوان الملزمة"></div>
-                    <div class="form-group"><label>ملف الـ PDF</label><input type="file" class="form-control" id="tUpFile" accept=".pdf" required></div>
-                    <button type="submit" id="tUploadBtn" class="btn btn-primary btn-block">نشر الملزمة في غرفتي فوراً</button>
+                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="tUpRoomId"></select></div>
+                    <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="tUpTitle" required></div>
+                    <div class="form-group"><label>ملف PDF</label><input type="file" class="form-control" id="tUpFile" accept=".pdf" required></div>
+                    <button type="submit" class="btn btn-primary btn-block">نشر</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionTeacherRecordings" style="display: none;"><div class="card-header"><i class="fas fa-film"></i> نشر محاضرة مسجلة / فيديو طويل لغرفتي</div>
+            <div class="card" id="sectionTeacherRecordings" style="display: none;"><div class="card-header"><i class="fas fa-film"></i> رفع محاضرة مسجلة</div>
                 <form onsubmit="handleTeacherRecording(event)">
-                    <div class="form-group"><label>اختر الغرفة</label><select class="form-control" id="recRoomId"></select></div>
-                    <div class="form-group"><label>عنوان المحاضرة أو الفيديو</label><input type="text" class="form-control" id="recTitle" required placeholder="العنوان"></div>
-                    <div class="form-group"><label>رابط الفيديو الطويل (يوتيوب أو رابط مباشر)</label><input type="text" class="form-control" id="recUrl" required placeholder="رابط الفيديو"></div>
-                    <button type="submit" class="btn btn-primary btn-block">نشر الفيديو</button>
+                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="recRoomId"></select></div>
+                    <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="recTitle" required></div>
+                    <div class="form-group"><label>رابط الفيديو</label><input type="text" class="form-control" id="recUrl" required></div>
+                    <button type="submit" class="btn btn-primary btn-block">نشر</button>
                 </form>
             </div>
 
             <div class="card" id="sectionTeacherQuiz" style="display: none;"><div class="card-header"><i class="fas fa-question-circle"></i> إنشاء اختبار</div>
                 <form onsubmit="handleTeacherQuiz(event)">
-                    <div class="form-group"><label>اختر الغرفة</label><select class="form-control" id="qRoomId"></select></div>
-                    <div class="form-group"><label>عنوان الاختبار</label><input type="text" class="form-control" id="qTitle" required placeholder="العنوان"></div>
-                    <div class="form-group"><label>السؤال</label><input type="text" class="form-control" id="qQuestion" required placeholder="السؤال"></div>
+                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="qRoomId"></select></div>
+                    <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="qTitle" required></div>
+                    <div class="form-group"><label>السؤال</label><input type="text" class="form-control" id="qQuestion" required></div>
                     <div class="form-group"><label>خيار 1</label><input type="text" class="form-control" id="qOpt1" required></div>
                     <div class="form-group"><label>خيار 2</label><input type="text" class="form-control" id="qOpt2" required></div>
                     <div class="form-group"><label>خيار 3</label><input type="text" class="form-control" id="qOpt3" required></div>
-                    <div class="form-group"><label>رقم الإجابة الصحيحة (1 أو 2 أو 3)</label><input type="number" class="form-control" id="qCorrect" min="1" max="3" required></div>
-                    <button type="submit" class="btn btn-success btn-block">نشر الاختبار</button>
+                    <div class="form-group"><label>الإجابة الصحيحة (1 أو 2 أو 3)</label><input type="number" class="form-control" id="qCorrect" min="1" max="3" required></div>
+                    <button type="submit" class="btn btn-success btn-block">نشر</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionTeacherHomework" style="display: none;"><div class="card-header"><i class="fas fa-tasks"></i> إضافة واجب بيتي للطلاب</div>
+            <div class="card" id="sectionTeacherHomework" style="display: none;"><div class="card-header"><i class="fas fa-tasks"></i> إضافة واجب</div>
                 <form onsubmit="handleTeacherHomework(event)">
-                    <div class="form-group"><label>اختر الغرفة</label><select class="form-control" id="hwRoomId"></select></div>
-                    <div class="form-group"><label>عنوان الواجب / التعليمات</label><input type="text" class="form-control" id="hwTitle" required placeholder="مثال: حل التمارين صف 45"></div>
-                    <button type="submit" class="btn btn-primary btn-block">نشر الواجب</button>
+                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="hwRoomId"></select></div>
+                    <div class="form-group"><label>تعليمات الواجب</label><input type="text" class="form-control" id="hwTitle" required></div>
+                    <button type="submit" class="btn btn-primary btn-block">نشر</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionTeacherReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار طالب</div>
+            <div class="card" id="sectionTeacherReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> إنذار طالب</div>
                 <form onsubmit="submitTeacherReport(event)">
                     <div class="form-group"><label>اسم الطالب</label><input type="text" class="form-control" id="repStudentName" required></div>
                     <div class="form-group"><label>النوع</label><select class="form-control" id="repType"><option value="سلوك غير لائق">سلوك غير لائق</option><option value="إزعاج">إزعاج</option></select></div>
                     <div class="form-group"><label>التفاصيل</label><textarea class="form-control" id="repDetails" rows="3" required></textarea></div>
-                    <button type="submit" class="btn btn-warning btn-block">إرسال الإنذار</button>
+                    <button type="submit" class="btn btn-warning btn-block">إرسال</button>
                 </form>
             </div>
         </main>
@@ -417,23 +422,21 @@
 
     <div class="modal" id="editRoomModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 380px; padding: 24px;">
-            <div class="card-header"><i class="fas fa-edit" style="color:var(--warning);"></i> تعديل تفاصيل الغرفة</div>
+            <div class="card-header"><i class="fas fa-edit" style="color:var(--warning);"></i> تعديل الغرفة</div>
             <input type="hidden" id="editRoomId">
-            <div class="form-group"><label>عنوان الغرفة الجديد</label><input type="text" class="form-control" id="editRoomTitleInput"></div>
-            <div class="form-group"><label>رمز الدخول السري (PIN) الجديد</label><input type="text" class="form-control" id="editRoomPinInput"></div>
-            <button class="btn btn-success btn-block" onclick="saveEditedRoom()">حفظ التعديلات</button>
+            <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="editRoomTitleInput"></div>
+            <div class="form-group"><label>رمز PIN</label><input type="text" class="form-control" id="editRoomPinInput"></div>
+            <button class="btn btn-success btn-block" onclick="saveEditedRoom()">حفظ</button>
             <button class="btn btn-danger btn-block" onclick="closeEditRoomModal()" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
         </div>
     </div>
 
     <div class="modal" id="pinModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 380px; padding: 24px; text-align: center;">
-            <div class="card-header" style="justify-content: center;"><i class="fas fa-lock" style="color:var(--danger);"></i> غرفة محمية برمز سري</div>
-            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #334155;">هذه الغرفة خاصة ومحمية. يرجى إدخال رمز الدخول (PIN) الذي زودك به الأستاذ:</p>
-            <div class="form-group">
-                <input type="password" class="form-control" id="studentPinInput" placeholder="أدخل رمز الـ PIN هنا" style="text-align: center; font-size: 1.2rem; font-weight: 800;">
-            </div>
-            <button class="btn btn-success btn-block" onclick="verifyRoomPin()">دخول الغرفة</button>
+            <div class="card-header" style="justify-content: center;"><i class="fas fa-lock" style="color:var(--danger);"></i> غرفة محمية</div>
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #334155;">أدخل رمز الدخول (PIN):</p>
+            <div class="form-group"><input type="password" class="form-control" id="studentPinInput" placeholder="PIN" style="text-align: center; font-size: 1.2rem; font-weight: 800;"></div>
+            <button class="btn btn-success btn-block" onclick="verifyRoomPin()">دخول</button>
             <button class="btn btn-danger btn-block" onclick="closePinModal()" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
         </div>
     </div>
@@ -447,31 +450,29 @@
                 <button class="btn btn-warning" style="flex:1;" onclick="switchLoginTab('registerTeacher')">تسجيل جديد</button>
             </div>
             <div id="loginAdminBox">
-                <div class="form-group"><label>كلمة مرور الأدمن</label><input type="password" class="form-control" id="adminPassInput" placeholder="كلمة المرور"></div>
+                <div class="form-group"><label>كلمة مرور الأدمن</label><input type="password" class="form-control" id="adminPassInput"></div>
                 <button class="btn btn-primary btn-block" onclick="verifyAdminLogin()">دخول الأدمن</button>
             </div>
             <div id="loginTeacherBox" style="display: none;">
-                <div class="form-group"><label>يوزر المدرس</label><input type="text" class="form-control" id="teacherUsername" placeholder="يوزر"></div>
-                <div class="form-group"><label>كلمة المرور</label><input type="password" class="form-control" id="teacherPassword" placeholder="كلمة المرور"></div>
+                <div class="form-group"><label>يوزر المدرس</label><input type="text" class="form-control" id="teacherUsername"></div>
+                <div class="form-group"><label>كلمة المرور</label><input type="password" class="form-control" id="teacherPassword"></div>
                 <button class="btn btn-success btn-block" onclick="verifyTeacherLogin()">دخول المدرس</button>
             </div>
             <div id="registerTeacherBox" style="display: none;">
-                <div class="form-group"><label>اسم المدرس</label><input type="text" class="form-control" id="regTName" placeholder="الاسم"></div>
-                <div class="form-group"><label>المادة الدراسية</label>
+                <div class="form-group"><label>اسم المدرس</label><input type="text" class="form-control" id="regTName"></div>
+                <div class="form-group"><label>المادة</label>
                     <select class="form-control" id="regTSubject">
-                        <option value="الحاسوب">💻 الحاسوب</option>
+                        <option value="الحاسوب">💻 الحاسوب[span_1](start_span)[span_1](end_span)</option>
                         <option value="الرياضيات">📐 الرياضيات</option>
                         <option value="اللغة العربية">📖 اللغة العربية</option>
                         <option value="اللغة الإنجليزية">🔤 اللغة الإنجليزية</option>
                         <option value="الفيزياء">⚡ الفيزياء</option>
                         <option value="الكيمياء">🧪 الكيمياء</option>
                         <option value="الأحياء">🧬 الأحياء</option>
-                        <option value="الاجتماعيات">🗺️ الاجتماعيات</option>
-                        <option value="التربية الإسلامية">🕌 التربية الإسلامية</option>
                     </select>
                 </div>
-                <div class="form-group"><label>يوزر</label><input type="text" class="form-control" id="regTUser" placeholder="يوزر"></div>
-                <div class="form-group"><label>كلمة المرور</label><input type="password" class="form-control" id="regTPass" placeholder="كلمة المرور"></div>
+                <div class="form-group"><label>يوزر</label><input type="text" class="form-control" id="regTUser"></div>
+                <div class="form-group"><label>كلمة المرور</label><input type="password" class="form-control" id="regTPass"></div>
                 <button class="btn btn-warning btn-block" onclick="registerNewTeacher(event)">تسجيل</button>
             </div>
             <button class="btn btn-danger btn-block" onclick="closeAdminModal()" style="margin-top: 12px; background: transparent; color: #64748b;">إلغاء</button>
@@ -486,11 +487,12 @@
 
         const ADMIN_HASH = "V0ExOTkyd2E="; // WA1992wa
         let activeClass = ""; let activeSub = ""; let activeRoomId = "";
-        let currentRole = ""; let loggedTeacherData = null; let currentRoomLiveUrl = "";
+        let currentRole = ""; let loggedTeacherData = null;
         let previousNotificationsCount = 0;
         let currentStudentName = "";
         let pendingRoomData = null;
         let currentPdfScale = 1.0;
+        let localStream = null;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -499,9 +501,7 @@
             { name: "اللغة الإنجليزية", icon: "fas fa-language" },
             { name: "الفيزياء", icon: "fas fa-atom" },
             { name: "الكيمياء", icon: "fas fa-flask" },
-            { name: "الأحياء", icon: "fas fa-dna" },
-            { name: "الاجتماعيات", icon: "fas fa-globe-americas" },
-            { name: "التربية الإسلامية", icon: "fas fa-mosque" }
+            { name: "الأحياء", icon: "fas fa-dna" }
         ];
 
         window.onload = function() { 
@@ -513,8 +513,7 @@
 
         function checkMaintenanceStatus() {
             db.ref('settings/maintenance').on('value', snapshot => {
-                const isMaint = snapshot.val();
-                if (isMaint === true && currentRole !== 'admin') {
+                if (snapshot.val() === true && currentRole !== 'admin') {
                     document.getElementById('maintenanceScreen').style.display = 'flex';
                 } else {
                     document.getElementById('maintenanceScreen').style.display = 'none';
@@ -542,12 +541,11 @@
             const price = document.getElementById('cfgPrice').value;
             const payments = document.getElementById('cfgPayments').value;
             const maintenance = document.getElementById('cfgMaintenance').value === "true";
-
             fetch(`${DATABASE_URL}/settings.json`, {
                 method: 'PUT',
                 body: JSON.stringify({ price, payments, maintenance }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => alert('تم حفظ الإعدادات وتحديث حالة المنصة بنجاح!'));
+            }).then(() => alert('تم حفظ الإعدادات!'));
         }
 
         function switchLoginTab(tab) {
@@ -567,7 +565,7 @@
                 document.getElementById('adminLockBtn').style.display = 'none';
                 document.getElementById('adminExitBtn').style.display = 'flex';
                 document.getElementById('logoutContainer').style.display = 'block';
-                document.getElementById('topSubtitle').innerText = "لوحة تحكم الأدمن (الأستاذ وليد)";
+                document.getElementById('topSubtitle').innerText = "لوحة تحكم الأدمن";
                 document.getElementById('maintenanceScreen').style.display = 'none';
                 closeAdminModal();
                 showSection('sectionNotifications');
@@ -608,12 +606,12 @@
                 method: 'PUT',
                 body: JSON.stringify({ id: tId, name, subject, username, password }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم تسجيل المدرس بنجاح! يمكنك تسجيل الدخول الآن.'); switchLoginTab('teacher'); });
+            }).then(() => { alert('تم تسجيل المدرس بنجاح!'); switchLoginTab('teacher'); });
         }
 
         function logoutSystem() {
             localStorage.removeItem('student_session');
-            currentRole = ''; loggedTeacherData = null; currentRoomLiveUrl = ""; currentStudentName = "";
+            currentRole = ''; loggedTeacherData = null; currentStudentName = "";
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
             document.getElementById('logoutContainer').style.display = 'none';
@@ -666,7 +664,7 @@
                 body: JSON.stringify({ id: notifId, name, payMethod, refNum, status: 'pending', timestamp: Date.now() }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
-                alert('تم إرسال الإشعار بنجاح للأستاذ وليد! سيتم التفعيل فور التحقق.');
+                alert('تم إرسال إشعار التحويل للأدمن!');
                 document.getElementById('nStudentName').value = '';
                 document.getElementById('nRefNum').value = '';
             });
@@ -684,12 +682,9 @@
                             count++;
                             html += `
                                 <div class="list-item" style="border-right: 4px solid var(--accent);">
-                                    <div>
-                                        <strong>🔔 طالب جديد: ${notif.name}</strong><br>
-                                        <small>طريقة التحويل: ${notif.payMethod} | رقم العملية: <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:800;">${notif.refNum}</code></small>
-                                    </div>
+                                    <div><strong>🔔 طالب: ${notif.name}</strong><br><small>التحويل: ${notif.payMethod} | العملية: ${notif.refNum}</small></div>
                                     <div style="display:flex; gap:8px;">
-                                        <button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="approvePaymentNotif('${notif.id}', '${notif.name}')">قبول وتوليد كود</button>
+                                        <button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="approvePaymentNotif('${notif.id}', '${notif.name}')">قبول</button>
                                         <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('notifications', '${notif.id}', listenToNotificationsRealtime)">رفض</button>
                                     </div>
                                 </div>
@@ -697,41 +692,20 @@
                         }
                     });
                 }
-
-                if (count > previousNotificationsCount && previousNotificationsCount !== 0) {
-                    playBeepSound();
-                }
-                previousNotificationsCount = count;
-
                 const topBadge = document.getElementById('topNotifBadge');
                 const sidebarBadge = document.getElementById('sidebarNotifBadge');
                 if (count > 0) {
                     topBadge.innerText = count; topBadge.style.display = 'flex';
                     sidebarBadge.innerText = count; sidebarBadge.style.display = 'inline-flex';
                 } else {
-                    topBadge.style.display = 'none';
-                    sidebarBadge.style.display = 'none';
+                    topBadge.style.display = 'none'; sidebarBadge.style.display = 'none';
                 }
-
-                document.getElementById('liveNotificationsList').innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد إشعارات أو طلبات جديدة حالياً.</p>';
+                document.getElementById('liveNotificationsList').innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد إشعارات جديدة.</p>';
             });
         }
 
-        function playBeepSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-                osc.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.3);
-            } catch (e) {}
-        }
-
         function approvePaymentNotif(notifId, studentName) {
-            const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000) + '-' + Math.floor(1000 + Math.random() * 9000);
-            
+            const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
             fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
                 method: 'PUT',
                 body: JSON.stringify({ code: randomCode, isUsed: false, createdAt: Date.now() }),
@@ -741,9 +715,7 @@
                     method: 'PATCH',
                     body: JSON.stringify({ status: 'approved', generatedCode: randomCode }),
                     headers: { 'Content-Type': 'application/json' }
-                }).then(() => {
-                    alert(`تم قبول طلب الطالب: ${studentName}\nتم توليد الكود السري: ${randomCode}`);
-                });
+                }).then(() => alert(`تم القبول وتوليد الكود: ${randomCode}`));
             });
         }
 
@@ -751,7 +723,6 @@
             e.preventDefault();
             const name = document.getElementById('vStudentName').value.trim();
             const code = document.getElementById('vCodeInput').value.trim();
-
             fetch(`${DATABASE_URL}/vouchers/${code}.json`).then(res => res.json()).then(voucher => {
                 if (voucher && !voucher.isUsed) {
                     fetch(`${DATABASE_URL}/vouchers/${code}.json`, {
@@ -759,37 +730,23 @@
                         body: JSON.stringify({ isUsed: true, usedBy: name, usedAt: Date.now() }),
                         headers: { 'Content-Type': 'application/json' }
                     });
-
                     currentStudentName = name;
-                    const studentSession = { id: code, name: name, status: 'active' };
-                    localStorage.setItem('student_session', JSON.stringify(studentSession));
-                    
+                    localStorage.setItem('student_session', JSON.stringify({ id: code, name: name, status: 'active' }));
                     document.getElementById('logoutContainer').style.display = 'block';
-                    alert('تم تفعيل اشتراكك بنجاح! أهلاً بك في المنصة.');
+                    alert('تم التفعيل بنجاح!');
                     openClass('الأول المتوسط');
-                } else {
-                    alert('كود التفعيل غير صحيح أو تم استخدامه مسبقاً!');
-                }
-            }).catch(() => alert('حدث خطأ في الاتصال.'));
+                } else { alert('الكود غير صحيح أو مستخدم!'); }
+            });
         }
 
         function generateVoucher(e) {
             e.preventDefault();
-            const count = parseInt(document.getElementById('vCount').value) || 1;
-            let promises = [];
-            for (let i = 0; i < count; i++) {
-                const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000) + '-' + Math.floor(1000 + Math.random() * 9000);
-                const p = fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
-                    method: 'PUT',
-                    body: JSON.stringify({ code: randomCode, isUsed: false, createdAt: Date.now() }),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                promises.push(p);
-            }
-            Promise.all(promises).then(() => {
-                alert(`تم توليد ${count} كود تفعيل جديد بنجاح!`);
-                fetchVouchersList();
-            });
+            const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
+            fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ code: randomCode, isUsed: false, createdAt: Date.now() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert(`تم توليد الكود: ${randomCode}`); fetchVouchersList(); });
         }
 
         function fetchVouchersList() {
@@ -798,18 +755,10 @@
                 if (data) {
                     Object.keys(data).forEach(k => {
                         const v = data[k];
-                        html += `
-                            <div class="list-item">
-                                <div>
-                                    كود التفعيل: <code style="background:#e2e8f0; padding:4px 8px; border-radius:4px; font-weight:800; color:var(--primary);">${v.code}</code>
-                                    ${v.isUsed ? `<br><small style="color:var(--danger);">مستخدم من قبل الطالب: ${v.usedBy}</small>` : '<br><small style="color:var(--success);">جاهز للإرسال للطالب</small>'}
-                                </div>
-                                <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('vouchers', '${v.code}', fetchVouchersList)">حذف</button>
-                            </div>
-                        `;
+                        html += `<div class="list-item"><div>الكود: <strong>${v.code}</strong> ${v.isUsed ? `(مستخدم: ${v.usedBy})` : '(جاهز)'}</div><button class="btn btn-danger" onclick="deleteItem('vouchers', '${v.code}', fetchVouchersList)">حذف</button></div>`;
                     });
                 }
-                document.getElementById('vouchersList').innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد كودات تفعيل مولدة.</p>';
+                document.getElementById('vouchersList').innerHTML = html || '<p>لا توجد كودات.</p>';
             });
         }
 
@@ -831,7 +780,7 @@
             if (currentRole === 'admin' || currentRole === 'teacher' || checkStudentSession()) {
                 openClass(className);
             } else {
-                alert('عذراً، يجب تفعيل الاشتراك أولاً لتتمكن من دخول الصفوف ومتابعة الدروس!');
+                alert('يجب تفعيل الاشتراك أولاً!');
                 showSection('authSection');
             }
         }
@@ -859,15 +808,15 @@
                         if (r.grade === activeClass && r.subject === subName) {
                             html += `
                                 <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin}')">
-                                    <i class="fas fa-lock" style="color:var(--warning); position:absolute; top:10px; left:10px; font-size:1rem;"></i>
+                                    <i class="fas fa-lock" style="color:var(--warning); position:absolute; top:10px; left:10px;"></i>
                                     <i class="fas fa-chalkboard-teacher" style="color:var(--success);"></i>
-                                    <span>غرفة خاصة<br><strong>${r.title}</strong><br><small style="color:#64748b; font-weight:600;">الأستاذ: ${r.creator || 'مدرس'}</small></span>
+                                    <span><strong>${r.title}</strong><br><small>الأستاذ: ${r.creator || 'مدرس'}</small></span>
                                 </div>
                             `;
                         }
                     });
                 }
-                document.getElementById('teachersRoomsGrid').innerHTML = html || '<p style="color:#64748b; grid-column:1/-1; text-align:center;">لا توجد غرف خاصة محمية لهذا الصف والمادة.</p>';
+                document.getElementById('teachersRoomsGrid').innerHTML = html || '<p style="color:#64748b; grid-column:1/-1; text-align:center;">لا توجد غرف خاصة.</p>';
             });
         }
 
@@ -881,19 +830,13 @@
             document.getElementById('pinModal').style.display = 'flex';
         }
 
-        function closePinModal() {
-            document.getElementById('pinModal').style.display = 'none';
-            pendingRoomData = null;
-        }
+        function closePinModal() { document.getElementById('pinModal').style.display = 'none'; pendingRoomData = null; }
 
         function verifyRoomPin() {
-            const enteredPin = document.getElementById('studentPinInput').value.trim();
-            if (pendingRoomData && enteredPin === pendingRoomData.pin) {
+            if (pendingRoomData && document.getElementById('studentPinInput').value.trim() === pendingRoomData.pin) {
                 closePinModal();
                 openRoomInterface(pendingRoomData.id, pendingRoomData.title);
-            } else {
-                alert('رمز الدخول السري (PIN) غير صحيح!');
-            }
+            } else { alert('رمز PIN غير صحيح!'); }
         }
 
         function handleCreateCustomRoom(e) {
@@ -910,7 +853,7 @@
                 body: JSON.stringify({ id: roomId, title, grade, subject, pin, creator: creatorName }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
-                alert(`تم إنشاء الغرفة الخاصة "${title}" بنجاح!\nرمز الدخول السري (PIN) هو: ${pin}`);
+                alert('تم إنشاء الغرفة بنجاح!');
                 document.getElementById('crTitle').value = '';
                 document.getElementById('crPin').value = '';
                 loadTeacherRoomsIntoDropdowns();
@@ -928,20 +871,17 @@
                         if (currentRole === 'admin' || r.creator === creatorName) {
                             html += `
                                 <div class="list-item">
-                                    <div>
-                                        <strong>${r.title}</strong><br>
-                                        <small>الصف: ${r.grade} | المادة: ${r.subject} | رمز PIN: <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:800;">${r.pin}</code></small>
-                                    </div>
+                                    <div><strong>${r.title}</strong><br><small>الصف: ${r.grade} | المادة: ${r.subject} | PIN: ${r.pin}</small></div>
                                     <div style="display:flex; gap:8px;">
-                                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.8rem;" onclick="openEditRoomModal('${r.id}', '${r.title}', '${r.pin}')">تعديل الاسم والرمز</button>
-                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('custom_rooms', '${r.id}', fetchMyRooms)">حذف الغرفة</button>
+                                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.8rem;" onclick="openEditRoomModal('${r.id}', '${r.title}', '${r.pin}')">تعديل</button>
+                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('custom_rooms', '${r.id}', fetchMyRooms)">حذف</button>
                                     </div>
                                 </div>
                             `;
                         }
                     });
                 }
-                document.getElementById('myRoomsListContainer').innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد غرف خاصة مسجلة حالياً.</p>';
+                document.getElementById('myRoomsListContainer').innerHTML = html || '<p>لا توجد غرف.</p>';
             });
         }
 
@@ -951,101 +891,148 @@
             document.getElementById('editRoomPinInput').value = pin;
             document.getElementById('editRoomModal').style.display = 'flex';
         }
-
         function closeEditRoomModal() { document.getElementById('editRoomModal').style.display = 'none'; }
 
         function saveEditedRoom() {
             const roomId = document.getElementById('editRoomId').value;
-            const newTitle = document.getElementById('editRoomTitleInput').value.trim();
-            const newPin = document.getElementById('editRoomPinInput').value.trim();
-
-            if (!newTitle || !newPin) { alert('الرجاء إدخال العنوان ورمز PIN الجديدين!'); return; }
-
+            const title = document.getElementById('editRoomTitleInput').value.trim();
+            const pin = document.getElementById('editRoomPinInput').value.trim();
             fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
                 method: 'PATCH',
-                body: JSON.stringify({ title: newTitle, pin: newPin }),
+                body: JSON.stringify({ title, pin }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => {
-                alert('تم تحديث تفاصيل الغرفة بنجاح!');
-                closeEditRoomModal();
-                fetchMyRooms();
-            });
+            }).then(() => { alert('تم التحديث!'); closeEditRoomModal(); fetchMyRooms(); });
         }
 
-        // فتح واجهة الغرفة المطابقة لخانة المادة مع البث والملفات الخاصة بهذه الغرفة
         function openRoomInterface(roomId, roomTitle) {
             activeRoomId = roomId;
             document.getElementById('currentRoomTitle').innerText = `غرفة: ${roomTitle}`;
-            currentRoomLiveUrl = `https://meet.jit.si/WaleedAcademy_CustomRoom_${roomId}`;
-            document.getElementById('internalLiveIframe').src = currentRoomLiveUrl + "#config.startWithVideoMuted=true";
-
-            // إظهار أزرار التحكم بالكاميرا للمدرس أو الأدمن فقط داخل هذه الغرفة
+            
+            // ضبط أزرار التحكم في البث حسب الصلاحية
             const ctrlBox = document.getElementById('liveControlButtons');
             if (currentRole === 'admin' || currentRole === 'teacher') {
                 ctrlBox.innerHTML = `
-                    <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="setCameraOff()"><i class="fas fa-video-slash"></i> صوت فقط</button>
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="setCameraOn()"><i class="fas fa-video"></i> صوت وصورة</button>
-                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير الشاشة</button>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startTeacherWebcam()"><i class="fas fa-video"></i> بدء البث بالكاميرا</button>
+                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="stopTeacherWebcam()"><i class="fas fa-stop"></i> إيقاف البث</button>
                 `;
+                document.getElementById('teacherGradeAddBox').style.display = 'flex';
             } else {
-                ctrlBox.innerHTML = `
-                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير الشاشة</button>
-                `;
+                ctrlBox.innerHTML = `<span style="color:#38bdf8; font-size:0.85rem;">متابعة بث الأستاذ المباشر</span>`;
+                document.getElementById('teacherGradeAddBox').style.display = 'none';
             }
 
             showSection('lecturesSection');
-            renderRoomLectures(); renderRoomRecordings(); renderRoomQuizzes(); renderRoomHomework();
+            switchRoomTab('paneLive', document.querySelector('.room-tab-btn'));
+            renderRoomLectures(); renderRoomRecordings(); renderRoomQuizzes(); renderRoomHomework(); renderRoomQuestions(); renderRoomGrades();
         }
 
-        function setCameraOff() { if (currentRoomLiveUrl) document.getElementById('internalLiveIframe').src = currentRoomLiveUrl + "#config.startWithVideoMuted=true"; }
-        function setCameraOn() { if (currentRoomLiveUrl) document.getElementById('internalLiveIframe').src = currentRoomLiveUrl + "#config.startWithVideoMuted=false"; }
-        
-        function toggleFullScreenLive() {
-            const box = document.getElementById('liveContainerBox');
-            if (!document.fullscreenElement) {
-                if (box.requestFullscreen) { box.requestFullscreen(); }
-                else if (box.webkitRequestFullscreen) { box.webkitRequestFullscreen(); }
-            } else {
-                if (document.exitFullscreen) { document.exitFullscreen(); }
+        // تشغيل كاميرا المدرس للبث الداخلي الخفيف بالمتصفح
+        function startTeacherWebcam() {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+                localStream = stream;
+                const vid = document.getElementById('webcamVideo');
+                vid.srcObject = stream;
+                document.getElementById('liveStatusMsg').style.display = 'none';
+                alert('تم بدء البث المباشر بنجاح!');
+            }).catch(() => alert('تعذر الوصول للكاميرا أو الميكروفون!'));
+        }
+
+        function stopTeacherWebcam() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                document.getElementById('webcamVideo').srcObject = null;
+                document.getElementById('liveStatusMsg').style.display = 'block';
             }
+        }
+
+        // التبديل بين أقسام الغرفة (Tabs)
+        function switchRoomTab(paneId, btnEl) {
+            document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.room-tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(paneId).classList.add('active');
+            if(btnEl) btnEl.classList.add('active');
         }
 
         function backToSubjectsView() { showSection('subjectsSection'); }
         function backToRoomsView() { showSection('teachersRoomsSection'); }
 
+        // نظام الأسئلة والنقاش داخل الغرفة
+        function sendStudentQuestion() {
+            const text = document.getElementById('studentQuestionInput').value.trim();
+            if(!text) { alert('اكتب السؤال أولاً!'); return; }
+            const qId = 'Q_' + Date.now();
+            fetch(`${DATABASE_URL}/room_questions/${activeRoomId}/${qId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: qId, student: currentStudentName || 'طالب', text, date: new Date().toLocaleTimeString() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم إرسال السؤال بنجاح!'); document.getElementById('studentQuestionInput').value = ''; renderRoomQuestions(); });
+        }
+
+        function renderRoomQuestions() {
+            fetch(`${DATABASE_URL}/room_questions/${activeRoomId}.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if(data) {
+                    Object.keys(data).forEach(k => {
+                        const q = data[k];
+                        html += `<div class="list-item"><div><strong>${q.student}:</strong> ${q.text}<br><small style="color:#64748b;">${q.date}</small></div></div>`;
+                    });
+                }
+                document.getElementById('questionsListContainer').innerHTML = html || '<p style="color:#64748b;">لا توجد أسئلة.</p>';
+            });
+        }
+
+        // نظام التقييم وأسماء الطلاب
+        function saveStudentGrade() {
+            const name = document.getElementById('gradeStudentName').value.trim();
+            const val = document.getElementById('gradeStudentVal').value.trim();
+            if(!name || !val) { alert('أدخل الاسم والتقييم!'); return; }
+            const gId = 'G_' + Date.now();
+            fetch(`${DATABASE_URL}/room_grades/${activeRoomId}/${gId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: gId, name, val }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم حفظ التقييم!'); document.getElementById('gradeStudentName').value = ''; document.getElementById('gradeStudentVal').value = ''; renderRoomGrades(); });
+        }
+
+        function renderRoomGrades() {
+            fetch(`${DATABASE_URL}/room_grades/${activeRoomId}.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if(data) {
+                    Object.keys(data).forEach(k => {
+                        const g = data[k];
+                        html += `
+                            <div class="list-item">
+                                <div><i class="fas fa-user-graduate" style="color:var(--primary);"></i> الطالب: <strong>${g.name}</strong></div>
+                                <div><span class="badge badge-active" style="font-size:0.9rem; padding:6px 14px;">التقييم: ${g.val}</span></div>
+                            </div>
+                        `;
+                    });
+                }
+                document.getElementById('studentsGradesList').innerHTML = html || '<p style="color:#64748b;">لا توجد تقييمات مسجلة للطلاب بعد.</p>';
+            });
+        }
+
         function renderRoomLectures() {
             const container = document.getElementById('lecturesContainer');
-            container.innerHTML = `<p style="color:#64748b;">جاري التحميل...</p>`;
             fetch(`${DATABASE_URL}/contents.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) {
                     Object.keys(data).forEach(k => {
                         const item = data[k];
                         if (item.roomId === activeRoomId) {
-                            let fullData = item.fileData || (item.chunks ? Object.values(item.chunks).join('') : '');
-                            let safeData = encodeURIComponent(fullData);
-                            let canDelete = (currentRole === 'admin' || currentRole === 'teacher');
-                            html += `
-                                <div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}')">
-                                    <div class="file-mini-info"><i class="fas fa-file-pdf"></i><h4>${item.title}</h4></div>
-                                    <div style="display:flex; gap:10px; align-items:center;">
-                                        <span class="badge badge-active">عرض وتكبير</span>
-                                        ${canDelete ? `<button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem;" onclick="event.stopPropagation(); deleteItem('contents', '${item.id}', renderRoomLectures)">حذف</button>` : ''}
-                                    </div>
-                                </div>
-                            `;
+                            let safeData = encodeURIComponent(item.fileData || (item.chunks ? Object.values(item.chunks).join('') : ''));
+                            html += `<div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}')"><div class="file-mini-info"><i class="fas fa-file-pdf"></i><h4>${item.title}</h4></div><span class="badge badge-active">عرض وتكبير</span></div>`;
                         }
                     });
                 }
-                container.innerHTML = html || `<p style="color:#64748b;">لا توجد ملازم مرفوعة في هذه الغرفة حالياً.</p>`;
+                container.innerHTML = html || `<p style="color:#64748b;">لا توجد ملازم.</p>`;
             });
         }
 
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             currentPdfScale = 1.0;
-            let wmHtml = '';
-            for(let i=0; i<12; i++) { wmHtml += `<span>${currentStudentName || 'منصة الأستاذ وليد'} - محمي للأغراض التعليمية</span>`; }
+            let wmHtml = ''; for(let i=0; i<12; i++) { wmHtml += `<span>${currentStudentName || 'منصة وليد'}</span>`; }
             document.getElementById('pdfWatermarkText').innerHTML = wmHtml;
             updatePdfViewer(encodedData);
             document.getElementById('fileViewerModal').style.display = 'flex';
@@ -1053,46 +1040,29 @@
 
         function updatePdfViewer(encodedData) {
             const decodedUrl = decodeURIComponent(encodedData);
-            document.getElementById('modalViewerContainer').innerHTML = `
-                <object data="${decodedUrl}#view=FitH&toolbar=0" type="application/pdf" width="${100 * currentPdfScale}%" height="${100 * currentPdfScale}%" style="transition:0.2s;"></object>
-                <div class="watermark-overlay" id="pdfWatermarkText"></div>
-            `;
+            document.getElementById('modalViewerContainer').innerHTML = `<object data="${decodedUrl}#view=FitH&toolbar=0" type="application/pdf" width="${100 * currentPdfScale}%" height="${100 * currentPdfScale}%"></object><div class="watermark-overlay" id="pdfWatermarkText"></div>`;
         }
 
         function zoomPdf(delta) {
             currentPdfScale = Math.max(0.6, Math.min(2.5, currentPdfScale + delta));
             const obj = document.querySelector('#modalViewerContainer object');
-            if(obj) {
-                obj.style.width = (100 * currentPdfScale) + '%';
-                obj.style.height = (100 * currentPdfScale) + '%';
-            }
+            if(obj) { obj.style.width = (100 * currentPdfScale) + '%'; obj.style.height = (100 * currentPdfScale) + '%'; }
         }
 
         function closeFileModal() { document.getElementById('fileViewerModal').style.display = 'none'; document.getElementById('modalViewerContainer').innerHTML = ''; }
 
         function renderRoomRecordings() {
-            const container = document.getElementById('recordingsContainer');
-            container.innerHTML = `<p style="color:#64748b;">جاري التحميل...</p>`;
             fetch(`${DATABASE_URL}/recordings.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) {
                     Object.keys(data).forEach(k => {
                         const rec = data[k];
                         if (rec.roomId === activeRoomId) {
-                            let canDelete = (currentRole === 'admin' || currentRole === 'teacher');
-                            html += `
-                                <div class="file-mini-card" onclick="openRecordingModal('${rec.title}', '${rec.url}')">
-                                    <div class="file-mini-info"><i class="fas fa-play-circle" style="color:var(--accent);"></i><h4>${rec.title}</h4></div>
-                                    <div style="display:flex; gap:10px; align-items:center;">
-                                        <span class="badge badge-active">مشاهدة</span>
-                                        ${canDelete ? `<button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem;" onclick="event.stopPropagation(); deleteItem('recordings', '${rec.id}', renderRoomRecordings)">حذف</button>` : ''}
-                                    </div>
-                                </div>
-                            `;
+                            html += `<div class="file-mini-card" onclick="openRecordingModal('${rec.title}', '${rec.url}')"><div class="file-mini-info"><i class="fas fa-play-circle" style="color:var(--accent);"></i><h4>${rec.title}</h4></div><span class="badge badge-active">مشاهدة</span></div>`;
                         }
                     });
                 }
-                container.innerHTML = html || `<p style="color:#64748b;">لا توجد محاضرات مسجلة.</p>`;
+                document.getElementById('recordingsContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد محاضرات.</p>`;
             });
         }
 
@@ -1103,95 +1073,44 @@
         }
 
         function renderRoomHomework() {
-            const container = document.getElementById('homeworkContainer');
-            container.innerHTML = `<p style="color:#64748b;">جاري التحميل...</p>`;
             fetch(`${DATABASE_URL}/homework.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) {
                     Object.keys(data).forEach(k => {
                         const hw = data[k];
                         if (hw.roomId === activeRoomId) {
-                            let canDelete = (currentRole === 'admin' || currentRole === 'teacher');
-                            html += `
-                                <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px; position:relative;">
-                                    <h5 style="color:var(--primary); font-weight:800; margin-bottom:8px;">📌 ${hw.title}</h5>
-                                    <div style="margin-top:10px; display:flex; gap:10px; align-items:center;">
-                                        <input type="text" class="form-control" id="ans_${k}" placeholder="اكتب إجابتك أو رابط الحل هنا" style="flex:1;">
-                                        <button class="btn btn-success" style="padding:10px 16px;" onclick="submitHomeworkAnswer('${k}')">إرسال الحل</button>
-                                    </div>
-                                    ${canDelete ? `<button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem; position:absolute; top:12px; left:12px;" onclick="deleteItem('homework', '${k}', renderRoomHomework)">حذف</button>` : ''}
-                                </div>
-                            `;
+                            html += `<div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px;"><h5>📌 ${hw.title}</h5></div>`;
                         }
                     });
                 }
-                container.innerHTML = html || `<p style="color:#64748b;">لا توجد واجبات حالياً.</p>`;
+                document.getElementById('homeworkContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد واجبات.</p>`;
             });
         }
 
-        function submitHomeworkAnswer(hwId) {
-            const answerText = document.getElementById(`ans_${hwId}`).value.trim();
-            if(!answerText) { alert('الرجاء كتابة الحل أولاً!'); return; }
-            const subId = 'SUB_' + Date.now();
-            fetch(`${DATABASE_URL}/homework_submits/${subId}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({ id: subId, hwId, studentName: currentStudentName || 'طالب', answer: answerText, date: new Date().toLocaleString() }),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => alert('تم إرسال حل الواجب للأستاذ بنجاح!'));
-        }
-
         function renderRoomQuizzes() {
-            const container = document.getElementById('quizzesContainer');
-            container.innerHTML = `<p style="color:#64748b;">جاري التحميل...</p>`;
             fetch(`${DATABASE_URL}/quizzes.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) {
                     Object.keys(data).forEach(k => {
                         const q = data[k];
                         if (q.roomId === activeRoomId) {
-                            let canDelete = (currentRole === 'admin' || currentRole === 'teacher');
-                            html += `
-                                <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px; position:relative;">
-                                    <h5 style="color:var(--primary); font-weight:800; margin-bottom:8px;">📝 ${q.title}</h5>
-                                    <p style="font-weight:700; margin-bottom:10px;">س: ${q.question}</p>
-                                    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
-                                        <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.85rem;" onclick="checkQuizAnswer('${k}', 1, ${q.correct})">1) ${q.opt1}</button>
-                                        <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.85rem;" onclick="checkQuizAnswer('${k}', 2, ${q.correct})">2) ${q.opt2}</button>
-                                        <button class="btn btn-secondary" style="padding:6px 12px; font-size:0.85rem;" onclick="checkQuizAnswer('${k}', 3, ${q.correct})">3) ${q.opt3}</button>
-                                    </div>
-                                    <div id="quizResult_${k}" style="font-weight:800; font-size:0.9rem;"></div>
-                                    ${canDelete ? `<button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem; position:absolute; top:12px; left:12px;" onclick="deleteItem('quizzes', '${k}', renderRoomQuizzes)">حذف الاختبار</button>` : ''}
-                                </div>
-                            `;
+                            html += `<div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px;"><h5>📝 ${q.title}</h5><p>${q.question}</p></div>`;
                         }
                     });
                 }
-                container.innerHTML = html || `<p style="color:#64748b;">لا توجد اختبارات نشطة.</p>`;
+                document.getElementById('quizzesContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد اختبارات.</p>`;
             });
         }
 
         function deleteItem(path, id, callback) {
-            if (confirm('هل تريد حذف هذا العنصر نهائياً؟')) {
-                fetch(`${DATABASE_URL}/${path}/${id}.json`, { method: 'DELETE' }).then(() => callback());
-            }
-        }
-
-        function checkQuizAnswer(quizId, chosen, correct) {
-            const resBox = document.getElementById(`quizResult_${quizId}`);
-            if (chosen === correct) { resBox.innerHTML = `<span style="color:var(--success);">إجابة صحيحة أحسنت!</span>`; }
-            else { resBox.innerHTML = `<span style="color:var(--danger);">إجابة خاطئة.</span>`; }
+            if (confirm('هل تريد الحذف؟')) { fetch(`${DATABASE_URL}/${path}/${id}.json`, { method: 'DELETE' }).then(() => callback()); }
         }
 
         function fetchTeachersList() {
             fetch(`${DATABASE_URL}/teachers.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) {
-                    Object.keys(data).forEach(k => {
-                        const t = data[k];
-                        html += `<div class="list-item"><div><strong>${t.name}</strong> - مادة: ${t.subject}</div><button class="btn btn-danger" onclick="deleteItem('teachers', '${t.id}', fetchTeachersList)">حذف المدرس</button></div>`;
-                    });
-                }
-                document.getElementById('teachersManageList').innerHTML = html || '<p style="text-align:center; color:#64748b;">لا يوجد مدرسين.</p>';
+                if (data) { Object.keys(data).forEach(k => { const t = data[k]; html += `<div class="list-item"><div><strong>${t.name}</strong> - ${t.subject}</div><button class="btn btn-danger" onclick="deleteItem('teachers', '${t.id}', fetchTeachersList)">حذف</button></div>`; }); }
+                document.getElementById('teachersManageList').innerHTML = html || '<p>لا يوجد مدرسين.</p>';
             });
         }
 
@@ -1199,8 +1118,7 @@
             e.preventDefault();
             const roomId = document.getElementById('tUpRoomId').value;
             const title = document.getElementById('tUpTitle').value;
-            const fileInput = document.getElementById('tUpFile');
-            const file = fileInput.files[0];
+            const file = document.getElementById('tUpFile').files[0];
             const reader = new FileReader();
             reader.onload = function(evt) {
                 const contentId = 'CONT_' + Date.now();
@@ -1211,7 +1129,7 @@
                     method: 'PUT',
                     body: JSON.stringify({ id: contentId, roomId, title, chunks, date: new Date().toLocaleDateString('ar-EG') }),
                     headers: { 'Content-Type': 'application/json' }
-                }).then(() => { alert('تم نشر الملزمة في الغرفة بنجاح!'); document.getElementById('tUpTitle').value = ''; document.getElementById('tUpFile').value = ''; });
+                }).then(() => { alert('تم رفع الملزمة!'); document.getElementById('tUpTitle').value = ''; document.getElementById('tUpFile').value = ''; });
             };
             reader.readAsDataURL(file);
         }
@@ -1226,7 +1144,7 @@
                 method: 'PUT',
                 body: JSON.stringify({ id: recId, roomId, title, url }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم نشر المحاضرة في الغرفة بنجاح!'); document.getElementById('recTitle').value = ''; document.getElementById('recUrl').value = ''; });
+            }).then(() => { alert('تم نشر المحاضرة!'); document.getElementById('recTitle').value = ''; document.getElementById('recUrl').value = ''; });
         }
 
         function handleTeacherQuiz(e) {
@@ -1243,7 +1161,7 @@
                 method: 'PUT',
                 body: JSON.stringify({ id: qId, roomId, title, question, opt1, opt2, opt3, correct }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم نشر الاختبار في الغرفة!'); document.getElementById('qTitle').value = ''; document.getElementById('qQuestion').value = ''; });
+            }).then(() => { alert('تم نشر الاختبار!'); document.getElementById('qTitle').value = ''; document.getElementById('qQuestion').value = ''; });
         }
 
         function handleTeacherHomework(e) {
@@ -1255,7 +1173,7 @@
                 method: 'PUT',
                 body: JSON.stringify({ id: hwId, roomId, title }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم نشر الواجب في الغرفة بنجاح!'); document.getElementById('hwTitle').value = ''; });
+            }).then(() => { alert('تم نشر الواجب!'); document.getElementById('hwTitle').value = ''; });
         }
 
         function submitTeacherReport(e) {
@@ -1273,11 +1191,10 @@
         function renderScheduleManager() {
             document.getElementById('scheduleContainer').innerHTML = `
                 <form onsubmit="saveSchedule(event)" style="margin-bottom:20px; background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #cbd5e1;">
-                    <h4 style="color:var(--primary); margin-bottom:12px;">إضافة حصة لجدول الأسبوع</h4>
                     <div class="form-group"><label>الصف</label><select class="form-control" id="schGrade"><option value="الأول المتوسط">الأول المتوسط</option><option value="السادس الاعدادي">السادس الإعدادي</option></select></div>
                     <div class="form-group"><label>اليوم</label><select class="form-control" id="schDay"><option value="السبت">السبت</option><option value="الأحد">الأحد</option></select></div>
                     <div class="form-group"><label>التفاصيل</label><input type="text" class="form-control" id="schDetails" required placeholder="الساعة 5 - رياضيات"></div>
-                    <button type="submit" class="btn btn-success btn-block">إضافة للحصة</button>
+                    <button type="submit" class="btn btn-success btn-block">إضافة</button>
                 </form>
                 <div id="schList">جاري التحميل...</div>
             `;
@@ -1299,7 +1216,7 @@
             fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) { Object.keys(data).forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
-                document.getElementById('schList').innerHTML = html || '<p style="color:#64748b; text-align:center;">لا توجد حصص.</p>';
+                document.getElementById('schList').innerHTML = html || '<p>لا توجد حصص.</p>';
             });
         }
 
@@ -1307,7 +1224,7 @@
             fetch(`${DATABASE_URL}/reports.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) { Object.keys(data).forEach(k => { const r = data[k]; html += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; }); }
-                document.getElementById('adminReportsList').innerHTML = html || '<p style="color:#64748b; text-align:center;">لا توجد تقارير.</p>';
+                document.getElementById('adminReportsList').innerHTML = html || '<p>لا توجد تقارير.</p>';
             });
         }
     </script>
