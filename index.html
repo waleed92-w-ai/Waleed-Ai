@@ -488,7 +488,7 @@
                                 <p style="color: #94a3b8; font-size: 0.8rem;" id="voiceRoomStatusText">البث الصوتي غير مفعل حالياً. بانتظار بدء الأستاذ...</p>
                             </div>
 
-                            <!-- مشغل صوتي تفاعلي ظاهر للمستخدم لتجاوز قيود المتصفح الهاتفي -->
+                            <!-- مشغل صوتي تفاعلي ظاهر لكل المتواجدين والمستمعين بسماعة موحدة -->
                             <div id="audioPlayerWrapper" style="background: rgba(15, 23, 42, 0.9); padding: 12px; border-radius: 12px; margin: 10px auto; text-align: center; border: 1px solid #38bdf8; max-width: 320px;">
                                 <p style="color: #fff; font-size: 0.82rem; margin-bottom: 8px; font-weight: 700;">🔊 انقر لتفعيل وسماع البث الصوتي المباشر:</p>
                                 <button class="btn btn-success" id="forcePlayAudioBtn" onclick="forcePlayAudioStream()" style="padding: 8px 16px; font-size: 0.85rem; width: 100%;">
@@ -818,7 +818,6 @@
         let localStream = null;
         let peerConnection = null;
         let isMicMuted = false;
-        let isStudentInLive = false;
         let activePresenceRef = null; 
 
         const rtcConfig = {
@@ -1099,7 +1098,6 @@
             activeSub = "";
             activeRoomId = "";
             activeRoomTitleStr = "";
-            isStudentInLive = false;
             
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
@@ -1627,22 +1625,24 @@
         }
 
         function registerStudentPresence(roomId) {
-            if (!currentStudentName || currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') return;
+            const displayName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
+                (loggedTeacherData ? loggedTeacherData.name + ' (أستاذ/مشرف)' : 'الأستاذ (المضيف)') : 
+                (currentStudentName || 'طالب زائر');
             
             if (activePresenceRef) {
                 activePresenceRef.remove();
             }
 
-            const studentKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
-            activePresenceRef = db.ref(`active_students/${roomId}/${studentKey}`);
+            const userKey = displayName.replace(/[.#$\/\[\]]/g, '_') + '_' + Date.now();
+            activePresenceRef = db.ref(`active_students/${roomId}/${userKey}`);
             
-            const studentData = {
-                name: currentStudentName,
+            const userData = {
+                name: displayName,
                 joinedAt: Date.now(),
                 status: 'نشط'
             };
 
-            activePresenceRef.set(studentData);
+            activePresenceRef.set(userData);
             activePresenceRef.onDisconnect().remove();
         }
 
@@ -1758,6 +1758,10 @@
             showSection('roomMenuSection'); 
         }
 
+        window.addEventListener('beforeunload', function() {
+            removeStudentPresence();
+        });
+
         function openRoomSection(paneId) {
             document.getElementById('currentRoomContentTitle').innerText = `غرفة: ${activeRoomTitleStr}`;
             document.getElementById('liveRoomTitleDisplay').innerText = activeRoomTitleStr;
@@ -1798,7 +1802,7 @@
                         const st = data[k];
                         html += `
                             <div class="list-item" style="border-right: 4px solid var(--success);">
-                                <div><strong>👤 الطالب: ${st.name}</strong><br><small style="color:var(--success);">🟢 متواجد في البث</small></div>
+                                <div><strong>👤 الشخص: ${st.name}</strong><br><small style="color:var(--success);">🟢 متواجد في الغرفة</small></div>
                                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
                                     <button class="btn btn-warning" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherWarnStudent('${st.name}')"><i class="fas fa-exclamation-triangle"></i> تنبيه</button>
                                     <button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherKickStudent('${k}', '${st.name}')"><i class="fas fa-ban"></i> طرد</button>
@@ -1808,7 +1812,7 @@
                     });
                 }
                 const activeSList = document.getElementById('activeStudentsLiveManagementList');
-                if (activeSList) activeSList.innerHTML = html || '<p style="color:#64748b;">لا يوجد طلاب متواجدون الآن في البث المباشر.</p>';
+                if (activeSList) activeSList.innerHTML = html || '<p style="color:#64748b;">لا يوجد أشخاص متواجدون الآن في الغرفة.</p>';
             });
         }
 
@@ -1827,27 +1831,27 @@
                                     <img src="IMG_1507.jpeg" class="attendee-mini-avatar" onerror="this.src='https://via.placeholder.com/35'">
                                     <span style="color:#fff; font-size:0.85rem; font-weight:800;">${st.name}</span>
                                 </div>
-                                <span style="font-size:0.7rem; color:#10b981; font-weight:700;">يستمع</span>
+                                <span style="font-size:0.7rem; color:#10b981; font-weight:700;">متواجد</span>
                             </div>
                         `;
                     });
                 }
                 document.getElementById('attendeesCountNum').innerText = count;
                 const listEl = document.getElementById('allAttendeesScrollList');
-                if (listEl) listEl.innerHTML = html || '<p style="color:#64748b; font-size:0.8rem; text-align:center;">لا يوجد طلاب متواجدون في البث حالياً.</p>';
+                if (listEl) listEl.innerHTML = html || '<p style="color:#64748b; font-size:0.8rem; text-align:center;">لا يوجد أشخاص في الغرفة حالياً.</p>';
             });
         }
 
         function teacherWarnStudent(studentName) {
-            alert(`⚠️ تم إرسال تنبيه رسمي للطالب: ${studentName}`);
+            alert(`⚠️ تم إرسال تنبيه رسمي إلى: ${studentName}`);
         }
 
         function teacherKickStudent(studentKey, studentName) {
-            if (confirm(`هل أنت متأكد من طرد الطالب ${studentName}؟`)) {
+            if (confirm(`هل أنت متأكد من طرد ${studentName}؟`)) {
                 db.ref(`active_students/${activeRoomId}/${studentKey}`).remove();
                 db.ref(`room_kicked/${activeRoomId}/${studentKey}`).set({ studentName: studentName, kickedAt: Date.now() });
                 db.ref(`voice_participants/${activeRoomId}/student_${studentName.replace(/[.#$\/\[\]]/g, '_')}`).remove();
-                alert(`تم طرد الطالب ${studentName}.`);
+                alert(`تم طرد ${studentName}.`);
             }
         }
 
@@ -1916,21 +1920,18 @@
         }
 
         function endWebRTCBroadcast() {
-            if (confirm('هل تريد إنهاء البث الصوتي وإغلاقه لجميع الطلاب؟')) {
-                if (localStream) {
-                    localStream.getTracks().forEach(t => t.stop());
-                    localStream = null;
-                }
-                if (peerConnection) {
-                    peerConnection.close();
-                    peerConnection = null;
-                }
-                db.ref(`voice_participants/${activeRoomId}`).remove();
-                db.ref(`voice_requests/${activeRoomId}`).remove();
-                db.ref(`webrtc_signaling/${activeRoomId}`).remove();
-                db.ref(`voice_status/${activeRoomId}`).set({ active: false });
-                alert('تم إنهاء البث الصوتي بنجاح.');
+            if (localStream) {
+                localStream.getTracks().forEach(t => t.stop());
+                localStream = null;
             }
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            db.ref(`voice_participants/${activeRoomId}`).remove();
+            db.ref(`voice_requests/${activeRoomId}`).remove();
+            db.ref(`webrtc_signaling/${activeRoomId}`).remove();
+            db.ref(`voice_status/${activeRoomId}`).set({ active: false });
         }
 
         function listenToVoiceBroadcastStatus() {
@@ -2014,9 +2015,7 @@
                 if (data && currentStudentName) {
                     Object.keys(data).forEach(k => {
                         const req = data[k];
-                        if (req.studentName === currentStudentName && req.status === 'approved' && !isStudentInLive) {
-                            isStudentInLive = true;
-                            alert('تم قبول طلبك! يمكنك الآن التحدث في البث.');
+                        if (req.studentName === currentStudentName && req.status === 'approved') {
                             initPeerConnectionAsClient();
                             if (ctrlBox) {
                                 ctrlBox.innerHTML = `
@@ -2115,20 +2114,50 @@
                         }
                     }
                 });
-            }).catch(err => {
-                alert('تعذر الوصول إلى الميكروفون!');
-                console.error(err);
+            }).catch(() => {
+                // إذا لم يكن طالباً متحدثاً، يستقبل الصوت بوضع الاستماع فقط (Receive-only)
+                connectAsListenerOnly();
+            });
+        }
+
+        function connectAsListenerOnly() {
+            peerConnection = new RTCPeerConnection(rtcConfig);
+
+            peerConnection.ontrack = event => {
+                const remoteAudio = document.getElementById('remoteAudio');
+                remoteAudio.srcObject = event.streams[0];
+                remoteAudio.play().catch(e => console.log("Audio play error:", e));
+            };
+
+            db.ref(`webrtc_signaling/${activeRoomId}/offer`).once('value').then(snapshot => {
+                const offer = snapshot.val();
+                if (offer) {
+                    return peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(offer)));
+                }
+            }).then(() => {
+                return peerConnection.createAnswer();
+            }).then(answer => {
+                return peerConnection.setLocalDescription(answer);
+            }).then(() => {
+                db.ref(`webrtc_signaling/${activeRoomId}/answer`).set(JSON.stringify(peerConnection.localDescription));
+            });
+
+            db.ref(`webrtc_signaling/${activeRoomId}/host_candidates`).on('child_added', snapshot => {
+                if (snapshot.exists()) {
+                    const candidate = JSON.parse(snapshot.val());
+                    if (peerConnection) {
+                        peerConnection.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
+                    }
+                }
             });
         }
 
         function initWebRTCReceiver() {
-            if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                db.ref(`voice_status/${activeRoomId}/active`).on('value', snapshot => {
-                    if (snapshot.val() === true && !peerConnection && isStudentInLive) {
-                        initPeerConnectionAsClient();
-                    }
-                });
-            }
+            db.ref(`voice_status/${activeRoomId}/active`).on('value', snapshot => {
+                if (snapshot.val() === true && !peerConnection) {
+                    connectAsListenerOnly();
+                }
+            });
         }
 
         function toggleMicrophone() {
@@ -2144,8 +2173,6 @@
                     const studentKey = 'student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_');
                     db.ref(`voice_participants/${activeRoomId}/${studentKey}`).update({ isMuted: isMicMuted });
                 }
-
-                alert(isMicMuted ? 'تم كتم المايك.' : 'تم فتح المايك.');
             } else {
                 alert('الميكروفون غير مفعل.');
             }
@@ -2200,9 +2227,7 @@
         }
 
         function removeVoiceParticipant(pKey) {
-            if (confirm('هل تريد إنزال هذا الطالب من البث الصوتي؟')) {
-                db.ref(`voice_participants/${activeRoomId}/${pKey}`).remove();
-            }
+            db.ref(`voice_participants/${activeRoomId}/${pKey}`).remove();
         }
 
         function makeCoHost(pKey, studentName) {
@@ -2386,7 +2411,7 @@
         }
 
         function deleteItem(path, id, callback) {
-            if (confirm('هل تريد الحذف بالتأكيد؟')) { fetch(`${DATABASE_URL}/${path}/${id}.json`, { method: 'DELETE' }).then(() => callback()); }
+            fetch(`${DATABASE_URL}/${path}/${id}.json`, { method: 'DELETE' }).then(() => callback());
         }
 
         function submitTeacherReport(e) {
