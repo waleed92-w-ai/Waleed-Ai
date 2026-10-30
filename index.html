@@ -290,20 +290,20 @@
 
                 <div class="room-section-pane" id="paneLive">
                     <div style="background: #1e293b; padding: 14px; border-radius: var(--radius);">
+                        
+                        <!-- صندوق طلبات انضمام الطلاب للبث الصوتي (أصبح في الأعلى وبارز للأستاذ) -->
+                        <div id="teacherLiveAdminBox" style="background: #0f172a; border: 2px solid #38bdf8; border-radius: 12px; padding: 16px; margin-bottom: 16px; display: none; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);">
+                            <h4 style="color: #38bdf8; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-user-clock" style="font-size: 1.2rem;"></i> طلبات انضمام الطلاب للبث الصوتي المباشر:
+                            </h4>
+                            <div id="liveRequestsListContainer" style="max-height: 160px; overflow-y: auto;">
+                                <p style="color: #94a3b8; font-size: 0.9rem;">لا توجد طلبات انضمام معلقة حالياً.</p>
+                            </div>
+                        </div>
+
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #fff; flex-wrap: wrap; gap: 8px;">
                             <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-microphone" style="color: #38bdf8;"></i> البث الصوتي: <span id="liveRoomTitleDisplay">غرفة الدرس</span></span>
                             <div style="display: flex; gap: 8px; align-items: center;" id="liveControlButtons"></div>
-                        </div>
-
-                        <!-- شريط التفعيل الصوتي السريع -->
-                        <div id="audioUnlockBanner" style="background: #1e40af; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; color: #fff;">
-                            <span><i class="fas fa-volume-up"></i> اضغط هنا لتنشيط وسماع صوت الأستاذ بوضوح:</span>
-                            <button class="btn btn-success" id="unlockAudioBtn" style="padding: 6px 14px; font-size: 0.8rem;">تنشيط الصوت الآن</button>
-                        </div>
-
-                        <div id="teacherLiveAdminBox" style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; margin-bottom: 12px; display: none;">
-                            <h5 style="color: #38bdf8; font-size: 0.9rem; margin-bottom: 8px;"><i class="fas fa-users"></i> طلبات انضمام الطلاب للبث الصوتي:</h5>
-                            <div id="liveRequestsListContainer" style="max-height: 120px; overflow-y: auto;"><p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p></div>
                         </div>
 
                         <!-- حاوية البث مع زر تكبير/تصغير الشاشة بالكامل -->
@@ -598,7 +598,7 @@
         </div>
     </div>
 
-    <!-- عنصر مشغل الصوت الموحد للطلاب لسماع صوت الأستاذ -->
+    <!-- عنصر مشغل الصوت الموحد للطلاب لسماع صوت الأستاذ مباشرة -->
     <audio id="remoteAudioPlayer" autoplay playsinline></audio>
 
     <script>
@@ -674,7 +674,6 @@
                 });
             });
 
-            document.getElementById('unlockAudioBtn').addEventListener('click', unlockAudioOutput);
             document.getElementById('sendQuestionBtn').addEventListener('click', sendStudentQuestion);
             document.getElementById('saveGradeBtn').addEventListener('click', saveStudentGrade);
 
@@ -690,7 +689,6 @@
             document.getElementById('zoomOutBtn').addEventListener('click', () => zoomPdf(-0.1));
             document.getElementById('closeFileModalBtn').addEventListener('click', closeFileModal);
             
-            // أزرار التكبير/التصغير لملء الشاشة للبث والملفات
             document.getElementById('toggleLiveFullscreenBtn').addEventListener('click', toggleLiveBoxFullscreen);
             document.getElementById('toggleModalFullscreenBtn').addEventListener('click', toggleFileModalFullscreen);
 
@@ -1592,6 +1590,7 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
+        // ==================== الحل النهائي المحدث للصوت وتدفق البث ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -1610,6 +1609,7 @@
             }
             listenToVoiceParticipants();
             listenToVoiceBroadcastStatus();
+            setupRemoteAudioReceiver();
         }
 
         function startVoiceBroadcast() {
@@ -1645,6 +1645,9 @@
                         localAudioStream = null;
                     }
                     renderVoiceParticipantsGrid(null);
+                } else if (isActive && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
+                    // تشغيل تلقائي لصوت الأستاذ فور بدء البث دون الحاجة لزر تنشيط
+                    setupRemoteAudioReceiver();
                 }
             });
         }
@@ -1671,11 +1674,11 @@
                         const req = data[k];
                         if (req.status === 'pending') {
                             html += `
-                                <div style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px;">
-                                    <span style="color: #fff; font-size: 0.85rem; font-weight: 700;">👤 ${req.studentName} يطلب الانضمام للصوت</span>
-                                    <div style="display: flex; gap: 6px;">
-                                        <button class="btn btn-success" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'approved')">قبول</button>
-                                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'rejected')">رفض</button>
+                                <div style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; border-right: 4px solid #38bdf8;">
+                                    <span style="color: #fff; font-size: 0.9rem; font-weight: 800;"><i class="fas fa-user-graduate" style="color:#38bdf8; margin-left:6px;"></i> الطالب: ${req.studentName} يطلب التحدث</span>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'approved')"><i class="fas fa-check"></i> قبول</button>
+                                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'rejected')"><i class="fas fa-times"></i> رفض</button>
                                     </div>
                                 </div>
                             `;
@@ -1683,7 +1686,7 @@
                     });
                 }
                 const reqContainer = document.getElementById('liveRequestsListContainer');
-                if (reqContainer) reqContainer.innerHTML = html || '<p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p>';
+                if (reqContainer) reqContainer.innerHTML = html || '<p style="color: #94a3b8; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p>';
             });
         }
 
@@ -1704,7 +1707,7 @@
             const ctrlBox = document.getElementById('liveControlButtons');
             if (ctrlBox && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
                 ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="requestVoiceJoin()"><i class="fas fa-sign-in-alt"></i> طلب الانضمام للبث الصوتي</button>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="requestVoiceJoin()"><i class="fas fa-sign-in-alt"></i> طلب التحدث في البث</button>
                 `;
             }
 
@@ -1715,7 +1718,7 @@
                         const req = data[k];
                         if (req.studentName === currentStudentName && req.status === 'approved' && !isStudentInLive) {
                             isStudentInLive = true;
-                            alert('تم قبول طلبك! انضممت للبث الصوتي.');
+                            alert('تم قبول طلبك! يمكنك الآن التحدث في البث.');
                             initLocalMicrophone(false);
                             if (ctrlBox) {
                                 ctrlBox.innerHTML = `
@@ -1744,15 +1747,15 @@
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
         }
 
-        function unlockAudioOutput() {
-            const audioEl = document.getElementById('remoteAudioPlayer');
-            audioEl.play().then(() => {
-                alert('🔊 تم تنشيط الصوت وسماع الأستاذ بنجاح!');
-                document.getElementById('audioUnlockBanner').style.display = 'none';
-            }).catch(err => {
-                console.error(err);
-                alert('يرجى النقر مرة أخرى بعد بدء البث من قبل الأستاذ.');
-            });
+        function setupRemoteAudioReceiver() {
+            // استقبال صوت الأستاذ وبثه تلقائياً في سماعات الطالب دون الحاجة لأزرار إضافية
+            if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    const audioEl = document.getElementById('remoteAudioPlayer');
+                    audioEl.srcObject = stream;
+                    audioEl.play().catch(() => {});
+                }).catch(() => {});
+            }
         }
 
         function toggleMicrophone() {
