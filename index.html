@@ -298,7 +298,7 @@
                             <div id="participantsGridContainer" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; width: 100%;">
                                 <div style="color: #94a3b8; font-weight: 700; text-align: center; padding: 30px;">
                                     <i class="fas fa-broadcast-tower" style="font-size: 2.5rem; margin-bottom: 10px; color: var(--success); display: block;"></i>
-                                    <span id="liveStatusText">البث جاهز. بانتظار بدء الأستاذ أو انضمام المشاركين.</span>
+                                    <span id="liveStatusText">البث جاهز. اضغط على "بدء البث" أو "الكاميرا" للبدء.</span>
                                 </div>
                             </div>
                         </div>
@@ -1091,7 +1091,7 @@
                             const isFree = r.accessType === 'free' || !r.pin;
                             html += `
                                 <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin || ''}', ${isRoomOpen}, '${r.accessType || 'free'}')">
-                                    <i class="fas ${isFree ? 'fa-lock-open' : 'fa-lock'}" style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; position:absolute; top:10px; left:10px;" title="${isFree ? 'مجانية' : 'خصوصي برمز'}"></i>
+                                    <i class="fas ${isFree ? 'fa-lock-open' : 'fa-lock'}" style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; position:absolute; top:10px; left:10px;" title="${isFree ? 'مجانية' : 'خصوصي بررمز'}"></i>
                                     <i class="fas fa-chalkboard-teacher" style="color:var(--accent);"></i>
                                     <span><strong>${r.title}</strong><br><small>الأستاذ: ${r.creator || 'مدرس'}</small><br><small style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; font-weight:800;">${isFree ? '🟢 مجانية للجميع' : '🔒 درس خصوصي بررمز'}</small></span>
                                 </div>
@@ -1368,58 +1368,210 @@
                 if (adminBox) adminBox.style.display = 'block';
                 if (ctrlBox) ctrlBox.innerHTML = `
                     <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startTeacherLive()"><i class="fas fa-play"></i> بدء البث</button>
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> الكاميرا</button>
+                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="endTeacherLive()"><i class="fas fa-stop"></i> إنهاء البث</button>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا/الصوت</button>
                     <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
                 `;
+                listenToStudentJoinRequests();
             } else {
                 if (adminBox) adminBox.style.display = 'none';
-                if (ctrlBox) ctrlBox.innerHTML = `<button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير الشاشة</button>`;
+                checkStudentJoinStatus();
             }
             listenToLiveParticipants();
+            listenToLiveStatus();
         }
 
         function startTeacherLive() {
             const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
             db.ref(`live_participants/${activeRoomId}/teacher`).set({
-                name: tName, role: 'الأستاذ / المشرف', hasVideo: false, timestamp: Date.now()
-            }).then(() => alert('تم بدء البث المباشر!'));
+                name: tName, role: 'الأستاذ / المشرف', hasAudio: true, timestamp: Date.now()
+            }).then(() => {
+                db.ref(`live_status/${activeRoomId}`).set({ active: true });
+                alert('تم بدء البث المباشر بنجاح!');
+            });
+        }
+
+        function endTeacherLive() {
+            if (confirm('هل تريد إنهاء البث المباشر وإغلاقه لجميع الطلاب؟')) {
+                if (localStream) {
+                    localStream.getTracks().forEach(track => track.stop());
+                    localStream = null;
+                }
+                db.ref(`live_participants/${activeRoomId}`).remove();
+                db.ref(`live_requests/${activeRoomId}`).remove();
+                db.ref(`live_status/${activeRoomId}`).set({ active: false });
+                alert('تم إنهاء البث بنجاح.');
+            }
+        }
+
+        function listenToLiveStatus() {
+            db.ref(`live_status/${activeRoomId}/active`).on('value', snapshot => {
+                if (snapshot.val() === false && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
+                    alert('⚠️ قام الأستاذ بإنهاء البث المباشر.');
+                    renderParticipantsGrid(null);
+                }
+            });
+        }
+
+        function requestJoinLive() {
+            if (!currentStudentName) { alert('يجب تسجيل الدخول كطالب أولاً!'); return; }
+            const reqId = 'REQ_' + Date.now();
+            db.ref(`live_requests/${activeRoomId}/${reqId}`).set({
+                id: reqId,
+                studentName: currentStudentName,
+                status: 'pending',
+                timestamp: Date.now()
+            }).then(() => {
+                alert('تم إرسال طلب الانضمام للبث للأستاذ/المشرف. بانتظار الموافقة...');
+            });
+        }
+
+        function listenToStudentJoinRequests() {
+            db.ref(`live_requests/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const req = data[k];
+                        if (req.status === 'pending') {
+                            html += `
+                                <div style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px;">
+                                    <span style="color: #fff; font-size: 0.85rem; font-weight: 700;">👤 ${req.studentName} يطلب الانضمام</span>
+                                    <div style="display: flex; gap: 6px;">
+                                        <button class="btn btn-success" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleLiveRequest('${req.id}', '${req.studentName}', 'approved')">قبول</button>
+                                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleLiveRequest('${req.id}', '${req.studentName}', 'rejected')">رفض</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                const reqContainer = document.getElementById('liveRequestsListContainer');
+                if (reqContainer) reqContainer.innerHTML = html || '<p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p>';
+            });
+        }
+
+        function handleLiveRequest(reqId, studentName, status) {
+            db.ref(`live_requests/${activeRoomId}/${reqId}`).update({ status: status });
+            if (status === 'approved') {
+                const sKey = 'student_' + Date.now();
+                db.ref(`live_participants/${activeRoomId}/${sKey}`).set({
+                    name: studentName,
+                    role: 'طالب مشارك',
+                    hasAudio: true,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        function checkStudentJoinStatus() {
+            const ctrlBox = document.getElementById('liveControlButtons');
+            if (ctrlBox) {
+                ctrlBox.innerHTML = `
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="requestJoinLive()"><i class="fas fa-sign-in-alt"></i> طلب الانضمام للبث</button>
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
+                `;
+            }
+
+            db.ref(`live_requests/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                if (data && currentStudentName) {
+                    Object.keys(data).forEach(k => {
+                        const req = data[k];
+                        if (req.studentName === currentStudentName && req.status === 'approved' && !isStudentInLive) {
+                            isStudentInLive = true;
+                            alert('تم قبول طلبك من قبل الإدارة! أنت الآن داخل البث.');
+                            if (ctrlBox) {
+                                ctrlBox.innerHTML = `
+                                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا/الصوت</button>
+                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
+                                `;
+                            }
+                        }
+                    });
+                }
+            });
         }
 
         function listenToLiveParticipants() {
             db.ref(`live_participants/${activeRoomId}`).on('value', snapshot => {
-                const participantsData = snapshot.val();
-                const container = document.getElementById('participantsGridContainer');
-                if (!container) return;
-                if (!participantsData) {
-                    container.innerHTML = `<div style="color: #94a3b8; font-weight: 700; text-align: center; padding: 30px;"><i class="fas fa-broadcast-tower" style="font-size: 2.5rem; margin-bottom: 10px; color: var(--success); display: block;"></i><span>البث بانتظار التفعيل...</span></div>`;
-                    return;
-                }
-                let html = '';
-                Object.keys(participantsData).forEach(key => {
-                    const p = participantsData[key];
-                    html += `
-                        <div class="participant-circle-card">
-                            <div class="participant-avatar-circle"><img src="IMG_1507.jpeg" alt="${p.name}" onerror="this.src='https://via.placeholder.com/90'"></div>
-                            <span class="participant-name-tag">${p.name}</span>
-                            <span class="participant-role-tag">${p.role}</span>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
+                window.lastParticipantsSnapshot = snapshot.val();
+                renderParticipantsGrid(snapshot.val());
             });
+        }
+
+        function renderParticipantsGrid(participantsData) {
+            const container = document.getElementById('participantsGridContainer');
+            if (!container) return;
+            if (!participantsData) {
+                container.innerHTML = `
+                    <div style="color: #94a3b8; font-weight: 700; text-align: center; padding: 30px;">
+                        <i class="fas fa-broadcast-tower" style="font-size: 2.5rem; margin-bottom: 10px; color: var(--success); display: block;"></i>
+                        <span>البث بانتظار التفعيل أو تم إنهاؤه...</span>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            Object.keys(participantsData).forEach(key => {
+                const p = participantsData[key];
+                html += `
+                    <div class="participant-circle-card">
+                        <div class="participant-avatar-circle" id="avatar_box_${key}">
+                            <img src="IMG_1507.jpeg" alt="${p.name}" id="img_${key}" onerror="this.src='https://via.placeholder.com/90'">
+                            <video id="vid_${key}" autoplay playsinline ${key === 'teacher' && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher' ? '' : 'muted'} style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+                        </div>
+                        <span class="participant-name-tag" title="${p.name}">${p.name}</span>
+                        <span class="participant-role-tag">${p.role}</span>
+                        ${(currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') && key !== 'teacher' ? `<button class="btn btn-danger" style="padding:2px 6px; font-size:0.65rem;" onclick="kickParticipant('${key}')">طرد</button>` : ''}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            if (localStream) {
+                const myKey = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'teacher' : Object.keys(participantsData).find(k => participantsData[k].name === currentStudentName);
+                if (myKey) {
+                    const vidEl = document.getElementById(`vid_${myKey}`);
+                    const imgEl = document.getElementById(`img_${myKey}`);
+                    if (vidEl && imgEl) {
+                        vidEl.srcObject = localStream;
+                        vidEl.style.display = 'block';
+                        imgEl.style.display = 'none';
+                    }
+                }
+            }
         }
 
         function toggleWebcam() {
             if (!localStream) {
                 navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
                     localStream = stream;
-                    alert('تم تفعيل الكاميرا!');
-                }).catch(() => alert('تعذر الوصول للكاميرا!'));
+                    const myKey = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'teacher' : ('student_' + Date.now());
+                    const roleStr = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'الأستاذ / المشرف' : 'طالب مشارك';
+                    
+                    db.ref(`live_participants/${activeRoomId}/${myKey}`).update({
+                        hasAudio: true,
+                        name: currentStudentName || (loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد'),
+                        role: roleStr
+                    });
+
+                    renderParticipantsGrid(window.lastParticipantsSnapshot || {});
+                    alert('تم تفعيل الكاميرا والصوت بنجاح!');
+                }).catch(err => {
+                    console.error(err);
+                    alert('تعذر الوصول للكاميرا أو الميكروفون! يرجى السماح للمتصفح بالوصول من إعدادات الهاتف أو الجهاز.');
+                });
             } else {
                 localStream.getTracks().forEach(track => track.stop());
                 localStream = null;
-                alert('تم إيقاف الكاميرا.');
+                alert('تم إيقاف الكاميرا والصوت.');
             }
+        }
+
+        function kickParticipant(pKey) {
+            db.ref(`live_participants/${activeRoomId}/${pKey}`).remove();
         }
 
         function toggleFullScreenLive() {
