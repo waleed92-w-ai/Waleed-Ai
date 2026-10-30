@@ -73,10 +73,15 @@
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
 
-        /* حاوية البث الداخلي القابلة للتكبير بالكامل */
+        /* حاوية البث (صوت افتراضياً، كاميرا مغلقة وتُفتح عند ضغط زر التشغيل، وتكبير كامل للشاشة) */
         .lightweight-live-box { width: 100%; height: 450px; background: #0f172a; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; border: 2px solid #334155; }
-        .lightweight-live-box video { width: 100%; height: 100%; object-fit: cover; }
+        .lightweight-live-box video { width: 100%; height: 100%; object-fit: cover; display: none; }
         
+        /* ضبط وضع ملء الشاشة تماماً ليملا الشاشة عرضاً وارتفاعاً بدون أي فراغات */
+        .lightweight-live-box:fullscreen { width: 100vw; height: 100vh; border-radius: 0; border: none; background: #000; }
+        .lightweight-live-box:-webkit-full-screen { width: 100vw; height: 100vh; border-radius: 0; border: none; background: #000; }
+        .lightweight-live-box:-moz-full-screen { width: 100vw; height: 100vh; border-radius: 0; border: none; background: #000; }
+
         #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         #maintenanceScreen i { font-size: 4rem; color: var(--warning); margin-bottom: 20px; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
@@ -262,18 +267,22 @@
                     <button class="btn btn-secondary" onclick="backToRoomMenu()"><i class="fas fa-arrow-right"></i> رجوع لأقسام الغرفة</button>
                 </div>
 
-                <!-- أ. قسم البث المباشر (صوت افتراضياً، كاميرا اختيارية، تكبير شاشة دقيق) -->
+                <!-- أ. قسم البث المباشر (صوت افتراضياً، زر تشغيل الكاميرا وإيقافها متاح للجميع، تكبير حقيقي) -->
                 <div class="room-section-pane" id="paneLive">
                     <div style="background: #1e293b; padding: 14px; border-radius: var(--radius);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #fff; flex-wrap: wrap; gap: 8px;">
-                            <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-video" style="color: #38bdf8;"></i> البث المباشر الداخلي</span>
-                            <div style="display: flex; gap: 8px; align-items: center;" id="liveControlButtons"></div>
+                            <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-video" style="color: #38bdf8;"></i> غرفة البث المشترك (صوت وصورة)</span>
+                            <div style="display: flex; gap: 8px; align-items: center;" id="liveControlButtons">
+                                <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا</button>
+                                <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="stopWebcam()"><i class="fas fa-video-slash"></i> إيقاف الكاميرا</button>
+                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير الشاشة</button>
+                            </div>
                         </div>
                         <div class="lightweight-live-box" id="liveContainerBox">
                             <video id="webcamVideo" autoplay playsinline muted></video>
                             <div id="liveStatusMsg" style="color: #94a3b8; font-weight: 700; position: absolute; text-align: center; padding: 0 15px;">
                                 <i class="fas fa-microphone-alt" style="font-size: 2.2rem; margin-bottom: 10px; color: var(--success); display: block;"></i>
-                                الصوت متصل وجاهز.<br>الكاميرا مغلقة اختياريّاً (يمكن للأستاذ تشغيلها متى أراد).
+                                الصوت متصل وجاهز للاستماع.<br>الكاميرا مغلقة افتراضياً (يمكنك تشغيل الكاميرا والصورة بالضغط على زر تشغيل الكاميرا).
                             </div>
                         </div>
                     </div>
@@ -630,7 +639,7 @@
         }
 
         function logoutSystem() {
-            stopTeacherWebcam();
+            stopWebcam();
             localStorage.removeItem('student_session');
             currentRole = ''; loggedTeacherData = null; currentStudentName = "";
             document.getElementById('adminSidebarSection').style.display = 'none';
@@ -943,20 +952,10 @@
             document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
             document.getElementById(paneId).classList.add('active');
 
-            const ctrlBox = document.getElementById('liveControlButtons');
             if (paneId === 'paneLive') {
                 if (currentRole === 'admin' || currentRole === 'teacher') {
-                    ctrlBox.innerHTML = `
-                        <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startTeacherWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا</button>
-                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="stopTeacherWebcam()"><i class="fas fa-video-slash"></i> إيقاف الكاميرا</button>
-                        <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير الشاشة</button>
-                    `;
                     document.getElementById('teacherGradeAddBox').style.display = 'flex';
                 } else {
-                    ctrlBox.innerHTML = `
-                        <span style="color:#38bdf8; font-size:0.85rem;">بث الأستاذ الصوتي والمرئي</span>
-                        <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير الشاشة</button>
-                    `;
                     document.getElementById('teacherGradeAddBox').style.display = 'none';
                 }
             }
@@ -967,33 +966,38 @@
             if (paneId === 'paneGrades') { renderRoomGrades(); }
         }
 
-        function startTeacherWebcam() {
+        function startWebcam() {
             navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
                 localStream = stream;
                 const vid = document.getElementById('webcamVideo');
                 vid.srcObject = stream;
+                vid.style.display = 'block';
                 document.getElementById('liveStatusMsg').style.display = 'none';
-            }).catch(() => alert('تعذر الوصول للكاميرا أو الميكروفون!'));
+            }).catch(() => alert('تعذر الوصول للكاميرا أو الميكروفون! تأكد من منح الصلاحية للمتصفح.'));
         }
 
-        function stopTeacherWebcam() {
+        function stopWebcam() {
             if (localStream) {
                 localStream.getTracks().forEach(track => track.stop());
                 localStream = null;
             }
-            document.getElementById('webcamVideo').srcObject = null;
+            const vid = document.getElementById('webcamVideo');
+            vid.srcObject = null;
+            vid.style.display = 'none';
             document.getElementById('liveStatusMsg').style.display = 'block';
         }
 
-        // دالة تكبير الشاشة الكاملة (متوافقة تماماً مع الأجهزة والهواتف)
+        // تكبير الشاشة الكاملة الحقيقية
         function toggleFullScreenLive() {
             const box = document.getElementById('liveContainerBox');
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+            if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement) {
                 if (box.requestFullscreen) { box.requestFullscreen(); }
                 else if (box.webkitRequestFullscreen) { box.webkitRequestFullscreen(); }
+                else if (box.msRequestFullscreen) { box.msRequestFullscreen(); }
             } else {
                 if (document.exitFullscreen) { document.exitFullscreen(); }
                 else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+                else if (document.msExitFullscreen) { document.msExitFullscreen(); }
             }
         }
 
