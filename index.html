@@ -65,7 +65,7 @@
         .btn-secondary { background: #64748b; color: white; }
         .btn-block { width: 100%; }
         .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
-        .sub-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px; padding: 18px 12px; text-align: center; font-weight: 800; cursor: pointer; transition: all 0.25s; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .sub-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px; padding: 18px 12px; text-align: center; font-weight: 800; cursor: pointer; transition: all 0.25s; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
         .sub-card i { font-size: 1.8rem; color: var(--accent); }
         .sub-card:hover { border-color: var(--accent); background: #eff6ff; transform: translateY(-3px); }
         .list-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
@@ -81,7 +81,6 @@
         .modal-header-bar { background: var(--primary); color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; font-weight: 800; }
         .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; -webkit-overflow-scrolling: touch; }
         .modal-body-viewer object { width: 100%; height: 100%; border: none; pointer-events: auto; }
-        /* العلامة المائية الأمنية المتحركة لحماية الملازم */
         .watermark-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around; opacity: 0.15; overflow: hidden; font-weight: 900; font-size: 1.1rem; color: #ffffff; transform: rotate(-25deg); }
         .embedded-live-frame { width: 100%; height: 520px; border: none; border-radius: 12px; background: #0f172a; }
         @media (max-width: 768px) { .layout-wrapper { flex-direction: column; } sidebar { width: 100%; } .embedded-live-frame { height: 380px; } }
@@ -109,7 +108,7 @@
 
     <div class="layout-wrapper">
         <sidebar id="appSidebar">
-            <div id="studentNavSection">
+            <div id="studentNavSection" style="display: none;">
                 <div class="sidebar-title">الصفوف الدراسية</div>
                 <div id="studentNavClasses">
                     <button class="nav-item" onclick="openClass('الأول المتوسط')"><i class="fas fa-graduation-cap"></i> الأول المتوسط</button>
@@ -135,22 +134,23 @@
             </div>
 
             <div id="teacherSidebarSection" style="display: none;">
-                <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة المدرس</div>
+                <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة المدرس / الغرفة</div>
+                <button class="nav-item" onclick="showSection('sectionCreateRoom')"><i class="fas fa-plus-circle" style="color:#10b981;"></i> إنشاء غرفة خاصة برمز PIN</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF لغرفتي</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherRecordings')"><i class="fas fa-film"></i> رفع محاضرة مسجلة</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherRecordings')"><i class="fas fa-film"></i> رفع محاضرة مسجلة (فيديو طويل)</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherQuiz')"><i class="fas fa-question-circle"></i> إنشاء اختبار إلكتروني</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherHomework')"><i class="fas fa-tasks"></i> إضافة واجب بيتي</button>
                 <button class="nav-item" onclick="showSection('sectionLiveRoom')"><i class="fas fa-video"></i> غرفة البث المباشر الخاصة بي</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherReports')"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار/تقرير طالب</button>
             </div>
 
-            <div style="margin-top: auto; padding-top: 15px;">
+            <div style="margin-top: auto; padding-top: 15px;" id="logoutContainer" style="display:none;">
                 <button class="nav-item" onclick="logoutSystem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
             </div>
         </sidebar>
 
         <main>
-            <!-- شاشة التفعيل الفوري واختيار طريقة الدفع للطلاب -->
+            <!-- شاشة التفعيل الافتتاحية للطالب -->
             <div class="card" id="authSection">
                 <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في المنصة</div>
                 <div style="background: #eff6ff; padding: 16px; border-radius: 12px; margin-bottom: 18px; border-right: 4px solid var(--accent);">
@@ -199,13 +199,11 @@
                 </form>
             </div>
 
-            <!-- لوحة الأدمن: الإشعارات الفورية المباشرة -->
             <div class="card" id="sectionNotifications" style="display: none;">
                 <div class="card-header"><i class="fas fa-bell"></i> الإشعارات والطلبات المباشرة من الطلاب</div>
                 <div id="liveNotificationsList">جاري تحميل الإشعارات...</div>
             </div>
 
-            <!-- المواد الدراسية -->
             <div class="card" id="subjectsSection" style="display: none;">
                 <div class="card-header"><i class="fas fa-book"></i> المواد الدراسية - <span id="currentClassName"></span></div>
                 <div class="grid-cards" id="dynamicSubjectsGrid"></div>
@@ -242,7 +240,7 @@
                 </div>
 
                 <div style="margin-bottom: 25px;">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-film"></i> المحاضرات المسجلة</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-film"></i> المحاضرات المسجلة والفيديوهات الطويلة</h4>
                     <div id="recordingsContainer"><p style="color: #64748b;">لا توجد محاضرات مسجلة.</p></div>
                 </div>
 
@@ -257,7 +255,47 @@
                 </div>
             </div>
 
-            <!-- لوحة الأدمن: كودات التفعيل -->
+            <!-- قسم إنشاء غرفة خاصة جديدة برمز PIN -->
+            <div class="card" id="sectionCreateRoom" style="display: none;">
+                <div class="card-header"><i class="fas fa-plus-circle" style="color:var(--success);"></i> إنشاء غرفة خاصة بالمادة والصف مع رمز قفل سري</div>
+                <form onsubmit="handleCreateCustomRoom(event)">
+                    <div class="form-group">
+                        <label>اسم الغرفة / العنوان (مثلاً: حاسوب الأول متوسط - الأستاذ وليد)</label>
+                        <input type="text" class="form-control" id="crTitle" required placeholder="عنوان الغرفة">
+                    </div>
+                    <div class="form-group">
+                        <label>اختر الصف الدراسي</label>
+                        <select class="form-control" id="crGrade">
+                            <option value="الأول المتوسط">الأول المتوسط</option>
+                            <option value="الثاني المتوسط">الثاني المتوسط</option>
+                            <option value="الثالث المتوسط">الثالث المتوسط</option>
+                            <option value="الرابع الاعدادي">الرابع الإعدادي</option>
+                            <option value="الخامس الاعدادي">الخامس الإعدادي</option>
+                            <option value="السادس الاعدادي">السادس الإعدادي</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>اختر المادة</label>
+                        <select class="form-control" id="crSubject">
+                            <option value="الحاسوب">💻 الحاسوب</option>
+                            <option value="الرياضيات">📐 الرياضيات</option>
+                            <option value="اللغة العربية">📖 اللغة العربية</option>
+                            <option value="اللغة الإنجليزية">🔤 اللغة الإنجليزية</option>
+                            <option value="الفيزياء">⚡ الفيزياء</option>
+                            <option value="الكيمياء">🧪 الكيمياء</option>
+                            <option value="الأحياء">🧬 الأحياء</option>
+                            <option value="الاجتماعيات">🗺️ الاجتماعيات</option>
+                            <option value="التربية الإسلامية">🕌 التربية الإسلامية</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>رمز الدخول السري (PIN) لحماية الغرفة (لا يمكن للطالب الدخول إلا به)</label>
+                        <input type="text" class="form-control" id="crPin" required placeholder="مثلاً: 1234 أو كود سري">
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-lock"></i> إنشاء الغرفة المحمية ونشرها</button>
+                </form>
+            </div>
+
             <div class="card" id="sectionVouchers" style="display: none;">
                 <div class="card-header"><i class="fas fa-ticket-alt"></i> إدارة وتوليد كودات التفعيل الخاصة بك</div>
                 <form onsubmit="generateVoucher(event)" style="margin-bottom: 20px; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1;">
@@ -299,7 +337,7 @@
                 </form>
             </div>
 
-            <div class="card" id="sectionTeacherRecordings" style="display: none;"><div class="card-header"><i class="fas fa-film"></i> نشر محاضرة مسجلة لغرفتي</div>
+            <div class="card" id="sectionTeacherRecordings" style="display: none;"><div class="card-header"><i class="fas fa-film"></i> نشر محاضرة مسجلة / فيديو طويل لغرفتي</div>
                 <form onsubmit="handleTeacherRecording(event)">
                     <div class="form-group"><label>اختر الصف الدراسي</label>
                         <select class="form-control" id="recGrade">
@@ -311,9 +349,9 @@
                             <option value="السادس الاعدادي">السادس الإعدادي</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>عنوان المحاضرة</label><input type="text" class="form-control" id="recTitle" required placeholder="العنوان"></div>
-                    <div class="form-group"><label>رابط الفيديو</label><input type="text" class="form-control" id="recUrl" required placeholder="رابط يوتيوب أو فيديو"></div>
-                    <button type="submit" class="btn btn-primary btn-block">نشر المحاضرة</button>
+                    <div class="form-group"><label>عنوان المحاضرة أو الفيديو</label><input type="text" class="form-control" id="recTitle" required placeholder="العنوان"></div>
+                    <div class="form-group"><label>رابط الفيديو الطويل (يوتيوب أو رابط مباشر)</label><input type="text" class="form-control" id="recUrl" required placeholder="رابط الفيديو"></div>
+                    <button type="submit" class="btn btn-primary btn-block">نشر الفيديو</button>
                 </form>
             </div>
 
@@ -372,7 +410,19 @@
         </main>
     </div>
 
-    <!-- نافذة عرض الملفات مع العلامة المائية الأمنية لحمايتها من التسريب -->
+    <!-- نافذة إدخال رمز PIN السري للغرفة للطالب -->
+    <div class="modal" id="pinModal">
+        <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 380px; padding: 24px; text-align: center;">
+            <div class="card-header" style="justify-content: center;"><i class="fas fa-lock" style="color:var(--danger);"></i> غرفة محمية برمز سري</div>
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #334155;">هذه الغرفة خاصة ومحمية. يرجى إدخال رمز الدخول (PIN) الذي زودك به الأستاذ:</p>
+            <div class="form-group">
+                <input type="password" class="form-control" id="studentPinInput" placeholder="أدخل رمز الـ PIN هنا" style="text-align: center; font-size: 1.2rem; font-weight: 800;">
+            </div>
+            <button class="btn btn-success btn-block" onclick="verifyRoomPin()">دخول الغرفة</button>
+            <button class="btn btn-danger btn-block" onclick="closePinModal()" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
+        </div>
+    </div>
+
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box" style="position: relative;">
             <div class="modal-header-bar">
@@ -436,6 +486,7 @@
         let currentRole = ""; let loggedTeacherData = null; let currentTeacherRoomUrl = "";
         let previousNotificationsCount = 0;
         let currentStudentName = "";
+        let pendingRoomData = null;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -495,6 +546,7 @@
                 document.getElementById('teacherSidebarSection').style.display = 'none';
                 document.getElementById('adminLockBtn').style.display = 'none';
                 document.getElementById('adminExitBtn').style.display = 'flex';
+                document.getElementById('logoutContainer').style.display = 'block';
                 document.getElementById('topSubtitle').innerText = "لوحة تحكم الأدمن (الأستاذ وليد)";
                 closeAdminModal();
                 showSection('sectionNotifications');
@@ -515,20 +567,36 @@
                     document.getElementById('teacherSidebarSection').style.display = 'block';
                     document.getElementById('adminLockBtn').style.display = 'none';
                     document.getElementById('adminExitBtn').style.display = 'flex';
+                    document.getElementById('logoutContainer').style.display = 'block';
                     document.getElementById('topSubtitle').innerText = `المدرس: ${found.name} (${found.subject})`;
                     currentTeacherRoomUrl = `https://meet.jit.si/WaleedAcademy_Room_${found.id}`;
                     document.getElementById('teacherLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=true";
-                    closeAdminModal(); showSection('sectionTeacherUpload');
+                    closeAdminModal(); showSection('sectionCreateRoom');
                 } else { alert('معلومات الدخول غير صحيحة!'); }
             });
+        }
+
+        function registerNewTeacher(e) {
+            e.preventDefault();
+            const name = document.getElementById('regTName').value.trim();
+            const subject = document.getElementById('regTSubject').value;
+            const username = document.getElementById('regTUser').value.trim();
+            const password = document.getElementById('regTPass').value.trim();
+            const tId = 'T_' + Date.now();
+            fetch(`${DATABASE_URL}/teachers/${tId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: tId, name, subject, username, password }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم تسجيل المدرس بنجاح! يمكنك تسجيل الدخول الآن.'); switchLoginTab('teacher'); });
         }
 
         function logoutSystem() {
             localStorage.removeItem('student_session');
             currentRole = ''; loggedTeacherData = null; currentTeacherRoomUrl = ""; currentStudentName = "";
-            document.getElementById('studentNavSection').style.display = 'block';
+            document.getElementById('studentNavSection').style.display = 'none';
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
+            document.getElementById('logoutContainer').style.display = 'none';
             document.getElementById('adminLockBtn').style.display = 'flex';
             document.getElementById('adminExitBtn').style.display = 'none';
             document.getElementById('topSubtitle').innerText = "المرحلة الثانوية";
@@ -536,7 +604,7 @@
         }
 
         function showSection(sectionId) {
-            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'lecturesSection', 'sectionNotifications', 'sectionVouchers', 'sectionTeachersManage', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework', 'sectionLiveRoom', 'sectionTeacherReports'].forEach(id => {
+            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'lecturesSection', 'sectionCreateRoom', 'sectionNotifications', 'sectionVouchers', 'sectionTeachersManage', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework', 'sectionLiveRoom', 'sectionTeacherReports'].forEach(id => {
                 document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
             });
             if (sectionId === 'sectionVouchers') fetchVouchersList();
@@ -654,6 +722,10 @@
                     currentStudentName = name;
                     const studentSession = { id: code, name: name, status: 'active' };
                     localStorage.setItem('student_session', JSON.stringify(studentSession));
+                    
+                    document.getElementById('studentNavSection').style.display = 'block';
+                    document.getElementById('logoutContainer').style.display = 'block';
+
                     alert('تم تفعيل اشتراكك بنجاح! أهلاً بك في المنصة.');
                     openClass('الأول المتوسط');
                 } else {
@@ -709,9 +781,16 @@
                 const student = JSON.parse(session);
                 if (student && student.status === 'active') {
                     currentStudentName = student.name;
+                    document.getElementById('studentNavSection').style.display = 'block';
+                    document.getElementById('logoutContainer').style.display = 'block';
                     openClass('الأول المتوسط');
-                } else { localStorage.removeItem('student_session'); showSection('authSection'); }
-            } else { showSection('authSection'); }
+                } else { 
+                    localStorage.removeItem('student_session'); 
+                    showSection('authSection'); 
+                }
+            } else { 
+                showSection('authSection'); 
+            }
         }
 
         function openClass(className) {
@@ -729,24 +808,70 @@
             activeSub = subName;
             document.getElementById('currentSubTitle').innerText = "مادة: " + subName + " (" + activeClass + ")";
             showSection('teachersRoomsSection');
-            fetch(`${DATABASE_URL}/teachers.json`).then(res => res.json()).then(data => {
+            fetch(`${DATABASE_URL}/custom_rooms.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) {
                     Object.keys(data).forEach(k => {
-                        const t = data[k];
-                        if (t.subject === subName) {
-                            html += `<div class="sub-card" onclick="openTeacherRoom('${t.id}', '${t.name}')"><i class="fas fa-chalkboard-teacher" style="color:var(--success);"></i><span>الأستاذ<br><strong>${t.name}</strong></span></div>`;
+                        const r = data[k];
+                        if (r.grade === activeClass && r.subject === subName) {
+                            html += `
+                                <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin}')">
+                                    <i class="fas fa-lock" style="color:var(--warning); position:absolute; top:10px; left:10px; font-size:1rem;"></i>
+                                    <i class="fas fa-chalkboard-teacher" style="color:var(--success);"></i>
+                                    <span>غرفة خاصة<br><strong>${r.title}</strong></span>
+                                </div>
+                            `;
                         }
                     });
                 }
-                document.getElementById('teachersRoomsGrid').innerHTML = html || '<p style="color:#64748b; grid-column:1/-1; text-align:center;">لا توجد غرف مدرسين لهذه المادة.</p>';
+                document.getElementById('teachersRoomsGrid').innerHTML = html || '<p style="color:#64748b; grid-column:1/-1; text-align:center;">لا توجد غرف خاصة محمية لهذا الصف والمادة.</p>';
             });
         }
 
-        function openTeacherRoom(teacherId, teacherName) {
-            activeTeacherRoom = teacherName;
-            document.getElementById('currentRoomTitle').innerText = `غرفة الأستاذ: ${teacherName} (${activeSub})`;
-            currentTeacherRoomUrl = `https://meet.jit.si/WaleedAcademy_Room_${teacherId}`;
+        function promptRoomPin(roomId, roomTitle, roomPin) {
+            pendingRoomData = { id: roomId, title: roomTitle, pin: roomPin };
+            document.getElementById('studentPinInput').value = '';
+            document.getElementById('pinModal').style.display = 'flex';
+        }
+
+        function closePinModal() {
+            document.getElementById('pinModal').style.display = 'none';
+            pendingRoomData = null;
+        }
+
+        function verifyRoomPin() {
+            const enteredPin = document.getElementById('studentPinInput').value.trim();
+            if (pendingRoomData && enteredPin === pendingRoomData.pin) {
+                closePinModal();
+                openTeacherRoom(pendingRoomData.id, pendingRoomData.title);
+            } else {
+                alert('رمز الدخول السري (PIN) غير صحيح!');
+            }
+        }
+
+        function handleCreateCustomRoom(e) {
+            e.preventDefault();
+            const title = document.getElementById('crTitle').value.trim();
+            const grade = document.getElementById('crGrade').value;
+            const subject = document.getElementById('crSubject').value;
+            const pin = document.getElementById('crPin').value.trim();
+            const roomId = 'ROOM_' + Date.now();
+
+            fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: roomId, title, grade, subject, pin, creator: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد' }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert(`تم إنشاء الغرفة الخاصة "${title}" بنجاح!\nرمز الدخول السري (PIN) هو: ${pin}`);
+                document.getElementById('crTitle').value = '';
+                document.getElementById('crPin').value = '';
+            });
+        }
+
+        function openTeacherRoom(roomId, roomTitle) {
+            activeTeacherRoom = roomTitle;
+            document.getElementById('currentRoomTitle').innerText = `غرفة: ${roomTitle} (${activeSub})`;
+            currentTeacherRoomUrl = `https://meet.jit.si/WaleedAcademy_CustomRoom_${roomId}`;
             document.getElementById('studentLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=true";
             showSection('lecturesSection');
             renderTeacherLectures(); renderTeacherRecordings(); renderTeacherQuizzes(); renderTeacherHomework();
@@ -765,10 +890,10 @@
                 if (data) {
                     Object.keys(data).forEach(k => {
                         const item = data[k];
-                        if (item.grade === activeClass && item.subject === activeSub && item.teacherName === activeTeacherRoom) {
+                        if (item.grade === activeClass && item.subject === activeSub) {
                             let fullData = item.fileData || (item.chunks ? Object.values(item.chunks).join('') : '');
                             let safeData = encodeURIComponent(fullData);
-                            let canDelete = (currentRole === 'admin' || (currentRole === 'teacher' && loggedTeacherData && loggedTeacherData.name === activeTeacherRoom));
+                            let canDelete = (currentRole === 'admin' || currentRole === 'teacher');
                             html += `
                                 <div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}')">
                                     <div class="file-mini-info"><i class="fas fa-file-pdf"></i><h4>${item.title}</h4></div>
@@ -793,8 +918,8 @@
                 if (data) {
                     Object.keys(data).forEach(k => {
                         const rec = data[k];
-                        if (rec.grade === activeClass && rec.subject === activeSub && rec.teacherName === activeTeacherRoom) {
-                            let canDelete = (currentRole === 'admin' || (currentRole === 'teacher' && loggedTeacherData && loggedTeacherData.name === activeTeacherRoom));
+                        if (rec.grade === activeClass && rec.subject === activeSub) {
+                            let canDelete = (currentRole === 'admin' || currentRole === 'teacher');
                             html += `
                                 <div class="file-mini-card" onclick="openRecordingModal('${rec.title}', '${rec.url}')">
                                     <div class="file-mini-info"><i class="fas fa-play-circle" style="color:var(--accent);"></i><h4>${rec.title}</h4></div>
@@ -819,8 +944,8 @@
                 if (data) {
                     Object.keys(data).forEach(k => {
                         const hw = data[k];
-                        if (hw.grade === activeClass && hw.subject === activeSub && hw.teacherName === activeTeacherRoom) {
-                            let canDelete = (currentRole === 'admin' || (currentRole === 'teacher' && loggedTeacherData && loggedTeacherData.name === activeTeacherRoom));
+                        if (hw.grade === activeClass && hw.subject === activeSub) {
+                            let canDelete = (currentRole === 'admin' || currentRole === 'teacher');
                             html += `
                                 <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px; position:relative;">
                                     <h5 style="color:var(--primary); font-weight:800; margin-bottom:8px;">📌 ${hw.title}</h5>
@@ -857,8 +982,8 @@
                 if (data) {
                     Object.keys(data).forEach(k => {
                         const q = data[k];
-                        if (q.grade === activeClass && q.subject === activeSub && q.teacherName === activeTeacherRoom) {
-                            let canDelete = (currentRole === 'admin' || (currentRole === 'teacher' && loggedTeacherData && loggedTeacherData.name === activeTeacherRoom));
+                        if (q.grade === activeClass && q.subject === activeSub) {
+                            let canDelete = (currentRole === 'admin' || currentRole === 'teacher');
                             html += `
                                 <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px; position:relative;">
                                     <h5 style="color:var(--primary); font-weight:800; margin-bottom:8px;">📝 ${q.title}</h5>
@@ -893,7 +1018,6 @@
 
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
-            // حقن العلامة المائية برمجياً باسم الطالب الحالي لمنع التسريب وتصوير الشاشة
             let wmHtml = '';
             for(let i=0; i<12; i++) {
                 wmHtml += `<span>${currentStudentName || 'منصة الأستاذ وليد'} - محمي للأغراض التعليمية</span>`;
@@ -938,7 +1062,7 @@
                 for (let i = 0; i < base64Data.length; i += 2 * 1024 * 1024) { chunks['part_' + Math.floor(i / (2 * 1024 * 1024))] = base64Data.substring(i, i + (2 * 1024 * 1024)); }
                 fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
                     method: 'PUT',
-                    body: JSON.stringify({ id: contentId, grade, subject: loggedTeacherData.subject, teacherName: loggedTeacherData.name, title, chunks, date: new Date().toLocaleDateString('ar-EG') }),
+                    body: JSON.stringify({ id: contentId, grade, subject: loggedTeacherData ? loggedTeacherData.subject : 'الرياضيات', teacherName: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد', title, chunks, date: new Date().toLocaleDateString('ar-EG') }),
                     headers: { 'Content-Type': 'application/json' }
                 }).then(() => { alert('تم نشر الملزمة بنجاح!'); document.getElementById('tUpTitle').value = ''; document.getElementById('tUpFile').value = ''; });
             };
@@ -953,9 +1077,9 @@
             const recId = 'REC_' + Date.now();
             fetch(`${DATABASE_URL}/recordings/${recId}.json`, {
                 method: 'PUT',
-                body: JSON.stringify({ id: recId, grade, subject: loggedTeacherData.subject, teacherName: loggedTeacherData.name, title, url }),
+                body: JSON.stringify({ id: recId, grade, subject: loggedTeacherData ? loggedTeacherData.subject : 'الرياضيات', teacherName: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد', title, url }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم نشر المحاضرة المسجلة!'); document.getElementById('recTitle').value = ''; document.getElementById('recUrl').value = ''; });
+            }).then(() => { alert('تم نشر المحاضرة المسجلة بنجاح!'); document.getElementById('recTitle').value = ''; document.getElementById('recUrl').value = ''; });
         }
 
         function handleTeacherQuiz(e) {
@@ -970,7 +1094,7 @@
             const qId = 'QUIZ_' + Date.now();
             fetch(`${DATABASE_URL}/quizzes/${qId}.json`, {
                 method: 'PUT',
-                body: JSON.stringify({ id: qId, grade, subject: loggedTeacherData.subject, teacherName: loggedTeacherData.name, title, question, opt1, opt2, opt3, correct }),
+                body: JSON.stringify({ id: qId, grade, subject: loggedTeacherData ? loggedTeacherData.subject : 'الرياضيات', teacherName: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد', title, question, opt1, opt2, opt3, correct }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => { alert('تم نشر الاختبار!'); document.getElementById('qTitle').value = ''; document.getElementById('qQuestion').value = ''; });
         }
@@ -982,7 +1106,7 @@
             const hwId = 'HW_' + Date.now();
             fetch(`${DATABASE_URL}/homework/${hwId}.json`, {
                 method: 'PUT',
-                body: JSON.stringify({ id: hwId, grade, subject: loggedTeacherData.subject, teacherName: loggedTeacherData.name, title }),
+                body: JSON.stringify({ id: hwId, grade, subject: loggedTeacherData ? loggedTeacherData.subject : 'الرياضيات', teacherName: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد', title }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => { alert('تم نشر الواجب بنجاح!'); document.getElementById('hwTitle').value = ''; });
         }
@@ -994,7 +1118,7 @@
             const details = document.getElementById('repDetails').value.trim();
             fetch(`${DATABASE_URL}/reports.json`, {
                 method: 'POST',
-                body: JSON.stringify({ teacher: loggedTeacherData.name, subject: loggedTeacherData.subject, student, type, details, date: new Date().toLocaleString() }),
+                body: JSON.stringify({ teacher: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد', subject: loggedTeacherData ? loggedTeacherData.subject : 'الرياضيات', student, type, details, date: new Date().toLocaleString() }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => { alert('تم إرسال الإنذار!'); document.getElementById('repStudentName').value = ''; document.getElementById('repDetails').value = ''; });
         }
