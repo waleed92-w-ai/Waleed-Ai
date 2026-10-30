@@ -64,20 +64,15 @@
         .btn-warning { background: var(--warning); color: white; }
         .btn-secondary { background: #64748b; color: white; }
         .btn-block { width: 100%; }
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; }
-        .sub-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px; padding: 18px 12px; text-align: center; font-weight: 800; cursor: pointer; transition: all 0.25s; display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; }
-        .sub-card i { font-size: 1.8rem; color: var(--accent); }
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+        .sub-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px; padding: 22px 14px; text-align: center; font-weight: 800; cursor: pointer; transition: all 0.25s; display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative; }
+        .sub-card i { font-size: 2.2rem; color: var(--accent); }
         .sub-card:hover { border-color: var(--accent); background: #eff6ff; transform: translateY(-3px); }
         .list-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
         
-        /* تبيوبات أقسام الغرفة الداخلية */
-        .room-tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; flex-wrap: wrap; }
-        .room-tab-btn { background: #f8fafc; border: 1.5px solid #cbd5e1; color: #334155; padding: 8px 16px; border-radius: 10px; font-weight: 800; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
-        .room-tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
 
-        /* مشغل البث الداخلي الخفيف والخالي من التعقيد */
         .lightweight-live-box { width: 100%; height: 420px; background: #0f172a; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; border: 2px solid #334155; }
         .lightweight-live-box video { width: 100%; height: 100%; object-fit: cover; }
         
@@ -228,41 +223,65 @@
                 <div class="grid-cards" id="teachersRoomsGrid"></div>
             </div>
 
-            <!-- واجهة الغرفة المقسمة بالكامل حسب طلبك (أقسام منظمة) -->
-            <div class="card" id="lecturesSection" style="display: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 id="currentRoomTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
+            <!-- 1. شاشة اختيار الأقسام داخل الغرفة (تشبه شكل الصفوف تماماً) -->
+            <div class="card" id="roomMenuSection" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 id="currentRoomMenuTitle" style="color: var(--primary); font-size: 1.2rem; font-weight: 900;"></h3>
                     <button class="btn btn-secondary" onclick="backToRoomsView()"><i class="fas fa-arrow-right"></i> رجوع للغرف</button>
                 </div>
+                <p style="color: #64748b; margin-bottom: 20px; font-weight: 700;">اختر القسم المطلوب للدخول إليه:</p>
+                <div class="grid-cards">
+                    <div class="sub-card" onclick="openRoomSection('paneLive')">
+                        <i class="fas fa-broadcast-tower" style="color: var(--accent);"></i>
+                        <span>البث المباشر</span>
+                    </div>
+                    <div class="sub-card" onclick="openRoomSection('paneLectures')">
+                        <i class="fas fa-book-reader" style="color: var(--success);"></i>
+                        <span>المحاضرات والملازم</span>
+                    </div>
+                    <div class="sub-card" onclick="openRoomSection('paneQuestions')">
+                        <i class="fas fa-comments" style="color: var(--warning);"></i>
+                        <span>الأسئلة والنقاش</span>
+                    </div>
+                    <div class="sub-card" onclick="openRoomSection('paneQuizzes')">
+                        <i class="fas fa-question-circle" style="color: #ec4899;"></i>
+                        <span>الاختبارات والواجبات</span>
+                    </div>
+                    <div class="sub-card" onclick="openRoomSection('paneGrades')">
+                        <i class="fas fa-star" style="color: #f59e0b;"></i>
+                        <span>التقييم وأسماء الطلاب</span>
+                    </div>
+                </div>
+            </div>
 
-                <!-- شريط أقسام الغرفة (Tabs) -->
-                <div class="room-tabs">
-                    <button class="room-tab-btn active" onclick="switchRoomTab('paneLive', this)"><i class="fas fa-broadcast-tower"></i> البث المباشر</button>
-                    <button class="room-tab-btn" onclick="switchRoomTab('paneLectures', this)"><i class="fas fa-book-reader"></i> المحاضرات والملازم</button>
-                    <button class="room-tab-btn" onclick="switchRoomTab('paneQuestions', this)"><i class="fas fa-comments"></i> الأسئلة والنقاش</button>
-                    <button class="room-tab-btn" onclick="switchRoomTab('paneQuizzes', this)"><i class="fas fa-question-circle"></i> الاختبارات</button>
-                    <button class="room-tab-btn" onclick="switchRoomTab('paneGrades', this)"><i class="fas fa-star"></i> التقييم وأسماء الطلاب</button>
+            <!-- 2. محتوى الأقسام داخل الغرفة -->
+            <div class="card" id="lecturesSection" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 id="currentRoomContentTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
+                    <button class="btn btn-secondary" onclick="backToRoomMenu()"><i class="fas fa-arrow-right"></i> رجوع لأقسام الغرفة</button>
                 </div>
 
-                <!-- 1. قسم البث المباشر الداخلي الخفيف -->
-                <div class="room-section-pane active" id="paneLive">
+                <!-- أ. قسم البث المباشر -->
+                <div class="room-section-pane" id="paneLive">
                     <div style="background: #1e293b; padding: 14px; border-radius: var(--radius);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #fff; flex-wrap: wrap; gap: 8px;">
-                            <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-video" style="color: #38bdf8;"></i> البث المباشر الداخلي الخفيف</span>
-                            <div id="liveControlButtons"></div>
+                            <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-video" style="color: #38bdf8;"></i> البث المباشر الاختياري الداخلي</span>
+                            <div style="display: flex; gap: 8px; align-items: center;" id="liveControlButtons"></div>
                         </div>
                         <div class="lightweight-live-box" id="liveContainerBox">
-                            <!-- كاميرا خفيفة تعمل مباشرة داخل المنصة بدون برامج خارجية -->
                             <video id="webcamVideo" autoplay playsinline muted></video>
-                            <div id="liveStatusMsg" style="color: #94a3b8; font-weight: 700; position: absolute;">البث غير متصل حالياً. ينتظر بدء الأستاذ...</div>
+                            <div id="liveStatusMsg" style="color: #94a3b8; font-weight: 700; position: absolute; text-align: center; padding: 0 15px;">
+                                <i class="fas fa-video-slash" style="font-size: 2.5rem; margin-bottom: 10px; display: block;"></i>
+                                الكاميرا مغلقة افتراضياً.<br>يمكن للأستاذ تفعيل الكاميرا متى أراد، أو متابعة الصوت والمحتوى.
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 2. قسم المحاضرات والملازم (تكبير وتصغير) -->
+                <!-- ب. المحاضرات والملازم -->
                 <div class="room-section-pane" id="paneLectures">
                     <div style="margin-bottom: 25px;">
-                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم المادة</h4>
+                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم المادة (تكبير / تصغير)</h4>
                         <div id="lecturesContainer"><p style="color: #64748b;">جاري التحميل...</p></div>
                     </div>
                     <div>
@@ -271,7 +290,7 @@
                     </div>
                 </div>
 
-                <!-- 3. قسم الأسئلة والنقاش -->
+                <!-- ج. الأسئلة والنقاش -->
                 <div class="room-section-pane" id="paneQuestions">
                     <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-comments"></i> أسئلة واستفسارات الطلاب</h4>
                     <div style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 15px;">
@@ -281,7 +300,7 @@
                     <div id="questionsListContainer"><p style="color: #64748b;">لا توجد أسئلة مرسلة.</p></div>
                 </div>
 
-                <!-- 4. قسم الاختبارات -->
+                <!-- د. الاختبارات والواجبات -->
                 <div class="room-section-pane" id="paneQuizzes">
                     <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-question-circle"></i> الاختبارات الإلكترونية</h4>
                     <div id="quizzesContainer"><p style="color: #64748b;">لا توجد اختبارات.</p></div>
@@ -291,10 +310,10 @@
                     </div>
                 </div>
 
-                <!-- 5. قسم التقييم وأسماء الطلاب (كل طالب وأمامه تقييمه) -->
+                <!-- هـ. التقييم وأسماء الطلاب -->
                 <div class="room-section-pane" id="paneGrades">
                     <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-star" style="color:var(--warning);"></i> سجل أسماء الطلاب وتقييماتهم في الغرفة</h4>
-                    <div style="margin-bottom: 15px; display: flex; gap: 10px;" id="teacherGradeAddBox" style="display:none;">
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px; display:none;" id="teacherGradeAddBox">
                         <input type="text" class="form-control" id="gradeStudentName" placeholder="اسم الطالب">
                         <input type="text" class="form-control" id="gradeStudentVal" placeholder="التقييم / الدرجة (مثلاً: ممتاز / 95%)">
                         <button class="btn btn-success" onclick="saveStudentGrade()">حفظ التقييم</button>
@@ -486,7 +505,7 @@
         const db = firebase.database();
 
         const ADMIN_HASH = "V0ExOTkyd2E="; // WA1992wa
-        let activeClass = ""; let activeSub = ""; let activeRoomId = "";
+        let activeClass = ""; let activeSub = ""; let activeRoomId = ""; let activeRoomTitleStr = "";
         let currentRole = ""; let loggedTeacherData = null;
         let previousNotificationsCount = 0;
         let currentStudentName = "";
@@ -610,6 +629,7 @@
         }
 
         function logoutSystem() {
+            stopTeacherWebcam();
             localStorage.removeItem('student_session');
             currentRole = ''; loggedTeacherData = null; currentStudentName = "";
             document.getElementById('adminSidebarSection').style.display = 'none';
@@ -622,7 +642,7 @@
         }
 
         function showSection(sectionId) {
-            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'lecturesSection', 'sectionCreateRoom', 'sectionManageRooms', 'sectionNotifications', 'sectionVouchers', 'sectionTeachersManage', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework', 'sectionTeacherReports'].forEach(id => {
+            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'roomMenuSection', 'lecturesSection', 'sectionCreateRoom', 'sectionManageRooms', 'sectionNotifications', 'sectionVouchers', 'sectionTeachersManage', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework', 'sectionTeacherReports'].forEach(id => {
                 document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
             });
             if (sectionId === 'sectionManageRooms') fetchMyRooms();
@@ -822,7 +842,7 @@
 
         function promptRoomPin(roomId, roomTitle, roomPin) {
             if (currentRole === 'admin' || currentRole === 'teacher') {
-                openRoomInterface(roomId, roomTitle);
+                openRoomMenu(roomId, roomTitle);
                 return;
             }
             pendingRoomData = { id: roomId, title: roomTitle, pin: roomPin };
@@ -835,7 +855,7 @@
         function verifyRoomPin() {
             if (pendingRoomData && document.getElementById('studentPinInput').value.trim() === pendingRoomData.pin) {
                 closePinModal();
-                openRoomInterface(pendingRoomData.id, pendingRoomData.title);
+                openRoomMenu(pendingRoomData.id, pendingRoomData.title);
             } else { alert('رمز PIN غير صحيح!'); }
         }
 
@@ -904,59 +924,83 @@
             }).then(() => { alert('تم التحديث!'); closeEditRoomModal(); fetchMyRooms(); });
         }
 
-        function openRoomInterface(roomId, roomTitle) {
+        // فتح قائمة أقسام الغرفة عند إدخال الـ PIN الصحيح
+        function openRoomMenu(roomId, roomTitle) {
             activeRoomId = roomId;
-            document.getElementById('currentRoomTitle').innerText = `غرفة: ${roomTitle}`;
-            
-            // ضبط أزرار التحكم في البث حسب الصلاحية
-            const ctrlBox = document.getElementById('liveControlButtons');
-            if (currentRole === 'admin' || currentRole === 'teacher') {
-                ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startTeacherWebcam()"><i class="fas fa-video"></i> بدء البث بالكاميرا</button>
-                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="stopTeacherWebcam()"><i class="fas fa-stop"></i> إيقاف البث</button>
-                `;
-                document.getElementById('teacherGradeAddBox').style.display = 'flex';
-            } else {
-                ctrlBox.innerHTML = `<span style="color:#38bdf8; font-size:0.85rem;">متابعة بث الأستاذ المباشر</span>`;
-                document.getElementById('teacherGradeAddBox').style.display = 'none';
-            }
-
-            showSection('lecturesSection');
-            switchRoomTab('paneLive', document.querySelector('.room-tab-btn'));
-            renderRoomLectures(); renderRoomRecordings(); renderRoomQuizzes(); renderRoomHomework(); renderRoomQuestions(); renderRoomGrades();
+            activeRoomTitleStr = roomTitle;
+            document.getElementById('currentRoomMenuTitle').innerText = `غرفة: ${roomTitle}`;
+            showSection('roomMenuSection');
         }
 
-        // تشغيل كاميرا المدرس للبث الداخلي الخفيف بالمتصفح
+        function backToRoomMenu() {
+            showSection('roomMenuSection');
+        }
+
+        // عند الضغط على أي قسم داخل الغرفة يفتح قسمه المخصص
+        function openRoomSection(paneId) {
+            document.getElementById('currentRoomContentTitle').innerText = `غرفة: ${activeRoomTitleStr}`;
+            showSection('lecturesSection');
+            
+            document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
+            document.getElementById(paneId).classList.add('active');
+
+            // إعداد أزرار البث والتحكم حسب الصلاحية
+            const ctrlBox = document.getElementById('liveControlButtons');
+            if (paneId === 'paneLive') {
+                if (currentRole === 'admin' || currentRole === 'teacher') {
+                    ctrlBox.innerHTML = `
+                        <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startTeacherWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا</button>
+                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="stopTeacherWebcam()"><i class="fas fa-video-slash"></i> إيقاف الكاميرا</button>
+                        <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير الشاشة</button>
+                    `;
+                    document.getElementById('teacherGradeAddBox').style.display = 'flex';
+                } else {
+                    ctrlBox.innerHTML = `
+                        <span style="color:#38bdf8; font-size:0.85rem;">بث الأستاذ المباشر (اختياري)</span>
+                        <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير الشاشة</button>
+                    `;
+                    document.getElementById('teacherGradeAddBox').style.display = 'none';
+                }
+            }
+
+            // تحميل محتوى القسم المحدد
+            if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
+            if (paneId === 'paneQuestions') { renderRoomQuestions(); }
+            if (paneId === 'paneQuizzes') { renderRoomQuizzes(); renderRoomHomework(); }
+            if (paneId === 'paneGrades') { renderRoomGrades(); }
+        }
+
         function startTeacherWebcam() {
             navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
                 localStream = stream;
                 const vid = document.getElementById('webcamVideo');
                 vid.srcObject = stream;
                 document.getElementById('liveStatusMsg').style.display = 'none';
-                alert('تم بدء البث المباشر بنجاح!');
             }).catch(() => alert('تعذر الوصول للكاميرا أو الميكروفون!'));
         }
 
         function stopTeacherWebcam() {
             if (localStream) {
                 localStream.getTracks().forEach(track => track.stop());
-                document.getElementById('webcamVideo').srcObject = null;
-                document.getElementById('liveStatusMsg').style.display = 'block';
+                localStream = null;
             }
+            document.getElementById('webcamVideo').srcObject = null;
+            document.getElementById('liveStatusMsg').style.display = 'block';
         }
 
-        // التبديل بين أقسام الغرفة (Tabs)
-        function switchRoomTab(paneId, btnEl) {
-            document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.room-tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(paneId).classList.add('active');
-            if(btnEl) btnEl.classList.add('active');
+        function toggleFullScreenLive() {
+            const box = document.getElementById('liveContainerBox');
+            if (!document.fullscreenElement) {
+                if (box.requestFullscreen) { box.requestFullscreen(); }
+                else if (box.webkitRequestFullscreen) { box.webkitRequestFullscreen(); }
+            } else {
+                if (document.exitFullscreen) { document.exitFullscreen(); }
+            }
         }
 
         function backToSubjectsView() { showSection('subjectsSection'); }
         function backToRoomsView() { showSection('teachersRoomsSection'); }
 
-        // نظام الأسئلة والنقاش داخل الغرفة
         function sendStudentQuestion() {
             const text = document.getElementById('studentQuestionInput').value.trim();
             if(!text) { alert('اكتب السؤال أولاً!'); return; }
@@ -981,7 +1025,6 @@
             });
         }
 
-        // نظام التقييم وأسماء الطلاب
         function saveStudentGrade() {
             const name = document.getElementById('gradeStudentName').value.trim();
             const val = document.getElementById('gradeStudentVal').value.trim();
