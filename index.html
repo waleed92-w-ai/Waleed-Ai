@@ -80,17 +80,17 @@
         
         .participants-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; width: 100%; margin-top: 15px; }
         
-        .voice-user-circle { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 110px; }
-        .voice-avatar-wrap { width: 85px; height: 85px; border-radius: 50%; border: 3px solid #64748b; overflow: hidden; background: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .voice-user-circle { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 120px; background: rgba(30, 41, 59, 0.7); padding: 10px; border-radius: 12px; border: 1px solid #334155; }
+        .voice-avatar-wrap { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #64748b; overflow: hidden; background: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
         .voice-avatar-wrap.speaking { border-color: var(--success); box-shadow: 0 0 15px var(--success); animation: pulseGlow 1.5s infinite; }
         @keyframes pulseGlow { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .voice-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .mic-status-icon { position: absolute; bottom: 2px; right: 2px; background: #1e293b; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; border: 1.5px solid #fff; }
+        .mic-status-icon { position: absolute; bottom: 2px; right: 2px; background: #1e293b; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border: 1.5px solid #fff; }
         .mic-status-icon.active { background: var(--success); }
         .mic-status-icon.muted { background: var(--danger); }
         
-        .voice-name-tag { color: #fff; font-size: 0.85rem; font-weight: 800; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .voice-role-tag { font-size: 0.7rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 8px; border-radius: 6px; }
+        .voice-name-tag { color: #fff; font-size: 0.82rem; font-weight: 800; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .voice-role-tag { font-size: 0.68rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 6px; border-radius: 6px; }
 
         #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         #maintenanceScreen i { font-size: 4rem; color: var(--warning); margin-bottom: 20px; animation: bounce 2s infinite; }
@@ -291,7 +291,7 @@
                 <div class="room-section-pane" id="paneLive">
                     <div style="background: #1e293b; padding: 14px; border-radius: var(--radius);">
                         
-                        <!-- صندوق طلبات انضمام الطلاب للبث الصوتي (أصبح في الأعلى وبارز للأستاذ) -->
+                        <!-- صندوق طلبات انضمام الطلاب للبث الصوتي (بارز وواضح للأستاذ) -->
                         <div id="teacherLiveAdminBox" style="background: #0f172a; border: 2px solid #38bdf8; border-radius: 12px; padding: 16px; margin-bottom: 16px; display: none; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);">
                             <h4 style="color: #38bdf8; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
                                 <i class="fas fa-user-clock" style="font-size: 1.2rem;"></i> طلبات انضمام الطلاب للبث الصوتي المباشر:
@@ -598,7 +598,7 @@
         </div>
     </div>
 
-    <!-- عنصر مشغل الصوت الموحد للطلاب لسماع صوت الأستاذ مباشرة -->
+    <!-- عنصر مشغل الصوت لاستماع الأستاذ والطلاب بدون صدى محلي -->
     <audio id="remoteAudioPlayer" autoplay playsinline></audio>
 
     <script>
@@ -1572,6 +1572,7 @@
             if (confirm(`هل أنت متأكد من طرد الطالب ${studentName}؟`)) {
                 db.ref(`active_students/${activeRoomId}/${studentKey}`).remove();
                 db.ref(`room_kicked/${activeRoomId}/${studentKey}`).set({ studentName: studentName, kickedAt: Date.now() });
+                db.ref(`voice_participants/${activeRoomId}/student_${studentName.replace(/[.#$\/\[\]]/g, '_')}`).remove();
                 alert(`تم طرد الطالب ${studentName}.`);
             }
         }
@@ -1590,7 +1591,7 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
-        // ==================== الحل النهائي المحدث للصوت وتدفق البث ====================
+        // ==================== نظام الصوت المحترف ومعالجة مسار البث ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -1609,13 +1610,13 @@
             }
             listenToVoiceParticipants();
             listenToVoiceBroadcastStatus();
-            setupRemoteAudioReceiver();
+            setupAudioPlayerReceiver();
         }
 
         function startVoiceBroadcast() {
             const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
             db.ref(`voice_participants/${activeRoomId}/teacher`).set({
-                name: tName, role: 'الأستاذ / المشرف', isMuted: false, timestamp: Date.now()
+                name: tName, role: 'الأستاذ / المضيف', isMuted: false, timestamp: Date.now()
             }).then(() => {
                 db.ref(`voice_status/${activeRoomId}`).set({ active: true });
                 initLocalMicrophone(true);
@@ -1645,9 +1646,6 @@
                         localAudioStream = null;
                     }
                     renderVoiceParticipantsGrid(null);
-                } else if (isActive && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                    // تشغيل تلقائي لصوت الأستاذ فور بدء البث دون الحاجة لزر تنشيط
-                    setupRemoteAudioReceiver();
                 }
             });
         }
@@ -1661,7 +1659,7 @@
                 status: 'pending',
                 timestamp: Date.now()
             }).then(() => {
-                alert('تم إرسال طلب الانضمام للبث الصوتي للأستاذ. بانتظار الموافقة...');
+                alert('تم إرسال طلب التحدث للأستاذ. بانتظار الموافقة...');
             });
         }
 
@@ -1734,28 +1732,21 @@
         function initLocalMicrophone(isTeacher) {
             navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
                 localAudioStream = stream;
-                const remoteAudio = document.getElementById('remoteAudioPlayer');
-                
-                if (isTeacher) {
-                    remoteAudio.muted = true;
-                    remoteAudio.srcObject = null;
-                } else {
-                    remoteAudio.muted = false;
-                    remoteAudio.srcObject = stream;
-                    remoteAudio.play().catch(e => console.log("Audio play deferred:", e));
+                // منع التكرار المحلي (Local Echo) عبر إلغاء توجيه المايك مباشرة لسماعة نفس الجهاز
+                const audioTracks = stream.getAudioTracks();
+                if(audioTracks.length > 0 && !isTeacher) {
+                    // الطالب يستمع لصوت الأستاذ فقط ولا يعيد بث صوته لنفسه
                 }
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
         }
 
-        function setupRemoteAudioReceiver() {
-            // استقبال صوت الأستاذ وبثه تلقائياً في سماعات الطالب دون الحاجة لأزرار إضافية
-            if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                    const audioEl = document.getElementById('remoteAudioPlayer');
-                    audioEl.srcObject = stream;
-                    audioEl.play().catch(() => {});
-                }).catch(() => {});
-            }
+        function setupAudioPlayerReceiver() {
+            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(stream => {
+                const audioEl = document.getElementById('remoteAudioPlayer');
+                audioEl.srcObject = stream;
+                audioEl.volume = 1.0;
+                audioEl.play().catch(() => {});
+            }).catch(() => {});
         }
 
         function toggleMicrophone() {
@@ -1797,28 +1788,44 @@
 
             if (statusText) statusText.innerText = "البث الصوتي جارٍ الآن 🎙️";
             let html = '';
+            const isUserAdminOrTeacher = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
+
             Object.keys(participantsData).forEach(key => {
                 const p = participantsData[key];
                 const muted = p.isMuted;
+                const isTeacherNode = (key === 'teacher');
+
                 html += `
                     <div class="voice-user-circle">
                         <div class="voice-avatar-wrap ${!muted ? 'speaking' : ''}">
-                            <img src="IMG_1507.jpeg" alt="${p.name}" onerror="this.src='https://via.placeholder.com/85'">
+                            <img src="IMG_1507.jpeg" alt="${p.name}" onerror="this.src='https://via.placeholder.com/75'">
                             <div class="mic-status-icon ${!muted ? 'active' : 'muted'}">
                                 <i class="fas ${!muted ? 'fa-microphone' : 'fa-microphone-slash'}"></i>
                             </div>
                         </div>
                         <span class="voice-name-tag" title="${p.name}">${p.name}</span>
                         <span class="voice-role-tag">${p.role}</span>
-                        ${(currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') && key !== 'teacher' ? `<button class="btn btn-danger" style="padding:2px 6px; font-size:0.65rem; margin-top:4px;" onclick="kickVoiceParticipant('${key}')">طرد</button>` : ''}
+                        ${isUserAdminOrTeacher && !isTeacherNode ? `
+                            <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; justify-content:center;">
+                                <button class="btn btn-warning" style="padding:2px 6px; font-size:0.6rem;" onclick="makeCoHost('${key}', '${p.name}')" title="ترقية مشرف"><i class="fas fa-star"></i></button>
+                                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.6rem;" onclick="removeVoiceParticipant('${key}')" title="إنزال من البث"><i class="fas fa-user-minus"></i></button>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             });
             container.innerHTML = html;
         }
 
-        function kickVoiceParticipant(pKey) {
-            db.ref(`voice_participants/${activeRoomId}/${pKey}`).remove();
+        function removeVoiceParticipant(pKey) {
+            if (confirm('هل تريد إنزال هذا الطالب من البث الصوتي؟')) {
+                db.ref(`voice_participants/${activeRoomId}/${pKey}`).remove();
+            }
+        }
+
+        function makeCoHost(pKey, studentName) {
+            db.ref(`voice_participants/${activeRoomId}/${pKey}`).update({ role: 'مشرف مساعد 🌟' });
+            alert(`تم تعيين الطالب ${studentName} مشرفاً مساعداً في البث.`);
         }
 
         function backToSubjectsView() { showSection('subjectsSection'); }
@@ -2050,10 +2057,10 @@
 
         function fetchAdminReports() {
             fetch(`${DATABASE_URL}/reports.json`).then(res => res.json()).then(data => {
-                let html = '';
-                if (data) { Object.keys(data).forEach(k => { const r = data[k]; html += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; }); }
+                let html, htmlList = '';
+                if (data) { Object.keys(data).forEach(k => { const r = data[k]; htmlList += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; }); }
                 const adminRList = document.getElementById('adminReportsList');
-                if (adminRList) adminRList.innerHTML = html || '<p>لا توجد تقارير.</p>';
+                if (adminRList) adminRList.innerHTML = htmlList || '<p>لا توجد تقارير.</p>';
             });
         }
     </script>
