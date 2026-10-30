@@ -502,7 +502,6 @@
                     <button class="btn btn-secondary" id="backToRoomMenuBtn"><i class="fas fa-arrow-right"></i> رجوع لأقسام الغرفة</button>
                 </div>
 
-                <!-- قسم التحضير والامتحانات اليومية والشهرية المتكامل -->
                 <div class="room-section-pane" id="panePreparation">
                     <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-clipboard-list"></i> لوحة التحضير والامتحانات (يومي، شهري، نصف سنة، شفهي)</h4>
                     
@@ -661,7 +660,7 @@
                     </div>
                     <div class="form-group"><label>نوع الوصول للغرفة</label>
                         <select class="form-control" id="crAccessType">
-                            <option value="free">🟢 مجانية بالكامل (يستطيع أي طالب الدخول مباشرة بدون رمز)</option>
+                            <option value="free">🟢 مجانية بالكامل (يستطيع أي طالب أو مدرس الدخول مباشرة)</option>
                             <option value="protected">🔒 خاصة / دروس خصوصية (تتطلب رمز PIN سري)</option>
                         </select>
                     </div>
@@ -812,7 +811,7 @@
             </div>
             <div class="form-group"><label>حالة الغرفة العامة</label>
                 <select class="form-control" id="editRoomIsOpen">
-                    <option value="true">🟢 مفتوحة للطلاب</option>
+                    <option value="true">🟢 مفتوحة</option>
                     <option value="false">🔴 مغلقة تماماً</option>
                 </select>
             </div>
@@ -823,8 +822,8 @@
 
     <div class="modal" id="pinModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 380px; padding: 24px; text-align: center;">
-            <div class="card-header" style="justify-content: center;"><i class="fas fa-lock" style="color:var(--danger);"></i> غرفة دروس خصوصية محمية</div>
-            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #334155;">أدخل رمز الدخول (PIN) الخاص بالدرس:</p>
+            <div class="card-header" style="justify-content: center;"><i class="fas fa-lock" style="color:var(--danger);"></i> غرفة غير مسجلة باسمك / محمية</div>
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #334155;">هذه الغرفة خاصة بالأستاذ المالك. أدخل رمز الدخول (PIN) للدخول:</p>
             <div class="form-group"><input type="text" class="form-control" id="studentPinInput" placeholder="PIN" style="text-align: center; font-size: 1.2rem; font-weight: 800;"></div>
             <button class="btn btn-success btn-block" id="verifyPinBtn">دخول</button>
             <button class="btn btn-danger btn-block" id="closePinModalBtn" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
@@ -906,6 +905,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadSettingsData(); 
             checkMaintenanceStatus();
+            checkTeacherSessionLive();
             checkStudentSession(); 
             listenToNotificationsRealtime();
             initEventListeners();
@@ -987,6 +987,21 @@
             
             document.getElementById('saveEditedItemBtn').addEventListener('click', saveEditedItem);
             document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
+        }
+
+        function checkTeacherSessionLive() {
+            const session = localStorage.getItem('teacher_session');
+            if (session) {
+                const teacherObj = JSON.parse(session);
+                if (teacherObj && teacherObj.id) {
+                    db.ref(`teachers/${teacherObj.id}`).on('value', snapshot => {
+                        if (!snapshot.exists()) {
+                            alert('⚠️ تم حذف حسابك من قبل الأدمن. تم تسجيل خروجك من المنصة.');
+                            logoutSystem();
+                        }
+                    });
+                }
+            }
         }
 
         function toggleLiveBoxFullscreen() {
@@ -1099,6 +1114,7 @@
                 if (found) {
                     currentRole = found.isSupervisor ? 'supervisor' : 'teacher'; 
                     loggedTeacherData = found;
+                    localStorage.setItem('teacher_session', JSON.stringify({ id: found.id }));
                     
                     document.getElementById('teacherSidebarSection').style.display = 'block';
                     document.getElementById('adminLockBtn').style.display = 'none';
@@ -1120,6 +1136,7 @@
 
                     closeAdminModal(); 
                     loadTeacherRoomsIntoDropdowns();
+                    checkTeacherSessionLive();
                 } else { alert('معلومات الدخول غير صحيحة أو بانتظار موافقة الأدمن!'); }
             });
         }
@@ -1145,6 +1162,7 @@
         function logoutSystem() {
             cleanupActiveSession();
             localStorage.removeItem('student_session');
+            localStorage.removeItem('teacher_session');
             currentRole = '';
             loggedTeacherData = null;
             currentStudentName = "";
@@ -1208,11 +1226,11 @@
                                 <div>
                                     <strong>👨‍🏫 المدرس: ${t.name} ${isSup ? '⭐ (مشرف مساعد)' : ''}</strong><br>
                                     <small style="color:var(--accent); font-weight:800;"><i class="fas fa-book"></i> المادة: ${t.subject}</small><br>
-                                    <small style="color:#64748b;">يوزر: ${t.username}</small>
+                                    <small style="color:#64748b;">يوزر: ${t.username} | الباسورد: ${t.password}</small>
                                 </div>
                                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
                                     ${currentRole === 'admin' ? `<button class="btn ${isSup ? 'btn-secondary' : 'btn-warning'}" style="padding:6px 10px; font-size:0.75rem;" onclick="toggleSupervisor('${t.id}', ${!isSup})">${isSup ? 'إلغاء الإشراف' : 'ترقية مشرف'}</button>` : ''}
-                                    <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteItem('teachers', '${t.id}', loadPlatformUsersOverview)">حذف</button>
+                                    <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteItem('teachers', '${t.id}', loadPlatformUsersOverview)">حذف المدرس</button>
                                 </div>
                             </div>
                         `;
@@ -1280,7 +1298,7 @@
         }
 
         function deleteAllStudentsBatch() {
-            if (confirm("⚠️ هل أنت متأكد من حذف وحذف اشتراكات جميع الطلاب دفعة واحدة لإنهاء الدوام؟ (لن يتم المساس بالغرف أو الملفات والمحتوى)")) {
+            if (confirm("⚠️ هل أنت متأكد من حذف وحذف اشتراكات جميع الطلاب دفعة واحدة لإنهاء الدوام؟")) {
                 fetch(`${DATABASE_URL}/vouchers.json`, { method: 'DELETE' }).then(() => {
                     db.ref('active_students').remove();
                     db.ref('room_permissions').remove();
@@ -1783,10 +1801,10 @@
                             const isRoomOpen = r.isOpen !== false;
                             const isFree = r.accessType === 'free' || !r.pin;
                             html += `
-                                <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin || ''}', ${isRoomOpen}, '${r.accessType || 'free'}')">
+                                <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin || ''}', ${isRoomOpen}, '${r.accessType || 'free'}', '${r.creator || ''}')">
                                     <i class="fas ${isFree ? 'fa-lock-open' : 'fa-lock'}" style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; position:absolute; top:10px; left:10px;" title="${isFree ? 'مجانية' : 'خصوصي بررمز'}"></i>
                                     <i class="fas fa-chalkboard-teacher" style="color:var(--accent);"></i>
-                                    <span><strong>${r.title}</strong><br><small>الأستاذ: ${r.creator || 'مدرس'}</small><br><small style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; font-weight:800;">${isFree ? '🟢 مجانية للجميع' : '🔒 درس خصوصي بررمز'}</small></span>
+                                    <span><strong>${r.title}</strong><br><small>الأستاذ: ${r.creator || 'مدرس'}</small><br><small style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; font-weight:800;">${isFree ? '🟢 مجانية' : '🔒 محمية بررمز'}</small></span>
                                 </div>
                             `;
                         }
@@ -1804,15 +1822,26 @@
             document.getElementById('editPinInputGroup').style.display = (val === 'protected') ? 'block' : 'none';
         }
 
-        function promptRoomPin(roomId, roomTitle, roomPin, isOpen, accessType) {
-            if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+        function promptRoomPin(roomId, roomTitle, roomPin, isOpen, accessType, roomCreator) {
+            const currentTeacherName = loggedTeacherData ? loggedTeacherData.name : '';
+            const isOwnerTeacher = (currentRole === 'teacher' && currentTeacherName === roomCreator);
+            const isAdminOrSup = (currentRole === 'admin' || currentRole === 'supervisor');
+
+            if (isAdminOrSup || isOwnerTeacher) {
                 openRoomMenu(roomId, roomTitle);
                 return;
             }
 
             fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`).then(res => res.json()).then(roomData => {
                 if (roomData && roomData.isOpen === false) {
-                    alert('⚠️ عذراً، هذه الغرفة مغلقة حالياً من قبل الأستاذ.');
+                    alert('⚠️ عذراً، هذه الغرفة مغلقة حالياً.');
+                    return;
+                }
+
+                if (currentRole === 'teacher') {
+                    pendingRoomData = { id: roomId, title: roomTitle, pin: roomData.pin || roomPin };
+                    document.getElementById('studentPinInput').value = '';
+                    document.getElementById('pinModal').style.display = 'flex';
                     return;
                 }
 
@@ -1852,7 +1881,7 @@
                 const enteredPin = String(document.getElementById('studentPinInput').value).trim();
                 const correctPin = String(pendingRoomData.pin).trim();
                 
-                if (enteredPin === correctPin) {
+                if (enteredPin === correctPin || correctPin === "") {
                     const rId = pendingRoomData.id;
                     const rTitle = pendingRoomData.title;
                     
@@ -1864,7 +1893,7 @@
                     closePinModal();
                     openRoomMenu(rId, rTitle);
                 } else {
-                    alert('رمز PIN الخاص بالدرس الخصوصي غير صحيح!');
+                    alert('رمز PIN الخاص بالغرفة غير صحيح!');
                 }
             }
         }
