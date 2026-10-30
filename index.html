@@ -395,7 +395,6 @@
 
             <div class="card" id="sectionManageRooms" style="display: none;"><div class="card-header"><i class="fas fa-edit"></i> إدارة وتعديل غرفتي</div><div id="myRoomsListContainer">جاري التحميل...</div></div>
             
-            <!-- نافذة رفع الملفات والمحتوى الشاملة لأي قسم في الغرفة -->
             <div class="card" id="sectionUniversalUpload" style="display: none;">
                 <div class="card-header"><i class="fas fa-cloud-upload-alt" style="color:var(--accent);"></i> رفع محتوى أو ملف جديد لأي قسم بالغرفة</div>
                 <form id="universalUploadForm">
@@ -417,7 +416,6 @@
                         <input type="text" class="form-control" id="uniTitle" required placeholder="مثال: المحاضرة الأولى في الرياضيات أو ملزمة الفصل الأول">
                     </div>
 
-                    <!-- حقول متغيرة حسب القسم المختار -->
                     <div class="form-group" id="uniFieldFileWrap">
                         <label>اختر ملف (PDF)</label>
                         <input type="file" class="form-control" id="uniFile" accept=".pdf">
@@ -478,7 +476,6 @@
         </main>
     </div>
 
-    <!-- نافذة تعديل العنصر أو المحتوى (للمدرس) -->
     <div class="modal" id="editItemModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 400px; padding: 24px;">
             <div class="card-header"><i class="fas fa-edit" style="color:var(--warning);"></i> تعديل عنوان أو اسم العنصر</div>
@@ -1092,7 +1089,8 @@
                     alert('تم تعديل العنوان بنجاح!');
                     document.getElementById('editItemModal').style.display = 'none';
                     if (type === 'pdf' || type === 'recording') renderRoomLectures();
-                    if (type === 'quiz' || type === 'homework') renderRoomQuizzes(); // أو الواجبات
+                    if (type === 'quiz') renderRoomQuizzes();
+                    if (type === 'homework') renderRoomHomework();
                 });
             }
         }
@@ -1558,7 +1556,7 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
-        // ==================== تعديلات البث الصوتي وحل مشكلة الصوت ====================
+        // ==================== تعديلات وإصلاح أزرار الكتم وإنهاء البث المباشر ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -1596,10 +1594,11 @@
                     localAudioStream.getTracks().forEach(t => t.stop());
                     localAudioStream = null;
                 }
+                // مسح كافة بيانات المشاركين وحالة البث لتحديثها فوراً عند الجميع
                 db.ref(`voice_participants/${activeRoomId}`).remove();
                 db.ref(`voice_requests/${activeRoomId}`).remove();
                 db.ref(`voice_status/${activeRoomId}`).set({ active: false });
-                alert('تم إنهاء البث الصوتي.');
+                alert('تم إنهاء البث الصوتي بنجاح.');
             }
         }
 
@@ -1607,9 +1606,11 @@
             db.ref(`voice_status/${activeRoomId}/active`).on('value', snapshot => {
                 const isActive = snapshot.val() === true;
                 if (!isActive && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
+                    if (localAudioStream) {
+                        localAudioStream.getTracks().forEach(t => t.stop());
+                        localAudioStream = null;
+                    }
                     renderVoiceParticipantsGrid(null);
-                } else if (isActive && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                    checkStudentVoiceJoinStatus();
                 }
             });
         }
@@ -1697,12 +1698,11 @@
             navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
                 localAudioStream = stream;
                 const remoteAudio = document.getElementById('remoteAudioPlayer');
-                // توجيه تدفق المايك مباشرة ليعمل الصوت بوضوح وسلاسة
                 remoteAudio.srcObject = stream;
                 if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
-                    remoteAudio.muted = true; // المدرس لا يسمع صوته مباشرة لعدم حدوث صدى (Echo)
+                    remoteAudio.muted = true; 
                 } else {
-                    remoteAudio.muted = false; // الطالب يسمع الأستاذ والصوت بوضوح
+                    remoteAudio.muted = false; 
                 }
                 remoteAudio.play().catch(e => console.log("Audio play deferred:", e));
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
@@ -1726,12 +1726,21 @@
                 const icon = document.getElementById('micToggleIcon');
                 if (icon) icon.className = isMicMuted ? "fas fa-microphone-slash" : "fas fa-microphone";
                 
+                // تحديث حالة الكتم بشكل فوري في قاعدة البيانات لكي تظهر أيقونة الكتم الحمراء لدى الجميع
+                let participantKey = 'teacher';
+                if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
+                    // طالب متحدث
+                    participantKey = 'student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+                }
+
                 db.ref(`voice_participants/${activeRoomId}`).once('value', snapshot => {
                     const data = snapshot.val();
                     if (data) {
                         Object.keys(data).forEach(k => {
                             if (k === 'teacher' && (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher')) {
                                 db.ref(`voice_participants/${activeRoomId}/teacher`).update({ isMuted: isMicMuted });
+                            } else if (data[k].name === currentStudentName) {
+                                db.ref(`voice_participants/${activeRoomId}/${k}`).update({ isMuted: isMicMuted });
                             }
                         });
                     }
@@ -1830,7 +1839,6 @@
             });
         }
 
-        // عرض المحاضرات والملازم مع إمكانية حذف أو تعديل أي شيء ينشره المدرس
         function renderRoomLectures() {
             const container = document.getElementById('lecturesContainer');
             if (!container) return;
@@ -1860,7 +1868,6 @@
                     });
                 }
                 
-                // إضافة عرض المحاضرات المسجلة هنا أيضاً ليتمكن المدرس من تعديلها أو حذفها
                 fetch(`${DATABASE_URL}/recordings.json`).then(r => r.json()).then(recData => {
                     let recHtml = '';
                     if (recData) {
