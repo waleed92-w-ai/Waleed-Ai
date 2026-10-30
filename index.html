@@ -1622,7 +1622,7 @@
             }
         }
 
-        // ==================== نظام تتبع الوجود الفوري (حصرياً عند دخول قسم البث الصوتى) ====================
+        // ==================== نظام تتبع الوجود الفوري (حصرياً عند دخول قسم البث الصوتي) ====================
         function registerStudentPresence(roomId) {
             if (!currentStudentName || currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') return;
             
@@ -1742,7 +1742,6 @@
             activeRoomTitleStr = roomTitle;
             document.getElementById('currentRoomMenuTitle').innerText = `غرفة: ${roomTitle}`;
             
-            // عند فتح القائمة، نضمن عدم تسجيل الحضور بعد، حتى يدخل قسم البث الصوتي
             removeStudentPresence();
             showSection('roomMenuSection');
             
@@ -1752,7 +1751,7 @@
         }
 
         function backToRoomMenu() { 
-            removeStudentPresence(); // إزالة الحضور عند الخروج من قسم البث والصوت
+            removeStudentPresence(); 
             showSection('roomMenuSection'); 
         }
 
@@ -1764,14 +1763,13 @@
             document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
             document.getElementById(paneId).classList.add('active');
 
-            // إذا دخل الطالب حصرياً إلى قسم البث الصوتي المباشر، نسجل حضوره الفعلي
             if (paneId === 'paneLive') { 
                 registerStudentPresence(activeRoomId);
                 setupVoiceControlsAndListeners(); 
                 renderVoiceParticipantsGrid(); 
                 renderAllAttendeesList(); 
             } else {
-                removeStudentPresence(); // إذا انتقل لقسم آخر، يزول من المتواجدين في البث
+                removeStudentPresence(); 
             }
 
             if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
@@ -1868,7 +1866,7 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
-        // ==================== نظام الصوت المتطور ====================
+        // ==================== نظام الصوت المتطور المحدث ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -2017,7 +2015,7 @@
                 localAudioStream = stream;
                 stream.getAudioTracks().forEach(track => { track.enabled = true; });
                 
-                const mediaRecorder = new MediaRecorder(stream);
+                const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
                 mediaRecorder.ondataavailable = event => {
                     if (event.data && event.data.size > 0 && !isMicMuted) {
                         const reader = new FileReader();
@@ -2033,7 +2031,7 @@
                         }
                     }
                 };
-                mediaRecorder.start(500);
+                mediaRecorder.start(300);
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
         }
 
@@ -2045,7 +2043,9 @@
                     const myKey = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'teacher' : ('student_' + (currentStudentName ? currentStudentName.replace(/[.#$\/\[\]]/g, '_') : ''));
                     if (data.sender !== myKey) {
                         audioPlayer.src = data.audioData;
-                        audioPlayer.play().catch(e => console.log("Audio autoplay prevented:", e));
+                        audioPlayer.play().catch(e => {
+                            console.log("Audio autoplay prevented, user interaction required:", e);
+                        });
                     }
                 }
             });
