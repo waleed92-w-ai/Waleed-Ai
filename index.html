@@ -50,7 +50,8 @@
         .nav-item i { font-size: 1.1rem; width: 22px; color: #38bdf8; }
         .nav-item:hover, .nav-item.active { background: var(--accent); color: #fff; }
         .nav-item:hover i, .nav-item.active i { color: #fff; }
-        main { flex: 1; padding: 24px; max-width: 1100px; }
+        main { flex: 1; padding: 24px; max-width: 1100px; transition: all 0.3s ease; }
+        
         .card { background: var(--card); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
         .card-header { font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
         .form-group { margin-bottom: 16px; }
@@ -73,11 +74,14 @@
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
 
-        .voice-room-box { width: 100%; min-height: 420px; background: #0f172a; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; position: relative; border: 2px solid #334155; }
+        /* حاوية غرفة البث وتدعم التكبير بالكامل */
+        .voice-room-box { width: 100%; min-height: 420px; background: #0f172a; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; position: relative; border: 2px solid #334155; transition: all 0.3s ease; }
+        .voice-room-box.fullscreen-mode { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; border-radius: 0 !important; padding: 40px !important; }
+        
         .participants-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; width: 100%; margin-top: 15px; }
         
         .voice-user-circle { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 110px; }
-        .voice-avatar-wrap { width: 85px; height: 85px; border-radius: 50%; border: 3px solid #64748b; overflow: hidden; background: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; }
+        .voice-avatar-wrap { width: 85px; height: 85px; border-radius: 50%; border: 3px solid #64748b; overflow: hidden; background: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
         .voice-avatar-wrap.speaking { border-color: var(--success); box-shadow: 0 0 15px var(--success); animation: pulseGlow 1.5s infinite; }
         @keyframes pulseGlow { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
         .voice-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
@@ -93,7 +97,9 @@
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2000; }
-        .modal-content-box { background: #1e293b; border-radius: var(--radius); width: 98%; max-width: 1100px; height: 94vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; }
+        .modal-content-box { background: #1e293b; border-radius: var(--radius); width: 98%; max-width: 1100px; height: 94vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; transition: all 0.3s ease; }
+        .modal-content-box.fullscreen-mode { width: 100vw !important; height: 100vh !important; border-radius: 0 !important; max-width: none !important; }
+        
         .modal-header-bar { background: var(--primary); color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; font-weight: 800; }
         .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; -webkit-overflow-scrolling: touch; display: flex; align-items: center; justify-content: center; }
         .watermark-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around; opacity: 0.15; overflow: hidden; font-weight: 900; font-size: 1.1rem; color: #ffffff; transform: rotate(-25deg); }
@@ -291,7 +297,7 @@
 
                         <!-- شريط التفعيل الصوتي السريع -->
                         <div id="audioUnlockBanner" style="background: #1e40af; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; color: #fff;">
-                            <span><i class="fas fa-volume-up"></i> اضغط هنا لتنشيط وسماع الصوت بوضوح في الغرفة:</span>
+                            <span><i class="fas fa-volume-up"></i> اضغط هنا لتنشيط وسماع صوت الأستاذ بوضوح:</span>
                             <button class="btn btn-success" id="unlockAudioBtn" style="padding: 6px 14px; font-size: 0.8rem;">تنشيط الصوت الآن</button>
                         </div>
 
@@ -300,7 +306,9 @@
                             <div id="liveRequestsListContainer" style="max-height: 120px; overflow-y: auto;"><p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p></div>
                         </div>
 
-                        <div class="voice-room-box">
+                        <!-- حاوية البث مع زر تكبير/تصغير الشاشة بالكامل -->
+                        <div class="voice-room-box" id="voiceRoomBoxContainer">
+                            <button class="btn btn-secondary" id="toggleLiveFullscreenBtn" style="position: absolute; top: 12px; left: 12px; padding: 6px 10px; font-size: 0.75rem; z-index: 20;" title="تكبير/تصغير الشاشة"><i class="fas fa-expand"></i> ملء الشاشة</button>
                             <div style="color: #94a3b8; font-weight: 700; text-align: center; margin-bottom: 10px;" id="voiceRoomStatusText">
                                 الغرفة الصوتية جاهزة. اضغط على "بدء البث" للبدء.
                             </div>
@@ -499,13 +507,15 @@
         </div>
     </div>
 
+    <!-- نافذة عرض الملفات والملازم مع زر ملء الشاشة والتكبير/التصغير -->
     <div class="modal" id="fileViewerModal">
-        <div class="modal-content-box">
+        <div class="modal-content-box" id="fileModalContentBox">
             <div class="modal-header-bar">
                 <span id="modalFileTitle">عرض الملزمة</span>
                 <div style="display: flex; gap: 8px; align-items: center;">
-                    <button class="btn btn-secondary" id="zoomInBtn" style="padding: 4px 10px; font-size: 0.8rem;"><i class="fas fa-search-plus"></i> تكبير</button>
-                    <button class="btn btn-secondary" id="zoomOutBtn" style="padding: 4px 10px; font-size: 0.8rem;"><i class="fas fa-search-minus"></i> تصغير</button>
+                    <button class="btn btn-secondary" id="toggleModalFullscreenBtn" style="padding: 4px 10px; font-size: 0.8rem;" title="تكبير/تصغير النافذة"><i class="fas fa-expand"></i> ملء الشاشة</button>
+                    <button class="btn btn-secondary" id="zoomInBtn" style="padding: 4px 10px; font-size: 0.8rem;" title="تكبير النص"><i class="fas fa-search-plus"></i> تكبير</button>
+                    <button class="btn btn-secondary" id="zoomOutBtn" style="padding: 4px 10px; font-size: 0.8rem;" title="تصغير النص"><i class="fas fa-search-minus"></i> تصغير</button>
                     <button class="btn btn-danger" id="closeFileModalBtn" style="padding: 4px 10px; font-size: 0.8rem;">إغلاق</button>
                 </div>
             </div>
@@ -588,7 +598,7 @@
         </div>
     </div>
 
-    <!-- عنصر مشغل الصوت المشترك للسامعين -->
+    <!-- عنصر مشغل الصوت الموحد للطلاب لسماع صوت الأستاذ -->
     <audio id="remoteAudioPlayer" autoplay playsinline></audio>
 
     <script>
@@ -679,6 +689,10 @@
             document.getElementById('zoomInBtn').addEventListener('click', () => zoomPdf(0.1));
             document.getElementById('zoomOutBtn').addEventListener('click', () => zoomPdf(-0.1));
             document.getElementById('closeFileModalBtn').addEventListener('click', closeFileModal);
+            
+            // أزرار التكبير/التصغير لملء الشاشة للبث والملفات
+            document.getElementById('toggleLiveFullscreenBtn').addEventListener('click', toggleLiveBoxFullscreen);
+            document.getElementById('toggleModalFullscreenBtn').addEventListener('click', toggleFileModalFullscreen);
 
             document.getElementById('editRoomAccessType').addEventListener('change', function() { toggleEditPinInput(this.value); });
             document.getElementById('saveEditedRoomBtn').addEventListener('click', saveEditedRoom);
@@ -698,6 +712,28 @@
             
             document.getElementById('saveEditedItemBtn').addEventListener('click', saveEditedItem);
             document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
+        }
+
+        function toggleLiveBoxFullscreen() {
+            const box = document.getElementById('voiceRoomBoxContainer');
+            const btn = document.getElementById('toggleLiveFullscreenBtn');
+            box.classList.toggle('fullscreen-mode');
+            if (box.classList.contains('fullscreen-mode')) {
+                btn.innerHTML = '<i class="fas fa-compress"></i> تصغير الشاشة';
+            } else {
+                btn.innerHTML = '<i class="fas fa-expand"></i> ملء الشاشة';
+            }
+        }
+
+        function toggleFileModalFullscreen() {
+            const box = document.getElementById('fileModalContentBox');
+            const btn = document.getElementById('toggleModalFullscreenBtn');
+            box.classList.toggle('fullscreen-mode');
+            if (box.classList.contains('fullscreen-mode')) {
+                btn.innerHTML = '<i class="fas fa-compress"></i> تصغير النافذة';
+            } else {
+                btn.innerHTML = '<i class="fas fa-expand"></i> ملء الشاشة';
+            }
         }
 
         function checkMaintenanceStatus() {
@@ -1556,7 +1592,6 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
-        // ==================== تعديلات وإصلاح أزرار الكتم وإنهاء البث المباشر ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -1566,7 +1601,7 @@
                 if (ctrlBox) ctrlBox.innerHTML = `
                     <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startVoiceBroadcast()"><i class="fas fa-play"></i> بدء البث</button>
                     <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="endVoiceBroadcast()"><i class="fas fa-stop"></i> إنهاء البث</button>
-                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم/فتح المايك</button>
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
                 `;
                 listenToStudentVoiceRequests();
             } else {
@@ -1583,7 +1618,7 @@
                 name: tName, role: 'الأستاذ / المشرف', isMuted: false, timestamp: Date.now()
             }).then(() => {
                 db.ref(`voice_status/${activeRoomId}`).set({ active: true });
-                initLocalMicrophone();
+                initLocalMicrophone(true);
                 alert('تم بدء البث الصوتي المباشر بنجاح!');
             });
         }
@@ -1594,7 +1629,6 @@
                     localAudioStream.getTracks().forEach(t => t.stop());
                     localAudioStream = null;
                 }
-                // مسح كافة بيانات المشاركين وحالة البث لتحديثها فوراً عند الجميع
                 db.ref(`voice_participants/${activeRoomId}`).remove();
                 db.ref(`voice_requests/${activeRoomId}`).remove();
                 db.ref(`voice_status/${activeRoomId}`).set({ active: false });
@@ -1656,7 +1690,7 @@
         function handleVoiceRequest(reqId, studentName, status) {
             db.ref(`voice_requests/${activeRoomId}/${reqId}`).update({ status: status });
             if (status === 'approved') {
-                const sKey = 'student_' + Date.now();
+                const sKey = 'student_' + studentName.replace(/[.#$\/\[\]]/g, '_');
                 db.ref(`voice_participants/${activeRoomId}/${sKey}`).set({
                     name: studentName,
                     role: 'طالب متحدث',
@@ -1682,10 +1716,10 @@
                         if (req.studentName === currentStudentName && req.status === 'approved' && !isStudentInLive) {
                             isStudentInLive = true;
                             alert('تم قبول طلبك! انضممت للبث الصوتي.');
-                            initLocalMicrophone();
+                            initLocalMicrophone(false);
                             if (ctrlBox) {
                                 ctrlBox.innerHTML = `
-                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم/فتح المايك</button>
+                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
                                 `;
                             }
                         }
@@ -1694,24 +1728,26 @@
             });
         }
 
-        function initLocalMicrophone() {
+        function initLocalMicrophone(isTeacher) {
             navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
                 localAudioStream = stream;
                 const remoteAudio = document.getElementById('remoteAudioPlayer');
-                remoteAudio.srcObject = stream;
-                if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
-                    remoteAudio.muted = true; 
+                
+                if (isTeacher) {
+                    remoteAudio.muted = true;
+                    remoteAudio.srcObject = null;
                 } else {
-                    remoteAudio.muted = false; 
+                    remoteAudio.muted = false;
+                    remoteAudio.srcObject = stream;
+                    remoteAudio.play().catch(e => console.log("Audio play deferred:", e));
                 }
-                remoteAudio.play().catch(e => console.log("Audio play deferred:", e));
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
         }
 
         function unlockAudioOutput() {
             const audioEl = document.getElementById('remoteAudioPlayer');
             audioEl.play().then(() => {
-                alert('🔊 تم تنشيط الصوت وسماعه بنجاح!');
+                alert('🔊 تم تنشيط الصوت وسماع الأستاذ بنجاح!');
                 document.getElementById('audioUnlockBanner').style.display = 'none';
             }).catch(err => {
                 console.error(err);
@@ -1726,25 +1762,12 @@
                 const icon = document.getElementById('micToggleIcon');
                 if (icon) icon.className = isMicMuted ? "fas fa-microphone-slash" : "fas fa-microphone";
                 
-                // تحديث حالة الكتم بشكل فوري في قاعدة البيانات لكي تظهر أيقونة الكتم الحمراء لدى الجميع
-                let participantKey = 'teacher';
-                if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                    // طالب متحدث
-                    participantKey = 'student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+                if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                    db.ref(`voice_participants/${activeRoomId}/teacher`).update({ isMuted: isMicMuted });
+                } else if (currentStudentName) {
+                    const studentKey = 'student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+                    db.ref(`voice_participants/${activeRoomId}/${studentKey}`).update({ isMuted: isMicMuted });
                 }
-
-                db.ref(`voice_participants/${activeRoomId}`).once('value', snapshot => {
-                    const data = snapshot.val();
-                    if (data) {
-                        Object.keys(data).forEach(k => {
-                            if (k === 'teacher' && (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher')) {
-                                db.ref(`voice_participants/${activeRoomId}/teacher`).update({ isMuted: isMicMuted });
-                            } else if (data[k].name === currentStudentName) {
-                                db.ref(`voice_participants/${activeRoomId}/${k}`).update({ isMuted: isMicMuted });
-                            }
-                        });
-                    }
-                });
 
                 alert(isMicMuted ? 'تم كتم المايك.' : 'تم فتح المايك.');
             } else {
