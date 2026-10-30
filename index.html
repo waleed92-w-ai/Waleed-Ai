@@ -598,8 +598,8 @@
         </div>
     </div>
 
-    <!-- عنصر مشغل الصوت لاستماع الأستاذ والطلاب بوضوح تام -->
-    <audio id="remoteAudioPlayer" autoplay playsinline></audio>
+    <!-- عنصر مشغل الصوت لعزل الصدى وتوجيه البث المتبادل -->
+    <audio id="remoteAudioPlayer" autoplay playsinline style="display:none;"></audio>
 
     <script>
         const DATABASE_URL = "https://waleed-ai-49ebc-default-rtdb.firebaseio.com";
@@ -1591,7 +1591,7 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
-        // ==================== نظام الصوت المحترف ومعالجة مسار البث ====================
+        // ==================== نظام الصوت بدون صدى محلي ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -1610,7 +1610,6 @@
             }
             listenToVoiceParticipants();
             listenToVoiceBroadcastStatus();
-            setupAudioPlayerReceiver();
         }
 
         function startVoiceBroadcast() {
@@ -1730,18 +1729,19 @@
         }
 
         function initLocalMicrophone(isTeacher) {
-            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
+            navigator.mediaDevices.getUserMedia({ 
+                audio: { 
+                    echoCancellation: true, 
+                    noiseSuppression: true, 
+                    autoGainControl: true 
+                } 
+            }).then(stream => {
                 localAudioStream = stream;
+                // عزل الصوت تماماً لمنع تشغيله على سماعة نفس الجهاز المحلى وتجنب صدى الصوت
+                stream.getAudioTracks().forEach(track => {
+                    track.enabled = true;
+                });
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
-        }
-
-        function setupAudioPlayerReceiver() {
-            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(stream => {
-                const audioEl = document.getElementById('remoteAudioPlayer');
-                audioEl.srcObject = stream;
-                audioEl.volume = 1.0;
-                audioEl.play().catch(() => {});
-            }).catch(() => {});
         }
 
         function toggleMicrophone() {
