@@ -108,18 +108,30 @@
 
     <div class="layout-wrapper">
         <sidebar id="appSidebar">
-            <div id="studentNavSection" style="display: none;">
-                <div class="sidebar-title">الصفوف الدراسية</div>
-                <div id="studentNavClasses">
-                    <button class="nav-item" onclick="openClass('الأول المتوسط')"><i class="fas fa-graduation-cap"></i> الأول المتوسط</button>
-                    <button class="nav-item" onclick="openClass('الثاني المتوسط')"><i class="fas fa-graduation-cap"></i> الثاني المتوسط</button>
-                    <button class="nav-item" onclick="openClass('الثالث المتوسط')"><i class="fas fa-graduation-cap"></i> الثالث المتوسط</button>
-                    <button class="nav-item" onclick="openClass('الرابع الاعدادي')"><i class="fas fa-book-reader"></i> الرابع الإعدادي</button>
-                    <button class="nav-item" onclick="openClass('الخامس الاعدادي')"><i class="fas fa-book-reader"></i> الخامس الإعدادي</button>
-                    <button class="nav-item" onclick="openClass('السادس الاعدادي')"><i class="fas fa-user-graduate"></i> السادس الإعدادي</button>
-                </div>
+            <!-- الصفوف الدراسية تظهر للجميع (الطلاب، المدرسين، والأدمن) -->
+            <div class="sidebar-title">الصفوف الدراسية</div>
+            <div id="studentNavClasses">
+                <button class="nav-item" onclick="openClass('الأول المتوسط')"><i class="fas fa-graduation-cap"></i> الأول المتوسط</button>
+                <button class="nav-item" onclick="openClass('الثاني المتوسط')"><i class="fas fa-graduation-cap"></i> الثاني المتوسط</button>
+                <button class="nav-item" onclick="openClass('الثالث المتوسط')"><i class="fas fa-graduation-cap"></i> الثالث المتوسط</button>
+                <button class="nav-item" onclick="openClass('الرابع الاعدادي')"><i class="fas fa-book-reader"></i> الرابع الإعدادي</button>
+                <button class="nav-item" onclick="openClass('الخامس الاعدادي')"><i class="fas fa-book-reader"></i> الخامس الإعدادي</button>
+                <button class="nav-item" onclick="openClass('السادس الاعدادي')"><i class="fas fa-user-graduate"></i> السادس الإعدادي</button>
             </div>
 
+            <!-- لوحة تحكم المدرسين (تظهر إذا كان المستخدم مدرساً أو الأدمن) -->
+            <div id="teacherSidebarSection" style="display: none;">
+                <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة المدرس / الغرف</div>
+                <button class="nav-item" onclick="showSection('sectionCreateRoom')"><i class="fas fa-plus-circle" style="color:#10b981;"></i> إنشاء غرفة خاصة برمز PIN</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF لغرفتي</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherRecordings')"><i class="fas fa-film"></i> رفع محاضرة مسجلة (فيديو طويل)</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherQuiz')"><i class="fas fa-question-circle"></i> إنشاء اختبار إلكتروني</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherHomework')"><i class="fas fa-tasks"></i> إضافة واجب بيتي</button>
+                <button class="nav-item" onclick="showSection('sectionLiveRoom')"><i class="fas fa-video"></i> غرفة البث المباشر الخاصة بي</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherReports')"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار/تقرير طالب</button>
+            </div>
+
+            <!-- إعدادات الأدمن الخاص بك وحدك -->
             <div id="adminSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة الأدمن (الأستاذ وليد)</div>
                 <button class="nav-item" onclick="showSection('sectionNotifications')">
@@ -133,24 +145,13 @@
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
-            <div id="teacherSidebarSection" style="display: none;">
-                <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة المدرس / الغرفة</div>
-                <button class="nav-item" onclick="showSection('sectionCreateRoom')"><i class="fas fa-plus-circle" style="color:#10b981;"></i> إنشاء غرفة خاصة برمز PIN</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF لغرفتي</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherRecordings')"><i class="fas fa-film"></i> رفع محاضرة مسجلة (فيديو طويل)</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherQuiz')"><i class="fas fa-question-circle"></i> إنشاء اختبار إلكتروني</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherHomework')"><i class="fas fa-tasks"></i> إضافة واجب بيتي</button>
-                <button class="nav-item" onclick="showSection('sectionLiveRoom')"><i class="fas fa-video"></i> غرفة البث المباشر الخاصة بي</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherReports')"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار/تقرير طالب</button>
-            </div>
-
-            <div style="margin-top: auto; padding-top: 15px;" id="logoutContainer" style="display:none;">
+            <div style="margin-top: auto; padding-top: 15px; display:none;" id="logoutContainer">
                 <button class="nav-item" onclick="logoutSystem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
             </div>
         </sidebar>
 
         <main>
-            <!-- شاشة التفعيل الافتتاحية للطالب -->
+            <!-- صفحة التفعيل الافتتاحية للطلاب غير المسجلين -->
             <div class="card" id="authSection">
                 <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في المنصة</div>
                 <div style="background: #eff6ff; padding: 16px; border-radius: 12px; margin-bottom: 18px; border-right: 4px solid var(--accent);">
@@ -176,7 +177,7 @@
                         <label>كود التفعيل السري</label>
                         <input type="text" class="form-control" id="vCodeInput" required placeholder="أدخل كود التفعيل">
                     </div>
-                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-bolt"></i> تفعيل الحساب والدخول فوراً</button>
+                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-bolt"></i> تفعيل الحساب والدخول للمنصة</button>
                 </form>
 
                 <form id="formNotifyAdmin" onsubmit="sendPaymentNotification(event)" style="display: none;">
@@ -255,12 +256,12 @@
                 </div>
             </div>
 
-            <!-- قسم إنشاء غرفة خاصة جديدة برمز PIN -->
+            <!-- لوحة إنشاء غرفة خاصة برمز PIN للمدرسين -->
             <div class="card" id="sectionCreateRoom" style="display: none;">
-                <div class="card-header"><i class="fas fa-plus-circle" style="color:var(--success);"></i> إنشاء غرفة خاصة بالمادة والصف مع رمز قفل سري</div>
+                <div class="card-header"><i class="fas fa-plus-circle" style="color:var(--success);"></i> إنشاء غرفة خاصة برمز PIN سري</div>
                 <form onsubmit="handleCreateCustomRoom(event)">
                     <div class="form-group">
-                        <label>اسم الغرفة / العنوان (مثلاً: حاسوب الأول متوسط - الأستاذ وليد)</label>
+                        <label>عنوان الغرفة (مثلاً: رياضيات السادس - الأستاذ وليد)</label>
                         <input type="text" class="form-control" id="crTitle" required placeholder="عنوان الغرفة">
                     </div>
                     <div class="form-group">
@@ -289,8 +290,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>رمز الدخول السري (PIN) لحماية الغرفة (لا يمكن للطالب الدخول إلا به)</label>
-                        <input type="text" class="form-control" id="crPin" required placeholder="مثلاً: 1234 أو كود سري">
+                        <label>رمز الدخول السري (PIN) لحماية الغرفة</label>
+                        <input type="text" class="form-control" id="crPin" required placeholder="مثلاً: 1234">
                     </div>
                     <button type="submit" class="btn btn-success btn-block"><i class="fas fa-lock"></i> إنشاء الغرفة المحمية ونشرها</button>
                 </form>
@@ -311,11 +312,12 @@
             <div class="card" id="sectionTeachersManage" style="display: none;"><div class="card-header"><i class="fas fa-chalkboard-teacher"></i> إدارة المدرسين وغرفهم</div><div id="teachersManageList">جاري التحميل...</div></div>
             <div class="card" id="sectionScheduleManage" style="display: none;"><div class="card-header"><i class="fas fa-calendar-alt"></i> جدول الحصص الأسبوعي</div><div id="scheduleContainer"></div></div>
             <div class="card" id="sectionAdminReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> سجل إنذارات الطلاب</div><div id="adminReportsList"></div></div>
-            <div class="card" id="sectionSettings" style="display: none;"><div class="card-header"><i class="fas fa-sliders-h"></i> الإعدادات</div>
+            
+            <div class="card" id="sectionSettings" style="display: none;"><div class="card-header"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</div>
                 <form onsubmit="saveSettings(event)">
                     <div class="form-group"><label>سعر الاشتراك</label><input type="text" class="form-control" id="cfgPrice" required></div>
                     <div class="form-group"><label>طرق الدفع (زين كاش / ماستر كارد)</label><textarea class="form-control" id="cfgPayments" rows="3" required></textarea></div>
-                    <button type="submit" class="btn btn-primary btn-block">حفظ</button>
+                    <button type="submit" class="btn btn-primary btn-block">حفظ الإعدادات</button>
                 </form>
             </div>
 
@@ -541,9 +543,8 @@
         function verifyAdminLogin() {
             if (btoa(document.getElementById('adminPassInput').value) === ADMIN_HASH) {
                 currentRole = 'admin';
-                document.getElementById('studentNavSection').style.display = 'none';
                 document.getElementById('adminSidebarSection').style.display = 'block';
-                document.getElementById('teacherSidebarSection').style.display = 'none';
+                document.getElementById('teacherSidebarSection').style.display = 'block';
                 document.getElementById('adminLockBtn').style.display = 'none';
                 document.getElementById('adminExitBtn').style.display = 'flex';
                 document.getElementById('logoutContainer').style.display = 'block';
@@ -562,8 +563,7 @@
                 if (data) { Object.keys(data).forEach(k => { if (data[k].username === user && data[k].password === pass) found = data[k]; }); }
                 if (found) {
                     currentRole = 'teacher'; loggedTeacherData = found;
-                    document.getElementById('studentNavSection').style.display = 'none';
-                    document.getElementById('adminSidebarSection').style.display = 'none';
+                    document.getElementById('adminSidebarSection').style.display = 'none'; // الأدمن فقط تظهر له الإعدادات
                     document.getElementById('teacherSidebarSection').style.display = 'block';
                     document.getElementById('adminLockBtn').style.display = 'none';
                     document.getElementById('adminExitBtn').style.display = 'flex';
@@ -593,14 +593,13 @@
         function logoutSystem() {
             localStorage.removeItem('student_session');
             currentRole = ''; loggedTeacherData = null; currentTeacherRoomUrl = ""; currentStudentName = "";
-            document.getElementById('studentNavSection').style.display = 'none';
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
             document.getElementById('logoutContainer').style.display = 'none';
             document.getElementById('adminLockBtn').style.display = 'flex';
             document.getElementById('adminExitBtn').style.display = 'none';
             document.getElementById('topSubtitle').innerText = "المرحلة الثانوية";
-            showSection('authSection');
+            checkStudentSession();
         }
 
         function showSection(sectionId) {
@@ -723,9 +722,7 @@
                     const studentSession = { id: code, name: name, status: 'active' };
                     localStorage.setItem('student_session', JSON.stringify(studentSession));
                     
-                    document.getElementById('studentNavSection').style.display = 'block';
                     document.getElementById('logoutContainer').style.display = 'block';
-
                     alert('تم تفعيل اشتراكك بنجاح! أهلاً بك في المنصة.');
                     openClass('الأول المتوسط');
                 } else {
@@ -781,7 +778,6 @@
                 const student = JSON.parse(session);
                 if (student && student.status === 'active') {
                     currentStudentName = student.name;
-                    document.getElementById('studentNavSection').style.display = 'block';
                     document.getElementById('logoutContainer').style.display = 'block';
                     openClass('الأول المتوسط');
                 } else { 
@@ -818,7 +814,7 @@
                                 <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin}')">
                                     <i class="fas fa-lock" style="color:var(--warning); position:absolute; top:10px; left:10px; font-size:1rem;"></i>
                                     <i class="fas fa-chalkboard-teacher" style="color:var(--success);"></i>
-                                    <span>غرفة خاصة<br><strong>${r.title}</strong></span>
+                                    <span>غرفة خاصة<br><strong>${r.title}</strong><br><small style="color:#64748b; font-weight:600;">الأستاذ: ${r.creator || 'مدرس'}</small></span>
                                 </div>
                             `;
                         }
@@ -829,6 +825,11 @@
         }
 
         function promptRoomPin(roomId, roomTitle, roomPin) {
+            // إذا كان المستخدم هو الأدمن أو المدرس صاحب الغرفة، يستطيع الدخول مباشرة بدون طلب PIN
+            if (currentRole === 'admin' || currentRole === 'teacher') {
+                openTeacherRoom(roomId, roomTitle);
+                return;
+            }
             pendingRoomData = { id: roomId, title: roomTitle, pin: roomPin };
             document.getElementById('studentPinInput').value = '';
             document.getElementById('pinModal').style.display = 'flex';
@@ -856,15 +857,17 @@
             const subject = document.getElementById('crSubject').value;
             const pin = document.getElementById('crPin').value.trim();
             const roomId = 'ROOM_' + Date.now();
+            const creatorName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
 
             fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
                 method: 'PUT',
-                body: JSON.stringify({ id: roomId, title, grade, subject, pin, creator: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد' }),
+                body: JSON.stringify({ id: roomId, title, grade, subject, pin, creator: creatorName }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
                 alert(`تم إنشاء الغرفة الخاصة "${title}" بنجاح!\nرمز الدخول السري (PIN) هو: ${pin}`);
                 document.getElementById('crTitle').value = '';
                 document.getElementById('crPin').value = '';
+                openClass(grade);
             });
         }
 
