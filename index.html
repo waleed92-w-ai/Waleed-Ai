@@ -712,22 +712,31 @@
             });
         }
 
+        // دالة تسجيل الخروج المصححة والشاملة
         function logoutSystem() {
-            stopWebcam();
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
             localStorage.removeItem('student_session');
-            currentRole = ''; loggedTeacherData = null; currentStudentName = "";
+            currentRole = '';
+            loggedTeacherData = null;
+            currentStudentName = "";
+            
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
             document.getElementById('logoutContainer').style.display = 'none';
             document.getElementById('adminLockBtn').style.display = 'flex';
             document.getElementById('adminExitBtn').style.display = 'none';
             document.getElementById('topSubtitle').innerText = "المرحلة الثانوية";
+            
             showSection('authSection');
         }
 
         function showSection(sectionId) {
             ['authSection', 'subjectsSection', 'teachersRoomsSection', 'roomMenuSection', 'lecturesSection', 'sectionCreateRoom', 'sectionManageRooms', 'sectionNotifications', 'sectionPlatformUsers', 'sectionVouchers', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework', 'sectionTeacherReports'].forEach(id => {
-                document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
+                const el = document.getElementById(id);
+                if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
             });
             if (sectionId === 'sectionManageRooms') fetchMyRooms();
             if (sectionId === 'sectionPlatformUsers') loadPlatformUsersOverview();
@@ -780,7 +789,8 @@
                             }
                         });
                     }
-                    document.getElementById('adminTeachersListContainer').innerHTML = teachersHtml || '<p style="color:#64748b;">لا يوجد مدرسين مسجلين حالياً.</p>';
+                    const tContainer = document.getElementById('adminTeachersListContainer');
+                    if (tContainer) tContainer.innerHTML = teachersHtml || '<p style="color:#64748b;">لا يوجد مدرسين مسجلين حالياً.</p>';
                 });
             });
 
@@ -814,7 +824,8 @@
                         }
                     });
                 }
-                document.getElementById('adminStudentsListContainer').innerHTML = studentsHtml || '<p style="color:#64748b;">لا توجد اشتراكات طلاب نشطة حالياً.</p>';
+                const sContainer = document.getElementById('adminStudentsListContainer');
+                if (sContainer) sContainer.innerHTML = studentsHtml || '<p style="color:#64748b;">لا توجد اشتراكات طلاب نشطة حالياً.</p>';
             });
         }
 
@@ -904,13 +915,16 @@
                 }
                 const topBadge = document.getElementById('topNotifBadge');
                 const sidebarBadge = document.getElementById('sidebarNotifBadge');
-                if (count > 0) {
-                    topBadge.innerText = count; topBadge.style.display = 'flex';
-                    sidebarBadge.innerText = count; sidebarBadge.style.display = 'inline-flex';
-                } else {
-                    topBadge.style.display = 'none'; sidebarBadge.style.display = 'none';
+                if (topBadge && sidebarBadge) {
+                    if (count > 0) {
+                        topBadge.innerText = count; topBadge.style.display = 'flex';
+                        sidebarBadge.innerText = count; sidebarBadge.style.display = 'inline-flex';
+                    } else {
+                        topBadge.style.display = 'none'; sidebarBadge.style.display = 'none';
+                    }
                 }
-                document.getElementById('liveNotificationsList').innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد إشعارات جديدة.</p>';
+                const notifList = document.getElementById('liveNotificationsList');
+                if (notifList) notifList.innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد إشعارات جديدة.</p>';
             });
         }
 
@@ -968,7 +982,8 @@
                         html += `<div class="list-item"><div>الكود: <strong>${v.code}</strong> ${v.isUsed ? `(مستخدم: ${v.usedBy})` : '(جاهز للاستخدام)'}</div><button class="btn btn-danger" onclick="deleteItem('vouchers', '${v.code}', fetchVouchersList)">حذف</button></div>`;
                     });
                 }
-                document.getElementById('vouchersList').innerHTML = html || '<p>لا توجد كودات.</p>';
+                const vList = document.getElementById('vouchersList');
+                if (vList) vList.innerHTML = html || '<p>لا توجد كودات.</p>';
             });
         }
 
@@ -1136,7 +1151,8 @@
                         }
                     });
                 }
-                document.getElementById('myRoomsListContainer').innerHTML = html || '<p>لا توجد غرف.</p>';
+                const myRoomsC = document.getElementById('myRoomsListContainer');
+                if (myRoomsC) myRoomsC.innerHTML = html || '<p>لا توجد غرف.</p>';
             });
         }
 
@@ -1234,7 +1250,8 @@
                         `;
                     });
                 }
-                document.getElementById('activeStudentsLiveManagementList').innerHTML = html || '<p style="color:#64748b;">لا يوجد طلاب نشطون حالياً في هذه الغرفة.</p>';
+                const activeSList = document.getElementById('activeStudentsLiveManagementList');
+                if (activeSList) activeSList.innerHTML = html || '<p style="color:#64748b;">لا يوجد طلاب نشطون حالياً في هذه الغرفة.</p>';
             });
         }
 
@@ -1292,15 +1309,15 @@
             const adminBox = document.getElementById('teacherLiveAdminBox');
 
             if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
-                adminBox.style.display = 'block';
-                ctrlBox.innerHTML = `
+                if (adminBox) adminBox.style.display = 'block';
+                if (ctrlBox) ctrlBox.innerHTML = `
                     <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startTeacherLive()"><i class="fas fa-play"></i> بدء البث</button>
                     <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل/إيقاف الكاميرا</button>
                     <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
                 `;
                 listenToStudentJoinRequests();
             } else {
-                adminBox.style.display = 'none';
+                if (adminBox) adminBox.style.display = 'none';
                 checkStudentJoinStatus();
             }
             listenToLiveParticipants();
@@ -1352,7 +1369,8 @@
                         }
                     });
                 }
-                document.getElementById('liveRequestsListContainer').innerHTML = html || '<p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p>';
+                const reqContainer = document.getElementById('liveRequestsListContainer');
+                if (reqContainer) reqContainer.innerHTML = html || '<p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p>';
             });
         }
 
@@ -1371,10 +1389,12 @@
 
         function checkStudentJoinStatus() {
             const ctrlBox = document.getElementById('liveControlButtons');
-            ctrlBox.innerHTML = `
-                <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="requestJoinLive()"><i class="fas fa-sign-in-alt"></i> طلب الانضمام للبث</button>
-                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
-            `;
+            if (ctrlBox) {
+                ctrlBox.innerHTML = `
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="requestJoinLive()"><i class="fas fa-sign-in-alt"></i> طلب الانضمام للبث</button>
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
+                `;
+            }
 
             db.ref(`live_requests/${activeRoomId}`).on('value', snapshot => {
                 const data = snapshot.val();
@@ -1384,10 +1404,12 @@
                         if (req.studentName === currentStudentName && req.status === 'approved' && !isStudentInLive) {
                             isStudentInLive = true;
                             alert('تم قبول طلبك من قبل الإدارة! أنت الآن داخل البث.');
-                            ctrlBox.innerHTML = `
-                                <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا</button>
-                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
-                            `;
+                            if (ctrlBox) {
+                                ctrlBox.innerHTML = `
+                                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا</button>
+                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
+                                `;
+                            }
                         }
                     });
                 }
@@ -1402,6 +1424,7 @@
 
         function renderParticipantsGrid(participantsData) {
             const container = document.getElementById('participantsGridContainer');
+            if (!container) return;
             if (!participantsData) {
                 container.innerHTML = `
                     <div style="color: #94a3b8; font-weight: 700; text-align: center; padding: 30px;">
@@ -1482,7 +1505,8 @@
                         html += `<div class="list-item"><div><strong>${q.student}:</strong> ${q.text}<br><small style="color:#64748b;">${q.date}</small></div></div>`;
                     });
                 }
-                document.getElementById('questionsListContainer').innerHTML = html || '<p style="color:#64748b;">لا توجد أسئلة.</p>';
+                const qListC = document.getElementById('questionsListContainer');
+                if (qListC) qListC.innerHTML = html || '<p style="color:#64748b;">لا توجد أسئلة.</p>';
             });
         }
 
@@ -1512,12 +1536,14 @@
                         `;
                     });
                 }
-                document.getElementById('studentsGradesList').innerHTML = html || '<p style="color:#64748b;">لا توجد تقييمات مسجلة للطلاب بعد.</p>';
+                const sGradesList = document.getElementById('studentsGradesList');
+                if (sGradesList) sGradesList.innerHTML = html || '<p style="color:#64748b;">لا توجد تقييمات مسجلة للطلاب بعد.</p>';
             });
         }
 
         function renderRoomLectures() {
             const container = document.getElementById('lecturesContainer');
+            if (!container) return;
             fetch(`${DATABASE_URL}/contents.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) {
@@ -1566,7 +1592,8 @@
                         }
                     });
                 }
-                document.getElementById('recordingsContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد محاضرات.</p>`;
+                const recContainer = document.getElementById('recordingsContainer');
+                if (recContainer) recContainer.innerHTML = html || `<p style="color:#64748b;">لا توجد محاضرات.</p>`;
             });
         }
 
@@ -1587,7 +1614,8 @@
                         }
                     });
                 }
-                document.getElementById('homeworkContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد واجبات.</p>`;
+                const hwContainer = document.getElementById('homeworkContainer');
+                if (hwContainer) hwContainer.innerHTML = html || `<p style="color:#64748b;">لا توجد واجبات.</p>`;
             });
         }
 
@@ -1602,7 +1630,8 @@
                         }
                     });
                 }
-                document.getElementById('quizzesContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد اختبارات.</p>`;
+                const qContainer = document.getElementById('quizzesContainer');
+                if (qContainer) qContainer.innerHTML = html || `<p style="color:#64748b;">لا توجد اختبارات.</p>`;
             });
         }
 
@@ -1685,7 +1714,9 @@
         }
 
         function renderScheduleManager() {
-            document.getElementById('scheduleContainer').innerHTML = `
+            const schC = document.getElementById('scheduleContainer');
+            if (!schC) return;
+            schC.innerHTML = `
                 <form onsubmit="saveSchedule(event)" style="margin-bottom:20px; background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #cbd5e1;">
                     <div class="form-group"><label>الصف</label><select class="form-control" id="schGrade"><option value="الأول المتوسط">الأول المتوسط</option><option value="السادس الاعدادي">السادس الإعدادي</option></select></div>
                     <div class="form-group"><label>اليوم</label><select class="form-control" id="schDay"><option value="السبت">السبت</option><option value="الأحد">الأحد</option></select></div>
@@ -1712,7 +1743,8 @@
             fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) { Object.keys(data).forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
-                document.getElementById('schList').innerHTML = html || '<p>لا توجد حصص.</p>';
+                const schList = document.getElementById('schList');
+                if (schList) schList.innerHTML = html || '<p>لا توجد حصص.</p>';
             });
         }
 
@@ -1720,7 +1752,8 @@
             fetch(`${DATABASE_URL}/reports.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) { Object.keys(data).forEach(k => { const r = data[k]; html += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; }); }
-                document.getElementById('adminReportsList').innerHTML = html || '<p>لا توجد تقارير.</p>';
+                const adminRList = document.getElementById('adminReportsList');
+                if (adminRList) adminRList.innerHTML = html || '<p>لا توجد تقارير.</p>';
             });
         }
     </script>
