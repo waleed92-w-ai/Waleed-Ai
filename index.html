@@ -73,17 +73,20 @@
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
 
-        .lightweight-live-box { width: 100%; min-height: 450px; background: #0f172a; border-radius: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; padding: 20px; position: relative; overflow: auto; border: 2px solid #334155; }
+        .voice-room-box { width: 100%; min-height: 420px; background: #0f172a; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; position: relative; border: 2px solid #334155; }
+        .participants-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; width: 100%; margin-top: 15px; }
         
-        .participant-circle-card { display: flex; flex-direction: column; align-items: center; gap: 8px; background: rgba(30, 41, 59, 0.7); padding: 12px; border-radius: 20px; border: 1px solid #334155; width: 160px; text-align: center; }
-        .participant-avatar-circle { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--success); overflow: hidden; background: #1e293b; display: flex; align-items: center; justify-content: center; position: relative; }
-        .participant-avatar-circle img, .participant-avatar-circle video { width: 100%; height: 100%; object-fit: cover; }
-        .participant-name-tag { color: #fff; font-size: 0.85rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .participant-role-tag { font-size: 0.7rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 8px; border-radius: 6px; }
-
-        .lightweight-live-box:fullscreen { width: 100vw; height: 100vh; border-radius: 0; border: none; background: #000; }
-        .lightweight-live-box:-webkit-full-screen { width: 100vw; height: 100vh; border-radius: 0; border: none; background: #000; }
-        .lightweight-live-box:-moz-full-screen { width: 100vw; height: 100vh; border-radius: 0; border: none; background: #000; }
+        .voice-user-circle { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 110px; }
+        .voice-avatar-wrap { width: 85px; height: 85px; border-radius: 50%; border: 3px solid #64748b; overflow: hidden; background: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; }
+        .voice-avatar-wrap.speaking { border-color: var(--success); box-shadow: 0 0 15px var(--success); animation: pulseGlow 1.5s infinite; }
+        @keyframes pulseGlow { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .voice-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .mic-status-icon { position: absolute; bottom: 2px; right: 2px; background: #1e293b; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; border: 1.5px solid #fff; }
+        .mic-status-icon.active { background: var(--success); }
+        .mic-status-icon.muted { background: var(--danger); }
+        
+        .voice-name-tag { color: #fff; font-size: 0.85rem; font-weight: 800; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .voice-role-tag { font-size: 0.7rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 8px; border-radius: 6px; }
 
         #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         #maintenanceScreen i { font-size: 4rem; color: var(--warning); margin-bottom: 20px; animation: bounce 2s infinite; }
@@ -95,7 +98,7 @@
         .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; -webkit-overflow-scrolling: touch; display: flex; align-items: center; justify-content: center; }
         .watermark-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around; opacity: 0.15; overflow: hidden; font-weight: 900; font-size: 1.1rem; color: #ffffff; transform: rotate(-25deg); }
         
-        @media (max-width: 768px) { .layout-wrapper { flex-direction: column; } sidebar { width: 100%; } .lightweight-live-box { min-height: 320px; } }
+        @media (max-width: 768px) { .layout-wrapper { flex-direction: column; } sidebar { width: 100%; } .voice-room-box { min-height: 320px; } }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -254,8 +257,8 @@
                 <p style="color: #64748b; margin-bottom: 20px; font-weight: 700;">اختر القسم المطلوب للدخول إليه:</p>
                 <div class="grid-cards">
                     <div class="sub-card" onclick="openRoomSection('paneLive')">
-                        <i class="fas fa-broadcast-tower" style="color: var(--accent);"></i>
-                        <span>البث المباشر</span>
+                        <i class="fas fa-microphone-alt" style="color: var(--accent);"></i>
+                        <span>البث الصوتي المباشر</span>
                     </div>
                     <div class="sub-card" onclick="openRoomSection('paneLectures')">
                         <i class="fas fa-book-reader" style="color: var(--success);"></i>
@@ -285,22 +288,20 @@
                 <div class="room-section-pane" id="paneLive">
                     <div style="background: #1e293b; padding: 14px; border-radius: var(--radius);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #fff; flex-wrap: wrap; gap: 8px;">
-                            <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-video" style="color: #38bdf8;"></i> البث المباشر: <span id="liveRoomTitleDisplay">غرفة الدرس</span></span>
+                            <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-microphone" style="color: #38bdf8;"></i> البث الصوتي: <span id="liveRoomTitleDisplay">غرفة الدرس</span></span>
                             <div style="display: flex; gap: 8px; align-items: center;" id="liveControlButtons"></div>
                         </div>
 
                         <div id="teacherLiveAdminBox" style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; margin-bottom: 12px; display: none;">
-                            <h5 style="color: #38bdf8; font-size: 0.9rem; margin-bottom: 8px;"><i class="fas fa-users"></i> طلبات الطلاب للانضمام للبث:</h5>
+                            <h5 style="color: #38bdf8; font-size: 0.9rem; margin-bottom: 8px;"><i class="fas fa-users"></i> طلبات انضمام الطلاب للبث الصوتي:</h5>
                             <div id="liveRequestsListContainer" style="max-height: 120px; overflow-y: auto;"><p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p></div>
                         </div>
 
-                        <div class="lightweight-live-box" id="liveContainerBox">
-                            <div id="participantsGridContainer" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; width: 100%;">
-                                <div style="color: #94a3b8; font-weight: 700; text-align: center; padding: 30px;">
-                                    <i class="fas fa-broadcast-tower" style="font-size: 2.5rem; margin-bottom: 10px; color: var(--success); display: block;"></i>
-                                    <span id="liveStatusText">البث جاهز. اضغط على "بدء البث" أو "الكاميرا" للبدء.</span>
-                                </div>
+                        <div class="voice-room-box">
+                            <div style="color: #94a3b8; font-weight: 700; text-align: center; margin-bottom: 10px;" id="voiceRoomStatusText">
+                                الغرفة الصوتية جاهزة. اضغط على "بدء البث" للبدء.
                             </div>
+                            <div class="participants-grid" id="participantsGridContainer"></div>
                         </div>
                     </div>
                 </div>
@@ -566,6 +567,9 @@
         </div>
     </div>
 
+    <!-- عنصر صوتي للاستماع -->
+    <audio id="remoteAudioPlayer" autoplay playsinline></audio>
+
     <script>
         const DATABASE_URL = "https://waleed-ai-49ebc-default-rtdb.firebaseio.com";
         const firebaseConfig = { databaseURL: DATABASE_URL };
@@ -578,7 +582,8 @@
         let currentStudentName = "";
         let pendingRoomData = null;
         let currentPdfScale = 1.0;
-        let localStream = null;
+        let localAudioStream = null;
+        let isMicMuted = false;
         let isStudentInLive = false;
 
         const allSubjectsList = [
@@ -731,9 +736,9 @@
 
         function logoutSystem() {
             try {
-                if (localStream) {
-                    localStream.getTracks().forEach(track => track.stop());
-                    localStream = null;
+                if (localAudioStream) {
+                    localAudioStream.getTracks().forEach(track => track.stop());
+                    localAudioStream = null;
                 }
             } catch (err) {
                 console.error(err);
@@ -1296,7 +1301,7 @@
             document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
             document.getElementById(paneId).classList.add('active');
 
-            if (paneId === 'paneLive') { setupLiveControlsAndListeners(); renderParticipantsGrid(); }
+            if (paneId === 'paneLive') { setupVoiceControlsAndListeners(); renderVoiceParticipantsGrid(); }
             if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
             if (paneId === 'paneQuestions') { renderRoomQuestions(); }
             if (paneId === 'paneQuizzes') { renderRoomQuizzes(); renderRoomHomework(); }
@@ -1360,74 +1365,77 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
-        function setupLiveControlsAndListeners() {
+        function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
 
             if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
                 if (adminBox) adminBox.style.display = 'block';
                 if (ctrlBox) ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startTeacherLive()"><i class="fas fa-play"></i> بدء البث</button>
-                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="endTeacherLive()"><i class="fas fa-stop"></i> إنهاء البث</button>
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا/الصوت</button>
-                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startVoiceBroadcast()"><i class="fas fa-play"></i> بدء البث</button>
+                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="endVoiceBroadcast()"><i class="fas fa-stop"></i> إنهاء البث</button>
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم/فتح المايك</button>
                 `;
-                listenToStudentJoinRequests();
+                listenToStudentVoiceRequests();
             } else {
                 if (adminBox) adminBox.style.display = 'none';
-                checkStudentJoinStatus();
+                checkStudentVoiceJoinStatus();
             }
-            listenToLiveParticipants();
-            listenToLiveStatus();
+            listenToVoiceParticipants();
+            listenToVoiceBroadcastStatus();
         }
 
-        function startTeacherLive() {
+        function startVoiceBroadcast() {
             const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
-            db.ref(`live_participants/${activeRoomId}/teacher`).set({
-                name: tName, role: 'الأستاذ / المشرف', hasAudio: true, timestamp: Date.now()
+            db.ref(`voice_participants/${activeRoomId}/teacher`).set({
+                name: tName, role: 'الأستاذ / المشرف', isMuted: false, timestamp: Date.now()
             }).then(() => {
-                db.ref(`live_status/${activeRoomId}`).set({ active: true });
-                alert('تم بدء البث المباشر بنجاح!');
+                db.ref(`voice_status/${activeRoomId}`).set({ active: true });
+                initLocalMicrophone('teacher');
+                alert('تم بدء البث الصوتي المباشر!');
             });
         }
 
-        function endTeacherLive() {
-            if (confirm('هل تريد إنهاء البث المباشر وإغلاقه لجميع الطلاب؟')) {
-                if (localStream) {
-                    localStream.getTracks().forEach(track => track.stop());
-                    localStream = null;
+        function endVoiceBroadcast() {
+            if (confirm('هل تريد إنهاء البث الصوتي وإغلاقه لجميع الطلاب؟')) {
+                if (localAudioStream) {
+                    localAudioStream.getTracks().forEach(t => t.stop());
+                    localAudioStream = null;
                 }
-                db.ref(`live_participants/${activeRoomId}`).remove();
-                db.ref(`live_requests/${activeRoomId}`).remove();
-                db.ref(`live_status/${activeRoomId}`).set({ active: false });
-                alert('تم إنهاء البث بنجاح.');
+                db.ref(`voice_participants/${activeRoomId}`).remove();
+                db.ref(`voice_requests/${activeRoomId}`).remove();
+                db.ref(`voice_status/${activeRoomId}`).set({ active: false });
+                alert('تم إنهاء البث الصوتي بنجاح.');
             }
         }
 
-        function listenToLiveStatus() {
-            db.ref(`live_status/${activeRoomId}/active`).on('value', snapshot => {
-                if (snapshot.val() === false && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                    alert('⚠️ قام الأستاذ بإنهاء البث المباشر.');
-                    renderParticipantsGrid(null);
+        function listenToVoiceBroadcastStatus() {
+            db.ref(`voice_status/${activeRoomId}/active`).on('value', snapshot => {
+                const isActive = snapshot.val() === true;
+                if (!isActive && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
+                    renderVoiceParticipantsGrid(null);
+                } else if (isActive && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
+                    // إظهار زر الانضمام تلقائياً فور بدء البث من قبل الأستاذ
+                    checkStudentVoiceJoinStatus();
                 }
             });
         }
 
-        function requestJoinLive() {
+        function requestVoiceJoin() {
             if (!currentStudentName) { alert('يجب تسجيل الدخول كطالب أولاً!'); return; }
-            const reqId = 'REQ_' + Date.now();
-            db.ref(`live_requests/${activeRoomId}/${reqId}`).set({
+            const reqId = 'VREQ_' + Date.now();
+            db.ref(`voice_requests/${activeRoomId}/${reqId}`).set({
                 id: reqId,
                 studentName: currentStudentName,
                 status: 'pending',
                 timestamp: Date.now()
             }).then(() => {
-                alert('تم إرسال طلب الانضمام للبث للأستاذ/المشرف. بانتظار الموافقة...');
+                alert('تم إرسال طلب الانضمام للبث الصوتي للأستاذ. بانتظار الموافقة...');
             });
         }
 
-        function listenToStudentJoinRequests() {
-            db.ref(`live_requests/${activeRoomId}`).on('value', snapshot => {
+        function listenToStudentVoiceRequests() {
+            db.ref(`voice_requests/${activeRoomId}`).on('value', snapshot => {
                 const data = snapshot.val();
                 let html = '';
                 if (data) {
@@ -1436,10 +1444,10 @@
                         if (req.status === 'pending') {
                             html += `
                                 <div style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px;">
-                                    <span style="color: #fff; font-size: 0.85rem; font-weight: 700;">👤 ${req.studentName} يطلب الانضمام</span>
+                                    <span style="color: #fff; font-size: 0.85rem; font-weight: 700;">👤 ${req.studentName} يطلب الانضمام للصوت</span>
                                     <div style="display: flex; gap: 6px;">
-                                        <button class="btn btn-success" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleLiveRequest('${req.id}', '${req.studentName}', 'approved')">قبول</button>
-                                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleLiveRequest('${req.id}', '${req.studentName}', 'rejected')">رفض</button>
+                                        <button class="btn btn-success" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'approved')">قبول</button>
+                                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'rejected')">رفض</button>
                                     </div>
                                 </div>
                             `;
@@ -1451,40 +1459,39 @@
             });
         }
 
-        function handleLiveRequest(reqId, studentName, status) {
-            db.ref(`live_requests/${activeRoomId}/${reqId}`).update({ status: status });
+        function handleVoiceRequest(reqId, studentName, status) {
+            db.ref(`voice_requests/${activeRoomId}/${reqId}`).update({ status: status });
             if (status === 'approved') {
                 const sKey = 'student_' + Date.now();
-                db.ref(`live_participants/${activeRoomId}/${sKey}`).set({
+                db.ref(`voice_participants/${activeRoomId}/${sKey}`).set({
                     name: studentName,
-                    role: 'طالب مشارك',
-                    hasAudio: true,
+                    role: 'طالب متحدث',
+                    isMuted: false,
                     timestamp: Date.now()
                 });
             }
         }
 
-        function checkStudentJoinStatus() {
+        function checkStudentVoiceJoinStatus() {
             const ctrlBox = document.getElementById('liveControlButtons');
-            if (ctrlBox) {
+            if (ctrlBox && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
                 ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="requestJoinLive()"><i class="fas fa-sign-in-alt"></i> طلب الانضمام للبث</button>
-                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="requestVoiceJoin()"><i class="fas fa-sign-in-alt"></i> طلب الانضمام للبث الصوتي</button>
                 `;
             }
 
-            db.ref(`live_requests/${activeRoomId}`).on('value', snapshot => {
+            db.ref(`voice_requests/${activeRoomId}`).on('value', snapshot => {
                 const data = snapshot.val();
                 if (data && currentStudentName) {
                     Object.keys(data).forEach(k => {
                         const req = data[k];
                         if (req.studentName === currentStudentName && req.status === 'approved' && !isStudentInLive) {
                             isStudentInLive = true;
-                            alert('تم قبول طلبك من قبل الإدارة! أنت الآن داخل البث.');
+                            alert('تم قبول طلبك! تم انضمامك للبث الصوتي.');
+                            initLocalMicrophone('student_' + Date.now());
                             if (ctrlBox) {
                                 ctrlBox.innerHTML = `
-                                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا/الصوت</button>
-                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
+                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم/فتح المايك</button>
                                 `;
                             }
                         }
@@ -1493,91 +1500,68 @@
             });
         }
 
-        function listenToLiveParticipants() {
-            db.ref(`live_participants/${activeRoomId}`).on('value', snapshot => {
-                window.lastParticipantsSnapshot = snapshot.val();
-                renderParticipantsGrid(snapshot.val());
+        function initLocalMicrophone(userKey) {
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                localAudioStream = stream;
+                const remoteAudio = document.getElementById('remoteAudioPlayer');
+                remoteAudio.srcObject = stream;
+                remoteAudio.muted = true;
+            }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في المتصفح.'));
+        }
+
+        function toggleMicrophone() {
+            if (localAudioStream) {
+                isMicMuted = !isMicMuted;
+                localAudioStream.getAudioTracks().forEach(track => { track.enabled = !isMicMuted; });
+                const icon = document.getElementById('micToggleIcon');
+                if (icon) icon.className = isMicMuted ? "fas fa-microphone-slash" : "fas fa-microphone";
+                alert(isMicMuted ? 'تم كتم المايك.' : 'تم فتح المايك.');
+            } else {
+                alert('الميكروفون غير مفعل أو لم يتم بدء البث بعد.');
+            }
+        }
+
+        function listenToVoiceParticipants() {
+            db.ref(`voice_participants/${activeRoomId}`).on('value', snapshot => {
+                renderVoiceParticipantsGrid(snapshot.val());
             });
         }
 
-        function renderParticipantsGrid(participantsData) {
+        function renderVoiceParticipantsGrid(participantsData) {
             const container = document.getElementById('participantsGridContainer');
+            const statusText = document.getElementById('voiceRoomStatusText');
             if (!container) return;
+
             if (!participantsData) {
-                container.innerHTML = `
-                    <div style="color: #94a3b8; font-weight: 700; text-align: center; padding: 30px;">
-                        <i class="fas fa-broadcast-tower" style="font-size: 2.5rem; margin-bottom: 10px; color: var(--success); display: block;"></i>
-                        <span>البث بانتظار التفعيل أو تم إنهاؤه...</span>
-                    </div>
-                `;
+                container.innerHTML = '';
+                if (statusText) statusText.innerText = "البث الصوتي غير مفعل حالياً. بانتظار بدء الأستاذ...";
                 return;
             }
 
+            if (statusText) statusText.innerText = "البث الصوتي جارٍ الآن 🎙️";
             let html = '';
             Object.keys(participantsData).forEach(key => {
                 const p = participantsData[key];
+                const muted = p.isMuted;
                 html += `
-                    <div class="participant-circle-card">
-                        <div class="participant-avatar-circle" id="avatar_box_${key}">
-                            <img src="IMG_1507.jpeg" alt="${p.name}" id="img_${key}" onerror="this.src='https://via.placeholder.com/90'">
-                            <video id="vid_${key}" autoplay playsinline ${key === 'teacher' && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher' ? '' : 'muted'} style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+                    <div class="voice-user-circle">
+                        <div class="voice-avatar-wrap ${!muted ? 'speaking' : ''}">
+                            <img src="IMG_1507.jpeg" alt="${p.name}" onerror="this.src='https://via.placeholder.com/85'">
+                            <div class="mic-status-icon ${!muted ? 'active' : 'muted'}">
+                                <i class="fas ${!muted ? 'fa-microphone' : 'fa-microphone-slash'}"></i>
+                            </div>
                         </div>
-                        <span class="participant-name-tag" title="${p.name}">${p.name}</span>
-                        <span class="participant-role-tag">${p.role}</span>
-                        ${(currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') && key !== 'teacher' ? `<button class="btn btn-danger" style="padding:2px 6px; font-size:0.65rem;" onclick="kickParticipant('${key}')">طرد</button>` : ''}
+                        <span class="voice-name-tag" title="${p.name}">${p.name}</span>
+                        <span class="voice-role-tag">${p.role}</span>
+                        ${(currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') && key !== 'teacher' ? `<button class="btn btn-danger" style="padding:2px 6px; font-size:0.65rem; margin-top:4px;" onclick="kickVoiceParticipant('${key}')">طرد</button>` : ''}
                     </div>
                 `;
             });
             container.innerHTML = html;
-
-            if (localStream) {
-                const myKey = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'teacher' : Object.keys(participantsData).find(k => participantsData[k].name === currentStudentName);
-                if (myKey) {
-                    const vidEl = document.getElementById(`vid_${myKey}`);
-                    const imgEl = document.getElementById(`img_${myKey}`);
-                    if (vidEl && imgEl) {
-                        vidEl.srcObject = localStream;
-                        vidEl.style.display = 'block';
-                        imgEl.style.display = 'none';
-                    }
-                }
-            }
         }
 
-        function toggleWebcam() {
-            if (!localStream) {
-                navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-                    localStream = stream;
-                    const myKey = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'teacher' : ('student_' + Date.now());
-                    const roleStr = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'الأستاذ / المشرف' : 'طالب مشارك';
-                    
-                    db.ref(`live_participants/${activeRoomId}/${myKey}`).update({
-                        hasAudio: true,
-                        name: currentStudentName || (loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد'),
-                        role: roleStr
-                    });
-
-                    renderParticipantsGrid(window.lastParticipantsSnapshot || {});
-                    alert('تم تفعيل الكاميرا والصوت بنجاح!');
-                }).catch(err => {
-                    console.error(err);
-                    alert('تعذر الوصول للكاميرا أو الميكروفون! يرجى السماح للمتصفح بالوصول من إعدادات الهاتف أو الجهاز.');
-                });
-            } else {
-                localStream.getTracks().forEach(track => track.stop());
-                localStream = null;
-                alert('تم إيقاف الكاميرا والصوت.');
-            }
-        }
-
-        function kickParticipant(pKey) {
-            db.ref(`live_participants/${activeRoomId}/${pKey}`).remove();
-        }
-
-        function toggleFullScreenLive() {
-            const box = document.getElementById('liveContainerBox');
-            if (!document.fullscreenElement) { box.requestFullscreen().catch(() => {}); }
-            else { document.exitFullscreen().catch(() => {}); }
+        function kickVoiceParticipant(pKey) {
+            db.ref(`voice_participants/${activeRoomId}/${pKey}`).remove();
         }
 
         function backToSubjectsView() { showSection('subjectsSection'); }
