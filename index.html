@@ -74,23 +74,210 @@
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
 
-        /* حاوية غرفة البث وتدعم التكبير بالكامل */
-        .voice-room-box { width: 100%; min-height: 420px; background: #0f172a; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; position: relative; border: 2px solid #334155; transition: all 0.3s ease; }
-        .voice-room-box.fullscreen-mode { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; border-radius: 0 !important; padding: 40px !important; }
+        /* ===== تصميم غرفة البث الاحترافي بنمط تيك توك (TikTok Live Style) ===== */
+        .tiktok-live-container {
+            width: 100%;
+            height: 600px;
+            background: linear-gradient(135deg, #090d16, #111827);
+            border-radius: 20px;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #334155;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
         
-        .participants-grid { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; width: 100%; margin-top: 15px; }
+        .tiktok-live-container.fullscreen-mode {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 99999 !important;
+            border-radius: 0 !important;
+            border: none !important;
+        }
+
+        /* القسم الأيمن: شاشة المتحدثين والتحكم */
+        .tiktok-stage-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            justify-content: space-between;
+        }
+
+        .tiktok-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .live-badge-pill {
+            background: linear-gradient(45deg, #ef4444, #f59e0b);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+        }
+
+        /* شبكة المتحدثين النشطين في البث */
+        .tiktok-speakers-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+            width: 100%;
+        }
+
+        .speaker-bubble {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 110px;
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .speaker-avatar-wrap {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid #64748b;
+            overflow: hidden;
+            background: #1e293b;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .speaker-avatar-wrap.speaking {
+            border-color: var(--success);
+            box-shadow: 0 0 20px var(--success);
+            animation: ringPulse 1.5s infinite;
+        }
+
+        @keyframes ringPulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .speaker-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
         
-        .voice-user-circle { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 120px; background: rgba(30, 41, 59, 0.7); padding: 10px; border-radius: 12px; border: 1px solid #334155; }
-        .voice-avatar-wrap { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #64748b; overflow: hidden; background: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; }
-        .voice-avatar-wrap.speaking { border-color: var(--success); box-shadow: 0 0 15px var(--success); animation: pulseGlow 1.5s infinite; }
-        @keyframes pulseGlow { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        .voice-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .mic-status-icon { position: absolute; bottom: 2px; right: 2px; background: #1e293b; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; border: 1.5px solid #fff; }
-        .mic-status-icon.active { background: var(--success); }
-        .mic-status-icon.muted { background: var(--danger); }
-        
-        .voice-name-tag { color: #fff; font-size: 0.82rem; font-weight: 800; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .voice-role-tag { font-size: 0.68rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 6px; border-radius: 6px; }
+        .speaker-mic-badge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--danger);
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            border: 1.5px solid #fff;
+        }
+        .speaker-mic-badge.active { background: var(--success); }
+
+        .speaker-name { color: #fff; font-size: 0.8rem; font-weight: 800; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .speaker-role { font-size: 0.65rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 6px; border-radius: 6px; }
+
+        /* شريط التحكم السفلي في البث */
+        .tiktok-control-bar {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 12px;
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+        }
+
+        /* القسم الأيسر: لوحة الحضور (كل المتواجدين) وطلبات الانضمام */
+        .tiktok-sidebar-panel {
+            width: 320px;
+            background: rgba(15, 23, 42, 0.95);
+            border-right: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            gap: 16px;
+            z-index: 15;
+            backdrop-filter: blur(15px);
+        }
+
+        .panel-box-title {
+            color: #38bdf8;
+            font-size: 0.88rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+
+        .attendees-scroll-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 250px;
+        }
+
+        .attendee-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .attendee-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .attendee-mini-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid var(--success);
+        }
+
+        .requests-scroll-list {
+            max-height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
         #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         #maintenanceScreen i { font-size: 4rem; color: var(--warning); margin-bottom: 20px; animation: bounce 2s infinite; }
@@ -104,7 +291,12 @@
         .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; -webkit-overflow-scrolling: touch; display: flex; align-items: center; justify-content: center; }
         .watermark-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around; opacity: 0.15; overflow: hidden; font-weight: 900; font-size: 1.1rem; color: #ffffff; transform: rotate(-25deg); }
         
-        @media (max-width: 768px) { .layout-wrapper { flex-direction: column; } sidebar { width: 100%; } .voice-room-box { min-height: 320px; } }
+        @media (max-width: 900px) { 
+            .layout-wrapper { flex-direction: column; } 
+            sidebar { width: 100%; } 
+            .tiktok-live-container { flex-direction: column; height: auto; min-height: 600px; }
+            .tiktok-sidebar-panel { width: 100%; max-height: 300px; }
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -289,31 +481,52 @@
                 </div>
 
                 <div class="room-section-pane" id="paneLive">
-                    <div style="background: #1e293b; padding: 14px; border-radius: var(--radius);">
+                    <!-- واجهة البث الاحترافي بنمط تيك توك المتكاملة -->
+                    <div class="tiktok-live-container" id="tiktokLiveContainerBox">
                         
-                        <!-- صندوق طلبات انضمام الطلاب للبث الصوتي (بارز وواضح للأستاذ) -->
-                        <div id="teacherLiveAdminBox" style="background: #0f172a; border: 2px solid #38bdf8; border-radius: 12px; padding: 16px; margin-bottom: 16px; display: none; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);">
-                            <h4 style="color: #38bdf8; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                                <i class="fas fa-user-clock" style="font-size: 1.2rem;"></i> طلبات انضمام الطلاب للبث الصوتي المباشر:
-                            </h4>
-                            <div id="liveRequestsListContainer" style="max-height: 160px; overflow-y: auto;">
-                                <p style="color: #94a3b8; font-size: 0.9rem;">لا توجد طلبات انضمام معلقة حالياً.</p>
+                        <!-- القسم الأيمن: شاشة المتحدثين وأزرار التحكم -->
+                        <div class="tiktok-stage-area">
+                            <div class="tiktok-top-bar">
+                                <div class="live-badge-pill">
+                                    <i class="fas fa-broadcast-tower"></i> بث مباشر
+                                </div>
+                                <button class="btn btn-secondary" id="toggleLiveFullscreenBtn" style="padding: 6px 12px; font-size: 0.78rem;" title="تكبير/تصغير الشاشة"><i class="fas fa-expand"></i> ملء الشاشة</button>
+                            </div>
+
+                            <div style="text-align: center; margin: 10px 0;">
+                                <h4 style="color: #fff; font-size: 1.05rem; font-weight: 800;" id="liveRoomTitleDisplay">غرفة الدرس</h4>
+                                <p style="color: #94a3b8; font-size: 0.8rem;" id="voiceRoomStatusText">البث الصوتي غير مفعل حالياً. بانتظار بدء الأستاذ...</p>
+                            </div>
+
+                            <!-- شبكة المتحدثين في البث -->
+                            <div class="tiktok-speakers-grid" id="participantsGridContainer"></div>
+
+                            <!-- شريط التحكم السفلي -->
+                            <div class="tiktok-control-bar" id="liveControlButtons"></div>
+                        </div>
+
+                        <!-- القسم الأيسر: لوحة الحضور (جميع المتواجدين بالأسماء والصور) وطلبات الانضمام -->
+                        <div class="tiktok-sidebar-panel">
+                            <div>
+                                <div class="panel-box-title">
+                                    <i class="fas fa-users" style="color:#10b981;"></i> المتواجدون الآن في الغرفة (<span id="attendeesCountNum">0</span>)
+                                </div>
+                                <div class="attendees-scroll-list" id="allAttendeesScrollList">
+                                    <p style="color: #64748b; font-size: 0.85rem; text-align: center;">جاري جلب المتواجدين...</p>
+                                </div>
+                            </div>
+
+                            <!-- صندوق طلبات انضمام الطلاب للبث -->
+                            <div id="teacherLiveAdminBox" style="display: none; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+                                <div class="panel-box-title" style="color: #f59e0b;">
+                                    <i class="fas fa-user-clock"></i> طلبات التحدث للبث:
+                                </div>
+                                <div class="requests-scroll-list" id="liveRequestsListContainer">
+                                    <p style="color: #94a3b8; font-size: 0.8rem;">لا توجد طلبات معلقة.</p>
+                                </div>
                             </div>
                         </div>
 
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #fff; flex-wrap: wrap; gap: 8px;">
-                            <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-microphone" style="color: #38bdf8;"></i> البث الصوتي: <span id="liveRoomTitleDisplay">غرفة الدرس</span></span>
-                            <div style="display: flex; gap: 8px; align-items: center;" id="liveControlButtons"></div>
-                        </div>
-
-                        <!-- حاوية البث مع زر تكبير/تصغير الشاشة بالكامل -->
-                        <div class="voice-room-box" id="voiceRoomBoxContainer">
-                            <button class="btn btn-secondary" id="toggleLiveFullscreenBtn" style="position: absolute; top: 12px; left: 12px; padding: 6px 10px; font-size: 0.75rem; z-index: 20;" title="تكبير/تصغير الشاشة"><i class="fas fa-expand"></i> ملء الشاشة</button>
-                            <div style="color: #94a3b8; font-weight: 700; text-align: center; margin-bottom: 10px;" id="voiceRoomStatusText">
-                                الغرفة الصوتية جاهزة. اضغط على "بدء البث" للبدء.
-                            </div>
-                            <div class="participants-grid" id="participantsGridContainer"></div>
-                        </div>
                     </div>
                 </div>
 
@@ -598,7 +811,7 @@
         </div>
     </div>
 
-    <!-- عنصر مشغل الصوت لعزل الصدى وتوجيه البث المتبادل -->
+    <!-- عنصر مشغل الصوت المتبادل لضمان سماع الصوت من الجهتين -->
     <audio id="remoteAudioPlayer" autoplay playsinline style="display:none;"></audio>
 
     <script>
@@ -713,7 +926,7 @@
         }
 
         function toggleLiveBoxFullscreen() {
-            const box = document.getElementById('voiceRoomBoxContainer');
+            const box = document.getElementById('tiktokLiveContainerBox');
             const btn = document.getElementById('toggleLiveFullscreenBtn');
             box.classList.toggle('fullscreen-mode');
             if (box.classList.contains('fullscreen-mode')) {
@@ -1411,10 +1624,10 @@
         function registerStudentPresence(roomId) {
             if (!currentStudentName) return;
             const studentKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
-            fetch(`${DATABASE_URL}/active_students/${roomId}/${studentKey}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({ name: currentStudentName, joinedAt: Date.now(), status: 'نشط' }),
-                headers: { 'Content-Type': 'application/json' }
+            db.ref(`active_students/${roomId}/${studentKey}`).set({
+                name: currentStudentName,
+                joinedAt: Date.now(),
+                status: 'نشط'
             });
         }
 
@@ -1526,7 +1739,7 @@
             document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
             document.getElementById(paneId).classList.add('active');
 
-            if (paneId === 'paneLive') { setupVoiceControlsAndListeners(); renderVoiceParticipantsGrid(); }
+            if (paneId === 'paneLive') { setupVoiceControlsAndListeners(); renderVoiceParticipantsGrid(); renderAllAttendeesList(); }
             if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
             if (paneId === 'paneQuestions') { renderRoomQuestions(); }
             if (paneId === 'paneQuizzes') { renderRoomQuizzes(); renderRoomHomework(); }
@@ -1564,6 +1777,32 @@
             });
         }
 
+        function renderAllAttendeesList() {
+            db.ref(`active_students/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                let html = '';
+                let count = 0;
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        count++;
+                        const st = data[k];
+                        html += `
+                            <div class="attendee-item">
+                                <div class="attendee-user-info">
+                                    <img src="IMG_1507.jpeg" class="attendee-mini-avatar" onerror="this.src='https://via.placeholder.com/35'">
+                                    <span style="color:#fff; font-size:0.85rem; font-weight:800;">${st.name}</span>
+                                </div>
+                                <span style="font-size:0.7rem; color:#10b981; font-weight:700;">يستمع</span>
+                            </div>
+                        `;
+                    });
+                }
+                document.getElementById('attendeesCountNum').innerText = count;
+                const listEl = document.getElementById('allAttendeesScrollList');
+                if (listEl) listEl.innerHTML = html || '<p style="color:#64748b; font-size:0.8rem; text-align:center;">لا يوجد طلاب متواجدون حالياً.</p>';
+            });
+        }
+
         function teacherWarnStudent(studentName) {
             alert(`⚠️ تم إرسال تنبيه رسمي للطالب: ${studentName}`);
         }
@@ -1591,7 +1830,7 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
-        // ==================== نظام الصوت بدون صدى محلي ====================
+        // ==================== نظام الصوت المتطور بدون صدى ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -1599,9 +1838,9 @@
             if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
                 if (adminBox) adminBox.style.display = 'block';
                 if (ctrlBox) ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startVoiceBroadcast()"><i class="fas fa-play"></i> بدء البث</button>
-                    <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="endVoiceBroadcast()"><i class="fas fa-stop"></i> إنهاء البث</button>
-                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
+                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="startVoiceBroadcast()"><i class="fas fa-play"></i> بدء البث</button>
+                    <button class="btn btn-danger" style="padding: 8px 14px; font-size: 0.85rem;" onclick="endVoiceBroadcast()"><i class="fas fa-stop"></i> إنهاء البث</button>
+                    <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
                 `;
                 listenToStudentVoiceRequests();
             } else {
@@ -1671,11 +1910,11 @@
                         const req = data[k];
                         if (req.status === 'pending') {
                             html += `
-                                <div style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; border-right: 4px solid #38bdf8;">
-                                    <span style="color: #fff; font-size: 0.9rem; font-weight: 800;"><i class="fas fa-user-graduate" style="color:#38bdf8; margin-left:6px;"></i> الطالب: ${req.studentName} يطلب التحدث</span>
-                                    <div style="display: flex; gap: 8px;">
-                                        <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'approved')"><i class="fas fa-check"></i> قبول</button>
-                                        <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'rejected')"><i class="fas fa-times"></i> رفض</button>
+                                <div style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 10px; border-radius: 8px; border-right: 3px solid #f59e0b;">
+                                    <span style="color: #fff; font-size: 0.82rem; font-weight: 800;">${req.studentName}</span>
+                                    <div style="display: flex; gap: 4px;">
+                                        <button class="btn btn-success" style="padding: 4px 8px; font-size: 0.7rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'approved')"><i class="fas fa-check"></i></button>
+                                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.7rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'rejected')"><i class="fas fa-times"></i></button>
                                     </div>
                                 </div>
                             `;
@@ -1683,7 +1922,7 @@
                     });
                 }
                 const reqContainer = document.getElementById('liveRequestsListContainer');
-                if (reqContainer) reqContainer.innerHTML = html || '<p style="color: #94a3b8; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p>';
+                if (reqContainer) reqContainer.innerHTML = html || '<p style="color: #94a3b8; font-size: 0.78rem;">لا توجد طلبات معلقة.</p>';
             });
         }
 
@@ -1704,7 +1943,7 @@
             const ctrlBox = document.getElementById('liveControlButtons');
             if (ctrlBox && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
                 ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="requestVoiceJoin()"><i class="fas fa-sign-in-alt"></i> طلب التحدث في البث</button>
+                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="requestVoiceJoin()"><i class="fas fa-sign-in-alt"></i> طلب التحدث في البث</button>
                 `;
             }
 
@@ -1719,7 +1958,7 @@
                             initLocalMicrophone(false);
                             if (ctrlBox) {
                                 ctrlBox.innerHTML = `
-                                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
+                                    <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
                                 `;
                             }
                         }
@@ -1737,10 +1976,8 @@
                 } 
             }).then(stream => {
                 localAudioStream = stream;
-                // عزل الصوت تماماً لمنع تشغيله على سماعة نفس الجهاز المحلى وتجنب صدى الصوت
-                stream.getAudioTracks().forEach(track => {
-                    track.enabled = true;
-                });
+                // منع تشغيل المايك المحلي على سماعة نفس الجهاز لتفادي الصدى
+                stream.getAudioTracks().forEach(track => { track.enabled = true; });
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
         }
 
@@ -1791,19 +2028,19 @@
                 const isTeacherNode = (key === 'teacher');
 
                 html += `
-                    <div class="voice-user-circle">
-                        <div class="voice-avatar-wrap ${!muted ? 'speaking' : ''}">
-                            <img src="IMG_1507.jpeg" alt="${p.name}" onerror="this.src='https://via.placeholder.com/75'">
-                            <div class="mic-status-icon ${!muted ? 'active' : 'muted'}">
+                    <div class="speaker-bubble">
+                        <div class="speaker-avatar-wrap ${!muted ? 'speaking' : ''}">
+                            <img src="IMG_1507.jpeg" alt="${p.name}" onerror="this.src='https://via.placeholder.com/70'">
+                            <div class="speaker-mic-badge ${!muted ? 'active' : ''}">
                                 <i class="fas ${!muted ? 'fa-microphone' : 'fa-microphone-slash'}"></i>
                             </div>
                         </div>
-                        <span class="voice-name-tag" title="${p.name}">${p.name}</span>
-                        <span class="voice-role-tag">${p.role}</span>
+                        <span class="speaker-name" title="${p.name}">${p.name}</span>
+                        <span class="speaker-role">${p.role}</span>
                         ${isUserAdminOrTeacher && !isTeacherNode ? `
-                            <div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; justify-content:center;">
+                            <div style="display:flex; gap:4px; margin-top:4px;">
                                 <button class="btn btn-warning" style="padding:2px 6px; font-size:0.6rem;" onclick="makeCoHost('${key}', '${p.name}')" title="ترقية مشرف"><i class="fas fa-star"></i></button>
-                                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.6rem;" onclick="removeVoiceParticipant('${key}')" title="إنزال من البث"><i class="fas fa-user-minus"></i></button>
+                                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.6rem;" onclick="removeVoiceParticipant('${key}')" title="إنزال"><i class="fas fa-user-minus"></i></button>
                             </div>
                         ` : ''}
                     </div>
