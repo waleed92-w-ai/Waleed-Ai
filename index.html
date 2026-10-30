@@ -807,7 +807,7 @@
         </div>
     </div>
 
-    <!-- عنصر مشغل الصوت المتبادل لضمان سماع الصوت من الجهتين -->
+    <!-- عناصر مشغل الصوت المتبادل -->
     <audio id="remoteAudioPlayer" autoplay playsinline style="display:none;"></audio>
 
     <script>
@@ -825,7 +825,7 @@
         let localAudioStream = null;
         let isMicMuted = false;
         let isStudentInLive = false;
-        let activePresenceRef = null; // مرجع تتبع الوجود للطالب في الفايربيس
+        let activePresenceRef = null; 
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -1081,10 +1081,7 @@
                     localAudioStream.getTracks().forEach(track => track.stop());
                     localAudioStream = null;
                 }
-                if (activePresenceRef) {
-                    activePresenceRef.remove();
-                    activePresenceRef = null;
-                }
+                removeStudentPresence();
             } catch (err) {
                 console.error(err);
             }
@@ -1110,10 +1107,8 @@
         }
 
         function showSection(sectionId) {
-            // إذا كان الطالب ينتقل من أقسام الغرفة إلى مكان آخر، نزيل وجوده تلقائياً
             if (sectionId !== 'roomMenuSection' && sectionId !== 'lecturesSection' && activePresenceRef) {
-                activePresenceRef.remove();
-                activePresenceRef = null;
+                removeStudentPresence();
             }
 
             ['authSection', 'subjectsSection', 'teachersRoomsSection', 'roomMenuSection', 'lecturesSection', 'sectionCreateRoom', 'sectionManageRooms', 'sectionNotifications', 'sectionPlatformUsers', 'sectionVouchers', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionUniversalUpload', 'sectionTeacherReports'].forEach(id => {
@@ -1626,11 +1621,10 @@
             }
         }
 
-        // ==================== نظام تتبع الوجود الفوري (دخول وخروج الطالب) ====================
+        // ==================== نظام تتبع الوجود الفوري (الدخول والخروج) ====================
         function registerStudentPresence(roomId) {
             if (!currentStudentName || currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') return;
             
-            // إذا كان مسجلاً مسبقاً في غرفة أخرى، نزيلها أولاً
             if (activePresenceRef) {
                 activePresenceRef.remove();
             }
@@ -1644,10 +1638,7 @@
                 status: 'نشط'
             };
 
-            // وضع البيانات عند الدخول
             activePresenceRef.set(studentData);
-            
-            // أمر Firebase التلقائي: عند خروج الطالب من الصفحة أو انقطاع الاتصال أو إغلاق التطبيق، يتم حذفه فوراً من الغرفة
             activePresenceRef.onDisconnect().remove();
         }
 
@@ -1750,9 +1741,7 @@
             activeRoomTitleStr = roomTitle;
             document.getElementById('currentRoomMenuTitle').innerText = `غرفة: ${roomTitle}`;
             
-            // تسجيل حضور الطالب فور دخوله للغرفة
             registerStudentPresence(roomId);
-
             showSection('roomMenuSection');
             
             if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher' && currentStudentName) {
@@ -1867,7 +1856,7 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
-        // ==================== نظام الصوت المتطور بدون صدى ====================
+        // ==================== نظام الصوت المعدل لضمان عمل الجهتين وبث الصوت المباشر ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -1886,6 +1875,7 @@
             }
             listenToVoiceParticipants();
             listenToVoiceBroadcastStatus();
+            setupAudioReceiver();
         }
 
         function startVoiceBroadcast() {
@@ -1893,7 +1883,7 @@
             db.ref(`voice_participants/${activeRoomId}/teacher`).set({
                 name: tName, role: 'الأستاذ / المضيف', isMuted: false, timestamp: Date.now()
             }).then(() => {
-                db.ref(`voice_status/${activeRoomId}`).set({ active: true });
+                db.ref(`voice_status/${activeRoomId}`).set({ active: true, updatedAt: Date.now() });
                 initLocalMicrophone(true);
                 alert('تم بدء البث الصوتي المباشر بنجاح!');
             });
@@ -2014,7 +2004,41 @@
             }).then(stream => {
                 localAudioStream = stream;
                 stream.getAudioTracks().forEach(track => { track.enabled = true; });
+                
+                // بث الصوت الفعلي عبر WebRTC أو Data Stream إذا لزم الأمر، أو تفعيل مشغل الصوت المحلي
+                const mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data && event.data.size > 0 && !isMicMuted) {
+                        const reader = new FileReader();
+                        reader.readAsDataURL(event.data);
+                        reader.onloadend = function() {
+                            const base64Audio = reader.result;
+                            const senderKey = isTeacher ? 'teacher' : ('student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_'));
+                            db.ref(`live_audio_stream/${activeRoomId}`).set({
+                                sender: senderKey,
+                                audioData: base64Audio,
+                                timestamp: Date.now()
+                            });
+                        }
+                    }
+                };
+                mediaRecorder.start(500); // إرسال حزم صوتية كل 500 ميلي ثانية
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
+        }
+
+        function setupAudioReceiver() {
+            const audioPlayer = document.getElementById('remoteAudioPlayer');
+            db.ref(`live_audio_stream/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                if (data && data.audioData) {
+                    const myKey = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'teacher' : ('student_' + (currentStudentName ? currentStudentName.replace(/[.#$\/\[\]]/g, '_') : ''));
+                    // لا تقم بتشغيل الصوت الصادر منك لكي لا يحدث صدى
+                    if (data.sender !== myKey) {
+                        audioPlayer.src = data.audioData;
+                        audioPlayer.play().catch(e => console.log("Audio autoplay prevented:", e));
+                    }
+                }
+            });
         }
 
         function toggleMicrophone() {
@@ -2317,7 +2341,7 @@
         function fetchSchedules() {
             fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) { Object.keys(data).forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
+                if (data) { Object.keys(data).keys().forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
                 const schList = document.getElementById('schList');
                 if (schList) schList.innerHTML = html || '<p>لا توجد حصص.</p>';
             });
