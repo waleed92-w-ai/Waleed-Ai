@@ -64,6 +64,7 @@
         .btn-danger { background: var(--danger); color: white; }
         .btn-warning { background: var(--warning); color: white; }
         .btn-secondary { background: #64748b; color: white; }
+        .btn-whatsapp { background: #25d366; color: white; }
         .btn-block { width: 100%; }
         .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
         .sub-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px; padding: 22px 14px; text-align: center; font-weight: 800; cursor: pointer; transition: all 0.25s; display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative; z-index: 95; }
@@ -343,7 +344,7 @@
             <div id="adminSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;" id="adminSidebarTitleText">لوحة الأدمن</div>
                 <button class="nav-item" id="navNotifications">
-                    <i class="fas fa-bell"></i> إشعارات وطلبات الطلاب
+                    <i class="fas fa-bell"></i> طلبات الاشتراكات والدفع
                     <span class="notif-badge" id="sidebarNotifBadge" style="position:static; margin-right:auto; display:none;">0</span>
                 </button>
                 <button class="nav-item" id="navPlatformUsers"><i class="fas fa-users-cog" style="color:#38bdf8;"></i> متابعة وإدارة المدرسين والطلبة</button>
@@ -393,6 +394,10 @@
                         <input type="text" class="form-control" id="nStudentName" required placeholder="اسمك الكامل">
                     </div>
                     <div class="form-group">
+                        <label>رقم هاتف الطالب (الواتساب للتواصل وإرسال الكود)</label>
+                        <input type="text" class="form-control" id="nPhone" required placeholder="مثال: 07800000000 أو 9647800000000">
+                    </div>
+                    <div class="form-group">
                         <label>طريقة التحويل التي استخدمتها</label>
                         <select class="form-control" id="nPayMethod">
                             <option value="زين كاش">زين كاش</option>
@@ -403,19 +408,18 @@
                         <label>رقم عملية التحويل / رقم المرجع (Transaction ID)</label>
                         <input type="text" class="form-control" id="nRefNum" required placeholder="أدخل رقم العملية المكتوب في الوصل">
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> إرسال الإشعار للأدمن</button>
+                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> إرسال طلب التحويل للأدمن</button>
                 </form>
             </div>
 
             <div class="card" id="sectionNotifications" style="display: none;">
-                <div class="card-header"><i class="fas fa-bell"></i> الإشعارات والطلبات المباشرة من الطلاب</div>
-                <div id="liveNotificationsList">جاري تحميل الإشعارات...</div>
+                <div class="card-header"><i class="fas fa-bell"></i> طلبات الاشتراكات والدفع المعلقة (مع زر إرسال الكود عبر واتساب)</div>
+                <div id="liveNotificationsList">جاري تحميل الطلبات...</div>
             </div>
 
             <div class="card" id="sectionPlatformUsers" style="display: none;">
                 <div class="card-header"><i class="fas fa-users-cog"></i> سجل ومتابعة المنصة (المدرسون، والطلبة المشتركون وإدارة الحذف)</div>
                 
-                <!-- أزرار الحذف الجماعي للطلاب عند انتهاء الدوام -->
                 <div style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1.5px dashed var(--danger); margin-bottom: 25px;">
                     <h4 style="color: var(--danger); font-weight: 900; margin-bottom: 10px;"><i class="fas fa-trash-alt"></i> إنهاء الدوام وحذف الطلاب (يبقى المحتوى والغرف سليمة)</h4>
                     <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">يمكنك حذف جميع الطلاب دفعة واحدة أو حذف صف محدد بانتهاء الدوام. سيحتاج الطلاب لكودات جديدة للدخول مرة أخرى.</p>
@@ -1246,11 +1250,9 @@
         function deleteStudentsByGradeBatch() {
             const gradeName = document.getElementById('batchGradeSelect').value;
             if (confirm(`⚠️ هل أنت متأكد من حذف طلاب صف (${gradeName}) فقط؟`)) {
-                // تصفية وحذف الكودات المرتبطة أو تفريغ الجلسة
                 fetch(`${DATABASE_URL}/vouchers.json`).then(res => res.json()).then(data => {
                     if (data) {
                         Object.keys(data).forEach(k => {
-                            // يمكنك حذفهم مباشرة أو حسب الحاجة
                             fetch(`${DATABASE_URL}/vouchers/${k}.json`, { method: 'DELETE' });
                         });
                     }
@@ -1401,17 +1403,19 @@
         function sendPaymentNotification(e) {
             e.preventDefault();
             const name = document.getElementById('nStudentName').value.trim();
+            const phone = document.getElementById('nPhone').value.trim();
             const payMethod = document.getElementById('nPayMethod').value;
             const refNum = document.getElementById('nRefNum').value.trim();
             const notifId = 'NOTIF_' + Date.now();
 
             fetch(`${DATABASE_URL}/notifications/${notifId}.json`, {
                 method: 'PUT',
-                body: JSON.stringify({ id: notifId, name, payMethod, refNum, status: 'pending', timestamp: Date.now() }),
+                body: JSON.stringify({ id: notifId, name, phone, payMethod, refNum, status: 'pending', timestamp: Date.now() }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
-                alert('تم إرسال إشعار التحويل للأدمن/المشرفين!');
+                alert('تم إرسال طلب التحويل بنجاح! انتظر مراجعة الأدمن وإرسال كود التفعيل عبر واتساب.');
                 document.getElementById('nStudentName').value = '';
+                document.getElementById('nPhone').value = '';
                 document.getElementById('nRefNum').value = '';
             });
         }
@@ -1428,10 +1432,12 @@
                             count++;
                             html += `
                                 <div class="list-item" style="border-right: 4px solid var(--accent);">
-                                    <div><strong>🔔 طالب: ${notif.name}</strong><br><small>التحويل: ${notif.payMethod} | العملية: ${notif.refNum}</small></div>
-                                    <div style="display:flex; gap:8px;">
-                                        <button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="approvePaymentNotif('${notif.id}', '${notif.name}')">قبول وتوليد كود</button>
-                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('notifications', '${notif.id}', listenToNotificationsRealtime)">رفض</button>
+                                    <div><strong>🔔 طالب: ${notif.name}</strong><br><small>هاتف واتساب: ${notif.phone} | التحويل: ${notif.payMethod} | العملية: ${notif.refNum}</small></div>
+                                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                        <button class="btn btn-whatsapp" style="padding:8px 14px; font-size:0.85rem;" onclick="approveAndSendWhatsApp('${notif.id}', '${notif.name}', '${notif.phone}')">
+                                            <i class="fab fa-whatsapp"></i> قبول وإرسال الكود عبر واتساب
+                                        </button>
+                                        <button class="btn btn-danger" style="padding:8px 12px; font-size:0.8rem;" onclick="deleteItem('notifications', '${notif.id}', listenToNotificationsRealtime)">رفض</button>
                                     </div>
                                 </div>
                             `;
@@ -1449,22 +1455,43 @@
                     }
                 }
                 const notifList = document.getElementById('liveNotificationsList');
-                if (notifList) notifList.innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد إشعارات جديدة.</p>';
+                if (notifList) notifList.innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد طلبات اشتراك معلقة.</p>';
             });
         }
 
-        function approvePaymentNotif(notifId, studentName) {
+        function approveAndSendWhatsApp(notifId, studentName, studentPhone) {
             const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
+            
+            // حفظ الكود في قاعدة البيانات كـ مستخدم أو جاهز
             fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
                 method: 'PUT',
-                body: JSON.stringify({ code: randomCode, isUsed: false, createdAt: Date.now() }),
+                body: JSON.stringify({ code: randomCode, isUsed: true, usedBy: studentName, usedAt: Date.now() }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
+                // تحديث حالة الإشعار
                 fetch(`${DATABASE_URL}/notifications/${notifId}.json`, {
                     method: 'PATCH',
                     body: JSON.stringify({ status: 'approved', generatedCode: randomCode }),
                     headers: { 'Content-Type': 'application/json' }
-                }).then(() => alert(`تم القبول وتوليد الكود بنجاح: ${randomCode}`));
+                }).then(() => {
+                    // تجهيز رسالة الواتساب وضمان الحقوق
+                    let formattedPhone = studentPhone.trim();
+                    if (formattedPhone.startsWith('0')) {
+                        formattedPhone = '964' + formattedPhone.substring(1);
+                    }
+                    
+                    const message = `🎓 *منصة الأستاذ وليد التعليمية - إيصال اشتراك رسمي*\n\n` +
+                                    `أهلاً بك عزيزي الطالب *${studentName}*.\n` +
+                                    `تم تأكيد استلام التحويل المالي وتفعيل اشتراكك الشهري بنجاح.\n\n` +
+                                    `📌 *معلومات حسابك السري:*\n` +
+                                    `• *كود التفعيل:* \`${randomCode}\`\n\n` +
+                                    `⚠️ *تنبيه لحفظ الحقوق:*\n` +
+                                    `هذا الكود مرتبط حصرياً باسمك الثلاثي ورقم هاتفك، ولا يجوز مشاركته مع أي شخص آخر لضمان استمرار اشتراكك وحماية حقوق المنصة.\n\n` +
+                                    `🔗 يرجى الدخول للمنصة والبدء بالدراسة بالتوفيق!`;
+
+                    const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
+                    window.open(whatsappUrl, '_blank');
+                });
             });
         }
 
