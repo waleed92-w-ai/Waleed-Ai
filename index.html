@@ -299,7 +299,6 @@
         }
         .badge-active { background: #d1fae5; color: #059669; }
 
-        /* بطاقة الملزمة المصغرة */
         .file-mini-card {
             background: #f8fafc;
             border: 2px solid #cbd5e1;
@@ -336,7 +335,6 @@
             color: var(--primary);
         }
 
-        /* نافذة العرض المنبثقة للشاشة الكاملة */
         .modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -404,8 +402,8 @@
         </div>
         <div class="top-btns">
             <a href="https://t.me/WALEED92w" target="_blank" class="icon-btn" title="تيليجرام"><i class="fab fa-telegram-plane"></i></a>
-            <button class="icon-btn" id="adminLockBtn" onclick="openAdminModal()" title="لوحة التحكم"><i class="fas fa-user-shield"></i></button>
-            <button class="icon-btn" id="adminExitBtn" onclick="logoutAdmin()" style="display:none;" title="خروج الإدارة"><i class="fas fa-sign-out-alt"></i></button>
+            <button class="icon-btn" id="adminLockBtn" onclick="openAdminModal()" title="دخول الإدارة / الأساتذة"><i class="fas fa-user-shield"></i></button>
+            <button class="icon-btn" id="adminExitBtn" onclick="logoutSystem()" style="display:none;" title="تسجيل خروج"><i class="fas fa-sign-out-alt"></i></button>
         </div>
     </header>
 
@@ -422,26 +420,31 @@
                 <button class="nav-item" onclick="openClass('السادس الاعدادي')"><i class="fas fa-user-graduate"></i> السادس الإعدادي</button>
             </div>
 
-            <!-- لوحة تحكم الأستاذ -->
+            <!-- لوحة تحكم الأدمن (الأستاذ وليد) -->
             <div id="adminSidebarSection" style="display: none;">
-                <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة الإدارة والتحكم</div>
-                <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد</button>
-                <button class="nav-item" onclick="showSection('sectionSubscribers')"><i class="fas fa-users"></i> اسماء المشتركين</button>
-                <button class="nav-item" onclick="showSection('sectionManageSubscribers')"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</button>
-                <button class="nav-item" onclick="showSection('sectionUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات PDF الشاملة</button>
+                <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة الأدمن (الأستاذ وليد)</div>
+                <button class="nav-item" onclick="showSection('sectionRequests')"><i class="fas fa-inbox"></i> طلبات الطلاب وتوليد الأكواد</button>
+                <button class="nav-item" onclick="showSection('sectionTeachersManage')"><i class="fas fa-chalkboard-teacher"></i> إدارة المدرسين بالمنصة</button>
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
+            <!-- لوحة تحكم المدرسين -->
+            <div id="teacherSidebarSection" style="display: none;">
+                <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة المدرس</div>
+                <button class="nav-item" onclick="showSection('sectionTeacherUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملازم مادتي</button>
+                <button class="nav-item" onclick="showSection('sectionLiveRoom')"><i class="fas fa-video"></i> غرفة البث المباشر للدرس</button>
+            </div>
+
             <div style="margin-top: auto; padding-top: 15px;">
-                <button class="nav-item" onclick="logoutStudent()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+                <button class="nav-item" onclick="logoutSystem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
             </div>
         </sidebar>
 
         <main>
 
-            <!-- 1. نموذج طلب الاشتراك والدخول -->
+            <!-- 1. نموذج الدخول برمز التفعيل والمعرف للطالب (أو إرسال طلب جديد) -->
             <div class="card" id="authSection">
-                <div class="card-header"><i class="fas fa-id-card"></i> طلب اشتراك في المنصة التعليمية</div>
+                <div class="card-header"><i class="fas fa-id-card"></i> تسجيل الدخول أو طلب اشتراك للمنصة</div>
                 
                 <div style="background: #eff6ff; padding: 16px; border-radius: 12px; margin-bottom: 18px; border-right: 4px solid var(--accent);">
                     <p style="font-weight: 800; color: var(--primary);"><i class="fas fa-tag"></i> سعر الاشتراك الشهري: <span id="dispPrice">5000</span> دينار</p>
@@ -452,14 +455,33 @@
                     </div>
                 </div>
 
-                <form id="studentAuthForm" onsubmit="submitStudentAuth(event)">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn btn-primary" style="flex:1;" onclick="switchAuthTab('login')">تسجيل دخول (برمز التفعيل)</button>
+                    <button class="btn btn-secondary" style="flex:1;" onclick="switchAuthTab('request')">تقديم طلب اشتراك جديد</button>
+                </div>
+
+                <!-- نموذج الدخول الفعلي بالكود -->
+                <form id="studentLoginForm" onsubmit="loginWithCode(event)">
+                    <div class="form-group">
+                        <label>معرف الطالب (المعرف الفرعي)</label>
+                        <input type="text" class="form-control" id="loginId" required placeholder="أدخل المعرف الخاص بك">
+                    </div>
+                    <div class="form-group">
+                        <label>رمز الدخول السري (Password)</label>
+                        <input type="password" class="form-control" id="loginCode" required placeholder="أدخل رمز الدخول">
+                    </div>
+                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-sign-in-alt"></i> دخول للمنصة فوراً</button>
+                </form>
+
+                <!-- نموذج طلب الاشتراك -->
+                <form id="studentReqForm" onsubmit="submitStudentAuth(event)" style="display: none;">
                     <div class="form-group">
                         <label>الاسم الثلاثي للطالب</label>
-                        <input type="text" class="form-control" id="stFullName" required placeholder="أدخل اسمك الثلاثي">
+                        <input type="text" class="form-control" id="stFullName" placeholder="أدخل اسمك الثلاثي">
                     </div>
                     <div class="form-group">
                         <label>معرف التواصل (يوزر تيليجرام أو رقم الهاتف)</label>
-                        <input type="text" class="form-control" id="stContact" required placeholder="@username">
+                        <input type="text" class="form-control" id="stContact" placeholder="@username">
                     </div>
                     <div class="form-group">
                         <label>طريقة الدفع المحول عبرها</label>
@@ -477,10 +499,10 @@
             <div class="card" id="pendingNotice" style="display: none; text-align: center; padding: 40px 20px;">
                 <i class="fas fa-hourglass-half" id="noticeIcon" style="font-size: 3.5rem; color: var(--warning); margin-bottom: 15px;"></i>
                 <h3 id="noticeTitle" style="color: var(--primary); margin-bottom: 10px;">طلبك قيد المراجعة لدى الأستاذ</h3>
-                <p id="noticeText" style="color: #64748b; margin-bottom: 20px;">تم إرسال طلبك إلى لوحة تحكم المنصة بنجاح. سيتم تفعيل حسابك فور موافقة الأستاذ وليد.</p>
+                <p id="noticeText" style="color: #64748b; margin-bottom: 20px;">تم إرسال طلبك بنجاح. سيتم تفعيل حسابك وإرسال (المعرف ورمز الدخول) إليك فوراً.</p>
                 <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
                     <a href="https://t.me/WALEED92w" target="_blank" class="btn btn-primary"><i class="fab fa-telegram-plane"></i> مراسلة الأستاذ للتعجيل</a>
-                    <button class="btn btn-secondary" onclick="logoutStudent()"><i class="fas fa-redo"></i> تقديم طلب جديد / تغيير اليوزر</button>
+                    <button class="btn btn-secondary" onclick="logoutSystem()"><i class="fas fa-redo"></i> العودة لتسجيل الدخول</button>
                 </div>
             </div>
 
@@ -490,7 +512,7 @@
                 <div class="grid-cards" id="dynamicSubjectsGrid"></div>
             </div>
 
-            <!-- 4. عرض المحاضرات والملفات المصغرة -->
+            <!-- 4. عرض المحاضرات والملفات -->
             <div class="card" id="lecturesSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 id="currentSubTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
@@ -501,64 +523,15 @@
                 </div>
             </div>
 
-            <!-- لوحة التحكم للإدارة -->
+            <!-- لوحة التحكم للأدمن (وليد) -->
             <div class="card" id="sectionRequests" style="display: none;">
-                <div class="card-header"><i class="fas fa-inbox"></i> طلبات الاشتراك الجديد والتجديد (قبول / رفض)</div>
+                <div class="card-header"><i class="fas fa-inbox"></i> طلبات الطلاب وتوليد أكواد التفعيل</div>
                 <div id="requestsList">جاري جلب الطلبات...</div>
             </div>
 
-            <div class="card" id="sectionSubscribers" style="display: none;">
-                <div class="card-header"><i class="fas fa-users"></i> اسماء المشتركين المفعلين</div>
-                <div id="subscribersList">جاري جلب المشتركين...</div>
-            </div>
-
-            <div class="card" id="sectionManageSubscribers" style="display: none;">
-                <div class="card-header"><i class="fas fa-user-cog"></i> التعديل وطرد المشتركين</div>
-                <div id="manageSubscribersList">جاري التحميل...</div>
-            </div>
-
-            <!-- قسم رفع ملفات الـ PDF الشاملة دفعة واحدة (مع التجزئة الذكية) -->
-            <div class="card" id="sectionUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF الشاملة (ملف كامل بضغطة زر)</div>
-                <form onsubmit="handleChunkedUpload(event)">
-                    <div class="form-group">
-                        <label>اختر الصف الدراسي</label>
-                        <select class="form-control" id="upGrade" required>
-                            <option value="الأول المتوسط">الأول المتوسط</option>
-                            <option value="الثاني المتوسط">الثاني المتوسط</option>
-                            <option value="الثالث المتوسط">الثالث المتوسط</option>
-                            <option value="الرابع الاعدادي">الرابع الإعدادي</option>
-                            <option value="الخامس الاعدادي">الخامس الإعدادي</option>
-                            <option value="السادس الاعدادي">السادس الإعدادي</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>اختر المادة</label>
-                        <select class="form-control" id="upSubject" required>
-                            <option value="الحاسوب">💻 الحاسوب</option>
-                            <option value="الرياضيات">📐 الرياضيات</option>
-                            <option value="اللغة العربية">📖 اللغة العربية</option>
-                            <option value="اللغة الإنجليزية">🔤 اللغة الإنجليزية</option>
-                            <option value="الفيزياء">⚡ الفيزياء</option>
-                            <option value="الكيمياء">🧪 الكيمياء</option>
-                            <option value="الأحياء">🧬 الأحياء</option>
-                            <option value="الاجتماعيات">🗺️ الاجتماعيات</option>
-                            <option value="التربية الإسلامية">🕌 التربية الإسلامية</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>عنوان الملزمة أو الكتاب</label>
-                        <input type="text" class="form-control" id="upTitle" required placeholder="مثال: ملزمة الرياضيات الشاملة للفصول الأربعة">
-                    </div>
-
-                    <div class="form-group">
-                        <label>اختر ملف الـ PDF الشامل من هاتفك</label>
-                        <input type="file" class="form-control" id="upFile" accept=".pdf,application/pdf" required style="padding: 10px;">
-                        <small style="color: #64748b; display: block; margin-top: 4px;">💡 سيقوم النظام بتجزئة ورفع الملزمة دفعة واحدة وبملف متكامل ومحمي للمشاهدة.</small>
-                    </div>
-
-                    <button type="submit" id="uploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> رفع ونشر الملف الشامل فوراً</button>
-                </form>
+            <div class="card" id="sectionTeachersManage" style="display: none;">
+                <div class="card-header"><i class="fas fa-chalkboard-teacher"></i> قائمة المدرسين المسجلين في المنصة</div>
+                <div id="teachersManageList">جاري جلب المدرسين...</div>
             </div>
 
             <div class="card" id="sectionSettings" style="display: none;">
@@ -576,31 +549,120 @@
                 </form>
             </div>
 
+            <!-- لوحة تحكم المدرس -->
+            <div class="card" id="sectionTeacherUpload" style="display: none;">
+                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF لمادتي الخاصة</div>
+                <form onsubmit="handleTeacherUpload(event)">
+                    <div class="form-group">
+                        <label>اختر الصف الدراسي</label>
+                        <select class="form-control" id="tUpGrade" required>
+                            <option value="الأول المتوسط">الأول المتوسط</option>
+                            <option value="الثاني المتوسط">الثاني المتوسط</option>
+                            <option value="الثالث المتوسط">الثالث المتوسط</option>
+                            <option value="الرابع الاعدادي">الرابع الإعدادي</option>
+                            <option value="الخامس الاعدادي">الخامس الإعدادي</option>
+                            <option value="السادس الاعدادي">السادس الإعدادي</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>عنوان الملزمة أو الكتاب</label>
+                        <input type="text" class="form-control" id="tUpTitle" required placeholder="مثال: الملزمة الشاملة لمادتي">
+                    </div>
+                    <div class="form-group">
+                        <label>اختر ملف الـ PDF</label>
+                        <input type="file" class="form-control" id="tUpFile" accept=".pdf,application/pdf" required style="padding: 10px;">
+                    </div>
+                    <button type="submit" id="tUploadBtn" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> نشر الملزمة فوراً</button>
+                </form>
+            </div>
+
+            <div class="card" id="sectionLiveRoom" style="display: none;">
+                <div class="card-header"><i class="fas fa-video"></i> غرفة البث المباشر للدرس (مع الطلاب)</div>
+                <div style="text-align: center; padding: 20px;">
+                    <p style="color: #64748b; margin-bottom: 15px;">انقر لبدء غرفة البث المباشر الفوري مع طلابك عبر منصة البث الآمنة:</p>
+                    <a href="https://meet.jit.si/WaleedAcademyLiveClass2026" target="_blank" class="btn btn-success" style="font-size: 1.1rem; padding: 15px 30px;"><i class="fas fa-broadcast-tower"></i> بدء البث المباشر الآن</a>
+                </div>
+            </div>
+
         </main>
     </div>
 
-    <!-- نافذة عرض الـ PDF المحمية بالكامل -->
+    <!-- نافذة عرض الـ PDF المحمية -->
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box">
             <div class="modal-header-bar">
                 <span id="modalFileTitle">عرض الملزمة</span>
                 <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="closeFileModal()"><i class="fas fa-times"></i> إغلاق</button>
             </div>
-            <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;">
-                <!-- يتم حقن عارض الـ PDF هنا -->
-            </div>
+            <div class="modal-body-viewer" id="modalViewerContainer" oncontextmenu="return false;"></div>
         </div>
     </div>
 
+    <!-- نافذة تسجيل الدخول الشاملة (أدمن، مدرس، أو تسجيل مدرس جديد) -->
     <div class="modal" id="adminModal">
-        <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 420px; padding: 24px;">
-            <div class="card-header"><i class="fas fa-lock"></i> دخول لوحة الأستاذ وليد</div>
-            <div class="form-group">
-                <label>كلمة المرور السريّة</label>
-                <input type="password" class="form-control" id="adminPassInput" placeholder="أدخل كلمة المرور">
+        <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 440px; padding: 24px; max-height: 90vh; overflow-y: auto;">
+            <div class="card-header"><i class="fas fa-user-shield"></i> بوابة الإدارة والأساتذة</div>
+            
+            <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                <button class="btn btn-primary" style="flex:1; font-size:0.85rem;" onclick="switchLoginTab('admin')">دخول الأدمن</button>
+                <button class="btn btn-secondary" style="flex:1; font-size:0.85rem;" onclick="switchLoginTab('teacher')">دخول مدرس</button>
+                <button class="btn btn-warning" style="flex:1; font-size:0.85rem;" onclick="switchLoginTab('registerTeacher')">تسجيل مدرس جديد</button>
             </div>
-            <button class="btn btn-primary btn-block" onclick="verifyAdminLogin()">دخول الإدارة</button>
-            <button class="btn btn-danger btn-block" onclick="closeAdminModal()" style="margin-top: 8px; background: transparent; color: #64748b;">إلغاء</button>
+
+            <!-- نموذج دخول الأدمن -->
+            <div id="loginAdminBox">
+                <div class="form-group">
+                    <label>كلمة مرور الأدمن (وليد)</label>
+                    <input type="password" class="form-control" id="adminPassInput" placeholder="أدخل كلمة المرور">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="verifyAdminLogin()">دخول الأدمن</button>
+            </div>
+
+            <!-- نموذج دخول المدرس -->
+            <div id="loginTeacherBox" style="display: none;">
+                <div class="form-group">
+                    <label>يوزر المدرس</label>
+                    <input type="text" class="form-control" id="teacherUsername" placeholder="يوزر المدرس">
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" class="form-control" id="teacherPassword" placeholder="كلمة المرور">
+                </div>
+                <button class="btn btn-success btn-block" onclick="verifyTeacherLogin()">دخول المدرس</button>
+            </div>
+
+            <!-- نموذج تسجيل مدرس جديد -->
+            <div id="registerTeacherBox" style="display: none;">
+                <div class="form-group">
+                    <label>اسم المدرس الثلاثي</label>
+                    <input type="text" class="form-control" id="regTName" placeholder="مثال: أحمد محمد">
+                </div>
+                <div class="form-group">
+                    <label>المادة الدراسية المختصة</label>
+                    <select class="form-control" id="regTSubject">
+                        <option value="الحاسوب">💻 الحاسوب</option>
+                        <option value="الرياضيات">📐 الرياضيات</option>
+                        <option value="اللغة العربية">📖 اللغة العربية</option>
+                        <option value="اللغة الإنجليزية">🔤 اللغة الإنجليزية</option>
+                        <option value="الفيزياء">⚡ الفيزياء</option>
+                        <option value="الكيمياء">🧪 الكيمياء</option>
+                        <option value="الأحياء">🧬 الأحياء</option>
+                        <option value="الاجتماعيات">🗺️ الاجتماعيات</option>
+                        <option value="التربية الإسلامية">🕌 التربية الإسلامية</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>يوزر تسجيل الدخول (Username)</label>
+                    <input type="text" class="form-control" id="regTUser" placeholder="اختر يوزر خاص بك">
+                </div>
+                <div class="form-group">
+                    <label>كلمة المرور (Password)</label>
+                    <input type="password" class="form-control" id="regTPass" placeholder="اختر كلمة مرور">
+                </div>
+                <button class="btn btn-warning btn-block" onclick="registerNewTeacher(event)">تسجيل وانضمام للمنصة</button>
+            </div>
+
+            <button class="btn btn-danger btn-block" onclick="closeAdminModal()" style="margin-top: 12px; background: transparent; color: #64748b;">إلغاء</button>
         </div>
     </div>
 
@@ -615,7 +677,8 @@
         const ADMIN_HASH = "V0ExOTkyd2E="; // WA1992wa
         let activeClass = "";
         let activeSub = "";
-        let sessionWatchInterval = null;
+        let currentRole = ""; // 'admin', 'teacher', 'student'
+        let loggedTeacherData = null;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -631,9 +694,7 @@
 
         window.onload = function() {
             loadSettingsData();
-            fetchRequestsData();
             checkStudentSession();
-            startSessionGuard();
         };
 
         function loadSettingsData() {
@@ -664,222 +725,199 @@
             }).then(() => alert('تم حفظ الإعدادات بنجاح!'));
         }
 
+        function switchAuthTab(tab) {
+            if (tab === 'login') {
+                document.getElementById('studentLoginForm').style.display = 'block';
+                document.getElementById('studentReqForm').style.display = 'none';
+            } else {
+                document.getElementById('studentLoginForm').style.display = 'none';
+                document.getElementById('studentReqForm').style.display = 'block';
+            }
+        }
+
+        function switchLoginTab(tab) {
+            document.getElementById('loginAdminBox').style.display = (tab === 'admin') ? 'block' : 'none';
+            document.getElementById('loginTeacherBox').style.display = (tab === 'teacher') ? 'block' : 'none';
+            document.getElementById('registerTeacherBox').style.display = (tab === 'registerTeacher') ? 'block' : 'none';
+        }
+
         function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
-        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; document.getElementById('adminPassInput').value = ''; }
+        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
 
         function verifyAdminLogin() {
             const pass = document.getElementById('adminPassInput').value;
             if (btoa(pass) === ADMIN_HASH) {
+                currentRole = 'admin';
                 document.getElementById('adminSidebarSection').style.display = 'block';
+                document.getElementById('teacherSidebarSection').style.display = 'none';
                 document.getElementById('adminLockBtn').style.display = 'none';
                 document.getElementById('adminExitBtn').style.display = 'flex';
-                document.getElementById('topSubtitle').innerText = "لوحة إدارة المنصة والطلاب";
+                document.getElementById('topSubtitle').innerText = "لوحة تحكم الأدمن (الأستاذ وليد)";
                 closeAdminModal();
                 showSection('sectionRequests');
                 fetchRequestsData();
+                fetchTeachersList();
             } else {
                 alert('كلمة المرور غير صحيحة!');
             }
         }
 
-        function logoutAdmin() {
+        function verifyTeacherLogin() {
+            const user = document.getElementById('teacherUsername').value.trim();
+            const pass = document.getElementById('teacherPassword').value.trim();
+
+            fetch(`${DATABASE_URL}/teachers.json`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data) {
+                        alert('لا يوجد مدرسين مسجلين بعد.');
+                        return;
+                    }
+                    let found = null;
+                    Object.keys(data).forEach(k => {
+                        if (data[k].username === user && data[k].password === pass) {
+                            found = data[k];
+                        }
+                    });
+
+                    if (found) {
+                        currentRole = 'teacher';
+                        loggedTeacherData = found;
+                        document.getElementById('adminSidebarSection').style.display = 'none';
+                        document.getElementById('teacherSidebarSection').style.display = 'block';
+                        document.getElementById('adminLockBtn').style.display = 'none';
+                        document.getElementById('adminExitBtn').style.display = 'flex';
+                        document.getElementById('topSubtitle').innerText = `المدرس: ${found.name} (${found.subject})`;
+                        closeAdminModal();
+                        showSection('sectionTeacherUpload');
+                    } else {
+                        alert('اسم المستخدم أو كلمة المرور غير صحيحة!');
+                    }
+                }).catch(() => alert('حدث خطأ في الاتصال.'));
+        }
+
+        function registerNewTeacher(e) {
+            e.preventDefault();
+            const name = document.getElementById('regTName').value.trim();
+            const subject = document.getElementById('regTSubject').value;
+            const username = document.getElementById('regTUser').value.trim();
+            const password = document.getElementById('regTPass').value.trim();
+
+            if (!name || !username || !password) {
+                alert('يرجى إكمال جميع الحقول');
+                return;
+            }
+
+            const tId = 'T_' + Date.now();
+            const tData = { id: tId, name, subject, username, password };
+
+            fetch(`${DATABASE_URL}/teachers/${tId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(tData),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert('تم تسجيل حسابك كمدرس بنجاح! يمكنك الآن تسجيل الدخول.');
+                switchLoginTab('teacher');
+            });
+        }
+
+        function logoutSystem() {
+            localStorage.removeItem('student_session');
+            currentRole = '';
+            loggedTeacherData = null;
             document.getElementById('adminSidebarSection').style.display = 'none';
+            document.getElementById('teacherSidebarSection').style.display = 'none';
             document.getElementById('adminLockBtn').style.display = 'flex';
             document.getElementById('adminExitBtn').style.display = 'none';
             document.getElementById('topSubtitle').innerText = "المرحلة الثانوية";
-            checkStudentSession();
+            showSection('authSection');
         }
 
         function showSection(sectionId) {
-            const sections = ['authSection', 'pendingNotice', 'subjectsSection', 'lecturesSection', 'sectionRequests', 'sectionSubscribers', 'sectionManageSubscribers', 'sectionUpload', 'sectionSettings'];
+            const sections = ['authSection', 'pendingNotice', 'subjectsSection', 'lecturesSection', 'sectionRequests', 'sectionTeachersManage', 'sectionSettings', 'sectionTeacherUpload', 'sectionLiveRoom'];
             sections.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
             });
-            if (sectionId === 'sectionRequests' || sectionId === 'sectionSubscribers' || sectionId === 'sectionManageSubscribers') {
-                fetchRequestsData();
-            }
+            if (sectionId === 'sectionRequests') fetchRequestsData();
+            if (sectionId === 'sectionTeachersManage') fetchTeachersList();
         }
 
         async function submitStudentAuth(e) {
             e.preventDefault();
-            const nameInput = document.getElementById('stFullName');
-            const contactInput = document.getElementById('stContact');
-            const paySelect = document.getElementById('stPayMethod');
+            const name = document.getElementById('stFullName').value.trim();
+            const contact = document.getElementById('stContact').value.trim();
+            const pay = document.getElementById('stPayMethod').value;
             const submitBtn = document.getElementById('submitBtn');
 
-            const name = nameInput.value.trim();
-            const contact = contactInput.value.trim();
-            const pay = paySelect.value;
-
             if (!name || !contact) {
-                alert('يرجى إكمال جميع الحقول المطلوبة');
+                alert('يرجى إكمال جميع الحقول');
                 return;
             }
 
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري إرسال الطلب للمنصة...`;
+            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...`;
 
-            const cleanContact = contact.replace(/[^a-zA-Z0-9]/g, '_');
-            const key = 'ST_' + Date.now() + '_' + cleanContact;
+            const key = 'ST_' + Date.now();
+            const reqData = { id: key, name, contact, paymentMethod: pay, status: 'pending', timestamp: Date.now() };
 
-            const reqData = {
-                id: key,
-                name: name,
-                contact: contact,
-                paymentMethod: pay,
-                status: 'pending',
-                timestamp: Date.now()
-            };
-
-            try {
-                const response = await fetch(`${DATABASE_URL}/requests/${key}.json`, {
-                    method: 'PUT',
-                    body: JSON.stringify(reqData),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-
-                if (response.ok) {
-                    localStorage.setItem('wal_key', key);
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
-                    
-                    document.getElementById('noticeIcon').className = "fas fa-hourglass-half";
-                    document.getElementById('noticeIcon').style.color = "var(--warning)";
-                    document.getElementById('noticeTitle').innerText = "طلبك قيد المراجعة لدى الأستاذ";
-                    document.getElementById('noticeText').innerText = "تم إرسال طلبك إلى لوحة تحكم المنصة بنجاح. سيتم تفعيل حسابك فور موافقة الأستاذ وليد.";
-                    showSection('pendingNotice');
-                    startSessionGuard();
-                } else {
-                    throw new Error('فشل الحفظ');
-                }
-            } catch (error) {
-                db.ref('requests/' + key).set(reqData).then(() => {
-                    localStorage.setItem('wal_key', key);
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
-                    
-                    document.getElementById('noticeIcon').className = "fas fa-hourglass-half";
-                    document.getElementById('noticeIcon').style.color = "var(--warning)";
-                    document.getElementById('noticeTitle').innerText = "طلبك قيد المراجعة لدى الأستاذ";
-                    document.getElementById('noticeText').innerText = "تم إرسال طلبك إلى لوحة تحكم المنصة بنجاح. سيتم تفعيل حسابك فور موافقة الأستاذ وليد.";
-                    showSection('pendingNotice');
-                    startSessionGuard();
-                }).catch(() => {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
-                    alert('حدث خطأ في الاتصال، يرجى المحاولة مرة أخرى.');
-                });
-            }
+            fetch(`${DATABASE_URL}/requests/${key}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(reqData),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                document.getElementById('noticeIcon').className = "fas fa-hourglass-half";
+                document.getElementById('noticeIcon').style.color = "var(--warning)";
+                document.getElementById('noticeTitle').innerText = "طلبك قيد المراجعة لدى الأدمن";
+                document.getElementById('noticeText').innerText = "تم إرسال طلبك بنجاح. سيتم تفعيل حسابك وإرسال (المعرف ورمز الدخول) إليك فوراً.";
+                showSection('pendingNotice');
+            }).catch(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> إرسال الطلب للمنصة`;
+                alert('حدث خطأ في الاتصال.');
+            });
         }
 
-        function logoutStudent() {
-            localStorage.removeItem('wal_key');
-            if (sessionWatchInterval) clearInterval(sessionWatchInterval);
-            closeFileModal();
-            showSection('authSection');
+        function loginWithCode(e) {
+            e.preventDefault();
+            const idInput = document.getElementById('loginId').value.trim();
+            const codeInput = document.getElementById('loginCode').value.trim();
+
+            fetch(`${DATABASE_URL}/requests/${idInput}.json`)
+                .then(res => res.json())
+                .then(req => {
+                    if (req && req.status === 'active' && req.passCode === codeInput) {
+                        localStorage.setItem('student_session', JSON.stringify(req));
+                        openClass('الأول المتوسط');
+                    } else {
+                        alert('المعرف أو رمز الدخول غير صحيح، أو أن حسابك غير مفعل بعد.');
+                    }
+                }).catch(() => alert('حدث خطأ في التحقق.'));
         }
 
         function checkStudentSession() {
-            if (document.getElementById('adminSidebarSection').style.display === 'block') return;
-
-            const key = localStorage.getItem('wal_key');
-            if (!key) {
-                showSection('authSection');
-                return;
-            }
-
-            fetch(`${DATABASE_URL}/requests/${key}.json`)
-                .then(res => res.json())
-                .then(req => {
-                    if (!req) {
-                        localStorage.removeItem('wal_key');
-                        showSection('authSection');
-                        return;
-                    }
-
-                    if (req.status === 'active' && req.activatedAt) {
-                        const monthTime = 30 * 24 * 60 * 60 * 1000;
-                        if (Date.now() - req.activatedAt > monthTime) {
-                            fetch(`${DATABASE_URL}/requests/${key}/status.json`, {
-                                method: 'PUT',
-                                body: JSON.stringify('expired'),
-                                headers: { 'Content-Type': 'application/json' }
-                            });
-                            req.status = 'expired';
-                        }
-                    }
-
-                    if (req.status === 'pending') {
-                        document.getElementById('noticeIcon').className = "fas fa-hourglass-half";
-                        document.getElementById('noticeIcon').style.color = "var(--warning)";
-                        document.getElementById('noticeTitle').innerText = "طلبك قيد المراجعة لدى الأستاذ";
-                        document.getElementById('noticeText').innerText = "تم إرسال طلبك إلى لوحة تحكم المنصة بنجاح. سيتم تفعيل حسابك فور موافقة الأستاذ وليد.";
-                        showSection('pendingNotice');
-                    } else if (req.status === 'expired' || req.status === 'rejected' || req.status === 'cancelled') {
-                        document.getElementById('noticeIcon').className = "fas fa-calendar-times";
-                        document.getElementById('noticeIcon').style.color = "var(--danger)";
-                        document.getElementById('noticeTitle').innerText = "انتهت صلاحية اشتراكك الشهري";
-                        document.getElementById('noticeText').innerText = "عذراً، لقد انقضى شهر على اشتراكك. يرجى تجديد الاشتراك والدفع لمتابعة الدراسة.";
-                        showSection('pendingNotice');
-                    } else if (req.status === 'active') {
-                        if (!activeClass || document.getElementById('authSection').style.display === 'block' || document.getElementById('pendingNotice').style.display === 'block') {
+            if (currentRole) return;
+            const session = localStorage.getItem('student_session');
+            if (session) {
+                const student = JSON.parse(session);
+                fetch(`${DATABASE_URL}/requests/${student.id}.json`)
+                    .then(res => res.json())
+                    .then(req => {
+                        if (req && req.status === 'active') {
                             openClass('الأول المتوسط');
+                        } else {
+                            localStorage.removeItem('student_session');
+                            showSection('authSection');
                         }
-                    }
-                }).catch(() => {});
-        }
-
-        function startSessionGuard() {
-            if (sessionWatchInterval) clearInterval(sessionWatchInterval);
-            sessionWatchInterval = setInterval(() => {
-                if (document.getElementById('adminSidebarSection').style.display === 'block') return;
-                const key = localStorage.getItem('wal_key');
-                if (key) {
-                    fetch(`${DATABASE_URL}/requests/${key}.json`)
-                        .then(res => res.json())
-                        .then(req => {
-                            if (!req) {
-                                localStorage.removeItem('wal_key');
-                                showSection('authSection');
-                                return;
-                            }
-
-                            if (req.status === 'active' && req.activatedAt) {
-                                const monthTime = 30 * 24 * 60 * 60 * 1000;
-                                if (Date.now() - req.activatedAt > monthTime) {
-                                    fetch(`${DATABASE_URL}/requests/${key}/status.json`, {
-                                        method: 'PUT',
-                                        body: JSON.stringify('expired'),
-                                        headers: { 'Content-Type': 'application/json' }
-                                    });
-                                    checkStudentSession();
-                                    return;
-                                }
-                            }
-
-                            if (req.status === 'active') {
-                                if (document.getElementById('pendingNotice').style.display === 'block' || document.getElementById('authSection').style.display === 'block') {
-                                    if (!activeClass) openClass('الأول المتوسط');
-                                }
-                            } else {
-                                checkStudentSession();
-                            }
-                        }).catch(() => {});
-                }
-            }, 3000);
+                    }).catch(() => showSection('authSection'));
+            } else {
+                showSection('authSection');
+            }
         }
 
         function openClass(className) {
-            const key = localStorage.getItem('wal_key');
-            const isAdmin = document.getElementById('adminSidebarSection').style.display === 'block';
-
-            if (!isAdmin && !key) {
-                alert('يرجى تقديم طلب اشتراك أولاً للوصول للصفوف الدراسية.');
-                showSection('authSection');
-                return;
-            }
-
             activeClass = className;
             document.getElementById('currentClassName').innerText = className;
             showSection('subjectsSection');
@@ -889,7 +927,6 @@
         function renderAllSubjectsGrid() {
             const gridContainer = document.getElementById('dynamicSubjectsGrid');
             let html = '';
-
             allSubjectsList.forEach(sub => {
                 html += `
                     <div class="sub-card" onclick="openSubject('${sub.name}')">
@@ -898,7 +935,6 @@
                     </div>
                 `;
             });
-
             gridContainer.innerHTML = html;
         }
 
@@ -909,9 +945,7 @@
             renderLectures();
         }
 
-        function backToSubjectsView() {
-            showSection('subjectsSection');
-        }
+        function backToSubjectsView() { showSection('subjectsSection'); }
 
         function renderLectures() {
             const container = document.getElementById('lecturesContainer');
@@ -921,7 +955,7 @@
                 .then(res => res.json())
                 .then(data => {
                     if (!data) {
-                        container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو ملفات مرفوعة لهذه المادة حتى الآن.</p>`;
+                        container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد ملازم مرفوعة لهذه المادة حتى الآن.</p>`;
                         return;
                     }
 
@@ -929,11 +963,8 @@
                     Object.keys(data).forEach(k => {
                         const item = data[k];
                         if (item.grade === activeClass && item.subject === activeSub) {
-                            // تجميع الأجزاء المقسمة تلقائياً لتعمل كملف واحد متكامل لدى الطالب
                             let fullData = item.fileData || "";
-                            if (item.chunks && typeof item.chunks === 'object') {
-                                fullData = Object.values(item.chunks).join('');
-                            }
+                            if (item.chunks) fullData = Object.values(item.chunks).join('');
                             let safeData = encodeURIComponent(fullData);
 
                             html += `
@@ -944,30 +975,21 @@
                                     </div>
                                     <div style="display: flex; align-items: center; gap: 10px;">
                                         <span class="badge badge-active"><i class="fas fa-eye"></i> عرض الملزمة كاملة</span>
-                                        ${document.getElementById('adminSidebarSection').style.display === 'block' ? `
-                                            <button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="event.stopPropagation(); deleteContent('${item.id}')">حذف</button>
-                                        ` : ''}
+                                        ${currentRole === 'admin' ? `<button class="btn btn-danger" style="padding: 6px 12px; font-size: 0.8rem;" onclick="event.stopPropagation(); deleteContent('${item.id}')">حذف</button>` : ''}
                                     </div>
                                 </div>
                             `;
                         }
                     });
-
-                    container.innerHTML = html || `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد محاضرات أو ملفات مرفوعة لهذه المادة حتى الآن.</p>`;
-                }).catch(() => {
-                    container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">حدث خطأ في تحميل المحتوى.</p>`;
-                });
+                    container.innerHTML = html || `<p style="text-align:center; color:#64748b; padding:20px;">لا توجد ملازم مرفوعة لهذه المادة حتى الآن.</p>`;
+                }).catch(() => { container.innerHTML = `<p style="text-align:center; color:#64748b; padding:20px;">حدث خطأ.</p>`; });
         }
 
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             const container = document.getElementById('modalViewerContainer');
             let realData = decodeURIComponent(encodedData);
-
-            container.innerHTML = `<object data="${realData}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%">
-                <embed src="${realData}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%" />
-            </object>`;
-
+            container.innerHTML = `<object data="${realData}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%"><embed src="${realData}#view=FitH&toolbar=0&navpanes=0&statusbar=0" type="application/pdf" width="100%" height="100%" /></object>`;
             document.getElementById('fileViewerModal').style.display = 'flex';
         }
 
@@ -977,9 +999,8 @@
         }
 
         function deleteContent(id) {
-            if (confirm('هل تريد حذف هذه الملزمة نهائياً؟')) {
-                fetch(`${DATABASE_URL}/contents/${id}.json`, { method: 'DELETE' })
-                    .then(() => renderLectures());
+            if (confirm('هل تريد حذف هذه الملزمة؟')) {
+                fetch(`${DATABASE_URL}/contents/${id}.json`, { method: 'DELETE' }).then(() => renderLectures());
             }
         }
 
@@ -988,137 +1009,120 @@
                 .then(res => res.json())
                 .then(data => {
                     const reqList = document.getElementById('requestsList');
-                    const subList = document.getElementById('subscribersList');
-                    const manageList = document.getElementById('manageSubscribersList');
-
                     if (!data) {
-                        reqList.innerHTML = '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة حالياً.</p>';
-                        subList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين مفعلين حالياً.</p>';
-                        manageList.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
+                        reqList.innerHTML = '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة.</p>';
                         return;
                     }
-
-                    let reqHtml = '', subHtml = '', manageHtml = '';
-
+                    let html = '';
                     Object.keys(data).forEach(k => {
                         const r = data[k];
-
-                        if (r.status === 'pending' || r.status === 'expired') {
-                            let titleLabel = r.status === 'expired' ? '<span style="color:var(--danger);">(منتهي الشهر - يطلب تجديد)</span>' : '';
-                            reqHtml += `
+                        if (r.status === 'pending') {
+                            html += `
                                 <div class="list-item">
                                     <div>
-                                        <strong>${r.name}</strong> (${r.contact}) ${titleLabel}
-                                        <br><small style="color:#64748b;">طريقة التحويل: ${r.paymentMethod || 'غير محددة'}</small>
+                                        <strong>${r.name}</strong> (${r.contact})
+                                        <br><small style="color:#64748b;">الدفع: ${r.paymentMethod}</small>
                                     </div>
                                     <div>
-                                        <button class="btn btn-success" onclick="activateSubscription('${r.id}')">قبول وتفعيل الشهر</button>
-                                        <button class="btn btn-danger" onclick="setReqStatus('${r.id}', 'rejected')">رفض</button>
+                                        <button class="btn btn-success" onclick="activateStudent('${r.id}')">قبول وتوليد كود الدخول</button>
+                                        <button class="btn btn-danger" onclick="deleteReq('${r.id}')">رفض</button>
                                     </div>
                                 </div>
                             `;
                         } else if (r.status === 'active') {
-                            subHtml += `
+                            html += `
                                 <div class="list-item">
-                                    <div><strong>${r.name}</strong> (${r.contact})</div>
-                                    <span class="badge badge-active">نشط (ساري المفعول)</span>
-                                </div>
-                            `;
-
-                            manageHtml += `
-                                <div class="list-item">
-                                    <div><strong>${r.name}</strong> (${r.contact})</div>
                                     <div>
-                                        <button class="btn btn-warning" onclick="setReqStatus('${r.id}', 'expired')">إنهاء اشتراكه</button>
-                                        <button class="btn btn-danger" onclick="deleteAndExpel('${r.id}')">طرد نهائي</button>
+                                        <strong>${r.name}</strong> - المعرف: <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px;">${r.id}</code> | الكود: <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px;">${r.passCode}</code>
                                     </div>
+                                    <span class="badge badge-active">نشط</span>
                                 </div>
                             `;
                         }
                     });
-
-                    reqList.innerHTML = reqHtml || '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة أو انتهت اشتراكاتها حالياً.</p>';
-                    subList.innerHTML = subHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين مفعلين حالياً.</p>';
-                    manageList.innerHTML = manageHtml || '<p style="text-align:center; color:#64748b;">لا يوجد مشتركين للتعديل على حساباتهم.</p>';
-                }).catch(() => {
-                    document.getElementById('requestsList').innerHTML = '<p style="text-align:center; color:#64748b;">فشل جلب الطلبات.</p>';
-                });
+                    reqList.innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد طلبات معلقة.</p>';
+                }).catch(() => {});
         }
 
-        function activateSubscription(id) {
-            const updateData = {
-                status: 'active',
-                activatedAt: Date.now()
-            };
+        function activateStudent(id) {
+            const passCode = Math.floor(1000 + Math.random() * 9000).toString(); // رمز دخول مكون من 4 أرقام
+            const updateData = { status: 'active', passCode: passCode, activatedAt: Date.now() };
+
             fetch(`${DATABASE_URL}/requests/${id}.json`, {
                 method: 'PATCH',
                 body: JSON.stringify(updateData),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
                 fetchRequestsData();
-                alert('تم تفعيل اشتراك الشهر بنجاح!');
+                alert(`تم تفعيل الطالب بنجاح!\nالمعرف: ${id}\nرمز الدخول: ${passCode}\n(أرسل هذه البيانات للطالب عبر تيليجرام).`);
             });
         }
 
-        function setReqStatus(id, newStatus) {
-            fetch(`${DATABASE_URL}/requests/${id}/status.json`, {
-                method: 'PUT',
-                body: JSON.stringify(newStatus),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => {
-                fetchRequestsData();
-            });
+        function deleteReq(id) {
+            fetch(`${DATABASE_URL}/requests/${id}.json`, { method: 'DELETE' }).then(() => fetchRequestsData());
         }
 
-        function deleteAndExpel(id) {
-            if (confirm('هل أنت متأكد من طرد هذا الطالب نهائياً؟')) {
-                fetch(`${DATABASE_URL}/requests/${id}.json`, { method: 'DELETE' })
-                    .then(() => fetchRequestsData());
+        function fetchTeachersList() {
+            fetch(`${DATABASE_URL}/teachers.json`)
+                .then(res => res.json())
+                .then(data => {
+                    const list = document.getElementById('teachersManageList');
+                    if (!data) {
+                        list.innerHTML = '<p style="text-align:center; color:#64748b;">لا يوجد مدرسين مسجلين بعد.</p>';
+                        return;
+                    }
+                    let html = '';
+                    Object.keys(data).forEach(k => {
+                        const t = data[k];
+                        html += `
+                            <div class="list-item">
+                                <div><strong>${t.name}</strong> - المادة: ${t.subject} (يوزر: ${t.username})</div>
+                                <button class="btn btn-danger" onclick="deleteTeacher('${t.id}')">حذف المدرس</button>
+                            </div>
+                        `;
+                    });
+                    list.innerHTML = html;
+                }).catch(() => {});
+        }
+
+        function deleteTeacher(id) {
+            if (confirm('هل تريد حذف هذا المدرس؟')) {
+                fetch(`${DATABASE_URL}/teachers/${id}.json`, { method: 'DELETE' }).then(() => fetchTeachersList());
             }
         }
 
-        // محرك التجزئة الذكية (Chunking Engine) لرفع الملفات الكبيرة كملف واحد متكامل مجاناً
-        function handleChunkedUpload(e) {
+        function handleTeacherUpload(e) {
             e.preventDefault();
-            const grade = document.getElementById('upGrade').value;
-            const subject = document.getElementById('upSubject').value;
-            const title = document.getElementById('upTitle').value;
-            const fileInput = document.getElementById('upFile');
-            const uploadBtn = document.getElementById('uploadBtn');
+            const grade = document.getElementById('tUpGrade').value;
+            const title = document.getElementById('tUpTitle').value;
+            const fileInput = document.getElementById('tUpFile');
+            const uploadBtn = document.getElementById('tUploadBtn');
 
-            if (fileInput.files.length === 0) {
-                alert('يرجى اختيار ملف الـ PDF الشامل.');
-                return;
-            }
+            if (fileInput.files.length === 0) return;
 
             const file = fileInput.files[0];
             uploadBtn.disabled = true;
-            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري معالجة وتجزئة الملزمة الشاملة...`;
+            uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري النشر...`;
 
             const reader = new FileReader();
             reader.onload = function(evt) {
                 const base64Data = evt.target.result;
                 const contentId = 'CONT_' + Date.now();
-                
-                // تقسيم البيانات إلى أجزاء بحجم 2 ميجابايت لكل جزء لتجاوز حدود قاعدة البيانات بسلاسة
-                const chunkSize = 2 * 1024 * 1024; 
+                const chunkSize = 2 * 1024 * 1024;
                 const chunks = {};
                 for (let i = 0; i < base64Data.length; i += chunkSize) {
-                    let chunkKey = 'part_' + Math.floor(i / chunkSize);
-                    chunks[chunkKey] = base64Data.substring(i, i + chunkSize);
+                    chunks['part_' + Math.floor(i / chunkSize)] = base64Data.substring(i, i + chunkSize);
                 }
 
                 const contentData = {
                     id: contentId,
                     grade: grade,
-                    subject: subject,
+                    subject: loggedTeacherData.subject,
+                    teacherName: loggedTeacherData.name,
                     title: title,
                     chunks: chunks,
-                    fileType: file.type,
                     date: new Date().toLocaleDateString('ar-EG')
                 };
-
-                uploadBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري رفع ونشر الأجزاء للسحابة...`;
 
                 fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
                     method: 'PUT',
@@ -1126,21 +1130,16 @@
                     headers: { 'Content-Type': 'application/json' }
                 }).then(res => {
                     uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> رفع ونشر الملف الشامل فوراً`;
+                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> نشر الملزمة فوراً`;
                     if (res.ok) {
-                        alert('تم رفع ونشر الملزمة الشاملة بنجاح تام وبملف واحد متكامل!');
-                        document.getElementById('upTitle').value = '';
-                        document.getElementById('upFile').value = '';
+                        alert('تم نشر الملزمة لمادتك بنجاح!');
+                        document.getElementById('tUpTitle').value = '';
+                        document.getElementById('tUpFile').value = '';
                     } else {
-                        alert('حدث خطأ أثناء حفظ أجزاء الملف، يرجى المحاولة مرة أخرى.');
+                        alert('حدث خطأ أثناء الرفع.');
                     }
-                }).catch(() => {
-                    uploadBtn.disabled = false;
-                    uploadBtn.innerHTML = `<i class="fas fa-bolt"></i> رفع ونشر الملف الشامل فوراً`;
-                    alert('حدث خطأ في الاتصال بالشبكة.');
                 });
             };
-
             reader.readAsDataURL(file);
         }
     </script>
