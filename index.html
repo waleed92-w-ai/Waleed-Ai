@@ -40,7 +40,7 @@
         .brand-info h1 { font-size: 1.15rem; font-weight: 800; }
         .brand-info p { font-size: 0.78rem; opacity: 0.85; }
         .top-btns { display: flex; gap: 10px; position: relative; }
-        .icon-btn { background: rgba(255,255,255,0.15); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: 0.3s; text-decoration: none; position: relative; }
+        .icon-btn { background: rgba(255,255,255,0.15); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: 0.3s; text-decoration: none; position: relative; z-index: 101; }
         .icon-btn:hover { background: rgba(255,255,255,0.3); }
         .notif-badge { position: absolute; top: -4px; right: -4px; background: var(--danger); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; font-weight: 800; display: none; align-items: center; justify-content: center; border: 2px solid var(--primary-dark); }
         .layout-wrapper { display: flex; flex: 1; }
@@ -573,7 +573,7 @@
         </div>
     </div>
 
-    <!-- عنصر مشغل الصوت الاحتياطي والمشترك -->
+    <!-- عنصر مشغل الصوت المشترك للسامعين -->
     <audio id="remoteAudioPlayer" autoplay playsinline></audio>
 
     <script>
@@ -1505,13 +1505,12 @@
             });
         }
 
-        // تحسين الحصول على المايك مع تفعيل إلغاء الصدى وتقليل الضوضاء
         function initLocalMicrophone() {
             navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
                 localAudioStream = stream;
                 const remoteAudio = document.getElementById('remoteAudioPlayer');
                 remoteAudio.srcObject = stream;
-                remoteAudio.muted = true; // كتم الصوت المحلي لمنع الصدى
+                remoteAudio.muted = true;
                 remoteAudio.play().catch(e => console.log(e));
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في المتصفح.'));
         }
@@ -1534,8 +1533,6 @@
                 const icon = document.getElementById('micToggleIcon');
                 if (icon) icon.className = isMicMuted ? "fas fa-microphone-slash" : "fas fa-microphone";
                 
-                // تحديث حالة الكتم في قاعدة البيانات لتنعكس لدى الجميع
-                const userKey = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'teacher' : 'student';
                 db.ref(`voice_participants/${activeRoomId}`).once('value', snapshot => {
                     const data = snapshot.val();
                     if (data) {
@@ -1818,7 +1815,7 @@
         }
 
         function fetchSchedules() {
-            fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data =>.then(res => res.json()).then(data => {
+            fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) { Object.keys(data).forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
                 const schList = document.getElementById('schList');
