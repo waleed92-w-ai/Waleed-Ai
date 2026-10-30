@@ -106,7 +106,7 @@
     <div id="maintenanceScreen">
         <i class="fas fa-tools"></i>
         <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 10px;">المنصة في حال صيانة حالياً</h2>
-        <p style="font-size: 1.1rem; color: #94a3b8; max-width: 400px;">نقوم بتحديث وتطوير المنصة لقدم أفضل أداء لكم. انتظر قليلاً وستعود للعمل قريباً...</p>
+        <p style="font-size: 1.1rem; color: #94a3b8; max-width: 400px;">نقوم بتحديث وتطوير المنصة لتقديم أفضل أداء لكم. انتظر قليلاً وستعود للعمل قريباً...</p>
     </div>
 
     <header>
@@ -144,10 +144,7 @@
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة المدرس / الغرف</div>
                 <button class="nav-item" id="navCreateRoom"><i class="fas fa-plus-circle" style="color:#10b981;"></i> إنشاء غرفة (عامة أو برمز)</button>
                 <button class="nav-item" id="navManageRooms"><i class="fas fa-edit" style="color:#f59e0b;"></i> إدارة وتعديل غرفتي</button>
-                <button class="nav-item" id="navTeacherUpload"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF لغرفتي</button>
-                <button class="nav-item" id="navTeacherRecordings"><i class="fas fa-film"></i> رفع محاضرة مسجلة</button>
-                <button class="nav-item" id="navTeacherQuiz"><i class="fas fa-question-circle"></i> إنشاء اختبار</button>
-                <button class="nav-item" id="navTeacherHomework"><i class="fas fa-tasks"></i> إضافة واجب بيتي</button>
+                <button class="nav-item" id="navUniversalUpload"><i class="fas fa-cloud-upload-alt" style="color:#38bdf8;"></i> رفع محتوى / ملف للغرفة</button>
                 <button class="nav-item" id="navTeacherReports"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار طالب</button>
             </div>
 
@@ -398,6 +395,51 @@
 
             <div class="card" id="sectionManageRooms" style="display: none;"><div class="card-header"><i class="fas fa-edit"></i> إدارة وتعديل غرفتي</div><div id="myRoomsListContainer">جاري التحميل...</div></div>
             
+            <!-- نافذة رفع الملفات والمحتوى الشاملة لأي قسم في الغرفة -->
+            <div class="card" id="sectionUniversalUpload" style="display: none;">
+                <div class="card-header"><i class="fas fa-cloud-upload-alt" style="color:var(--accent);"></i> رفع محتوى أو ملف جديد لأي قسم بالغرفة</div>
+                <form id="universalUploadForm">
+                    <div class="form-group">
+                        <label>اختر الغرفة</label>
+                        <select class="form-control" id="uniRoomId" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>اختر القسم (المكان الذي سيظهر فيه المحتوى داخل الغرفة)</label>
+                        <select class="form-control" id="uniSectionType" required onchange="handleUniSectionChange(this.value)">
+                            <option value="lecture_pdf">📄 ملزمة / ملف PDF (قسم المحاضرات والملازم)</option>
+                            <option value="recording_video">🎥 محاضرة مسجلة / فيديو (قسم المحاضرات والملازم)</option>
+                            <option value="quiz">📝 اختبار إلكتروني (قسم الاختبارات والواجبات)</option>
+                            <option value="homework">📌 واجب بيتي (قسم الاختبارات والواجبات)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>عنوان المحتوى / الملزمة / الواجب</label>
+                        <input type="text" class="form-control" id="uniTitle" required placeholder="مثال: المحاضرة الأولى في الرياضيات أو ملزمة الفصل الأول">
+                    </div>
+
+                    <!-- حقول متغيرة حسب القسم المختار -->
+                    <div class="form-group" id="uniFieldFileWrap">
+                        <label>اختر ملف (PDF)</label>
+                        <input type="file" class="form-control" id="uniFile" accept=".pdf">
+                    </div>
+
+                    <div class="form-group" id="uniFieldUrlWrap" style="display: none;">
+                        <label>رابط الفيديو أو المحاضرة المسجلة</label>
+                        <input type="text" class="form-control" id="uniUrl" placeholder="أدخل رابط الفيديو (يوتيوب أو رابط مباشر)">
+                    </div>
+
+                    <div id="uniQuizFieldsWrap" style="display: none;">
+                        <div class="form-group"><label>نص السؤال</label><input type="text" class="form-control" id="uniQQuestion" placeholder="السؤال..."></div>
+                        <div class="form-group"><label>الخيار الأول</label><input type="text" class="form-control" id="uniQOpt1" placeholder="خيار 1"></div>
+                        <div class="form-group"><label>الخيار الثاني</label><input type="text" class="form-control" id="uniQOpt2" placeholder="خيار 2"></div>
+                        <div class="form-group"><label>الخيار الثالث</label><input type="text" class="form-control" id="uniQOpt3" placeholder="خيار 3"></div>
+                        <div class="form-group"><label>رقم الإجابة الصحيحة (1 أو 2 أو 3)</label><input type="number" class="form-control" id="uniQCorrect" min="1" max="3" value="1"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-upload"></i> نشر المحتوى في الغرفة فوراً</button>
+                </form>
+            </div>
+
             <div class="card" id="sectionVouchers" style="display: none;">
                 <div class="card-header"><i class="fas fa-ticket-alt"></i> توليد وتفعيل كودات الاشتراكات</div>
                 <form id="generateVoucherForm" style="margin-bottom: 20px; background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #cbd5e1;">
@@ -425,45 +467,6 @@
                 </form>
             </div>
 
-            <div class="card" id="sectionTeacherUpload" style="display: none;"><div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF</div>
-                <form id="teacherUploadForm">
-                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="tUpRoomId"></select></div>
-                    <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="tUpTitle" required></div>
-                    <div class="form-group"><label>ملف PDF</label><input type="file" class="form-control" id="tUpFile" accept=".pdf" required></div>
-                    <button type="submit" class="btn btn-primary btn-block">نشر</button>
-                </form>
-            </div>
-
-            <div class="card" id="sectionTeacherRecordings" style="display: none;"><div class="card-header"><i class="fas fa-film"></i> رفع محاضرة مسجلة</div>
-                <form id="teacherRecordingForm">
-                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="recRoomId"></select></div>
-                    <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="recTitle" required></div>
-                    <div class="form-group"><label>رابط الفيديو</label><input type="text" class="form-control" id="recUrl" required></div>
-                    <button type="submit" class="btn btn-primary btn-block">نشر</button>
-                </form>
-            </div>
-
-            <div class="card" id="sectionTeacherQuiz" style="display: none;"><div class="card-header"><i class="fas fa-question-circle"></i> إنشاء اختبار</div>
-                <form id="teacherQuizForm">
-                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="qRoomId"></select></div>
-                    <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="qTitle" required></div>
-                    <div class="form-group"><label>السؤال</label><input type="text" class="form-control" id="qQuestion" required></div>
-                    <div class="form-group"><label>خيار 1</label><input type="text" class="form-control" id="qOpt1" required></div>
-                    <div class="form-group"><label>خيار 2</label><input type="text" class="form-control" id="qOpt2" required></div>
-                    <div class="form-group"><label>خيار 3</label><input type="text" class="form-control" id="qOpt3" required></div>
-                    <div class="form-group"><label>الإجابة الصحيحة (1 أو 2 أو 3)</label><input type="number" class="form-control" id="qCorrect" min="1" max="3" required></div>
-                    <button type="submit" class="btn btn-success btn-block">نشر</button>
-                </form>
-            </div>
-
-            <div class="card" id="sectionTeacherHomework" style="display: none;"><div class="card-header"><i class="fas fa-tasks"></i> إضافة واجب</div>
-                <form id="teacherHomeworkForm">
-                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="hwRoomId"></select></div>
-                    <div class="form-group"><label>تعليمات الواجب</label><input type="text" class="form-control" id="hwTitle" required></div>
-                    <button type="submit" class="btn btn-primary btn-block">نشر</button>
-                </form>
-            </div>
-
             <div class="card" id="sectionTeacherReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> إنذار طالب</div>
                 <form id="teacherReportForm">
                     <div class="form-group"><label>اسم الطالب</label><input type="text" class="form-control" id="repStudentName" required></div>
@@ -473,6 +476,21 @@
                 </form>
             </div>
         </main>
+    </div>
+
+    <!-- نافذة تعديل العنصر أو المحتوى (للمدرس) -->
+    <div class="modal" id="editItemModal">
+        <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 400px; padding: 24px;">
+            <div class="card-header"><i class="fas fa-edit" style="color:var(--warning);"></i> تعديل عنوان أو اسم العنصر</div>
+            <input type="hidden" id="editItemType">
+            <input type="hidden" id="editItemId">
+            <div class="form-group">
+                <label>العنوان الجديد</label>
+                <input type="text" class="form-control" id="editItemTitleInput">
+            </div>
+            <button class="btn btn-success btn-block" id="saveEditedItemBtn">حفظ التعديل</button>
+            <button class="btn btn-danger btn-block" id="closeEditItemModalBtn" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
+        </div>
     </div>
 
     <div class="modal" id="kickedModal" style="background: rgba(15, 23, 42, 0.95); z-index: 3000;">
@@ -611,7 +629,6 @@
         });
 
         function initEventListeners() {
-            // تفعيل أزرار القائمة الجانبية والتبويبات عبر addEventListeners المباشرة لضمان عدم فشل الاستجابة
             document.getElementById('adminLockBtn').addEventListener('click', openAdminModal);
             document.getElementById('adminExitBtn').addEventListener('click', logoutSystem);
             document.getElementById('logoutBtn').addEventListener('click', logoutSystem);
@@ -624,10 +641,7 @@
 
             document.getElementById('navCreateRoom').addEventListener('click', () => showSection('sectionCreateRoom'));
             document.getElementById('navManageRooms').addEventListener('click', () => showSection('sectionManageRooms'));
-            document.getElementById('navTeacherUpload').addEventListener('click', () => showSection('sectionTeacherUpload'));
-            document.getElementById('navTeacherRecordings').addEventListener('click', () => showSection('sectionTeacherRecordings'));
-            document.getElementById('navTeacherQuiz').addEventListener('click', () => showSection('sectionTeacherQuiz'));
-            document.getElementById('navTeacherHomework').addEventListener('click', () => showSection('sectionTeacherHomework'));
+            document.getElementById('navUniversalUpload').addEventListener('click', () => showSection('sectionUniversalUpload'));
             document.getElementById('navTeacherReports').addEventListener('click', () => showSection('sectionTeacherReports'));
 
             document.getElementById('navNotifications').addEventListener('click', () => showSection('sectionNotifications'));
@@ -662,11 +676,7 @@
             document.getElementById('generateVoucherForm').addEventListener('submit', generateVoucher);
             document.getElementById('settingsForm').addEventListener('submit', saveSettings);
 
-            document.getElementById('teacherUploadForm').addEventListener('submit', handleTeacherUpload);
-            document.getElementById('teacherRecordingForm').addEventListener('submit', handleTeacherRecording);
-            document.getElementById('teacherQuizForm').addEventListener('submit', handleTeacherQuiz);
-            document.getElementById('teacherHomeworkForm').addEventListener('submit', handleTeacherHomework);
-            document.getElementById('teacherReportForm').addEventListener('submit', submitTeacherReport);
+            document.getElementById('universalUploadForm').addEventListener('submit', handleUniversalUpload);
 
             document.getElementById('requestReentryBtn').addEventListener('click', requestReentryToRoom);
             document.getElementById('zoomInBtn').addEventListener('click', () => zoomPdf(0.1));
@@ -688,6 +698,9 @@
             document.getElementById('verifyTeacherBtn').addEventListener('click', verifyTeacherLogin);
             document.getElementById('registerTeacherBtn').addEventListener('click', registerNewTeacher);
             document.getElementById('closeAdminModalBtn').addEventListener('click', closeAdminModal);
+            
+            document.getElementById('saveEditedItemBtn').addEventListener('click', saveEditedItem);
+            document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
         }
 
         function checkMaintenanceStatus() {
@@ -794,7 +807,7 @@
                     } else {
                         document.getElementById('adminSidebarSection').style.display = 'none';
                         document.getElementById('topSubtitle').innerText = `المدرس: ${found.name} (${found.subject})`;
-                        showSection('sectionCreateRoom');
+                        showSection('sectionUniversalUpload');
                     }
 
                     closeAdminModal(); 
@@ -852,7 +865,7 @@
         }
 
         function showSection(sectionId) {
-            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'roomMenuSection', 'lecturesSection', 'sectionCreateRoom', 'sectionManageRooms', 'sectionNotifications', 'sectionPlatformUsers', 'sectionVouchers', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework', 'sectionTeacherReports'].forEach(id => {
+            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'roomMenuSection', 'lecturesSection', 'sectionCreateRoom', 'sectionManageRooms', 'sectionNotifications', 'sectionPlatformUsers', 'sectionVouchers', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionUniversalUpload', 'sectionTeacherReports'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
             });
@@ -861,7 +874,7 @@
             if (sectionId === 'sectionVouchers') fetchVouchersList();
             if (sectionId === 'sectionScheduleManage') renderScheduleManager();
             if (sectionId === 'sectionAdminReports') fetchAdminReports();
-            if (['sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework'].includes(sectionId)) loadTeacherRoomsIntoDropdowns();
+            if (sectionId === 'sectionUniversalUpload') loadTeacherRoomsIntoDropdowns();
         }
 
         function loadPlatformUsersOverview() {
@@ -984,11 +997,104 @@
                         }
                     });
                 }
-                ['tUpRoomId', 'recRoomId', 'qRoomId', 'hwRoomId'].forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.innerHTML = optionsHtml || '<option value="">أنشئ غرفة أولاً</option>';
-                });
+                const uniRoomSel = document.getElementById('uniRoomId');
+                if (uniRoomSel) uniRoomSel.innerHTML = optionsHtml || '<option value="">أنشئ غرفة أولاً</option>';
             });
+        }
+
+        function handleUniSectionChange(sectionVal) {
+            document.getElementById('uniFieldFileWrap').style.display = (sectionVal === 'lecture_pdf') ? 'block' : 'none';
+            document.getElementById('uniFieldUrlWrap').style.display = (sectionVal === 'recording_video') ? 'block' : 'none';
+            document.getElementById('uniQuizFieldsWrap').style.display = (sectionVal === 'quiz') ? 'block' : 'none';
+        }
+
+        function handleUniversalUpload(e) {
+            e.preventDefault();
+            const roomId = document.getElementById('uniRoomId').value;
+            const sectionType = document.getElementById('uniSectionType').value;
+            const title = document.getElementById('uniTitle').value.trim();
+
+            if (!roomId) { alert('اختر الغرفة أولاً!'); return; }
+
+            if (sectionType === 'lecture_pdf') {
+                const fileInput = document.getElementById('uniFile');
+                if (!fileInput.files[0]) { alert('اختر ملف PDF!'); return; }
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const contentId = 'CONT_' + Date.now();
+                    const base64Data = evt.target.result;
+                    const chunks = {};
+                    for (let i = 0; i < base64Data.length; i += 2 * 1024 * 1024) { chunks['part_' + Math.floor(i / (2 * 1024 * 1024))] = base64Data.substring(i, i + (2 * 1024 * 1024)); }
+                    fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ id: contentId, roomId, title, chunks, date: new Date().toLocaleDateString('ar-EG') }),
+                        headers: { 'Content-Type': 'application/json' }
+                    }).then(() => { alert('تم رفع الملزمة بنجاح!'); document.getElementById('uniTitle').value = ''; fileInput.value = ''; });
+                };
+                reader.readAsDataURL(file);
+            } else if (sectionType === 'recording_video') {
+                const url = document.getElementById('uniUrl').value.trim();
+                if (!url) { alert('أدخل رابط الفيديو!'); return; }
+                const recId = 'REC_' + Date.now();
+                fetch(`${DATABASE_URL}/recordings/${recId}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ id: recId, roomId, title, url }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => { alert('تم نشر المحاضرة المسجلة بنجاح!'); document.getElementById('uniTitle').value = ''; document.getElementById('uniUrl').value = ''; });
+            } else if (sectionType === 'quiz') {
+                const question = document.getElementById('uniQQuestion').value.trim();
+                const opt1 = document.getElementById('uniQOpt1').value.trim();
+                const opt2 = document.getElementById('uniQOpt2').value.trim();
+                const opt3 = document.getElementById('uniQOpt3').value.trim();
+                const correct = parseInt(document.getElementById('uniQCorrect').value);
+                const qId = 'QUIZ_' + Date.now();
+                fetch(`${DATABASE_URL}/quizzes/${qId}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ id: qId, roomId, title, question, opt1, opt2, opt3, correct }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => { alert('تم نشر الاختبار بنجاح!'); document.getElementById('uniTitle').value = ''; document.getElementById('uniQQuestion').value = ''; });
+            } else if (sectionType === 'homework') {
+                const hwId = 'HW_' + Date.now();
+                fetch(`${DATABASE_URL}/homework/${hwId}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ id: hwId, roomId, title }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => { alert('تم نشر الواجب البيتي بنجاح!'); document.getElementById('uniTitle').value = ''; });
+            }
+        }
+
+        function openEditItemModal(type, id, currentTitle) {
+            document.getElementById('editItemType').value = type;
+            document.getElementById('editItemId').value = id;
+            document.getElementById('editItemTitleInput').value = currentTitle;
+            document.getElementById('editItemModal').style.display = 'flex';
+        }
+
+        function saveEditedItem() {
+            const type = document.getElementById('editItemType').value;
+            const id = document.getElementById('editItemId').value;
+            const newTitle = document.getElementById('editItemTitleInput').value.trim();
+            if (!newTitle) { alert('اكتب العنوان الجديد!'); return; }
+
+            let path = '';
+            if (type === 'pdf') path = `contents/${id}`;
+            if (type === 'recording') path = `recordings/${id}`;
+            if (type === 'quiz') path = `quizzes/${id}`;
+            if (type === 'homework') path = `homework/${id}`;
+
+            if (path) {
+                fetch(`${DATABASE_URL}/${path}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ title: newTitle }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => {
+                    alert('تم تعديل العنوان بنجاح!');
+                    document.getElementById('editItemModal').style.display = 'none';
+                    if (type === 'pdf' || type === 'recording') renderRoomLectures();
+                    if (type === 'quiz' || type === 'homework') renderRoomQuizzes(); // أو الواجبات
+                });
+            }
         }
 
         function sendPaymentNotification(e) {
@@ -1452,6 +1558,7 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
+        // ==================== تعديلات البث الصوتي وحل مشكلة الصوت ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -1479,7 +1586,7 @@
             }).then(() => {
                 db.ref(`voice_status/${activeRoomId}`).set({ active: true });
                 initLocalMicrophone();
-                alert('تم بدء البث الصوتي المباشر!');
+                alert('تم بدء البث الصوتي المباشر بنجاح!');
             });
         }
 
@@ -1492,7 +1599,7 @@
                 db.ref(`voice_participants/${activeRoomId}`).remove();
                 db.ref(`voice_requests/${activeRoomId}`).remove();
                 db.ref(`voice_status/${activeRoomId}`).set({ active: false });
-                alert('تم إنهاء البث الصوتي بنجاح.');
+                alert('تم إنهاء البث الصوتي.');
             }
         }
 
@@ -1573,7 +1680,7 @@
                         const req = data[k];
                         if (req.studentName === currentStudentName && req.status === 'approved' && !isStudentInLive) {
                             isStudentInLive = true;
-                            alert('تم قبول طلبك! تم انضمامك للبث الصوتي.');
+                            alert('تم قبول طلبك! انضممت للبث الصوتي.');
                             initLocalMicrophone();
                             if (ctrlBox) {
                                 ctrlBox.innerHTML = `
@@ -1590,20 +1697,25 @@
             navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
                 localAudioStream = stream;
                 const remoteAudio = document.getElementById('remoteAudioPlayer');
+                // توجيه تدفق المايك مباشرة ليعمل الصوت بوضوح وسلاسة
                 remoteAudio.srcObject = stream;
-                remoteAudio.muted = true;
-                remoteAudio.play().catch(e => console.log(e));
-            }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في المتصفح.'));
+                if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                    remoteAudio.muted = true; // المدرس لا يسمع صوته مباشرة لعدم حدوث صدى (Echo)
+                } else {
+                    remoteAudio.muted = false; // الطالب يسمع الأستاذ والصوت بوضوح
+                }
+                remoteAudio.play().catch(e => console.log("Audio play deferred:", e));
+            }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
         }
 
         function unlockAudioOutput() {
             const audioEl = document.getElementById('remoteAudioPlayer');
             audioEl.play().then(() => {
-                alert('🔊 تم تنشيط الصوت بنجاح!');
+                alert('🔊 تم تنشيط الصوت وسماعه بنجاح!');
                 document.getElementById('audioUnlockBanner').style.display = 'none';
             }).catch(err => {
                 console.error(err);
-                alert('يرجى النقر مرة أخرى بعد بدء البث.');
+                alert('يرجى النقر مرة أخرى بعد بدء البث من قبل الأستاذ.');
             });
         }
 
@@ -1627,7 +1739,7 @@
 
                 alert(isMicMuted ? 'تم كتم المايك.' : 'تم فتح المايك.');
             } else {
-                alert('الميكروفون غير مفعل أو لم تقم ببدء/الانضمام للبث الصوتي بعد.');
+                alert('الميكروفون غير مفعل.');
             }
         }
 
@@ -1718,9 +1830,12 @@
             });
         }
 
+        // عرض المحاضرات والملازم مع إمكانية حذف أو تعديل أي شيء ينشره المدرس
         function renderRoomLectures() {
             const container = document.getElementById('lecturesContainer');
             if (!container) return;
+            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
+
             fetch(`${DATABASE_URL}/contents.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) {
@@ -1728,10 +1843,50 @@
                         const item = data[k];
                         if (item.roomId === activeRoomId) {
                             let safeData = encodeURIComponent(item.fileData || (item.chunks ? Object.values(item.chunks).join('') : ''));
-                            html += `<div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}')"><div class="file-mini-info"><i class="fas fa-file-pdf"></i><h4>${item.title}</h4></div></div>`;
+                            html += `
+                                <div class="list-item" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                                    <div style="cursor:pointer; flex:1;" onclick="openFileModal('${item.title}', '${safeData}')">
+                                        <i class="fas fa-file-pdf" style="color:var(--danger);"></i> <strong>${item.title}</strong>
+                                    </div>
+                                    ${isTeacherOrAdmin ? `
+                                        <div style="display:flex; gap:6px;">
+                                            <button class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditItemModal('pdf', '${item.id}', '${item.title}')"><i class="fas fa-edit"></i> تعديل</button>
+                                            <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteItem('contents', '${item.id}', renderRoomLectures)"><i class="fas fa-trash"></i> حذف</button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
                         }
                     });
                 }
+                
+                // إضافة عرض المحاضرات المسجلة هنا أيضاً ليتمكن المدرس من تعديلها أو حذفها
+                fetch(`${DATABASE_URL}/recordings.json`).then(r => r.json()).then(recData => {
+                    let recHtml = '';
+                    if (recData) {
+                        Object.keys(recData).forEach(rk => {
+                            const rec = recData[rk];
+                            if (rec.roomId === activeRoomId) {
+                                recHtml += `
+                                    <div class="list-item" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                                        <div style="cursor:pointer; flex:1;" onclick="openRecordingModal('${rec.title}', '${rec.url}')">
+                                            <i class="fas fa-film" style="color:var(--accent);"></i> <strong>${rec.title}</strong>
+                                        </div>
+                                        ${isTeacherOrAdmin ? `
+                                            <div style="display:flex; gap:6px;">
+                                                <button class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditItemModal('recording', '${rec.id}', '${rec.title}')"><i class="fas fa-edit"></i> تعديل</button>
+                                                <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteItem('recordings', '${rec.id}', renderRoomLectures)"><i class="fas fa-trash"></i> حذف</button>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    const recContainer = document.getElementById('recordingsContainer');
+                    if (recContainer) recContainer.innerHTML = recHtml || `<p style="color:#64748b;">لا توجد محاضرات مسجلة.</p>`;
+                });
+
                 container.innerHTML = html || `<p style="color:#64748b;">لا توجد ملازم.</p>`;
             });
         }
@@ -1758,15 +1913,6 @@
 
         function closeFileModal() { document.getElementById('fileViewerModal').style.display = 'none'; document.getElementById('modalViewerContainer').innerHTML = ''; }
 
-        function renderRoomRecordings() {
-            fetch(`${DATABASE_URL}/recordings.json`).then(res => res.json()).then(data => {
-                let html = '';
-                if (data) { Object.keys(data).forEach(k => { const rec = data[k]; if (rec.roomId === activeRoomId) { html += `<div class="file-mini-card" onclick="openRecordingModal('${rec.title}', '${rec.url}')"><h4>${rec.title}</h4></div>`; } }); }
-                const recContainer = document.getElementById('recordingsContainer');
-                if (recContainer) recContainer.innerHTML = html || `<p style="color:#64748b;">لا توجد محاضرات.</p>`;
-            });
-        }
-
         function openRecordingModal(title, videoUrl) {
             document.getElementById('modalFileTitle').innerText = title;
             document.getElementById('modalViewerContainer').innerHTML = `<iframe src="${videoUrl}" width="100%" height="100%" style="border:none;" allowfullscreen></iframe>`;
@@ -1774,18 +1920,44 @@
         }
 
         function renderRoomHomework() {
+            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
             fetch(`${DATABASE_URL}/homework.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) { Object.keys(data).forEach(k => { const hw = data[k]; if (hw.roomId === activeRoomId) { html += `<div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px;"><h5>📌 ${hw.title}</h5></div>`; } }); }
+                if (data) { Object.keys(data).forEach(k => { const hw = data[k]; if (hw.roomId === activeRoomId) { 
+                    html += `
+                        <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                            <div><h5>📌 ${hw.title}</h5></div>
+                            ${isTeacherOrAdmin ? `
+                                <div style="display:flex; gap:6px;">
+                                    <button class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditItemModal('homework', '${hw.id}', '${hw.title}')">تعديل</button>
+                                    <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteItem('homework', '${hw.id}', renderRoomHomework)">حذف</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `; 
+                } }); }
                 const hwContainer = document.getElementById('homeworkContainer');
                 if (hwContainer) hwContainer.innerHTML = html || `<p style="color:#64748b;">لا توجد واجبات.</p>`;
             });
         }
 
         function renderRoomQuizzes() {
+            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
             fetch(`${DATABASE_URL}/quizzes.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) { Object.keys(data).forEach(k => { const q = data[k]; if (q.roomId === activeRoomId) { html += `<div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px;"><h5>📝 ${q.title}</h5><p>${q.question}</p></div>`; } }); }
+                if (data) { Object.keys(data).forEach(k => { const q = data[k]; if (q.roomId === activeRoomId) { 
+                    html += `
+                        <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                            <div><h5>📝 ${q.title}</h5><p>${q.question}</p></div>
+                            ${isTeacherOrAdmin ? `
+                                <div style="display:flex; gap:6px;">
+                                    <button class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditItemModal('quiz', '${q.id}', '${q.title}')">تعديل</button>
+                                    <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteItem('quizzes', '${q.id}', renderRoomQuizzes)">حذف</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `; 
+                } }); }
                 const qContainer = document.getElementById('quizzesContainer');
                 if (qContainer) qContainer.innerHTML = html || `<p style="color:#64748b;">لا توجد اختبارات.</p>`;
             });
@@ -1793,68 +1965,6 @@
 
         function deleteItem(path, id, callback) {
             if (confirm('هل تريد الحذف بالتأكيد؟')) { fetch(`${DATABASE_URL}/${path}/${id}.json`, { method: 'DELETE' }).then(() => callback()); }
-        }
-
-        function handleTeacherUpload(e) {
-            e.preventDefault();
-            const roomId = document.getElementById('tUpRoomId').value;
-            const title = document.getElementById('tUpTitle').value;
-            const file = document.getElementById('tUpFile').files[0];
-            const reader = new FileReader();
-            reader.onload = function(evt) {
-                const contentId = 'CONT_' + Date.now();
-                const base64Data = evt.target.result;
-                const chunks = {};
-                for (let i = 0; i < base64Data.length; i += 2 * 1024 * 1024) { chunks['part_' + Math.floor(i / (2 * 1024 * 1024))] = base64Data.substring(i, i + (2 * 1024 * 1024)); }
-                fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
-                    method: 'PUT',
-                    body: JSON.stringify({ id: contentId, roomId, title, chunks, date: new Date().toLocaleDateString('ar-EG') }),
-                    headers: { 'Content-Type': 'application/json' }
-                }).then(() => { alert('تم رفع الملزمة!'); document.getElementById('tUpTitle').value = ''; document.getElementById('tUpFile').value = ''; });
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function handleTeacherRecording(e) {
-            e.preventDefault();
-            const roomId = document.getElementById('recRoomId').value;
-            const title = document.getElementById('recTitle').value.trim();
-            const url = document.getElementById('recUrl').value.trim();
-            const recId = 'REC_' + Date.now();
-            fetch(`${DATABASE_URL}/recordings/${recId}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({ id: recId, roomId, title, url }),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم نشر المحاضرة!'); document.getElementById('recTitle').value = ''; document.getElementById('recUrl').value = ''; });
-        }
-
-        function handleTeacherQuiz(e) {
-            e.preventDefault();
-            const roomId = document.getElementById('qRoomId').value;
-            const title = document.getElementById('qTitle').value.trim();
-            const question = document.getElementById('qQuestion').value.trim();
-            const opt1 = document.getElementById('qOpt1').value.trim();
-            const opt2 = document.getElementById('qOpt2').value.trim();
-            const opt3 = document.getElementById('qOpt3').value.trim();
-            const correct = parseInt(document.getElementById('qCorrect').value);
-            const qId = 'QUIZ_' + Date.now();
-            fetch(`${DATABASE_URL}/quizzes/${qId}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({ id: qId, roomId, title, question, opt1, opt2, opt3, correct }),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم نشر الاختبار!'); document.getElementById('qTitle').value = ''; document.getElementById('qQuestion').value = ''; });
-        }
-
-        function handleTeacherHomework(e) {
-            e.preventDefault();
-            const roomId = document.getElementById('hwRoomId').value;
-            const title = document.getElementById('hwTitle').value.trim();
-            const hwId = 'HW_' + Date.now();
-            fetch(`${DATABASE_URL}/homework/${hwId}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({ id: hwId, roomId, title }),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم نشر الواجب!'); document.getElementById('hwTitle').value = ''; });
         }
 
         function submitTeacherReport(e) {
