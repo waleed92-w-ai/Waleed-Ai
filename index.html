@@ -139,39 +139,39 @@
             <!-- لوحة المدرس العادي -->
             <div id="teacherSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة المدرس / الغرف</div>
-                <button class="nav-item" onclick="showSection('sectionCreateRoom')"><i class="fas fa-plus-circle" style="color:#10b981;"></i> إنشاء غرفة خاصة برمز PIN[span_4](start_span)[span_4](end_span)</button>
-                <button class="nav-item" onclick="showSection('sectionManageRooms')"><i class="fas fa-edit" style="color:#f59e0b;"></i> إدارة وتعديل غرفتي[span_5](start_span)[span_5](end_span)</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF لغرفتي[span_6](start_span)[span_6](end_span)</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherRecordings')"><i class="fas fa-film"></i> رفع محاضرة مسجلة[span_7](start_span)[span_7](end_span)</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherQuiz')"><i class="fas fa-question-circle"></i> إنشاء اختبار[span_8](start_span)[span_8](end_span)</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherHomework')"><i class="fas fa-tasks"></i> إضافة واجب بيتي[span_9](start_span)[span_9](end_span)</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherReports')"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار طالب[span_10](start_span)[span_10](end_span)</button>
+                <button class="nav-item" onclick="showSection('sectionCreateRoom')"><i class="fas fa-plus-circle" style="color:#10b981;"></i> إنشاء غرفة خاصة برمز PIN</button>
+                <button class="nav-item" onclick="showSection('sectionManageRooms')"><i class="fas fa-edit" style="color:#f59e0b;"></i> إدارة وتعديل غرفتي</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF لغرفتي</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherRecordings')"><i class="fas fa-film"></i> رفع محاضرة مسجلة</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherQuiz')"><i class="fas fa-question-circle"></i> إنشاء اختبار</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherHomework')"><i class="fas fa-tasks"></i> إضافة واجب بيتي</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherReports')"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار طالب</button>
             </div>
 
             <!-- لوحة الأدمن أو المشرف -->
             <div id="adminSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;" id="adminSidebarTitleText">لوحة الأدمن</div>
                 <button class="nav-item" onclick="showSection('sectionNotifications')">
-                    <i class="fas fa-bell"></i> إشعارات وطلبات الطلاب[span_11](start_span)[span_11](end_span)
+                    <i class="fas fa-bell"></i> إشعارات وطلبات الطلاب
                     <span class="notif-badge" id="sidebarNotifBadge" style="position:static; margin-right:auto; display:none;">0</span>
                 </button>
                 <button class="nav-item" onclick="showSection('sectionPlatformUsers')"><i class="fas fa-users-cog" style="color:#38bdf8;"></i> متابعة وإدارة المدرسين والطلبة</button>
-                <button class="nav-item" onclick="showSection('sectionVouchers')"><i class="fas fa-ticket-alt"></i> توليد وتفعيل كودات الاشتراكات[span_12](start_span)[span_12](end_span)</button>
-                <button class="nav-item" onclick="showSection('sectionScheduleManage')"><i class="fas fa-calendar-alt"></i> جدول الحصص الأسبوعي[span_13](start_span)[span_13](end_span)</button>
-                <button class="nav-item" onclick="showSection('sectionAdminReports')"><i class="fas fa-exclamation-triangle"></i> سجل إنذارات الطلاب[span_14](start_span)[span_14](end_span)</button>
-                <button class="nav-item" id="settingsNavBtn" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والصيانة[span_15](start_span)[span_15](end_span)</button>
+                <button class="nav-item" onclick="showSection('sectionVouchers')"><i class="fas fa-ticket-alt"></i> توليد وتفعيل كودات الاشتراكات</button>
+                <button class="nav-item" onclick="showSection('sectionScheduleManage')"><i class="fas fa-calendar-alt"></i> جدول الحصص الأسبوعي</button>
+                <button class="nav-item" onclick="showSection('sectionAdminReports')"><i class="fas fa-exclamation-triangle"></i> سجل إنذارات الطلاب</button>
+                <button class="nav-item" id="settingsNavBtn" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والصيانة</button>
             </div>
 
             <div style="margin-top: auto; padding-top: 15px; display:none;" id="logoutContainer">
-                <button class="nav-item" onclick="logoutSystem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج[span_16](start_span)[span_16](end_span)</button>
+                <button class="nav-item" onclick="logoutSystem()" style="color: #f87171;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
             </div>
         </sidebar>
 
         <main>
             <div class="card" id="authSection">
-                <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في المنصة للدخول إلى الصفوف والمحتوى[span_17](start_span)[span_17](end_span)</div>
+                <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في المنصة للدخول إلى الصفوف والمحتوى</div>
                 <div style="background: #eff6ff; padding: 16px; border-radius: 12px; margin-bottom: 18px; border-right: 4px solid var(--accent);">
-                    <p style="font-weight: 800; color: var(--primary);"><i class="fas fa-tag"></i> سعر الاشتراك الشهري: <span id="dispPrice">5000</span> دينار[span_18](start_span)[span_18](end_span)</p>
+                    <p style="font-weight: 800; color: var(--primary);"><i class="fas fa-tag"></i> سعر الاشتراك الشهري: <span id="dispPrice">5000</span> دينار</p>
                     <div id="dispPayment" style="font-size: 0.88rem; margin-top: 6px; white-space: pre-line; color: #334155;">
                         💳 ماستر كارد: 9061913829
                         📱 زين كاش: 07816745861
@@ -180,45 +180,45 @@
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <button class="btn btn-primary" style="flex:1;" onclick="switchAuthTab('code')">تفعيل مباشر (بكود التفعيل)[span_19](start_span)[span_19](end_span)</button>
-                    <button class="btn btn-secondary" style="flex:1;" onclick="switchAuthTab('notify')">إرسال إشعار تحويل مال للأدمن[span_20](start_span)[span_20](end_span)</button>
+                    <button class="btn btn-primary" style="flex:1;" onclick="switchAuthTab('code')">تفعيل مباشر (بكود التفعيل)</button>
+                    <button class="btn btn-secondary" style="flex:1;" onclick="switchAuthTab('notify')">إرسال إشعار تحويل مال للأدمن</button>
                 </div>
 
                 <form id="formVoucherCode" onsubmit="activateWithVoucher(event)">
                     <div class="form-group">
-                        <label>اسم الطالب الثلاثي[span_21](start_span)[span_21](end_span)</label>
-                        <input type="text" class="form-control" id="vStudentName" required placeholder="أدخل اسمك الثلاثي[span_22](start_span)[span_22](end_span)">
+                        <label>اسم الطالب الثلاثي</label>
+                        <input type="text" class="form-control" id="vStudentName" required placeholder="أدخل اسمك الثلاثي">
                     </div>
                     <div class="form-group">
-                        <label>كود التفعيل السري[span_23](start_span)[span_23](end_span)</label>
-                        <input type="text" class="form-control" id="vCodeInput" required placeholder="أدخل كود التفعيل[span_24](start_span)[span_24](end_span)">
+                        <label>كود التفعيل السري</label>
+                        <input type="text" class="form-control" id="vCodeInput" required placeholder="أدخل كود التفعيل">
                     </div>
-                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-bolt"></i> تفعيل الحساب ودخول الصفوف فوراً[span_25](start_span)[span_25](end_span)</button>
+                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-bolt"></i> تفعيل الحساب ودخول الصفوف فوراً</button>
                 </form>
 
                 <form id="formNotifyAdmin" onsubmit="sendPaymentNotification(event)" style="display: none;">
                     <div class="form-group">
-                        <label>الاسم الثلاثي للطالب[span_26](start_span)[span_26](end_span)</label>
-                        <input type="text" class="form-control" id="nStudentName" required placeholder="اسمك الكامل[span_27](start_span)[span_27](end_span)">
+                        <label>الاسم الثلاثي للطالب</label>
+                        <input type="text" class="form-control" id="nStudentName" required placeholder="اسمك الكامل">
                     </div>
                     <div class="form-group">
-                        <label>طريقة التحويل التي استخدمتها[span_28](start_span)[span_28](end_span)</label>
+                        <label>طريقة التحويل التي استخدمتها</label>
                         <select class="form-control" id="nPayMethod">
-                            <option value="زين كاش">زين كاش[span_29](start_span)[span_29](end_span)</option>
-                            <option value="ماستر كارد">ماستر كارد[span_30](start_span)[span_30](end_span)</option>
+                            <option value="زين كاش">زين كاش</option>
+                            <option value="ماستر كارد">ماستر كارد</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>رقم عملية التحويل / رقم المرجع (Transaction ID)[span_31](start_span)[span_31](end_span)</label>
-                        <input type="text" class="form-control" id="nRefNum" required placeholder="أدخل رقم العملية المكتوب في الوصل[span_32](start_span)[span_32](end_span)">
+                        <label>رقم عملية التحويل / رقم المرجع (Transaction ID)</label>
+                        <input type="text" class="form-control" id="nRefNum" required placeholder="أدخل رقم العملية المكتوب في الوصل">
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> إرسال الإشعار للأدمن[span_33](start_span)[span_33](end_span)</button>
+                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> إرسال الإشعار للأدمن</button>
                 </form>
             </div>
 
             <div class="card" id="sectionNotifications" style="display: none;">
-                <div class="card-header"><i class="fas fa-bell"></i> الإشعارات والطلبات المباشرة من الطلاب[span_34](start_span)[span_34](end_span)</div>
-                <div id="liveNotificationsList">جاري تحميل الإشعارات...[span_35](start_span)[span_35](end_span)</div>
+                <div class="card-header"><i class="fas fa-bell"></i> الإشعارات والطلبات المباشرة من الطلاب</div>
+                <div id="liveNotificationsList">جاري تحميل الإشعارات...</div>
             </div>
 
             <!-- قسم إدارة ومتابعة المشتركين (مدرسين وطلبة) -->
@@ -227,24 +227,24 @@
                 
                 <div style="margin-bottom: 25px;">
                     <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-chalkboard-teacher" style="color:var(--success);"></i> 1. حقل المدرسين وصلاحيات الإشراف (يمكنك جعل المدرس مشرفاً أو إلغاءها)</h4>
-                    <div id="adminTeachersListContainer"><p style="color: #64748b;">جاري جلب المدرسين...[span_36](start_span)[span_36](end_span)</p></div>
+                    <div id="adminTeachersListContainer"><p style="color: #64748b;">جاري جلب المدرسين...</p></div>
                 </div>
 
                 <div>
                     <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-user-graduate" style="color:var(--accent);"></i> 2. حقل الطلبة المشتركين وأيام اشتراكاتهم (مع إمكانية إنهاء/حذف الاشتراك)</h4>
-                    <div id="adminStudentsListContainer"><p style="color: #64748b;">جاري جلب الطلبة...[span_37](start_span)[span_37](end_span)</p></div>
+                    <div id="adminStudentsListContainer"><p style="color: #64748b;">جاري جلب الطلبة...</p></div>
                 </div>
             </div>
 
             <div class="card" id="subjectsSection" style="display: none;">
-                <div class="card-header"><i class="fas fa-book"></i> المواد الدراسية - <span id="currentClassName"></span>[span_38](start_span)[span_38](end_span)</div>
+                <div class="card-header"><i class="fas fa-book"></i> المواد الدراسية - <span id="currentClassName"></span></div>
                 <div class="grid-cards" id="dynamicSubjectsGrid"></div>
             </div>
 
             <div class="card" id="teachersRoomsSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 id="currentSubTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
-                    <button class="btn btn-secondary" onclick="backToSubjectsView()"><i class="fas fa-arrow-right"></i> رجوع للمواد[span_39](start_span)[span_39](end_span)</button>
+                    <button class="btn btn-secondary" onclick="backToSubjectsView()"><i class="fas fa-arrow-right"></i> رجوع للمواد</button>
                 </div>
                 <div class="grid-cards" id="teachersRoomsGrid"></div>
             </div>
@@ -253,29 +253,29 @@
             <div class="card" id="roomMenuSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 id="currentRoomMenuTitle" style="color: var(--primary); font-size: 1.2rem; font-weight: 900;"></h3>
-                    <button class="btn btn-secondary" onclick="backToRoomsView()"><i class="fas fa-arrow-right"></i> رجوع للغرف[span_40](start_span)[span_40](end_span)</button>
+                    <button class="btn btn-secondary" onclick="backToRoomsView()"><i class="fas fa-arrow-right"></i> رجوع للغرف</button>
                 </div>
-                <p style="color: #64748b; margin-bottom: 20px; font-weight: 700;">اختر القسم المطلوب للدخول إليه:[span_41](start_span)[span_41](end_span)</p>
+                <p style="color: #64748b; margin-bottom: 20px; font-weight: 700;">اختر القسم المطلوب للدخول إليه:</p>
                 <div class="grid-cards">
                     <div class="sub-card" onclick="openRoomSection('paneLive')">
                         <i class="fas fa-broadcast-tower" style="color: var(--accent);"></i>
-                        <span>البث المباشر[span_42](start_span)[span_42](end_span)</span>
+                        <span>البث المباشر</span>
                     </div>
                     <div class="sub-card" onclick="openRoomSection('paneLectures')">
                         <i class="fas fa-book-reader" style="color: var(--success);"></i>
-                        <span>المحاضرات والملازم[span_43](start_span)[span_43](end_span)</span>
+                        <span>المحاضرات والملازم</span>
                     </div>
                     <div class="sub-card" onclick="openRoomSection('paneQuestions')">
                         <i class="fas fa-comments" style="color: var(--warning);"></i>
-                        <span>الأسئلة والنقاش[span_44](start_span)[span_44](end_span)</span>
+                        <span>الأسئلة والنقاش</span>
                     </div>
                     <div class="sub-card" onclick="openRoomSection('paneQuizzes')">
                         <i class="fas fa-question-circle" style="color: #ec4899;"></i>
-                        <span>الاختبارات والواجبات[span_45](start_span)[span_45](end_span)</span>
+                        <span>الاختبارات والواجبات</span>
                     </div>
                     <div class="sub-card" onclick="openRoomSection('paneGrades')">
                         <i class="fas fa-star" style="color: #f59e0b;"></i>
-                        <span>التقييم وأسماء الطلاب[span_46](start_span)[span_46](end_span)</span>
+                        <span>التقييم وأسماء الطلاب</span>
                     </div>
                 </div>
             </div>
@@ -284,7 +284,7 @@
             <div class="card" id="lecturesSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 id="currentRoomContentTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
-                    <button class="btn btn-secondary" onclick="backToRoomMenu()"><i class="fas fa-arrow-right"></i> رجوع لأقسام الغرفة[span_47](start_span)[span_47](end_span)</button>
+                    <button class="btn btn-secondary" onclick="backToRoomMenu()"><i class="fas fa-arrow-right"></i> رجوع لأقسام الغرفة</button>
                 </div>
 
                 <!-- أ. قسم البث المباشر التفاعلي -->
@@ -297,8 +297,8 @@
 
                         <!-- صندوق لوحة إدارة طلبات الانضمام -->
                         <div id="teacherLiveAdminBox" style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; margin-bottom: 12px; display: none;">
-                            <h5 style="color: #38bdf8; font-size: 0.9rem; margin-bottom: 8px;"><i class="fas fa-users"></i> طلبات الطلاب للانضمام للبث:[span_48](start_span)[span_48](end_span)</h5>
-                            <div id="liveRequestsListContainer" style="max-height: 120px; overflow-y: auto;"><p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.[span_49](start_span)[span_49](end_span)</p></div>
+                            <h5 style="color: #38bdf8; font-size: 0.9rem; margin-bottom: 8px;"><i class="fas fa-users"></i> طلبات الطلاب للانضمام للبث:</h5>
+                            <div id="liveRequestsListContainer" style="max-height: 120px; overflow-y: auto;"><p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p></div>
                         </div>
 
                         <!-- حاوية دوائر المشاركين في البث -->
@@ -306,7 +306,7 @@
                             <div id="participantsGridContainer" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; width: 100%;">
                                 <div style="color: #94a3b8; font-weight: 700; text-align: center; padding: 30px;">
                                     <i class="fas fa-broadcast-tower" style="font-size: 2.5rem; margin-bottom: 10px; color: var(--success); display: block;"></i>
-                                    <span id="liveStatusText">البث جاهز. بانتظار بدء الأستاذ أو انضمام المشاركين.[span_50](start_span)[span_50](end_span)</span>
+                                    <span id="liveStatusText">البث جاهز. بانتظار بدء الأستاذ أو انضمام المشاركين.</span>
                                 </div>
                             </div>
                         </div>
@@ -316,157 +316,157 @@
                 <!-- ب. المحاضرات والملازم -->
                 <div class="room-section-pane" id="paneLectures">
                     <div style="margin-bottom: 25px;">
-                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم المادة (تكبير / تصغير)[span_51](start_span)[span_51](end_span)</h4>
-                        <div id="lecturesContainer"><p style="color: #64748b;">جاري التحميل...[span_52](start_span)[span_52](end_span)</p></div>
+                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم المادة (تكبير / تصغير)</h4>
+                        <div id="lecturesContainer"><p style="color: #64748b;">جاري التحميل...</p></div>
                     </div>
                     <div>
-                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-film"></i> المحاضرات المسجلة[span_53](start_span)[span_53](end_span)</h4>
-                        <div id="recordingsContainer"><p style="color: #64748b;">لا توجد محاضرات مسجلة.[span_54](start_span)[span_54](end_span)</p></div>
+                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-film"></i> المحاضرات المسجلة</h4>
+                        <div id="recordingsContainer"><p style="color: #64748b;">لا توجد محاضرات مسجلة.</p></div>
                     </div>
                 </div>
 
                 <!-- ج. الأسئلة والنقاش -->
                 <div class="room-section-pane" id="paneQuestions">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-comments"></i> أسئلة واستفسارات الطلاب[span_55](start_span)[span_55](end_span)</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-comments"></i> أسئلة واستفسارات الطلاب</h4>
                     <div style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 15px;">
-                        <textarea class="form-control" id="studentQuestionInput" rows="3" placeholder="اكتب سؤالك أو استفسارك هنا للأستاذ...[span_56](start_span)[span_56](end_span)"></textarea>
-                        <button class="btn btn-primary" style="margin-top: 10px;" onclick="sendStudentQuestion()">إرسال السؤال[span_57](start_span)[span_57](end_span)</button>
+                        <textarea class="form-control" id="studentQuestionInput" rows="3" placeholder="اكتب سؤالك أو استفسارك هنا للأستاذ..."></textarea>
+                        <button class="btn btn-primary" style="margin-top: 10px;" onclick="sendStudentQuestion()">إرسال السؤال</button>
                     </div>
-                    <div id="questionsListContainer"><p style="color: #64748b;">لا توجد أسئلة مرسلة.[span_58](start_span)[span_58](end_span)</p></div>
+                    <div id="questionsListContainer"><p style="color: #64748b;">لا توجد أسئلة مرسلة.</p></div>
                 </div>
 
                 <!-- د. الاختبارات والواجبات -->
                 <div class="room-section-pane" id="paneQuizzes">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-question-circle"></i> الاختبارات الإلكترونية[span_59](start_span)[span_59](end_span)</h4>
-                    <div id="quizzesContainer"><p style="color: #64748b;">لا توجد اختبارات.[span_60](start_span)[span_60](end_span)</p></div>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-question-circle"></i> الاختبارات الإلكترونية</h4>
+                    <div id="quizzesContainer"><p style="color: #64748b;">لا توجد اختبارات.</p></div>
                     <div style="margin-top: 25px;">
-                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-tasks"></i> الواجبات البيتية[span_61](start_span)[span_61](end_span)</h4>
-                        <div id="homeworkContainer"><p style="color: #64748b;">لا توجد واجبات حالياً.[span_62](start_span)[span_62](end_span)</p></div>
+                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-tasks"></i> الواجبات البيتية</h4>
+                        <div id="homeworkContainer"><p style="color: #64748b;">لا توجد واجبات حالياً.</p></div>
                     </div>
                 </div>
 
                 <!-- هـ. التقييم وأسماء الطلاب -->
                 <div class="room-section-pane" id="paneGrades">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-users" style="color:var(--accent);"></i> قائمة الطلاب النشطين والمتواجدين الآن في الغرفة[span_63](start_span)[span_63](end_span)</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-users" style="color:var(--accent);"></i> قائمة الطلاب النشطين والمتواجدين الآن في الغرفة</h4>
                     <div id="activeStudentsLiveManagementList" style="margin-bottom: 20px;">
-                        <p style="color: #64748b;">جاري جلب الطلاب النشطين في الغرفة...[span_64](start_span)[span_64](end_span)</p>
+                        <p style="color: #64748b;">جاري جلب الطلاب النشطين في الغرفة...</p>
                     </div>
 
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-star" style="color:var(--warning);"></i> سجل التقييمات والدرجات[span_65](start_span)[span_65](end_span)</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-star" style="color:var(--warning);"></i> سجل التقييمات والدرجات</h4>
                     <div style="margin-bottom: 15px; display: flex; gap: 10px; display:none;" id="teacherGradeAddBox">
-                        <input type="text" class="form-control" id="gradeStudentName" placeholder="اسم الطالب[span_66](start_span)[span_66](end_span)">
-                        <input type="text" class="form-control" id="gradeStudentVal" placeholder="التقييم / الدرجة (مثلاً: ممتاز / 95%)[span_67](start_span)[span_67](end_span)">
-                        <button class="btn btn-success" onclick="saveStudentGrade()">حفظ التقييم[span_68](start_span)[span_68](end_span)</button>
+                        <input type="text" class="form-control" id="gradeStudentName" placeholder="اسم الطالب">
+                        <input type="text" class="form-control" id="gradeStudentVal" placeholder="التقييم / الدرجة (مثلاً: ممتاز / 95%)">
+                        <button class="btn btn-success" onclick="saveStudentGrade()">حفظ التقييم</button>
                     </div>
-                    <div id="studentsGradesList"><p style="color: #64748b;">جاري جلب تقييمات الطلاب...[span_69](start_span)[span_69](end_span)</p></div>
+                    <div id="studentsGradesList"><p style="color: #64748b;">جاري جلب تقييمات الطلاب...</p></div>
                 </div>
             </div>
 
             <div class="card" id="sectionCreateRoom" style="display: none;">
-                <div class="card-header"><i class="fas fa-plus-circle" style="color:var(--success);"></i> إنشاء غرفة خاصة برمز PIN سري[span_70](start_span)[span_70](end_span)</div>
+                <div class="card-header"><i class="fas fa-plus-circle" style="color:var(--success);"></i> إنشاء غرفة خاصة برمز PIN سري</div>
                 <form onsubmit="handleCreateCustomRoom(event)">
-                    <div class="form-group"><label>عنوان الغرفة[span_71](start_span)[span_71](end_span)</label><input type="text" class="form-control" id="crTitle" required placeholder="عنوان الغرفة[span_72](start_span)[span_72](end_span)"></div>
-                    <div class="form-group"><label>الصف الدراسي[span_73](start_span)[span_73](end_span)</label>
+                    <div class="form-group"><label>عنوان الغرفة</label><input type="text" class="form-control" id="crTitle" required placeholder="عنوان الغرفة"></div>
+                    <div class="form-group"><label>الصف الدراسي</label>
                         <select class="form-control" id="crGrade">
-                            <option value="الأول المتوسط">الأول المتوسط[span_74](start_span)[span_74](end_span)</option>
-                            <option value="الثاني المتوسط">الثاني المتوسط[span_75](start_span)[span_75](end_span)</option>
-                            <option value="الثالث المتوسط">الثالث المتوسط[span_76](start_span)[span_76](end_span)</option>
-                            <option value="الرابع الاعدادي">الرابع الإعدادي[span_77](start_span)[span_77](end_span)</option>
-                            <option value="الخامس الاعدادي">الخامس الإعدادي[span_78](start_span)[span_78](end_span)</option>
-                            <option value="السادس الاعدادي">السادس الإعدادي[span_79](start_span)[span_79](end_span)</option>
+                            <option value="الأول المتوسط">الأول المتوسط</option>
+                            <option value="الثاني المتوسط">الثاني المتوسط</option>
+                            <option value="الثالث المتوسط">الثالث المتوسط</option>
+                            <option value="الرابع الاعدادي">الرابع الإعدادي</option>
+                            <option value="الخامس الاعدادي">الخامس الإعدادي</option>
+                            <option value="السادس الاعدادي">السادس الإعدادي</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>المادة[span_80](start_span)[span_80](end_span)</label>
+                    <div class="form-group"><label>المادة</label>
                         <select class="form-control" id="crSubject">
-                            <option value="الحاسوب">💻 الحاسوب[span_81](start_span)[span_81](end_span)</option>
-                            <option value="الرياضيات">📐 الرياضيات[span_82](start_span)[span_82](end_span)</option>
-                            <option value="اللغة العربية">📖 اللغة العربية[span_83](start_span)[span_83](end_span)</option>
-                            <option value="اللغة الإنجليزية">🔤 اللغة الإنجليزية[span_84](start_span)[span_84](end_span)</option>
-                            <option value="الفيزياء">⚡ الفيزياء[span_85](start_span)[span_85](end_span)</option>
-                            <option value="الكيمياء">🧪 الكيمياء[span_86](start_span)[span_86](end_span)</option>
-                            <option value="الأحياء">🧬 الأحياء[span_87](start_span)[span_87](end_span)</option>
+                            <option value="الحاسوب">💻 الحاسوب</option>
+                            <option value="الرياضيات">📐 الرياضيات</option>
+                            <option value="اللغة العربية">📖 اللغة العربية</option>
+                            <option value="اللغة الإنجليزية">🔤 اللغة الإنجليزية</option>
+                            <option value="الفيزياء">⚡ الفيزياء</option>
+                            <option value="الكيمياء">🧪 الكيمياء</option>
+                            <option value="الأحياء">🧬 الأحياء</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>رمز الدخول السري (PIN)[span_88](start_span)[span_88](end_span)</label><input type="text" class="form-control" id="crPin" required placeholder="1234"></div>
-                    <button type="submit" class="btn btn-success btn-block">إنشاء الغرفة المحمية[span_89](start_span)[span_89](end_span)</button>
+                    <div class="form-group"><label>رمز الدخول السري (PIN)</label><input type="text" class="form-control" id="crPin" required placeholder="1234"></div>
+                    <button type="submit" class="btn btn-success btn-block">إنشاء الغرفة المحمية</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionManageRooms" style="display: none;"><div class="card-header"><i class="fas fa-edit"></i> إدارة وتعديل غرفتي[span_90](start_span)[span_90](end_span)</div><div id="myRoomsListContainer">جاري التحميل...[span_91](start_span)[span_91](end_span)</div></div>
+            <div class="card" id="sectionManageRooms" style="display: none;"><div class="card-header"><i class="fas fa-edit"></i> إدارة وتعديل غرفتي</div><div id="myRoomsListContainer">جاري التحميل...</div></div>
             
             <!-- قسم توليد وتفعيل كودات الاشتراكات -->
             <div class="card" id="sectionVouchers" style="display: none;">
-                <div class="card-header"><i class="fas fa-ticket-alt"></i> توليد وتفعيل كودات الاشتراكات[span_92](start_span)[span_92](end_span)</div>
+                <div class="card-header"><i class="fas fa-ticket-alt"></i> توليد وتفعيل كودات الاشتراكات</div>
                 <form onsubmit="generateVoucher(event)" style="margin-bottom: 20px; background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #cbd5e1;">
                     <p style="font-weight: 700; margin-bottom: 10px; color:var(--primary);">توليد كود تفعيل اشتراك جديد:</p>
-                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> توليد كود اشتراك جديد الآن[span_93](start_span)[span_93](end_span)</button>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> توليد كود اشتراك جديد الآن</button>
                 </form>
-                <div id="vouchersList">جاري التحميل...[span_94](start_span)[span_94](end_span)</div>
+                <div id="vouchersList">جاري التحميل...</div>
             </div>
 
-            <div class="card" id="sectionScheduleManage" style="display: none;"><div class="card-header"><i class="fas fa-calendar-alt"></i> جدول الحصص[span_95](start_span)[span_95](end_span)</div><div id="scheduleContainer"></div></div>
-            <div class="card" id="sectionAdminReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> التقارير[span_96](start_span)[span_96](end_span)</div><div id="adminReportsList"></div></div>
+            <div class="card" id="sectionScheduleManage" style="display: none;"><div class="card-header"><i class="fas fa-calendar-alt"></i> جدول الحصص</div><div id="scheduleContainer"></div></div>
+            <div class="card" id="sectionAdminReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> التقارير</div><div id="adminReportsList"></div></div>
             
             <div class="card" id="sectionSettings" style="display: none;">
-                <div class="card-header"><i class="fas fa-sliders-h"></i> إعدادات المنصة والصيانة[span_97](start_span)[span_97](end_span)</div>
+                <div class="card-header"><i class="fas fa-sliders-h"></i> إعدادات المنصة والصيانة</div>
                 <form onsubmit="saveSettings(event)">
-                    <div class="form-group"><label>سعر الاشتراك[span_98](start_span)[span_98](end_span)</label><input type="text" class="form-control" id="cfgPrice" required></div>
-                    <div class="form-group"><label>طرق الدفع[span_99](start_span)[span_99](end_span)</label><textarea class="form-control" id="cfgPayments" rows="3" required></textarea></div>
-                    <div class="form-group"><label>حالة الصيانة[span_100](start_span)[span_100](end_span)</label>
+                    <div class="form-group"><label>سعر الاشتراك</label><input type="text" class="form-control" id="cfgPrice" required></div>
+                    <div class="form-group"><label>طرق الدفع</label><textarea class="form-control" id="cfgPayments" rows="3" required></textarea></div>
+                    <div class="form-group"><label>حالة الصيانة</label>
                         <select class="form-control" id="cfgMaintenance">
-                            <option value="false">🟢 تعمل طبيعي[span_101](start_span)[span_101](end_span)</option>
-                            <option value="true">🛠️ وضع الصيانة[span_102](start_span)[span_102](end_span)</option>
+                            <option value="false">🟢 تعمل طبيعي</option>
+                            <option value="true">🛠️ وضع الصيانة</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">حفظ[span_103](start_span)[span_103](end_span)</button>
+                    <button type="submit" class="btn btn-primary btn-block">حفظ</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionTeacherUpload" style="display: none;"><div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF[span_104](start_span)[span_104](end_span)</div>
+            <div class="card" id="sectionTeacherUpload" style="display: none;"><div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF</div>
                 <form onsubmit="handleTeacherUpload(event)">
-                    <div class="form-group"><label>الغرفة[span_105](start_span)[span_105](end_span)</label><select class="form-control" id="tUpRoomId"></select></div>
-                    <div class="form-group"><label>العنوان[span_106](start_span)[span_106](end_span)</label><input type="text" class="form-control" id="tUpTitle" required></div>
-                    <div class="form-group"><label>ملف PDF[span_107](start_span)[span_107](end_span)</label><input type="file" class="form-control" id="tUpFile" accept=".pdf" required></div>
-                    <button type="submit" class="btn btn-primary btn-block">نشر[span_108](start_span)[span_108](end_span)</button>
+                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="tUpRoomId"></select></div>
+                    <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="tUpTitle" required></div>
+                    <div class="form-group"><label>ملف PDF</label><input type="file" class="form-control" id="tUpFile" accept=".pdf" required></div>
+                    <button type="submit" class="btn btn-primary btn-block">نشر</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionTeacherRecordings" style="display: none;"><div class="card-header"><i class="fas fa-film"></i> رفع محاضرة مسجلة[span_109](start_span)[span_109](end_span)</div>
+            <div class="card" id="sectionTeacherRecordings" style="display: none;"><div class="card-header"><i class="fas fa-film"></i> رفع محاضرة مسجلة</div>
                 <form onsubmit="handleTeacherRecording(event)">
-                    <div class="form-group"><label>الغرفة[span_110](start_span)[span_110](end_span)</label><select class="form-control" id="recRoomId"></select></div>
-                    <div class="form-group"><label>العنوان[span_111](start_span)[span_111](end_span)</label><input type="text" class="form-control" id="recTitle" required></div>
-                    <div class="form-group"><label>رابط الفيديو[span_112](start_span)[span_112](end_span)</label><input type="text" class="form-control" id="recUrl" required></div>
-                    <button type="submit" class="btn btn-primary btn-block">نشر[span_113](start_span)[span_113](end_span)</button>
+                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="recRoomId"></select></div>
+                    <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="recTitle" required></div>
+                    <div class="form-group"><label>رابط الفيديو</label><input type="text" class="form-control" id="recUrl" required></div>
+                    <button type="submit" class="btn btn-primary btn-block">نشر</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionTeacherQuiz" style="display: none;"><div class="card-header"><i class="fas fa-question-circle"></i> إنشاء اختبار[span_114](start_span)[span_114](end_span)</div>
+            <div class="card" id="sectionTeacherQuiz" style="display: none;"><div class="card-header"><i class="fas fa-question-circle"></i> إنشاء اختبار</div>
                 <form onsubmit="handleTeacherQuiz(event)">
-                    <div class="form-group"><label>الغرفة[span_115](start_span)[span_115](end_span)</label><select class="form-control" id="qRoomId"></select></div>
-                    <div class="form-group"><label>العنوان[span_116](start_span)[span_116](end_span)</label><input type="text" class="form-control" id="qTitle" required></div>
-                    <div class="form-group"><label>السؤال[span_117](start_span)[span_117](end_span)</label><input type="text" class="form-control" id="qQuestion" required></div>
-                    <div class="form-group"><label>خيار 1[span_118](start_span)[span_118](end_span)</label><input type="text" class="form-control" id="qOpt1" required></div>
-                    <div class="form-group"><label>خيار 2[span_119](start_span)[span_119](end_span)</label><input type="text" class="form-control" id="qOpt2" required></div>
-                    <div class="form-group"><label>خيار 3[span_120](start_span)[span_120](end_span)</label><input type="text" class="form-control" id="qOpt3" required></div>
-                    <div class="form-group"><label>الإجابة الصحيحة (1 أو 2 أو 3)[span_121](start_span)[span_121](end_span)</label><input type="number" class="form-control" id="qCorrect" min="1" max="3" required></div>
-                    <button type="submit" class="btn btn-success btn-block">نشر[span_122](start_span)[span_122](end_span)</button>
+                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="qRoomId"></select></div>
+                    <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="qTitle" required></div>
+                    <div class="form-group"><label>السؤال</label><input type="text" class="form-control" id="qQuestion" required></div>
+                    <div class="form-group"><label>خيار 1</label><input type="text" class="form-control" id="qOpt1" required></div>
+                    <div class="form-group"><label>خيار 2</label><input type="text" class="form-control" id="qOpt2" required></div>
+                    <div class="form-group"><label>خيار 3</label><input type="text" class="form-control" id="qOpt3" required></div>
+                    <div class="form-group"><label>الإجابة الصحيحة (1 أو 2 أو 3)</label><input type="number" class="form-control" id="qCorrect" min="1" max="3" required></div>
+                    <button type="submit" class="btn btn-success btn-block">نشر</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionTeacherHomework" style="display: none;"><div class="card-header"><i class="fas fa-tasks"></i> إضافة واجب[span_123](start_span)[span_123](end_span)</div>
+            <div class="card" id="sectionTeacherHomework" style="display: none;"><div class="card-header"><i class="fas fa-tasks"></i> إضافة واجب</div>
                 <form onsubmit="handleTeacherHomework(event)">
-                    <div class="form-group"><label>الغرفة[span_124](start_span)[span_124](end_span)</label><select class="form-control" id="hwRoomId"></select></div>
-                    <div class="form-group"><label>تعليمات الواجب[span_125](start_span)[span_125](end_span)</label><input type="text" class="form-control" id="hwTitle" required></div>
-                    <button type="submit" class="btn btn-primary btn-block">نشر[span_126](start_span)[span_126](end_span)</button>
+                    <div class="form-group"><label>الغرفة</label><select class="form-control" id="hwRoomId"></select></div>
+                    <div class="form-group"><label>تعليمات الواجب</label><input type="text" class="form-control" id="hwTitle" required></div>
+                    <button type="submit" class="btn btn-primary btn-block">نشر</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionTeacherReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> إنذار طالب[span_127](start_span)[span_127](end_span)</div>
+            <div class="card" id="sectionTeacherReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> إنذار طالب</div>
                 <form onsubmit="submitTeacherReport(event)">
-                    <div class="form-group"><label>اسم الطالب[span_128](start_span)[span_128](end_span)</label><input type="text" class="form-control" id="repStudentName" required></div>
-                    <div class="form-group"><label>النوع[span_129](start_span)[span_129](end_span)</label><select class="form-control" id="repType"><option value="سلوك غير لائق">سلوك غير لائق[span_130](start_span)[span_130](end_span)</option><option value="إزعاج">إزعاج[span_131](start_span)[span_131](end_span)</option></select></div>
-                    <div class="form-group"><label>التفاصيل[span_132](start_span)[span_132](end_span)</label><textarea class="form-control" id="repDetails" rows="3" required></textarea></div>
-                    <button type="submit" class="btn btn-warning btn-block">إرسال[span_133](start_span)[span_133](end_span)</button>
+                    <div class="form-group"><label>اسم الطالب</label><input type="text" class="form-control" id="repStudentName" required></div>
+                    <div class="form-group"><label>النوع</label><select class="form-control" id="repType"><option value="سلوك غير لائق">سلوك غير لائق</option><option value="إزعاج">إزعاج</option></select></div>
+                    <div class="form-group"><label>التفاصيل</label><textarea class="form-control" id="repDetails" rows="3" required></textarea></div>
+                    <button type="submit" class="btn btn-warning btn-block">إرسال</button>
                 </form>
             </div>
         </main>
@@ -476,20 +476,20 @@
     <div class="modal" id="kickedModal" style="background: rgba(15, 23, 42, 0.95); z-index: 3000;">
         <div class="modal-body" style="background: #1e293b; color: white; border-radius: var(--radius); width: 90%; max-width: 400px; padding: 30px; text-align: center;">
             <i class="fas fa-ban" style="font-size: 3.5rem; color: var(--danger); margin-bottom: 15px;"></i>
-            <h3 style="font-size: 1.3rem; font-weight: 900; margin-bottom: 10px;">تم إخراجك من الغرفة[span_134](start_span)[span_134](end_span)</h3>
-            <p id="kickedReasonText" style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 20px;">قام الأستاذ أو المشرف بطردك من هذه الغرفة مؤقتاً.[span_135](start_span)[span_135](end_span)</p>
-            <button class="btn btn-success btn-block" onclick="requestReentryToRoom()"><i class="fas fa-redo"></i> طلب العودة والدخول (بموافقة الإدارة)[span_136](start_span)[span_136](end_span)</button>
+            <h3 style="font-size: 1.3rem; font-weight: 900; margin-bottom: 10px;">تم إخراجك من الغرفة</h3>
+            <p id="kickedReasonText" style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 20px;">قام الأستاذ أو المشرف بطردك من هذه الغرفة مؤقتاً.</p>
+            <button class="btn btn-success btn-block" onclick="requestReentryToRoom()"><i class="fas fa-redo"></i> طلب العودة والدخول (بموافقة الإدارة)</button>
         </div>
     </div>
 
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box">
             <div class="modal-header-bar">
-                <span id="modalFileTitle">عرض الملزمة[span_137](start_span)[span_137](end_span)</span>
+                <span id="modalFileTitle">عرض الملزمة</span>
                 <div style="display: flex; gap: 8px; align-items: center;">
-                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="zoomPdf(0.1)"><i class="fas fa-search-plus"></i> تكبير[span_138](start_span)[span_138](end_span)</button>
-                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="zoomPdf(-0.1)"><i class="fas fa-search-minus"></i> تصغير[span_139](start_span)[span_139](end_span)</button>
-                    <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.8rem;" onclick="closeFileModal()">إغلاق[span_140](start_span)[span_140](end_span)</button>
+                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="zoomPdf(0.1)"><i class="fas fa-search-plus"></i> تكبير</button>
+                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="zoomPdf(-0.1)"><i class="fas fa-search-minus"></i> تصغير</button>
+                    <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.8rem;" onclick="closeFileModal()">إغلاق</button>
                 </div>
             </div>
             <div class="modal-body-viewer" id="modalViewerContainer">
@@ -500,66 +500,66 @@
 
     <div class="modal" id="editRoomModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 380px; padding: 24px;">
-            <div class="card-header"><i class="fas fa-edit" style="color:var(--warning);"></i> تعديل الغرفة وقفلها[span_141](start_span)[span_141](end_span)</div>
+            <div class="card-header"><i class="fas fa-edit" style="color:var(--warning);"></i> تعديل الغرفة وقفلها</div>
             <input type="hidden" id="editRoomId">
-            <div class="form-group"><label>العنوان[span_142](start_span)[span_142](end_span)</label><input type="text" class="form-control" id="editRoomTitleInput"></div>
-            <div class="form-group"><label>رمز PIN[span_143](start_span)[span_143](end_span)</label><input type="text" class="form-control" id="editRoomPinInput"></div>
-            <div class="form-group"><label>حالة الغرفة[span_144](start_span)[span_144](end_span)</label>
+            <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="editRoomTitleInput"></div>
+            <div class="form-group"><label>رمز PIN</label><input type="text" class="form-control" id="editRoomPinInput"></div>
+            <div class="form-group"><label>حالة الغرفة</label>
                 <select class="form-control" id="editRoomIsOpen">
-                    <option value="true">🟢 مفتوحة للطلاب (بالرمز)[span_145](start_span)[span_145](end_span)</option>
-                    <option value="false">🔴 مغلقة تماماً (تمنع دخول الجميع)[span_146](start_span)[span_146](end_span)</option>
+                    <option value="true">🟢 مفتوحة للطلاب (بالرمز)</option>
+                    <option value="false">🔴 مغلقة تماماً (تمنع دخول الجميع)</option>
                 </select>
             </div>
-            <button class="btn btn-success btn-block" onclick="saveEditedRoom()">حفظ التعديلات[span_147](start_span)[span_147](end_span)</button>
-            <button class="btn btn-danger btn-block" onclick="closeEditRoomModal()" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء[span_148](start_span)[span_148](end_span)</button>
+            <button class="btn btn-success btn-block" onclick="saveEditedRoom()">حفظ التعديلات</button>
+            <button class="btn btn-danger btn-block" onclick="closeEditRoomModal()" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
         </div>
     </div>
 
     <div class="modal" id="pinModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 380px; padding: 24px; text-align: center;">
-            <div class="card-header" style="justify-content: center;"><i class="fas fa-lock" style="color:var(--danger);"></i> غرفة محمية[span_149](start_span)[span_149](end_span)</div>
-            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #334155;">أدخل رمز الدخول (PIN):[span_150](start_span)[span_150](end_span)</p>
+            <div class="card-header" style="justify-content: center;"><i class="fas fa-lock" style="color:var(--danger);"></i> غرفة محمية</div>
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #334155;">أدخل رمز الدخول (PIN):</p>
             <div class="form-group"><input type="text" class="form-control" id="studentPinInput" placeholder="PIN" style="text-align: center; font-size: 1.2rem; font-weight: 800;"></div>
-            <button class="btn btn-success btn-block" onclick="verifyRoomPin()">دخول[span_151](start_span)[span_151](end_span)</button>
-            <button class="btn btn-danger btn-block" onclick="closePinModal()" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء[span_152](start_span)[span_152](end_span)</button>
+            <button class="btn btn-success btn-block" onclick="verifyRoomPin()">دخول</button>
+            <button class="btn btn-danger btn-block" onclick="closePinModal()" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
         </div>
     </div>
 
     <div class="modal" id="adminModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 440px; padding: 24px;">
-            <div class="card-header"><i class="fas fa-user-shield"></i> بوابة الإدارة والأساتذة[span_153](start_span)[span_153](end_span)</div>
+            <div class="card-header"><i class="fas fa-user-shield"></i> بوابة الإدارة والأساتذة</div>
             <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-                <button class="btn btn-primary" style="flex:1;" onclick="switchLoginTab('admin')">الأدمن[span_154](start_span)[span_154](end_span)</button>
-                <button class="btn btn-secondary" style="flex:1;" onclick="switchLoginTab('teacher')">مدرس / مشرف[span_155](start_span)[span_155](end_span)</button>
-                <button class="btn btn-warning" style="flex:1;" onclick="switchLoginTab('registerTeacher')">تسجيل جديد[span_156](start_span)[span_156](end_span)</button>
+                <button class="btn btn-primary" style="flex:1;" onclick="switchLoginTab('admin')">الأدمن</button>
+                <button class="btn btn-secondary" style="flex:1;" onclick="switchLoginTab('teacher')">مدرس / مشرف</button>
+                <button class="btn btn-warning" style="flex:1;" onclick="switchLoginTab('registerTeacher')">تسجيل جديد</button>
             </div>
             <div id="loginAdminBox">
-                <div class="form-group"><label>كلمة مرور الأدمن[span_157](start_span)[span_157](end_span)</label><input type="password" class="form-control" id="adminPassInput"></div>
-                <button class="btn btn-primary btn-block" onclick="verifyAdminLogin()">دخول الأدمن[span_158](start_span)[span_158](end_span)</button>
+                <div class="form-group"><label>كلمة مرور الأدمن</label><input type="password" class="form-control" id="adminPassInput"></div>
+                <button class="btn btn-primary btn-block" onclick="verifyAdminLogin()">دخول الأدمن</button>
             </div>
             <div id="loginTeacherBox" style="display: none;">
-                <div class="form-group"><label>يوزر المدرس / المشرف[span_159](start_span)[span_159](end_span)</label><input type="text" class="form-control" id="teacherUsername"></div>
-                <div class="form-group"><label>كلمة المرور[span_160](start_span)[span_160](end_span)</label><input type="password" class="form-control" id="teacherPassword"></div>
-                <button class="btn btn-success btn-block" onclick="verifyTeacherLogin()">دخول المدرس[span_161](start_span)[span_161](end_span)</button>
+                <div class="form-group"><label>يوزر المدرس / المشرف</label><input type="text" class="form-control" id="teacherUsername"></div>
+                <div class="form-group"><label>كلمة المرور</label><input type="password" class="form-control" id="teacherPassword"></div>
+                <button class="btn btn-success btn-block" onclick="verifyTeacherLogin()">دخول المدرس</button>
             </div>
             <div id="registerTeacherBox" style="display: none;">
-                <div class="form-group"><label>اسم المدرس[span_162](start_span)[span_162](end_span)</label><input type="text" class="form-control" id="regTName"></div>
-                <div class="form-group"><label>المادة[span_163](start_span)[span_163](end_span)</label>
+                <div class="form-group"><label>اسم المدرس</label><input type="text" class="form-control" id="regTName"></div>
+                <div class="form-group"><label>المادة</label>
                     <select class="form-control" id="regTSubject">
-                        <option value="الحاسوب">💻 الحاسوب[span_164](start_span)[span_164](end_span)</option>
-                        <option value="الرياضيات">📐 الرياضيات[span_165](start_span)[span_165](end_span)</option>
-                        <option value="اللغة العربية">📖 اللغة العربية[span_166](start_span)[span_166](end_span)</option>
-                        <option value="اللغة الإنجليزية">🔤 اللغة الإنجليزية[span_167](start_span)[span_167](end_span)</option>
-                        <option value="الفيزياء">⚡ الفيزياء[span_168](start_span)[span_168](end_span)</option>
-                        <option value="الكيمياء">🧪 الكيمياء[span_169](start_span)[span_169](end_span)</option>
-                        <option value="الأحياء">🧬 الأحياء[span_170](start_span)[span_170](end_span)</option>
+                        <option value="الحاسوب">💻 الحاسوب</option>
+                        <option value="الرياضيات">📐 الرياضيات</option>
+                        <option value="اللغة العربية">📖 اللغة العربية</option>
+                        <option value="اللغة الإنجليزية">🔤 اللغة الإنجليزية</option>
+                        <option value="الفيزياء">⚡ الفيزياء</option>
+                        <option value="الكيمياء">🧪 الكيمياء</option>
+                        <option value="الأحياء">🧬 الأحياء</option>
                     </select>
                 </div>
-                <div class="form-group"><label>يوزر[span_171](start_span)[span_171](end_span)</label><input type="text" class="form-control" id="regTUser"></div>
-                <div class="form-group"><label>كلمة المرور[span_172](start_span)[span_172](end_span)</label><input type="password" class="form-control" id="regTPass"></div>
-                <button class="btn btn-warning btn-block" onclick="registerNewTeacher(event)">تسجيل طلب الانضمام[span_173](start_span)[span_173](end_span)</button>
+                <div class="form-group"><label>يوزر</label><input type="text" class="form-control" id="regTUser"></div>
+                <div class="form-group"><label>كلمة المرور</label><input type="password" class="form-control" id="regTPass"></div>
+                <button class="btn btn-warning btn-block" onclick="registerNewTeacher(event)">تسجيل طلب الانضمام</button>
             </div>
-            <button class="btn btn-danger btn-block" onclick="closeAdminModal()" style="margin-top: 12px; background: transparent; color: #64748b;">إلغاء[span_174](start_span)[span_174](end_span)</button>
+            <button class="btn btn-danger btn-block" onclick="closeAdminModal()" style="margin-top: 12px; background: transparent; color: #64748b;">إلغاء</button>
         </div>
     </div>
 
@@ -629,7 +629,7 @@
                 method: 'PUT',
                 body: JSON.stringify({ price, payments, maintenance }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => alert('تم حفظ الإعدادات[span_175](start_span)[span_175](end_span)!'));
+            }).then(() => alert('تم حفظ الإعدادات!'));
         }
 
         function switchLoginTab(tab) {
@@ -657,7 +657,7 @@
                 showSection('sectionPlatformUsers');
                 loadPlatformUsersOverview();
                 loadTeacherRoomsIntoDropdowns();
-            } else { alert('كلمة المرور خطأ[span_176](start_span)[span_176](end_span)!'); }
+            } else { alert('كلمة المرور خطأ!'); }
         }
 
         function verifyTeacherLogin() {
@@ -676,10 +676,9 @@
                     document.getElementById('logoutContainer').style.display = 'block';
 
                     if (found.isSupervisor) {
-                        // إذا كان المدرس مشرفاً، امنحه لوحة التحكم الإدارية أيضاً
                         document.getElementById('adminSidebarSection').style.display = 'block';
                         document.getElementById('adminSidebarTitleText').innerText = "لوحة المشرف المساعد";
-                        document.getElementById('settingsNavBtn').style.display = 'none'; // الإعدادات فقط للأدمن الرئيسي
+                        document.getElementById('settingsNavBtn').style.display = 'none';
                         document.getElementById('topSubtitle').innerText = `المشرف: ${found.name} (${found.subject})`;
                         showSection('sectionPlatformUsers');
                         loadPlatformUsersOverview();
@@ -691,7 +690,7 @@
 
                     closeAdminModal(); 
                     loadTeacherRoomsIntoDropdowns();
-                } else { alert('معلومات الدخول غير صحيحة أو بانتظار موافقة الأدمن[span_177](start_span)[span_177](end_span)!'); }
+                } else { alert('معلومات الدخول غير صحيحة أو بانتظار موافقة الأدمن!'); }
             });
         }
 
@@ -703,13 +702,12 @@
             const password = document.getElementById('regTPass').value.trim();
             const reqId = 'TREQ_' + Date.now();
 
-            // حفظ الطلب في إشعارات الأدمن/المشرفين لقبوله
             fetch(`${DATABASE_URL}/teacher_requests/${reqId}.json`, {
                 method: 'PUT',
                 body: JSON.stringify({ id: reqId, name, subject, username, password, status: 'pending', timestamp: Date.now() }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
-                alert('تم إرسال طلب تسجيل المدرس بنجاح إلى الإدارة بانتظار القبول[span_178](start_span)[span_178](end_span)!');
+                alert('تم إرسال طلب تسجيل المدرس بنجاح إلى الإدارة بانتظار القبول!');
                 switchLoginTab('teacher');
             });
         }
@@ -739,9 +737,7 @@
             if (['sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework'].includes(sectionId)) loadTeacherRoomsIntoDropdowns();
         }
 
-        // جلب وعرض المدرسين (مع زر تفعيل/إلغاء الإشراف) والطلبة المشتركين
         function loadPlatformUsersOverview() {
-            // 1. جلب المدرسين وطلبات انضمام المدرسين المعلقة
             fetch(`${DATABASE_URL}/teachers.json`).then(res => res.json()).then(teachersData => {
                 let teachersHtml = '';
                 if (teachersData) {
@@ -757,14 +753,13 @@
                                 </div>
                                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
                                     ${currentRole === 'admin' ? `<button class="btn ${isSup ? 'btn-secondary' : 'btn-warning'}" style="padding:6px 10px; font-size:0.75rem;" onclick="toggleSupervisor('${t.id}', ${!isSup})">${isSup ? 'إلغاء الإشراف' : 'ترقية مشرف'}</button>` : ''}
-                                    <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteItem('teachers', '${t.id}', loadPlatformUsersOverview)">حذف[span_179](start_span)[span_179](end_span)</button>
+                                    <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteItem('teachers', '${t.id}', loadPlatformUsersOverview)">حذف</button>
                                 </div>
                             </div>
                         `;
                     });
                 }
                 
-                // إضافة قسم طلبات المدرسين المعلقة ليتمكن المشرف أو الأدمن من قبولها
                 fetch(`${DATABASE_URL}/teacher_requests.json`).then(r => r.json()).then(reqs => {
                     if (reqs) {
                         Object.keys(reqs).forEach(rk => {
@@ -777,19 +772,18 @@
                                             <small>المادة: ${req.subject} | اليوزر: ${req.username}</small>
                                         </div>
                                         <div style="display:flex; gap:6px;">
-                                            <button class="btn btn-success" style="padding:6px 10px; font-size:0.75rem;" onclick="approveTeacherRequest('${req.id}', '${req.name}', '${req.subject}', '${req.username}', '${req.password}')">قبول المدرس[span_180](start_span)[span_180](end_span)</button>
-                                            <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteItem('teacher_requests', '${req.id}', loadPlatformUsersOverview)">رفض[span_181](start_span)[span_181](end_span)</button>
+                                            <button class="btn btn-success" style="padding:6px 10px; font-size:0.75rem;" onclick="approveTeacherRequest('${req.id}', '${req.name}', '${req.subject}', '${req.username}', '${req.password}')">قبول المدرس</button>
+                                            <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteItem('teacher_requests', '${req.id}', loadPlatformUsersOverview)">رفض</button>
                                         </div>
                                     </div>
                                 `;
                             }
                         });
                     }
-                    document.getElementById('adminTeachersListContainer').innerHTML = teachersHtml || '<p style="color:#64748b;">لا يوجد مدرسين مسجلين حالياً.[span_182](start_span)[span_182](end_span)</p>';
+                    document.getElementById('adminTeachersListContainer').innerHTML = teachersHtml || '<p style="color:#64748b;">لا يوجد مدرسين مسجلين حالياً.</p>';
                 });
             });
 
-            // 2. جلب الطلبة المشتركين وحساب الأيام الباقية مع إمكانية إنهاء/حذف الاشتراك
             fetch(`${DATABASE_URL}/vouchers.json`).then(res => res.json()).then(vouchersData => {
                 let studentsHtml = '';
                 const now = Date.now();
@@ -814,17 +808,16 @@
                                             ${isExpired ? '⚠️ انتهى الاشتراك' : `⏳ الأيام المتبقية لنهاية الاشتراك: ${daysLeft} يوم`}
                                         </small>
                                     </div>
-                                    <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('vouchers', '${code}', loadPlatformUsersOverview)">إهاء/حذف الاشتراك[span_183](start_span)[span_183](end_span)</button>
+                                    <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('vouchers', '${code}', loadPlatformUsersOverview)">إنهاء/حذف الاشتراك</button>
                                 </div>
                             `;
                         }
                     });
                 }
-                document.getElementById('adminStudentsListContainer').innerHTML = studentsHtml || '<p style="color:#64748b;">لا توجد اشتراكات طلاب نشطة حالياً.[span_184](start_span)[span_184](end_span)</p>';
+                document.getElementById('adminStudentsListContainer').innerHTML = studentsHtml || '<p style="color:#64748b;">لا توجد اشتراكات طلاب نشطة حالياً.</p>';
             });
         }
 
-        // ترقية مدرس إلى مشرف أو إلغاؤها
         function toggleSupervisor(teacherId, makeSuper) {
             fetch(`${DATABASE_URL}/teachers/${teacherId}.json`, {
                 method: 'PATCH',
@@ -836,7 +829,6 @@
             });
         }
 
-        // قبول طلب تسجيل مدرس جديد
         function approveTeacherRequest(reqId, name, subject, username, password) {
             const tId = 'T_' + Date.now();
             fetch(`${DATABASE_URL}/teachers/${tId}.json`, {
@@ -845,7 +837,7 @@
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
                 fetch(`${DATABASE_URL}/teacher_requests/${reqId}.json`, { method: 'DELETE' }).then(() => {
-                    alert(`تم قبول المدرس ${name} بنجاح[span_185](start_span)[span_185](end_span)!`);
+                    alert(`تم قبول المدرس ${name} بنجاح!`);
                     loadPlatformUsersOverview();
                 });
             });
@@ -865,7 +857,7 @@
                 }
                 ['tUpRoomId', 'recRoomId', 'qRoomId', 'hwRoomId'].forEach(id => {
                     const el = document.getElementById(id);
-                    if (el) el.innerHTML = optionsHtml || '<option value="">أنشئ غرفة أولاً[span_186](start_span)[span_186](end_span)</option>';
+                    if (el) el.innerHTML = optionsHtml || '<option value="">أنشئ غرفة أولاً</option>';
                 });
             });
         }
@@ -882,7 +874,7 @@
                 body: JSON.stringify({ id: notifId, name, payMethod, refNum, status: 'pending', timestamp: Date.now() }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
-                alert('تم إرسال إشعار التحويل للأدمن/المشرفين[span_187](start_span)[span_187](end_span)!');
+                alert('تم إرسال إشعار التحويل للأدمن/المشرفين!');
                 document.getElementById('nStudentName').value = '';
                 document.getElementById('nRefNum').value = '';
             });
@@ -902,8 +894,8 @@
                                 <div class="list-item" style="border-right: 4px solid var(--accent);">
                                     <div><strong>🔔 طالب: ${notif.name}</strong><br><small>التحويل: ${notif.payMethod} | العملية: ${notif.refNum}</small></div>
                                     <div style="display:flex; gap:8px;">
-                                        <button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="approvePaymentNotif('${notif.id}', '${notif.name}')">قبول وتوليد كود[span_188](start_span)[span_188](end_span)</button>
-                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('notifications', '${notif.id}', listenToNotificationsRealtime)">رفض[span_189](start_span)[span_189](end_span)</button>
+                                        <button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="approvePaymentNotif('${notif.id}', '${notif.name}')">قبول وتوليد كود</button>
+                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('notifications', '${notif.id}', listenToNotificationsRealtime)">رفض</button>
                                     </div>
                                 </div>
                             `;
@@ -918,7 +910,7 @@
                 } else {
                     topBadge.style.display = 'none'; sidebarBadge.style.display = 'none';
                 }
-                document.getElementById('liveNotificationsList').innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد إشعارات جديدة.[span_190](start_span)[span_190](end_span)</p>';
+                document.getElementById('liveNotificationsList').innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد إشعارات جديدة.</p>';
             });
         }
 
@@ -933,7 +925,7 @@
                     method: 'PATCH',
                     body: JSON.stringify({ status: 'approved', generatedCode: randomCode }),
                     headers: { 'Content-Type': 'application/json' }
-                }).then(() => alert(`تم القبول وتوليد الكود بنجاح: ${randomCode}[span_191](start_span)[span_191](end_span)`));
+                }).then(() => alert(`تم القبول وتوليد الكود بنجاح: ${randomCode}`));
             });
         }
 
@@ -951,9 +943,9 @@
                     currentStudentName = name;
                     localStorage.setItem('student_session', JSON.stringify({ id: code, name: name, status: 'active' }));
                     document.getElementById('logoutContainer').style.display = 'block';
-                    alert('تم التفعيل بنجاح[span_192](start_span)[span_192](end_span)!');
+                    alert('تم التفعيل بنجاح!');
                     openClass('الأول المتوسط');
-                } else { alert('الكود غير صحيح أو مستخدم[span_193](start_span)[span_193](end_span)!'); }
+                } else { alert('الكود غير صحيح أو مستخدم!'); }
             });
         }
 
@@ -964,7 +956,7 @@
                 method: 'PUT',
                 body: JSON.stringify({ code: randomCode, isUsed: false, createdAt: Date.now() }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert(`تم توليد الكود بنجاح: ${randomCode}[span_194](start_span)[span_194](end_span)`); fetchVouchersList(); });
+            }).then(() => { alert(`تم توليد الكود بنجاح: ${randomCode}`); fetchVouchersList(); });
         }
 
         function fetchVouchersList() {
@@ -973,10 +965,10 @@
                 if (data) {
                     Object.keys(data).forEach(k => {
                         const v = data[k];
-                        html += `<div class="list-item"><div>الكود: <strong>${v.code}</strong> ${v.isUsed ? `(مستخدم: ${v.usedBy})` : '(جاهز للاستخدام)'}</div><button class="btn btn-danger" onclick="deleteItem('vouchers', '${v.code}', fetchVouchersList)">حذف[span_195](start_span)[span_195](end_span)</button></div>`;
+                        html += `<div class="list-item"><div>الكود: <strong>${v.code}</strong> ${v.isUsed ? `(مستخدم: ${v.usedBy})` : '(جاهز للاستخدام)'}</div><button class="btn btn-danger" onclick="deleteItem('vouchers', '${v.code}', fetchVouchersList)">حذف</button></div>`;
                     });
                 }
-                document.getElementById('vouchersList').innerHTML = html || '<p>لا توجد كودات.[span_196](start_span)[span_196](end_span)</p>';
+                document.getElementById('vouchersList').innerHTML = html || '<p>لا توجد كودات.</p>';
             });
         }
 
@@ -998,7 +990,7 @@
             if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher' || checkStudentSession()) {
                 openClass(className);
             } else {
-                alert('يجب تفعيل الاشتراك أولاً[span_197](start_span)[span_197](end_span)!');
+                alert('يجب تفعيل الاشتراك أولاً!');
                 showSection('authSection');
             }
         }
@@ -1035,7 +1027,7 @@
                         }
                     });
                 }
-                document.getElementById('teachersRoomsGrid').innerHTML = html || '<p style="color:#64748b; grid-column:1/-1; text-align:center;">لا توجد غرف خاصة.[span_198](start_span)[span_198](end_span)</p>';
+                document.getElementById('teachersRoomsGrid').innerHTML = html || '<p style="color:#64748b; grid-column:1/-1; text-align:center;">لا توجد غرف خاصة.</p>';
             });
         }
 
@@ -1046,7 +1038,7 @@
             }
 
             if (isOpen === false) {
-                alert('⚠️ عذراً، هذه الغرفة مغلقة حالياً من قبل الأستاذ. لا يمكن الدخول حتى يتم فتحها.[span_199](start_span)[span_199](end_span)');
+                alert('⚠️ عذراً، هذه الغرفة مغلقة حالياً من قبل الأستاذ. لا يمكن الدخول حتى يتم فتحها.');
                 return;
             }
 
@@ -1085,7 +1077,7 @@
                     registerStudentPresence(pendingRoomData.id);
                     openRoomMenu(pendingRoomData.id, pendingRoomData.title);
                 } else {
-                    alert('رمز PIN غير صحيح! تأكد من الرمز المدخل.[span_200](start_span)[span_200](end_span)');
+                    alert('رمز PIN غير صحيح! تأكد من الرمز المدخل.');
                 }
             }
         }
@@ -1114,7 +1106,7 @@
                 body: JSON.stringify({ id: roomId, title, grade, subject, pin, isOpen: true, creator: creatorName }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
-                alert('تم إنشاء الغرفة بنجاح وهي مفتوحة بالرمز[span_201](start_span)[span_201](end_span)!');
+                alert('تم إنشاء الغرفة بنجاح وهي مفتوحة بالرمز!');
                 document.getElementById('crTitle').value = '';
                 document.getElementById('crPin').value = '';
                 loadTeacherRoomsIntoDropdowns();
@@ -1135,16 +1127,16 @@
                                 <div class="list-item" style="border-right: 4px solid ${isOpen ? 'var(--success)' : 'var(--danger)'};">
                                     <div><strong>${r.title}</strong><br><small>الصف: ${r.grade} | المادة: ${r.subject} | PIN: ${r.pin}</small><br><small style="color:${isOpen ? 'var(--success)' : 'var(--danger)'}; font-weight:800;">الحالة: ${isOpen ? '🟢 مفتوحة' : '🔴 مغلقة'}</small></div>
                                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                                        <button class="btn ${isOpen ? 'btn-danger' : 'btn-success'}" style="padding:6px 12px; font-size:0.8rem;" onclick="toggleRoomLock('${r.id}', ${!isOpen})">${isOpen ? 'قفل الغرفة[span_202](start_span)[span_202](end_span)' : 'فتح الغرفة[span_203](start_span)[span_203](end_span)'}</button>
-                                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.8rem;" onclick="openEditRoomModal('${r.id}', '${r.title}', '${r.pin}', ${isOpen})">تعديل[span_204](start_span)[span_204](end_span)</button>
-                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('custom_rooms', '${r.id}', fetchMyRooms)">حذف[span_205](start_span)[span_205](end_span)</button>
+                                        <button class="btn ${isOpen ? 'btn-danger' : 'btn-success'}" style="padding:6px 12px; font-size:0.8rem;" onclick="toggleRoomLock('${r.id}', ${!isOpen})">${isOpen ? 'قفل الغرفة' : 'فتح الغرفة'}</button>
+                                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.8rem;" onclick="openEditRoomModal('${r.id}', '${r.title}', '${r.pin}', ${isOpen})">تعديل</button>
+                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('custom_rooms', '${r.id}', fetchMyRooms)">حذف</button>
                                     </div>
                                 </div>
                             `;
                         }
                     });
                 }
-                document.getElementById('myRoomsListContainer').innerHTML = html || '<p>لا توجد غرف.[span_206](start_span)[span_206](end_span)</p>';
+                document.getElementById('myRoomsListContainer').innerHTML = html || '<p>لا توجد غرف.</p>';
             });
         }
 
@@ -1154,7 +1146,7 @@
                 body: JSON.stringify({ isOpen: newStatus }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
-                alert(newStatus ? '🟢 تم فتح الغرفة بنجاح[span_207](start_span)[span_207](end_span)!' : '🔴 تم قفل الغرفة بنجاح، ولن يتمكن أي طالب من الدخول[span_208](start_span)[span_208](end_span)!');
+                alert(newStatus ? '🟢 تم فتح الغرفة بنجاح!' : '🔴 تم قفل الغرفة بنجاح، ولن يتمكن أي طالب من الدخول!');
                 fetchMyRooms();
             });
         }
@@ -1178,7 +1170,7 @@
                 method: 'PATCH',
                 body: JSON.stringify({ title, pin, isOpen }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم تحديث إعدادات الغرفة[span_209](start_span)[span_209](end_span)!'); closeEditRoomModal(); fetchMyRooms(); });
+            }).then(() => { alert('تم تحديث إعدادات الغرفة!'); closeEditRoomModal(); fetchMyRooms(); });
         }
 
         function openRoomMenu(roomId, roomTitle) {
@@ -1234,15 +1226,15 @@
                             <div class="list-item" style="border-right: 4px solid var(--success);">
                                 <div><strong>👤 الطالب: ${st.name}</strong><br><small style="color:var(--success);">🟢 متواجد ونشط في الغرفة</small></div>
                                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                                    <button class="btn btn-warning" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherWarnStudent('${st.name}')"><i class="fas fa-exclamation-triangle"></i> تحذير[span_210](start_span)[span_210](end_span)</button>
-                                    <button class="btn btn-primary" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherEditStudentNote('${k}', '${st.name}')"><i class="fas fa-edit"></i> تعديل[span_211](start_span)[span_211](end_span)</button>
-                                    <button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherKickStudent('${k}', '${st.name}')"><i class="fas fa-ban"></i> طرد[span_212](start_span)[span_212](end_span)</button>
+                                    <button class="btn btn-warning" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherWarnStudent('${st.name}')"><i class="fas fa-exclamation-triangle"></i> تحذير</button>
+                                    <button class="btn btn-primary" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherEditStudentNote('${k}', '${st.name}')"><i class="fas fa-edit"></i> تعديل</button>
+                                    <button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherKickStudent('${k}', '${st.name}')"><i class="fas fa-ban"></i> طرد</button>
                                 </div>
                             </div>
                         `;
                     });
                 }
-                document.getElementById('activeStudentsLiveManagementList').innerHTML = html || '<p style="color:#64748b;">لا يوجد طلاب نشطون حالياً في هذه الغرفة.[span_213](start_span)[span_213](end_span)</p>';
+                document.getElementById('activeStudentsLiveManagementList').innerHTML = html || '<p style="color:#64748b;">لا يوجد طلاب نشطون حالياً في هذه الغرفة.</p>';
             });
         }
 
@@ -1255,7 +1247,7 @@
             const newNote = prompt(`تعديل ملاحظة أو تقييم للطالب ${studentName}:`, "ممتاز ومشارك");
             if (newNote) {
                 db.ref(`room_grades/${activeRoomId}`).push({ name: studentName, val: newNote });
-                alert('تم التحديث بنجاح[span_214](start_span)[span_214](end_span)!');
+                alert('تم التحديث بنجاح!');
             }
         }
 
@@ -1266,7 +1258,7 @@
                     studentName: studentName,
                     kickedAt: Date.now()
                 });
-                alert(`تم طرد الطالب ${studentName} بنجاح.[span_215](start_span)[span_215](end_span)`);
+                alert(`تم طرد الطالب ${studentName} بنجاح.`);
             }
         }
 
@@ -1291,7 +1283,7 @@
                 status: 'pending',
                 timestamp: Date.now()
             }).then(() => {
-                alert('تم إرسال طلب العودة للأستاذ/المشرف بنجاح. بانتظار الموافقة...[span_216](start_span)[span_216](end_span)');
+                alert('تم إرسال طلب العودة للأستاذ/المشرف بنجاح. بانتظار الموافقة...');
             });
         }
 
@@ -1302,9 +1294,9 @@
             if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
                 adminBox.style.display = 'block';
                 ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startTeacherLive()"><i class="fas fa-play"></i> بدء البث[span_217](start_span)[span_217](end_span)</button>
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل/إيقاف الكاميرا[span_218](start_span)[span_218](end_span)</button>
-                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير[span_219](start_span)[span_219](end_span)</button>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startTeacherLive()"><i class="fas fa-play"></i> بدء البث</button>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل/إيقاف الكاميرا</button>
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
                 `;
                 listenToStudentJoinRequests();
             } else {
@@ -1322,13 +1314,13 @@
                 hasVideo: false,
                 timestamp: Date.now()
             }).then(() => {
-                alert('تم بدء البث المباشر بنجاح وتواجدك كمسؤول[span_220](start_span)[span_220](end_span)!');
+                alert('تم بدء البث المباشر بنجاح وتواجدك كمسؤول!');
                 renderParticipantsGrid();
             });
         }
 
         function requestJoinLive() {
-            if (!currentStudentName) { alert('يجب تسجيل الدخول كطالب أولاً[span_221](start_span)[span_221](end_span)!'); return; }
+            if (!currentStudentName) { alert('يجب تسجيل الدخول كطالب أولاً!'); return; }
             const reqId = 'REQ_' + Date.now();
             db.ref(`live_requests/${activeRoomId}/${reqId}`).set({
                 id: reqId,
@@ -1336,7 +1328,7 @@
                 status: 'pending',
                 timestamp: Date.now()
             }).then(() => {
-                alert('تم إرسال طلب الانضمام للبث للأستاذ/المشرف. بانتظار الموافقة...[span_222](start_span)[span_222](end_span)');
+                alert('تم إرسال طلب الانضمام للبث للأستاذ/المشرف. بانتظار الموافقة...');
             });
         }
 
@@ -1352,15 +1344,15 @@
                                 <div style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px;">
                                     <span style="color: #fff; font-size: 0.85rem; font-weight: 700;">👤 ${req.studentName} يطلب الانضمام</span>
                                     <div style="display: flex; gap: 6px;">
-                                        <button class="btn btn-success" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleLiveRequest('${req.id}', '${req.studentName}', 'approved')">قبول[span_223](start_span)[span_223](end_span)</button>
-                                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleLiveRequest('${req.id}', '${req.studentName}', 'rejected')">رفض[span_224](start_span)[span_224](end_span)</button>
+                                        <button class="btn btn-success" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleLiveRequest('${req.id}', '${req.studentName}', 'approved')">قبول</button>
+                                        <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="handleLiveRequest('${req.id}', '${req.studentName}', 'rejected')">رفض</button>
                                     </div>
                                 </div>
                             `;
                         }
                     });
                 }
-                document.getElementById('liveRequestsListContainer').innerHTML = html || '<p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.[span_225](start_span)[span_225](end_span)</p>';
+                document.getElementById('liveRequestsListContainer').innerHTML = html || '<p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p>';
             });
         }
 
@@ -1380,8 +1372,8 @@
         function checkStudentJoinStatus() {
             const ctrlBox = document.getElementById('liveControlButtons');
             ctrlBox.innerHTML = `
-                <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="requestJoinLive()"><i class="fas fa-sign-in-alt"></i> طلب الانضمام للبث[span_226](start_span)[span_226](end_span)</button>
-                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير[span_227](start_span)[span_227](end_span)</button>
+                <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="requestJoinLive()"><i class="fas fa-sign-in-alt"></i> طلب الانضمام للبث</button>
+                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
             `;
 
             db.ref(`live_requests/${activeRoomId}`).on('value', snapshot => {
@@ -1391,10 +1383,10 @@
                         const req = data[k];
                         if (req.studentName === currentStudentName && req.status === 'approved' && !isStudentInLive) {
                             isStudentInLive = true;
-                            alert('تم قبول طلبك من قبل الإدارة! أنت الآن داخل البث.[span_228](start_span)[span_228](end_span)');
+                            alert('تم قبول طلبك من قبل الإدارة! أنت الآن داخل البث.');
                             ctrlBox.innerHTML = `
-                                <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا[span_229](start_span)[span_229](end_span)</button>
-                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير[span_230](start_span)[span_230](end_span)</button>
+                                <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> تشغيل الكاميرا</button>
+                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
                             `;
                         }
                     });
@@ -1414,7 +1406,7 @@
                 container.innerHTML = `
                     <div style="color: #94a3b8; font-weight: 700; text-align: center; padding: 30px;">
                         <i class="fas fa-broadcast-tower" style="font-size: 2.5rem; margin-bottom: 10px; color: var(--success); display: block;"></i>
-                        <span>البث بانتظار التفعيل أو انضمام المشاركين...[span_231](start_span)[span_231](end_span)</span>
+                        <span>البث بانتظار التفعيل أو انضمام المشاركين...</span>
                     </div>
                 `;
                 return;
@@ -1430,7 +1422,7 @@
                         </div>
                         <span class="participant-name-tag" title="${p.name}">${p.name}</span>
                         <span class="participant-role-tag">${p.role}</span>
-                        ${(currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') && key !== 'teacher' ? `<button class="btn btn-danger" style="padding:2px 6px; font-size:0.65rem;" onclick="kickParticipant('${key}')">طرد[span_232](start_span)[span_232](end_span)</button>` : ''}
+                        ${(currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') && key !== 'teacher' ? `<button class="btn btn-danger" style="padding:2px 6px; font-size:0.65rem;" onclick="kickParticipant('${key}')">طرد</button>` : ''}
                     </div>
                 `;
             });
@@ -1441,12 +1433,12 @@
             if (!localStream) {
                 navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
                     localStream = stream;
-                    alert('تم تفعيل الكاميرا والميكروفون بنجاح[span_233](start_span)[span_233](end_span)!');
-                }).catch(() => alert('تعذر الوصول للكاميرا! تأكد من منح الصلاحية.[span_234](start_span)[span_234](end_span)'));
+                    alert('تم تفعيل الكاميرا والميكروفون بنجاح!');
+                }).catch(() => alert('تعذر الوصول للكاميرا! تأكد من منح الصلاحية.'));
             } else {
                 localStream.getTracks().forEach(track => track.stop());
                 localStream = null;
-                alert('تم إيقاف الكاميرا.[span_235](start_span)[span_235](end_span)');
+                alert('تم إيقاف الكاميرا.');
             }
         }
 
@@ -1472,13 +1464,13 @@
 
         function sendStudentQuestion() {
             const text = document.getElementById('studentQuestionInput').value.trim();
-            if(!text) { alert('اكتب السؤال أولاً[span_236](start_span)[span_236](end_span)!'); return; }
+            if(!text) { alert('اكتب السؤال أولاً!'); return; }
             const qId = 'Q_' + Date.now();
             fetch(`${DATABASE_URL}/room_questions/${activeRoomId}/${qId}.json`, {
                 method: 'PUT',
                 body: JSON.stringify({ id: qId, student: currentStudentName || 'طالب', text, date: new Date().toLocaleTimeString() }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم إرسال السؤال بنجاح[span_237](start_span)[span_237](end_span)!'); document.getElementById('studentQuestionInput').value = ''; renderRoomQuestions(); });
+            }).then(() => { alert('تم إرسال السؤال بنجاح!'); document.getElementById('studentQuestionInput').value = ''; renderRoomQuestions(); });
         }
 
         function renderRoomQuestions() {
@@ -1490,20 +1482,20 @@
                         html += `<div class="list-item"><div><strong>${q.student}:</strong> ${q.text}<br><small style="color:#64748b;">${q.date}</small></div></div>`;
                     });
                 }
-                document.getElementById('questionsListContainer').innerHTML = html || '<p style="color:#64748b;">لا توجد أسئلة.[span_238](start_span)[span_238](end_span)</p>';
+                document.getElementById('questionsListContainer').innerHTML = html || '<p style="color:#64748b;">لا توجد أسئلة.</p>';
             });
         }
 
         function saveStudentGrade() {
             const name = document.getElementById('gradeStudentName').value.trim();
             const val = document.getElementById('gradeStudentVal').value.trim();
-            if(!name || !val) { alert('أدخل الاسم والتقييم[span_239](start_span)[span_239](end_span)!'); return; }
+            if(!name || !val) { alert('أدخل الاسم والتقييم!'); return; }
             const gId = 'G_' + Date.now();
             fetch(`${DATABASE_URL}/room_grades/${activeRoomId}/${gId}.json`, {
                 method: 'PUT',
                 body: JSON.stringify({ id: gId, name, val }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم حفظ التقييم[span_240](start_span)[span_240](end_span)!'); document.getElementById('gradeStudentName').value = ''; document.getElementById('gradeStudentVal').value = ''; renderRoomGrades(); });
+            }).then(() => { alert('تم حفظ التقييم!'); document.getElementById('gradeStudentName').value = ''; document.getElementById('gradeStudentVal').value = ''; renderRoomGrades(); });
         }
 
         function renderRoomGrades() {
@@ -1520,7 +1512,7 @@
                         `;
                     });
                 }
-                document.getElementById('studentsGradesList').innerHTML = html || '<p style="color:#64748b;">لا توجد تقييمات مسجلة للطلاب بعد.[span_241](start_span)[span_241](end_span)</p>';
+                document.getElementById('studentsGradesList').innerHTML = html || '<p style="color:#64748b;">لا توجد تقييمات مسجلة للطلاب بعد.</p>';
             });
         }
 
@@ -1533,11 +1525,11 @@
                         const item = data[k];
                         if (item.roomId === activeRoomId) {
                             let safeData = encodeURIComponent(item.fileData || (item.chunks ? Object.values(item.chunks).join('') : ''));
-                            html += `<div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}')"><div class="file-mini-info"><i class="fas fa-file-pdf"></i><h4>${item.title}</h4></div><span class="badge badge-active">عرض وتكبير[span_242](start_span)[span_242](end_span)</span></div>`;
+                            html += `<div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}')"><div class="file-mini-info"><i class="fas fa-file-pdf"></i><h4>${item.title}</h4></div><span class="badge badge-active">عرض وتكبير</span></div>`;
                         }
                     });
                 }
-                container.innerHTML = html || `<p style="color:#64748b;">لا توجد ملازم.[span_243](start_span)[span_243](end_span)</p>`;
+                container.innerHTML = html || `<p style="color:#64748b;">لا توجد ملازم.</p>`;
             });
         }
 
@@ -1570,11 +1562,11 @@
                     Object.keys(data).forEach(k => {
                         const rec = data[k];
                         if (rec.roomId === activeRoomId) {
-                            html += `<div class="file-mini-card" onclick="openRecordingModal('${rec.title}', '${rec.url}')"><div class="file-mini-info"><i class="fas fa-play-circle" style="color:var(--accent);"></i><h4>${rec.title}</h4></div><span class="badge badge-active">مشاهدة[span_244](start_span)[span_244](end_span)</span></div>`;
+                            html += `<div class="file-mini-card" onclick="openRecordingModal('${rec.title}', '${rec.url}')"><div class="file-mini-info"><i class="fas fa-play-circle" style="color:var(--accent);"></i><h4>${rec.title}</h4></div><span class="badge badge-active">مشاهدة</span></div>`;
                         }
                     });
                 }
-                document.getElementById('recordingsContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد محاضرات.[span_245](start_span)[span_245](end_span)</p>`;
+                document.getElementById('recordingsContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد محاضرات.</p>`;
             });
         }
 
@@ -1595,7 +1587,7 @@
                         }
                     });
                 }
-                document.getElementById('homeworkContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد واجبات.[span_246](start_span)[span_246](end_span)</p>`;
+                document.getElementById('homeworkContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد واجبات.</p>`;
             });
         }
 
@@ -1610,12 +1602,12 @@
                         }
                     });
                 }
-                document.getElementById('quizzesContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد اختبارات.[span_247](start_span)[span_247](end_span)</p>`;
+                document.getElementById('quizzesContainer').innerHTML = html || `<p style="color:#64748b;">لا توجد اختبارات.</p>`;
             });
         }
 
         function deleteItem(path, id, callback) {
-            if (confirm('هل تريد الحذف بالتأكيد؟[span_248](start_span)[span_248](end_span)')) { fetch(`${DATABASE_URL}/${path}/${id}.json`, { method: 'DELETE' }).then(() => callback()); }
+            if (confirm('هل تريد الحذف بالتأكيد؟')) { fetch(`${DATABASE_URL}/${path}/${id}.json`, { method: 'DELETE' }).then(() => callback()); }
         }
 
         function handleTeacherUpload(e) {
@@ -1633,7 +1625,7 @@
                     method: 'PUT',
                     body: JSON.stringify({ id: contentId, roomId, title, chunks, date: new Date().toLocaleDateString('ar-EG') }),
                     headers: { 'Content-Type': 'application/json' }
-                }).then(() => { alert('تم رفع الملزمة[span_249](start_span)[span_249](end_span)!'); document.getElementById('tUpTitle').value = ''; document.getElementById('tUpFile').value = ''; });
+                }).then(() => { alert('تم رفع الملزمة!'); document.getElementById('tUpTitle').value = ''; document.getElementById('tUpFile').value = ''; });
             };
             reader.readAsDataURL(file);
         }
@@ -1648,7 +1640,7 @@
                 method: 'PUT',
                 body: JSON.stringify({ id: recId, roomId, title, url }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم نشر المحاضرة[span_250](start_span)[span_250](end_span)!'); document.getElementById('recTitle').value = ''; document.getElementById('recUrl').value = ''; });
+            }).then(() => { alert('تم نشر المحاضرة!'); document.getElementById('recTitle').value = ''; document.getElementById('recUrl').value = ''; });
         }
 
         function handleTeacherQuiz(e) {
@@ -1665,7 +1657,7 @@
                 method: 'PUT',
                 body: JSON.stringify({ id: qId, roomId, title, question, opt1, opt2, opt3, correct }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم نشر الاختبار[span_251](start_span)[span_251](end_span)!'); document.getElementById('qTitle').value = ''; document.getElementById('qQuestion').value = ''; });
+            }).then(() => { alert('تم نشر الاختبار!'); document.getElementById('qTitle').value = ''; document.getElementById('qQuestion').value = ''; });
         }
 
         function handleTeacherHomework(e) {
@@ -1677,7 +1669,7 @@
                 method: 'PUT',
                 body: JSON.stringify({ id: hwId, roomId, title }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم نشر الواجب[span_252](start_span)[span_252](end_span)!'); document.getElementById('hwTitle').value = ''; });
+            }).then(() => { alert('تم نشر الواجب!'); document.getElementById('hwTitle').value = ''; });
         }
 
         function submitTeacherReport(e) {
@@ -1689,18 +1681,18 @@
                 method: 'POST',
                 body: JSON.stringify({ teacher: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد', student, type, details, date: new Date().toLocaleString() }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم إرسال الإنذار[span_253](start_span)[span_253](end_span)!'); document.getElementById('repStudentName').value = ''; document.getElementById('repDetails').value = ''; });
+            }).then(() => { alert('تم إرسال الإنذار!'); document.getElementById('repStudentName').value = ''; document.getElementById('repDetails').value = ''; });
         }
 
         function renderScheduleManager() {
             document.getElementById('scheduleContainer').innerHTML = `
                 <form onsubmit="saveSchedule(event)" style="margin-bottom:20px; background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #cbd5e1;">
-                    <div class="form-group"><label>الصف[span_254](start_span)[span_254](end_span)</label><select class="form-control" id="schGrade"><option value="الأول المتوسط">الأول المتوسط[span_255](start_span)[span_255](end_span)</option><option value="السادس الاعدادي">السادس الإعدادي[span_256](start_span)[span_256](end_span)</option></select></div>
-                    <div class="form-group"><label>اليوم[span_257](start_span)[span_257](end_span)</label><select class="form-control" id="schDay"><option value="السبت">السبت[span_258](start_span)[span_258](end_span)</option><option value="الأحد">الأحد[span_259](start_span)[span_259](end_span)</option></select></div>
-                    <div class="form-group"><label>التفاصيل[span_260](start_span)[span_260](end_span)</label><input type="text" class="form-control" id="schDetails" required placeholder="الساعة 5 - رياضيات[span_261](start_span)[span_261](end_span)"></div>
-                    <button type="submit" class="btn btn-success btn-block">إضافة[span_262](start_span)[span_262](end_span)</button>
+                    <div class="form-group"><label>الصف</label><select class="form-control" id="schGrade"><option value="الأول المتوسط">الأول المتوسط</option><option value="السادس الاعدادي">السادس الإعدادي</option></select></div>
+                    <div class="form-group"><label>اليوم</label><select class="form-control" id="schDay"><option value="السبت">السبت</option><option value="الأحد">الأحد</option></select></div>
+                    <div class="form-group"><label>التفاصيل</label><input type="text" class="form-control" id="schDetails" required placeholder="الساعة 5 - رياضيات"></div>
+                    <button type="submit" class="btn btn-success btn-block">إضافة</button>
                 </form>
-                <div id="schList">جاري التحميل...[span_263](start_span)[span_263](end_span)</div>
+                <div id="schList">جاري التحميل...</div>
             `;
             fetchSchedules();
         }
@@ -1713,22 +1705,22 @@
             const sId = 'SCH_' + Date.now();
             fetch(`${DATABASE_URL}/schedules/${sId}.json`, {
                 method: 'PUT', body: JSON.stringify({ id: sId, grade, day, details }), headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تمت الإضافة[span_264](start_span)[span_264](end_span)!'); document.getElementById('schDetails').value = ''; fetchSchedules(); });
+            }).then(() => { alert('تمت الإضافة!'); document.getElementById('schDetails').value = ''; fetchSchedules(); });
         }
 
         function fetchSchedules() {
             fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) { Object.keys(data).forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف[span_265](start_span)[span_265](end_span)</button></div>`; }); }
-                document.getElementById('schList').innerHTML = html || '<p>لا توجد حصص.[span_266](start_span)[span_266](end_span)</p>';
+                if (data) { Object.keys(data).forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
+                document.getElementById('schList').innerHTML = html || '<p>لا توجد حصص.</p>';
             });
         }
 
         function fetchAdminReports() {
             fetch(`${DATABASE_URL}/reports.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) { Object.keys(data).forEach(k => { const r = data[k]; html += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف[span_267](start_span)[span_267](end_span)</button></div>`; }); }
-                document.getElementById('adminReportsList').innerHTML = html || '<p>لا توجد تقارير.[span_268](start_span)[span_268](end_span)</p>';
+                if (data) { Object.keys(data).forEach(k => { const r = data[k]; html += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; }); }
+                document.getElementById('adminReportsList').innerHTML = html || '<p>لا توجد تقارير.</p>';
             });
         }
     </script>
