@@ -108,7 +108,7 @@
 
     <div class="layout-wrapper">
         <sidebar id="appSidebar">
-            <!-- قائمة الصفوف تظهر للجميع -->
+            <!-- قائمة الصفوف تظهر للجميع للتصفح ولكن مشروطة بالاشتراك عند النقر -->
             <div class="sidebar-title">الصفوف الدراسية</div>
             <div id="studentNavClasses">
                 <button class="nav-item" onclick="tryOpenClass('الأول المتوسط')"><i class="fas fa-graduation-cap"></i> الأول المتوسط</button>
@@ -149,9 +149,9 @@
         </sidebar>
 
         <main>
-            <!-- صفحة التفعيل والاشتراك (تظهر تلقائياً إذا حاول الطالب الدخول لصف ولم يكن مشتركاً) -->
+            <!-- واجهة التفعيل والاشتراك (تظهر للطالب غير المشترك عند النقر على أي صف) -->
             <div class="card" id="authSection">
-                <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في المنصة للدخول إلى الصفوف</div>
+                <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في المنصة للدخول إلى الصفوف والمحتوى</div>
                 <div style="background: #eff6ff; padding: 16px; border-radius: 12px; margin-bottom: 18px; border-right: 4px solid var(--accent);">
                     <p style="font-weight: 800; color: var(--primary);"><i class="fas fa-tag"></i> سعر الاشتراك الشهري: <span id="dispPrice">5000</span> دينار</p>
                     <div id="dispPayment" style="font-size: 0.88rem; margin-top: 6px; white-space: pre-line; color: #334155;">
@@ -783,7 +783,7 @@
             return false;
         }
 
-        // دالة التحقق عند محاولة الطالب النقر على أي صف دراسي
+        // دالة حماية الصفوف: لا يُسمح بالدخول إلا إذا كان الأدمن، المدرس، أو طالباً مشتركاً فعالاً
         function tryOpenClass(className) {
             if (currentRole === 'admin' || currentRole === 'teacher' || checkStudentSession()) {
                 openClass(className);
