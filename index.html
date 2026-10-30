@@ -292,6 +292,12 @@
                             <div style="display: flex; gap: 8px; align-items: center;" id="liveControlButtons"></div>
                         </div>
 
+                        <!-- زر تفاعلي لتفعيل الصوت في المتصفحات التي تحظر التشغيل التلقائي -->
+                        <div id="audioUnlockBanner" style="background: #1e40af; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; color: #fff;">
+                            <span><i class="fas fa-volume-up"></i> انقر هنا لتفعيل سماع الصوت بوضوح في الغرفة:</span>
+                            <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.8rem;" onclick="unlockAudioOutput()">تفعيل الصوت الآن</button>
+                        </div>
+
                         <div id="teacherLiveAdminBox" style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; margin-bottom: 12px; display: none;">
                             <h5 style="color: #38bdf8; font-size: 0.9rem; margin-bottom: 8px;"><i class="fas fa-users"></i> طلبات انضمام الطلاب للبث الصوتي:</h5>
                             <div id="liveRequestsListContainer" style="max-height: 120px; overflow-y: auto;"><p style="color: #64748b; font-size: 0.85rem;">لا توجد طلبات انضمام معلقة حالياً.</p></div>
@@ -567,7 +573,7 @@
         </div>
     </div>
 
-    <!-- عنصر صوتي للاستماع -->
+    <!-- عنصر مشغل الصوت المشترك للسامعين -->
     <audio id="remoteAudioPlayer" autoplay playsinline></audio>
 
     <script>
@@ -1391,7 +1397,7 @@
                 name: tName, role: 'الأستاذ / المشرف', isMuted: false, timestamp: Date.now()
             }).then(() => {
                 db.ref(`voice_status/${activeRoomId}`).set({ active: true });
-                initLocalMicrophone('teacher');
+                initLocalMicrophone();
                 alert('تم بدء البث الصوتي المباشر!');
             });
         }
@@ -1415,7 +1421,6 @@
                 if (!isActive && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
                     renderVoiceParticipantsGrid(null);
                 } else if (isActive && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                    // إظهار زر الانضمام تلقائياً فور بدء البث من قبل الأستاذ
                     checkStudentVoiceJoinStatus();
                 }
             });
@@ -1488,7 +1493,7 @@
                         if (req.studentName === currentStudentName && req.status === 'approved' && !isStudentInLive) {
                             isStudentInLive = true;
                             alert('تم قبول طلبك! تم انضمامك للبث الصوتي.');
-                            initLocalMicrophone('student_' + Date.now());
+                            initLocalMicrophone();
                             if (ctrlBox) {
                                 ctrlBox.innerHTML = `
                                     <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم/فتح المايك</button>
@@ -1500,13 +1505,26 @@
             });
         }
 
-        function initLocalMicrophone(userKey) {
+        function initLocalMicrophone() {
             navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
                 localAudioStream = stream;
                 const remoteAudio = document.getElementById('remoteAudioPlayer');
                 remoteAudio.srcObject = stream;
-                remoteAudio.muted = true;
+                remoteAudio.muted = true; // كتم الصدى المحلي للمتحدث نفسه
+                remoteAudio.play().catch(e => console.log(e));
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في المتصفح.'));
+        }
+
+        // دالة زر تفعيل الصوت اليدوي لتجاوز قيود المتصفحات الآمنة
+        function unlockAudioOutput() {
+            const audioEl = document.getElementById('remoteAudioPlayer');
+            audioEl.play().then(() => {
+                alert('🔊 تم تفعيل تشغيل الصوت بنجاح!');
+                document.getElementById('audioUnlockBanner').style.display = 'none';
+            }).catch(err => {
+                console.error(err);
+                alert('يرجى النقر مرة أخرى بعد بدء البث الصوتي.');
+            });
         }
 
         function toggleMicrophone() {
