@@ -180,8 +180,8 @@
                 </div>
 
                 <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                    <button class="btn btn-primary" style="flex:1;" onclick="switchAuthTab('code')">تفعيل مباشر (بكود التفعيل)</button>
-                    <button class="btn btn-secondary" style="flex:1;" onclick="switchAuthTab('notify')">إرسال إشعار تحويل مال للأدمن</button>
+                    <button class="btn btn-primary" id="btnTabCode" style="flex:1;" onclick="switchAuthTab('code')">تفعيل مباشر (بكود التفعيل)</button>
+                    <button class="btn btn-secondary" id="btnTabNotify" style="flex:1;" onclick="switchAuthTab('notify')">إرسال إشعار تحويل مال للأدمن</button>
                 </div>
 
                 <form id="formVoucherCode" onsubmit="activateWithVoucher(event)">
@@ -609,8 +609,22 @@
         }
 
         function switchAuthTab(type) {
-            document.getElementById('formVoucherCode').style.display = (type === 'code') ? 'block' : 'none';
-            document.getElementById('formNotifyAdmin').style.display = (type === 'notify') ? 'block' : 'none';
+            const btnCode = document.getElementById('btnTabCode');
+            const btnNotify = document.getElementById('btnTabNotify');
+            const formCode = document.getElementById('formVoucherCode');
+            const formNotify = document.getElementById('formNotifyAdmin');
+
+            if (type === 'code') {
+                formCode.style.display = 'block';
+                formNotify.style.display = 'none';
+                btnCode.className = 'btn btn-primary';
+                btnNotify.className = 'btn btn-secondary';
+            } else {
+                formCode.style.display = 'none';
+                formNotify.style.display = 'block';
+                btnCode.className = 'btn btn-secondary';
+                btnNotify.className = 'btn btn-primary';
+            }
         }
 
         function loadSettingsData() {
@@ -648,4 +662,1010 @@
             if (btoa(document.getElementById('adminPassInput').value) === ADMIN_HASH) {
                 currentRole = 'admin';
                 document.getElementById('adminSidebarSection').style.display = 'block';
-                document.
+                document.getElementById('teacherSidebarSection').style.display = 'block';
+                document.getElementById('adminSidebarTitleText').innerText = "لوحة الأدمن الرئيسي";
+                document.getElementById('settingsNavBtn').style.display = 'flex';
+                document.getElementById('adminLockBtn').style.display = 'none';
+                document.getElementById('adminExitBtn').style.display = 'flex';
+                document.getElementById('logoutContainer').style.display = 'block';
+                document.getElementById('topSubtitle').innerText = "لوحة تحكم الأدمن";
+                document.getElementById('maintenanceScreen').style.display = 'none';
+                closeAdminModal();
+                showSection('sectionPlatformUsers');
+                loadPlatformUsersOverview();
+                loadTeacherRoomsIntoDropdowns();
+            } else { alert('كلمة المرور خطأ!'); }
+        }
+
+        function verifyTeacherLogin() {
+            const user = document.getElementById('teacherUsername').value.trim();
+            const pass = document.getElementById('teacherPassword').value.trim();
+            fetch(`${DATABASE_URL}/teachers.json`).then(res => res.json()).then(data => {
+                let found = null;
+                if (data) { Object.keys(data).forEach(k => { if (data[k].username === user && data[k].password === pass) found = data[k]; }); }
+                if (found) {
+                    currentRole = found.isSupervisor ? 'supervisor' : 'teacher'; 
+                    loggedTeacherData = found;
+                    
+                    document.getElementById('teacherSidebarSection').style.display = 'block';
+                    document.getElementById('adminLockBtn').style.display = 'none';
+                    document.getElementById('adminExitBtn').style.display = 'flex';
+                    document.getElementById('logoutContainer').style.display = 'block';
+
+                    if (found.isSupervisor) {
+                        document.getElementById('adminSidebarSection').style.display = 'block';
+                        document.getElementById('adminSidebarTitleText').innerText = "لوحة المشرف المساعد";
+                        document.getElementById('settingsNavBtn').style.display = 'none';
+                        document.getElementById('topSubtitle').innerText = `المشرف: ${found.name} (${found.subject})`;
+                        showSection('sectionPlatformUsers');
+                        loadPlatformUsersOverview();
+                    } else {
+                        document.getElementById('adminSidebarSection').style.display = 'none';
+                        document.getElementById('topSubtitle').innerText = `المدرس: ${found.name} (${found.subject})`;
+                        showSection('sectionCreateRoom');
+                    }
+
+                    closeAdminModal(); 
+                    loadTeacherRoomsIntoDropdowns();
+                } else { alert('معلومات الدخول غير صحيحة أو بانتظار موافقة الأدمن!'); }
+            });
+        }
+
+        function registerNewTeacher(e) {
+            e.preventDefault();
+            const name = document.getElementById('regTName').value.trim();
+            const subject = document.getElementById('regTSubject').value;
+            const username = document.getElementById('regTUser').value.trim();
+            const password = document.getElementById('regTPass').value.trim();
+            const reqId = 'TREQ_' + Date.now();
+
+            fetch(`${DATABASE_URL}/teacher_requests/${reqId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: reqId, name, subject, username, password, status: 'pending', timestamp: Date.now() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert('تم إرسال طلب تسجيل المدرس بنجاح إلى الإدارة بانتظار القبول!');
+                switchLoginTab('teacher');
+            });
+        }
+
+        function logoutSystem() {
+            try {
+                if (localStream) {
+                    localStream.getTracks().forEach(track => track.stop());
+                    localStream = null;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+
+            localStorage.removeItem('student_session');
+            currentRole = '';
+            loggedTeacherData = null;
+            currentStudentName = "";
+            activeClass = "";
+            activeSub = "";
+            activeRoomId = "";
+            activeRoomTitleStr = "";
+            isStudentInLive = false;
+            
+            document.getElementById('adminSidebarSection').style.display = 'none';
+            document.getElementById('teacherSidebarSection').style.display = 'none';
+            document.getElementById('logoutContainer').style.display = 'none';
+            document.getElementById('adminLockBtn').style.display = 'flex';
+            document.getElementById('adminExitBtn').style.display = 'none';
+            document.getElementById('topSubtitle').innerText = "المرحلة الثانوية";
+            
+            showSection('authSection');
+        }
+
+        function showSection(sectionId) {
+            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'roomMenuSection', 'lecturesSection', 'sectionCreateRoom', 'sectionManageRooms', 'sectionNotifications', 'sectionPlatformUsers', 'sectionVouchers', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework', 'sectionTeacherReports'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
+            });
+            if (sectionId === 'sectionManageRooms') fetchMyRooms();
+            if (sectionId === 'sectionPlatformUsers') loadPlatformUsersOverview();
+            if (sectionId === 'sectionVouchers') fetchVouchersList();
+            if (sectionId === 'sectionScheduleManage') renderScheduleManager();
+            if (sectionId === 'sectionAdminReports') fetchAdminReports();
+            if (['sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework'].includes(sectionId)) loadTeacherRoomsIntoDropdowns();
+        }
+
+        function loadPlatformUsersOverview() {
+            fetch(`${DATABASE_URL}/teachers.json`).then(res => res.json()).then(teachersData => {
+                let teachersHtml = '';
+                if (teachersData) {
+                    Object.keys(teachersData).forEach(k => {
+                        const t = teachersData[k];
+                        const isSup = t.isSupervisor === true;
+                        teachersHtml += `
+                            <div class="list-item" style="border-right: 4px solid ${isSup ? 'var(--warning)' : 'var(--success)'};">
+                                <div>
+                                    <strong>👨‍🏫 المدرس: ${t.name} ${isSup ? '⭐ (مشرف مساعد)' : ''}</strong><br>
+                                    <small style="color:var(--accent); font-weight:800;"><i class="fas fa-book"></i> المادة: ${t.subject}</small><br>
+                                    <small style="color:#64748b;">يوزر: ${t.username}</small>
+                                </div>
+                                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                    ${currentRole === 'admin' ? `<button class="btn ${isSup ? 'btn-secondary' : 'btn-warning'}" style="padding:6px 10px; font-size:0.75rem;" onclick="toggleSupervisor('${t.id}', ${!isSup})">${isSup ? 'إلغاء الإشراف' : 'ترقية مشرف'}</button>` : ''}
+                                    <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteItem('teachers', '${t.id}', loadPlatformUsersOverview)">حذف</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                fetch(`${DATABASE_URL}/teacher_requests.json`).then(r => r.json()).then(reqs => {
+                    if (reqs) {
+                        Object.keys(reqs).forEach(rk => {
+                            const req = reqs[rk];
+                            if (req.status === 'pending') {
+                                teachersHtml += `
+                                    <div class="list-item" style="border-right: 4px solid var(--warning); background:#fffbeb;">
+                                        <div>
+                                            <strong>⏳ طلب مدرس جديد: ${req.name}</strong><br>
+                                            <small>المادة: ${req.subject} | اليوزر: ${req.username}</small>
+                                        </div>
+                                        <div style="display:flex; gap:6px;">
+                                            <button class="btn btn-success" style="padding:6px 10px; font-size:0.75rem;" onclick="approveTeacherRequest('${req.id}', '${req.name}', '${req.subject}', '${req.username}', '${req.password}')">قبول المدرس</button>
+                                            <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteItem('teacher_requests', '${req.id}', loadPlatformUsersOverview)">رفض</button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    const tContainer = document.getElementById('adminTeachersListContainer');
+                    if (tContainer) tContainer.innerHTML = teachersHtml || '<p style="color:#64748b;">لا يوجد مدرسين مسجلين حالياً.</p>';
+                });
+            });
+
+            fetch(`${DATABASE_URL}/vouchers.json`).then(res => res.json()).then(vouchersData => {
+                let studentsHtml = '';
+                const now = Date.now();
+                const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+
+                if (vouchersData) {
+                    Object.keys(vouchersData).forEach(code => {
+                        const v = vouchersData[code];
+                        if (v.isUsed && v.usedBy) {
+                            const usedAt = v.usedAt || now;
+                            const expirationTime = usedAt + thirtyDaysMs;
+                            const diffTime = expirationTime - now;
+                            const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            const isExpired = daysLeft <= 0;
+
+                            studentsHtml += `
+                                <div class="list-item" style="border-right: 4px solid ${isExpired ? 'var(--danger)' : 'var(--accent)'};">
+                                    <div>
+                                        <strong>👤 الطالب: ${v.usedBy}</strong><br>
+                                        <small>الكود: <code>${v.code}</code></small><br>
+                                        <small style="font-weight:800; color:${isExpired ? 'var(--danger)' : 'var(--success)'};">
+                                            ${isExpired ? '⚠️ انتهى الاشتراك' : `⏳ الأيام المتبقية لنهاية الاشتراك: ${daysLeft} يوم`}
+                                        </small>
+                                    </div>
+                                    <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('vouchers', '${code}', loadPlatformUsersOverview)">إنهاء/حذف الاشتراك</button>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                const sContainer = document.getElementById('adminStudentsListContainer');
+                if (sContainer) sContainer.innerHTML = studentsHtml || '<p style="color:#64748b;">لا توجد اشتراكات طلاب نشطة حالياً.</p>';
+            });
+        }
+
+        function toggleSupervisor(teacherId, makeSuper) {
+            fetch(`${DATABASE_URL}/teachers/${teacherId}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify({ isSupervisor: makeSuper }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert(makeSuper ? '⭐ تم ترقية المدرس ليصبح مشرفاً مساعداً بنجاح!' : 'تم إلغاء صلاحية الإشراف عن المدرس.');
+                loadPlatformUsersOverview();
+            });
+        }
+
+        function approveTeacherRequest(reqId, name, subject, username, password) {
+            const tId = 'T_' + Date.now();
+            fetch(`${DATABASE_URL}/teachers/${tId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: tId, name, subject, username, password, isSupervisor: false }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                fetch(`${DATABASE_URL}/teacher_requests/${reqId}.json`, { method: 'DELETE' }).then(() => {
+                    alert(`تم قبول المدرس ${name} بنجاح!`);
+                    loadPlatformUsersOverview();
+                });
+            });
+        }
+
+        function loadTeacherRoomsIntoDropdowns() {
+            const creatorName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+            fetch(`${DATABASE_URL}/custom_rooms.json`).then(res => res.json()).then(data => {
+                let optionsHtml = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const r = data[k];
+                        if (currentRole === 'admin' || currentRole === 'supervisor' || r.creator === creatorName) {
+                            optionsHtml += `<option value="${r.id}">${r.title} (${r.grade})</option>`;
+                        }
+                    });
+                }
+                ['tUpRoomId', 'recRoomId', 'qRoomId', 'hwRoomId'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerHTML = optionsHtml || '<option value="">أنشئ غرفة أولاً</option>';
+                });
+            });
+        }
+
+        function sendPaymentNotification(e) {
+            e.preventDefault();
+            const name = document.getElementById('nStudentName').value.trim();
+            const payMethod = document.getElementById('nPayMethod').value;
+            const refNum = document.getElementById('nRefNum').value.trim();
+            const notifId = 'NOTIF_' + Date.now();
+
+            fetch(`${DATABASE_URL}/notifications/${notifId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: notifId, name, payMethod, refNum, status: 'pending', timestamp: Date.now() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert('تم إرسال إشعار التحويل للأدمن/المشرفين!');
+                document.getElementById('nStudentName').value = '';
+                document.getElementById('nRefNum').value = '';
+            });
+        }
+
+        function listenToNotificationsRealtime() {
+            db.ref('notifications').on('value', snapshot => {
+                const data = snapshot.val();
+                let count = 0;
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const notif = data[k];
+                        if (notif.status === 'pending') {
+                            count++;
+                            html += `
+                                <div class="list-item" style="border-right: 4px solid var(--accent);">
+                                    <div><strong>🔔 طالب: ${notif.name}</strong><br><small>التحويل: ${notif.payMethod} | العملية: ${notif.refNum}</small></div>
+                                    <div style="display:flex; gap:8px;">
+                                        <button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="approvePaymentNotif('${notif.id}', '${notif.name}')">قبول وتوليد كود</button>
+                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('notifications', '${notif.id}', listenToNotificationsRealtime)">رفض</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                const topBadge = document.getElementById('topNotifBadge');
+                const sidebarBadge = document.getElementById('sidebarNotifBadge');
+                if (topBadge && sidebarBadge) {
+                    if (count > 0) {
+                        topBadge.innerText = count; topBadge.style.display = 'flex';
+                        sidebarBadge.innerText = count; sidebarBadge.style.display = 'inline-flex';
+                    } else {
+                        topBadge.style.display = 'none'; sidebarBadge.style.display = 'none';
+                    }
+                }
+                const notifList = document.getElementById('liveNotificationsList');
+                if (notifList) notifList.innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد إشعارات جديدة.</p>';
+            });
+        }
+
+        function approvePaymentNotif(notifId, studentName) {
+            const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
+            fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ code: randomCode, isUsed: false, createdAt: Date.now() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                fetch(`${DATABASE_URL}/notifications/${notifId}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ status: 'approved', generatedCode: randomCode }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => alert(`تم القبول وتوليد الكود بنجاح: ${randomCode}`));
+            });
+        }
+
+        function activateWithVoucher(e) {
+            e.preventDefault();
+            const name = document.getElementById('vStudentName').value.trim();
+            const code = document.getElementById('vCodeInput').value.trim();
+
+            fetch(`${DATABASE_URL}/vouchers/${code}.json`).then(res => res.json()).then(voucher => {
+                if (voucher) {
+                    if (!voucher.isUsed || voucher.usedBy === name) {
+                        if (!voucher.isUsed) {
+                            fetch(`${DATABASE_URL}/vouchers/${code}.json`, {
+                                method: 'PATCH',
+                                body: JSON.stringify({ isUsed: true, usedBy: name, usedAt: Date.now() }),
+                                headers: { 'Content-Type': 'application/json' }
+                            });
+                        }
+                        currentStudentName = name;
+                        localStorage.setItem('student_session', JSON.stringify({ id: code, name: name, status: 'active' }));
+                        document.getElementById('logoutContainer').style.display = 'block';
+                        alert('تم تسجيل الدخول بنجاح!');
+                        openClass('الأول المتوسط');
+                    } else {
+                        alert('⚠️ عذراً، هذا الكود مستخدم بالفعل من قبل طالب آخر!');
+                    }
+                } else { 
+                    alert('كود التفعيل غير صحيح!'); 
+                }
+            });
+        }
+
+        function generateVoucher(e) {
+            e.preventDefault();
+            const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
+            fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ code: randomCode, isUsed: false, createdAt: Date.now() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert(`تم توليد الكود بنجاح: ${randomCode}`); fetchVouchersList(); });
+        }
+
+        function fetchVouchersList() {
+            fetch(`${DATABASE_URL}/vouchers.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const v = data[k];
+                        html += `<div class="list-item"><div>الكود: <strong>${v.code}</strong> ${v.isUsed ? `(مستخدم: ${v.usedBy})` : '(جاهز للاستخدام)'}</div><button class="btn btn-danger" onclick="deleteItem('vouchers', '${v.code}', fetchVouchersList)">حذف</button></div>`;
+                    });
+                }
+                const vList = document.getElementById('vouchersList');
+                if (vList) vList.innerHTML = html || '<p>لا توجد كودات.</p>';
+            });
+        }
+
+        function checkStudentSession() {
+            if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') return true;
+            const session = localStorage.getItem('student_session');
+            if (session) {
+                const student = JSON.parse(session);
+                if (student && student.id && student.name) {
+                    fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
+                        if (voucher && voucher.isUsed && voucher.usedBy === student.name) {
+                            currentStudentName = student.name;
+                            document.getElementById('logoutContainer').style.display = 'block';
+                            return true;
+                        } else {
+                            logoutSystem();
+                        }
+                    }).catch(() => {});
+                }
+            }
+            return false;
+        }
+
+        function tryOpenClass(className) {
+            if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                openClass(className);
+                return;
+            }
+            const session = localStorage.getItem('student_session');
+            if (session) {
+                const student = JSON.parse(session);
+                fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
+                    if (voucher && voucher.isUsed) {
+                        currentStudentName = student.name;
+                        openClass(className);
+                    } else {
+                        logoutSystem();
+                        alert('⚠️ عذراً، انتهى اشتراكك أو تم حذفه. يرجى التفعيل من جديد.');
+                        showSection('authSection');
+                    }
+                });
+            } else {
+                alert('يجب تفعيل الاشتراك أولاً!');
+                showSection('authSection');
+            }
+        }
+
+        function openClass(className) {
+            activeClass = className;
+            document.getElementById('currentClassName').innerText = className;
+            showSection('subjectsSection');
+            let html = '';
+            allSubjectsList.forEach(sub => {
+                html += `<div class="sub-card" onclick="openSubjectRooms('${sub.name}')"><i class="${sub.icon}"></i><span>${sub.name}</span></div>`;
+            });
+            document.getElementById('dynamicSubjectsGrid').innerHTML = html;
+        }
+
+        function openSubjectRooms(subName) {
+            activeSub = subName;
+            document.getElementById('currentSubTitle').innerText = "مادة: " + subName + " (" + activeClass + ")";
+            showSection('teachersRoomsSection');
+            fetch(`${DATABASE_URL}/custom_rooms.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const r = data[k];
+                        if (r.grade === activeClass && r.subject === subName) {
+                            const isRoomOpen = r.isOpen !== false;
+                            const isFree = r.accessType === 'free' || !r.pin;
+                            html += `
+                                <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin || ''}', ${isRoomOpen}, '${r.accessType || 'free'}')">
+                                    <i class="fas ${isFree ? 'fa-lock-open' : 'fa-lock'}" style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; position:absolute; top:10px; left:10px;" title="${isFree ? 'مجانية' : 'خصوصي برمز'}"></i>
+                                    <i class="fas fa-chalkboard-teacher" style="color:var(--accent);"></i>
+                                    <span><strong>${r.title}</strong><br><small>الأستاذ: ${r.creator || 'مدرس'}</small><br><small style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; font-weight:800;">${isFree ? '🟢 مجانية للجميع' : '🔒 درس خصوصي بررمز'}</small></span>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                document.getElementById('teachersRoomsGrid').innerHTML = html || '<p style="color:#64748b; grid-column:1/-1; text-align:center;">لا توجد غرف متاحة.</p>';
+            });
+        }
+
+        function togglePinInput(val) {
+            document.getElementById('pinInputGroup').style.display = (val === 'protected') ? 'block' : 'none';
+        }
+
+        function toggleEditPinInput(val) {
+            document.getElementById('editPinInputGroup').style.display = (val === 'protected') ? 'block' : 'none';
+        }
+
+        function promptRoomPin(roomId, roomTitle, roomPin, isOpen, accessType) {
+            if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                openRoomMenu(roomId, roomTitle);
+                return;
+            }
+
+            fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`).then(res => res.json()).then(roomData => {
+                if (roomData && roomData.isOpen === false) {
+                    alert('⚠️ عذراً، هذه الغرفة مغلقة حالياً من قبل الأستاذ.');
+                    return;
+                }
+
+                if (!roomData || roomData.accessType === 'free' || !roomData.pin) {
+                    registerStudentPresence(roomId);
+                    openRoomMenu(roomId, roomTitle);
+                    return;
+                }
+
+                if (currentStudentName) {
+                    fetch(`${DATABASE_URL}/room_kicked/${roomId}.json`).then(res => res.json()).then(kickedData => {
+                        if (kickedData) {
+                            let isKicked = false;
+                            Object.keys(kickedData).forEach(k => {
+                                if (kickedData[k].studentName === currentStudentName) isKicked = true;
+                            });
+                            if (isKicked) {
+                                document.getElementById('kickedModal').style.display = 'flex';
+                                return;
+                            }
+                        }
+                        pendingRoomData = { id: roomId, title: roomTitle, pin: roomData.pin };
+                        document.getElementById('studentPinInput').value = '';
+                        document.getElementById('pinModal').style.display = 'flex';
+                    });
+                } else {
+                    pendingRoomData = { id: roomId, title: roomTitle, pin: roomData.pin };
+                    document.getElementById('studentPinInput').value = '';
+                    document.getElementById('pinModal').style.display = 'flex';
+                }
+            });
+        }
+
+        function closePinModal() { document.getElementById('pinModal').style.display = 'none'; pendingRoomData = null; }
+
+        function verifyRoomPin() {
+            if (pendingRoomData) {
+                const enteredPin = String(document.getElementById('studentPinInput').value).trim();
+                const correctPin = String(pendingRoomData.pin).trim();
+                
+                if (enteredPin === correctPin) {
+                    const rId = pendingRoomData.id;
+                    const rTitle = pendingRoomData.title;
+                    
+                    if (currentStudentName) {
+                        const sKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+                        db.ref(`room_permissions/${rId}/${sKey}`).set({ allowed: true, timestamp: Date.now() });
+                    }
+                    
+                    closePinModal();
+                    registerStudentPresence(rId);
+                    openRoomMenu(rId, rTitle);
+                } else {
+                    alert('رمز PIN الخاص بالدرس الخصوصي غير صحيح!');
+                }
+            }
+        }
+
+        function registerStudentPresence(roomId) {
+            if (!currentStudentName) return;
+            const studentKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+            fetch(`${DATABASE_URL}/active_students/${roomId}/${studentKey}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ name: currentStudentName, joinedAt: Date.now(), status: 'نشط' }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+        function handleCreateCustomRoom(e) {
+            e.preventDefault();
+            const title = document.getElementById('crTitle').value.trim();
+            const grade = document.getElementById('crGrade').value;
+            const subject = document.getElementById('crSubject').value;
+            const accessType = document.getElementById('crAccessType').value;
+            const pin = accessType === 'protected' ? String(document.getElementById('crPin').value).trim() : '';
+            const roomId = 'ROOM_' + Date.now();
+            const creatorName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+
+            fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: roomId, title, grade, subject, accessType, pin, isOpen: true, creator: creatorName }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert('تم إنشاء الغرفة بنجاح!');
+                document.getElementById('crTitle').value = '';
+                document.getElementById('crPin').value = '';
+                loadTeacherRoomsIntoDropdowns();
+                openClass(grade);
+            });
+        }
+
+        function fetchMyRooms() {
+            const creatorName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+            fetch(`${DATABASE_URL}/custom_rooms.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const r = data[k];
+                        if (currentRole === 'admin' || currentRole === 'supervisor' || r.creator === creatorName) {
+                            const isOpen = r.isOpen !== false;
+                            const isFree = r.accessType === 'free' || !r.pin;
+                            html += `
+                                <div class="list-item" style="border-right: 4px solid ${isFree ? 'var(--success)' : 'var(--warning)'};">
+                                    <div><strong>${r.title}</strong><br><small>الصف: ${r.grade} | المادة: ${r.subject} | النوع: ${isFree ? '🟢 مجانية' : '🔒 خصوصي بررمز (' + r.pin + ')'}</small></div>
+                                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                        <button class="btn ${isOpen ? 'btn-danger' : 'btn-success'}" style="padding:6px 12px; font-size:0.8rem;" onclick="toggleRoomLock('${r.id}', ${!isOpen})">${isOpen ? 'قفل الغرفة' : 'فتح الغرفة'}</button>
+                                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.8rem;" onclick="openEditRoomModal('${r.id}', '${r.title}', '${r.accessType || 'free'}', '${r.pin || ''}', ${isOpen})">تعديل</button>
+                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('custom_rooms', '${r.id}', fetchMyRooms)">حذف</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                const myRoomsC = document.getElementById('myRoomsListContainer');
+                if (myRoomsC) myRoomsC.innerHTML = html || '<p>لا توجد غرف خاصة بك.</p>';
+            });
+        }
+
+        function toggleRoomLock(roomId, newStatus) {
+            fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify({ isOpen: newStatus }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert(newStatus ? '🟢 تم فتح الغرفة بنجاح!' : '🔴 تم قفل الغرفة بنجاح!');
+                fetchMyRooms();
+            });
+        }
+
+        function openEditRoomModal(roomId, title, accessType, pin, isOpen) {
+            document.getElementById('editRoomId').value = roomId;
+            document.getElementById('editRoomTitleInput').value = title;
+            document.getElementById('editRoomAccessType').value = accessType;
+            document.getElementById('editRoomPinInput').value = pin;
+            document.getElementById('editRoomIsOpen').value = isOpen ? "true" : "false";
+            toggleEditPinInput(accessType);
+            document.getElementById('editRoomModal').style.display = 'flex';
+        }
+        function closeEditRoomModal() { document.getElementById('editRoomModal').style.display = 'none'; }
+
+        function saveEditedRoom() {
+            const roomId = document.getElementById('editRoomId').value;
+            const title = document.getElementById('editRoomTitleInput').value.trim();
+            const accessType = document.getElementById('editRoomAccessType').value;
+            const pin = accessType === 'protected' ? String(document.getElementById('editRoomPinInput').value).trim() : '';
+            const isOpen = document.getElementById('editRoomIsOpen').value === "true";
+            
+            fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify({ title, accessType, pin, isOpen }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم تحديث إعدادات الغرفة!'); closeEditRoomModal(); fetchMyRooms(); });
+        }
+
+        function openRoomMenu(roomId, roomTitle) {
+            activeRoomId = roomId;
+            activeRoomTitleStr = roomTitle;
+            document.getElementById('currentRoomMenuTitle').innerText = `غرفة: ${roomTitle}`;
+            showSection('roomMenuSection');
+            
+            if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher' && currentStudentName) {
+                listenToStudentKickStatus(roomId);
+            }
+        }
+
+        function backToRoomMenu() { showSection('roomMenuSection'); }
+
+        function openRoomSection(paneId) {
+            document.getElementById('currentRoomContentTitle').innerText = `غرفة: ${activeRoomTitleStr}`;
+            document.getElementById('liveRoomTitleDisplay').innerText = activeRoomTitleStr;
+            showSection('lecturesSection');
+            
+            document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
+            document.getElementById(paneId).classList.add('active');
+
+            if (paneId === 'paneLive') { setupLiveControlsAndListeners(); renderParticipantsGrid(); }
+            if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
+            if (paneId === 'paneQuestions') { renderRoomQuestions(); }
+            if (paneId === 'paneQuizzes') { renderRoomQuizzes(); renderRoomHomework(); }
+            if (paneId === 'paneGrades') { 
+                renderRoomGrades(); 
+                if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                    document.getElementById('teacherGradeAddBox').style.display = 'flex';
+                    renderActiveStudentsManagementForTeacher();
+                } else {
+                    document.getElementById('teacherGradeAddBox').style.display = 'none';
+                }
+            }
+        }
+
+        function renderActiveStudentsManagementForTeacher() {
+            db.ref(`active_students/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const st = data[k];
+                        html += `
+                            <div class="list-item" style="border-right: 4px solid var(--success);">
+                                <div><strong>👤 الطالب: ${st.name}</strong><br><small style="color:var(--success);">🟢 متواجد في الغرفة</small></div>
+                                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                    <button class="btn btn-warning" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherWarnStudent('${st.name}')"><i class="fas fa-exclamation-triangle"></i> تنبيه</button>
+                                    <button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherKickStudent('${k}', '${st.name}')"><i class="fas fa-ban"></i> طرد</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                const activeSList = document.getElementById('activeStudentsLiveManagementList');
+                if (activeSList) activeSList.innerHTML = html || '<p style="color:#64748b;">لا يوجد طلاب متواجدون الآن في هذه الغرفة.</p>';
+            });
+        }
+
+        function teacherWarnStudent(studentName) {
+            alert(`⚠️ تم إرسال تنبيه رسمي للطالب: ${studentName}`);
+        }
+
+        function teacherKickStudent(studentKey, studentName) {
+            if (confirm(`هل أنت متأكد من طرد الطالب ${studentName}؟`)) {
+                db.ref(`active_students/${activeRoomId}/${studentKey}`).remove();
+                db.ref(`room_kicked/${activeRoomId}/${studentKey}`).set({ studentName: studentName, kickedAt: Date.now() });
+                alert(`تم طرد الطالب ${studentName}.`);
+            }
+        }
+
+        function listenToStudentKickStatus(roomId) {
+            const studentKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+            db.ref(`room_kicked/${roomId}/${studentKey}`).on('value', snapshot => {
+                if (snapshot.exists()) { document.getElementById('kickedModal').style.display = 'flex'; }
+            });
+        }
+
+        function requestReentryToRoom() {
+            const studentKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+            db.ref(`room_kicked/${activeRoomId}/${studentKey}`).remove();
+            document.getElementById('kickedModal').style.display = 'none';
+            alert('تم إرسال طلب العودة للأستاذ بنجاح.');
+        }
+
+        function setupLiveControlsAndListeners() {
+            const ctrlBox = document.getElementById('liveControlButtons');
+            const adminBox = document.getElementById('teacherLiveAdminBox');
+
+            if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                if (adminBox) adminBox.style.display = 'block';
+                if (ctrlBox) ctrlBox.innerHTML = `
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="startTeacherLive()"><i class="fas fa-play"></i> بدء البث</button>
+                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleWebcam()"><i class="fas fa-video"></i> الكاميرا</button>
+                    <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير</button>
+                `;
+            } else {
+                if (adminBox) adminBox.style.display = 'none';
+                if (ctrlBox) ctrlBox.innerHTML = `<button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير الشاشة</button>`;
+            }
+            listenToLiveParticipants();
+        }
+
+        function startTeacherLive() {
+            const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+            db.ref(`live_participants/${activeRoomId}/teacher`).set({
+                name: tName, role: 'الأستاذ / المشرف', hasVideo: false, timestamp: Date.now()
+            }).then(() => alert('تم بدء البث المباشر!'));
+        }
+
+        function listenToLiveParticipants() {
+            db.ref(`live_participants/${activeRoomId}`).on('value', snapshot => {
+                const participantsData = snapshot.val();
+                const container = document.getElementById('participantsGridContainer');
+                if (!container) return;
+                if (!participantsData) {
+                    container.innerHTML = `<div style="color: #94a3b8; font-weight: 700; text-align: center; padding: 30px;"><i class="fas fa-broadcast-tower" style="font-size: 2.5rem; margin-bottom: 10px; color: var(--success); display: block;"></i><span>البث بانتظار التفعيل...</span></div>`;
+                    return;
+                }
+                let html = '';
+                Object.keys(participantsData).forEach(key => {
+                    const p = participantsData[key];
+                    html += `
+                        <div class="participant-circle-card">
+                            <div class="participant-avatar-circle"><img src="IMG_1507.jpeg" alt="${p.name}" onerror="this.src='https://via.placeholder.com/90'"></div>
+                            <span class="participant-name-tag">${p.name}</span>
+                            <span class="participant-role-tag">${p.role}</span>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
+
+        function toggleWebcam() {
+            if (!localStream) {
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+                    localStream = stream;
+                    alert('تم تفعيل الكاميرا!');
+                }).catch(() => alert('تعذر الوصول للكاميرا!'));
+            } else {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+                alert('تم إيقاف الكاميرا.');
+            }
+        }
+
+        function toggleFullScreenLive() {
+            const box = document.getElementById('liveContainerBox');
+            if (!document.fullscreenElement) { box.requestFullscreen().catch(() => {}); }
+            else { document.exitFullscreen().catch(() => {}); }
+        }
+
+        function backToSubjectsView() { showSection('subjectsSection'); }
+        function backToRoomsView() { showSection('teachersRoomsSection'); }
+
+        function sendStudentQuestion() {
+            const text = document.getElementById('studentQuestionInput').value.trim();
+            if(!text) { alert('اكتب السؤال أولاً!'); return; }
+            const qId = 'Q_' + Date.now();
+            fetch(`${DATABASE_URL}/room_questions/${activeRoomId}/${qId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: qId, student: currentStudentName || 'طالب', text, date: new Date().toLocaleTimeString() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم إرسال السؤال!'); document.getElementById('studentQuestionInput').value = ''; renderRoomQuestions(); });
+        }
+
+        function renderRoomQuestions() {
+            fetch(`${DATABASE_URL}/room_questions/${activeRoomId}.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if(data) { Object.keys(data).forEach(k => { const q = data[k]; html += `<div class="list-item"><div><strong>${q.student}:</strong> ${q.text}<br><small style="color:#64748b;">${q.date}</small></div></div>`; }); }
+                const qListC = document.getElementById('questionsListContainer');
+                if (qListC) qListC.innerHTML = html || '<p style="color:#64748b;">لا توجد أسئلة.</p>';
+            });
+        }
+
+        function saveStudentGrade() {
+            const name = document.getElementById('gradeStudentName').value.trim();
+            const val = document.getElementById('gradeStudentVal').value.trim();
+            if(!name || !val) { alert('أدخل الاسم والتقييم!'); return; }
+            const gId = 'G_' + Date.now();
+            fetch(`${DATABASE_URL}/room_grades/${activeRoomId}/${gId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: gId, name, val }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم حفظ التقييم!'); document.getElementById('gradeStudentName').value = ''; document.getElementById('gradeStudentVal').value = ''; renderRoomGrades(); });
+        }
+
+        function renderRoomGrades() {
+            fetch(`${DATABASE_URL}/room_grades/${activeRoomId}.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if(data) { Object.keys(data).forEach(k => { const g = data[k]; html += `<div class="list-item"><div>الطالب: <strong>${g.name}</strong></div><div>التقييم: ${g.val}</div></div>`; }); }
+                const sGradesList = document.getElementById('studentsGradesList');
+                if (sGradesList) sGradesList.innerHTML = html || '<p style="color:#64748b;">لا توجد تقييمات.</p>';
+            });
+        }
+
+        function renderRoomLectures() {
+            const container = document.getElementById('lecturesContainer');
+            if (!container) return;
+            fetch(`${DATABASE_URL}/contents.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const item = data[k];
+                        if (item.roomId === activeRoomId) {
+                            let safeData = encodeURIComponent(item.fileData || (item.chunks ? Object.values(item.chunks).join('') : ''));
+                            html += `<div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}')"><div class="file-mini-info"><i class="fas fa-file-pdf"></i><h4>${item.title}</h4></div></div>`;
+                        }
+                    });
+                }
+                container.innerHTML = html || `<p style="color:#64748b;">لا توجد ملازم.</p>`;
+            });
+        }
+
+        function openFileModal(title, encodedData) {
+            document.getElementById('modalFileTitle').innerText = title;
+            currentPdfScale = 1.0;
+            let wmHtml = ''; for(let i=0; i<12; i++) { wmHtml += `<span>${currentStudentName || 'منصة وليد'}</span>`; }
+            document.getElementById('pdfWatermarkText').innerHTML = wmHtml;
+            updatePdfViewer(encodedData);
+            document.getElementById('fileViewerModal').style.display = 'flex';
+        }
+
+        function updatePdfViewer(encodedData) {
+            const decodedUrl = decodeURIComponent(encodedData);
+            document.getElementById('modalViewerContainer').innerHTML = `<object data="${decodedUrl}#view=FitH&toolbar=0" type="application/pdf" width="${100 * currentPdfScale}%" height="${100 * currentPdfScale}%"></object><div class="watermark-overlay" id="pdfWatermarkText"></div>`;
+        }
+
+        function zoomPdf(delta) {
+            currentPdfScale = Math.max(0.6, Math.min(2.5, currentPdfScale + delta));
+            const obj = document.querySelector('#modalViewerContainer object');
+            if(obj) { obj.style.width = (100 * currentPdfScale) + '%'; obj.style.height = (100 * currentPdfScale) + '%'; }
+        }
+
+        function closeFileModal() { document.getElementById('fileViewerModal').style.display = 'none'; document.getElementById('modalViewerContainer').innerHTML = ''; }
+
+        function renderRoomRecordings() {
+            fetch(`${DATABASE_URL}/recordings.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) { Object.keys(data).forEach(k => { const rec = data[k]; if (rec.roomId === activeRoomId) { html += `<div class="file-mini-card" onclick="openRecordingModal('${rec.title}', '${rec.url}')"><h4>${rec.title}</h4></div>`; } }); }
+                const recContainer = document.getElementById('recordingsContainer');
+                if (recContainer) recContainer.innerHTML = html || `<p style="color:#64748b;">لا توجد محاضرات.</p>`;
+            });
+        }
+
+        function openRecordingModal(title, videoUrl) {
+            document.getElementById('modalFileTitle').innerText = title;
+            document.getElementById('modalViewerContainer').innerHTML = `<iframe src="${videoUrl}" width="100%" height="100%" style="border:none;" allowfullscreen></iframe>`;
+            document.getElementById('fileViewerModal').style.display = 'flex';
+        }
+
+        function renderRoomHomework() {
+            fetch(`${DATABASE_URL}/homework.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) { Object.keys(data).forEach(k => { const hw = data[k]; if (hw.roomId === activeRoomId) { html += `<div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px;"><h5>📌 ${hw.title}</h5></div>`; } }); }
+                const hwContainer = document.getElementById('homeworkContainer');
+                if (hwContainer) hwContainer.innerHTML = html || `<p style="color:#64748b;">لا توجد واجبات.</p>`;
+            });
+        }
+
+        function renderRoomQuizzes() {
+            fetch(`${DATABASE_URL}/quizzes.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) { Object.keys(data).forEach(k => { const q = data[k]; if (q.roomId === activeRoomId) { html += `<div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px;"><h5>📝 ${q.title}</h5><p>${q.question}</p></div>`; } }); }
+                const qContainer = document.getElementById('quizzesContainer');
+                if (qContainer) qContainer.innerHTML = html || `<p style="color:#64748b;">لا توجد اختبارات.</p>`;
+            });
+        }
+
+        function deleteItem(path, id, callback) {
+            if (confirm('هل تريد الحذف بالتأكيد؟')) { fetch(`${DATABASE_URL}/${path}/${id}.json`, { method: 'DELETE' }).then(() => callback()); }
+        }
+
+        function handleTeacherUpload(e) {
+            e.preventDefault();
+            const roomId = document.getElementById('tUpRoomId').value;
+            const title = document.getElementById('tUpTitle').value;
+            const file = document.getElementById('tUpFile').files[0];
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const contentId = 'CONT_' + Date.now();
+                const base64Data = evt.target.result;
+                const chunks = {};
+                for (let i = 0; i < base64Data.length; i += 2 * 1024 * 1024) { chunks['part_' + Math.floor(i / (2 * 1024 * 1024))] = base64Data.substring(i, i + (2 * 1024 * 1024)); }
+                fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ id: contentId, roomId, title, chunks, date: new Date().toLocaleDateString('ar-EG') }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => { alert('تم رفع الملزمة!'); document.getElementById('tUpTitle').value = ''; document.getElementById('tUpFile').value = ''; });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleTeacherRecording(e) {
+            e.preventDefault();
+            const roomId = document.getElementById('recRoomId').value;
+            const title = document.getElementById('recTitle').value.trim();
+            const url = document.getElementById('recUrl').value.trim();
+            const recId = 'REC_' + Date.now();
+            fetch(`${DATABASE_URL}/recordings/${recId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: recId, roomId, title, url }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم نشر المحاضرة!'); document.getElementById('recTitle').value = ''; document.getElementById('recUrl').value = ''; });
+        }
+
+        function handleTeacherQuiz(e) {
+            e.preventDefault();
+            const roomId = document.getElementById('qRoomId').value;
+            const title = document.getElementById('qTitle').value.trim();
+            const question = document.getElementById('qQuestion').value.trim();
+            const opt1 = document.getElementById('qOpt1').value.trim();
+            const opt2 = document.getElementById('qOpt2').value.trim();
+            const opt3 = document.getElementById('qOpt3').value.trim();
+            const correct = parseInt(document.getElementById('qCorrect').value);
+            const qId = 'QUIZ_' + Date.now();
+            fetch(`${DATABASE_URL}/quizzes/${qId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: qId, roomId, title, question, opt1, opt2, opt3, correct }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم نشر الاختبار!'); document.getElementById('qTitle').value = ''; document.getElementById('qQuestion').value = ''; });
+        }
+
+        function handleTeacherHomework(e) {
+            e.preventDefault();
+            const roomId = document.getElementById('hwRoomId').value;
+            const title = document.getElementById('hwTitle').value.trim();
+            const hwId = 'HW_' + Date.now();
+            fetch(`${DATABASE_URL}/homework/${hwId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: hwId, roomId, title }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم نشر الواجب!'); document.getElementById('hwTitle').value = ''; });
+        }
+
+        function submitTeacherReport(e) {
+            e.preventDefault();
+            const student = document.getElementById('repStudentName').value.trim();
+            const type = document.getElementById('repType').value;
+            const details = document.getElementById('repDetails').value.trim();
+            fetch(`${DATABASE_URL}/reports.json`, {
+                method: 'POST',
+                body: JSON.stringify({ teacher: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد', student, type, details, date: new Date().toLocaleString() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم إرسال الإنذار!'); document.getElementById('repStudentName').value = ''; document.getElementById('repDetails').value = ''; });
+        }
+
+        function renderScheduleManager() {
+            const schC = document.getElementById('scheduleContainer');
+            if (!schC) return;
+            schC.innerHTML = `
+                <form onsubmit="saveSchedule(event)" style="margin-bottom:20px; background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #cbd5e1;">
+                    <div class="form-group"><label>الصف</label><select class="form-control" id="schGrade"><option value="الأول المتوسط">الأول المتوسط</option><option value="السادس الاعدادي">السادس الإعدادي</option></select></div>
+                    <div class="form-group"><label>اليوم</label><select class="form-control" id="schDay"><option value="السبت">السبت</option><option value="الأحد">الأحد</option></select></div>
+                    <div class="form-group"><label>التفاصيل</label><input type="text" class="form-control" id="schDetails" required placeholder="الساعة 5 - رياضيات"></div>
+                    <button type="submit" class="btn btn-success btn-block">إضافة</button>
+                </form>
+                <div id="schList">جاري التحميل...</div>
+            `;
+            fetchSchedules();
+        }
+
+        function saveSchedule(e) {
+            e.preventDefault();
+            const grade = document.getElementById('schGrade').value;
+            const day = document.getElementById('schDay').value;
+            const details = document.getElementById('schDetails').value.trim();
+            const sId = 'SCH_' + Date.now();
+            fetch(`${DATABASE_URL}/schedules/${sId}.json`, {
+                method: 'PUT', body: JSON.stringify({ id: sId, grade, day, details }), headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تمت الإضافة!'); document.getElementById('schDetails').value = ''; fetchSchedules(); });
+        }
+
+        function fetchSchedules() {
+            fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) { Object.keys(data).forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
+                const schList = document.getElementById('schList');
+                if (schList) schList.innerHTML = html || '<p>لا توجد حصص.</p>';
+            });
+        }
+
+        function fetchAdminReports() {
+            fetch(`${DATABASE_URL}/reports.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) { Object.keys(data).forEach(k => { const r = data[k]; html += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; }); }
+                const adminRList = document.getElementById('adminReportsList');
+                if (adminRList) adminRList.innerHTML = html || '<p>لا توجد تقارير.</p>';
+            });
+        }
+    </script>
+</body>
+</html>
