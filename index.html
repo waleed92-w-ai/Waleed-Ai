@@ -1107,7 +1107,6 @@
         }
 
         function showSection(sectionId) {
-            // إذا غادر الطالب قسم البث أو الغرفة نهائياً، نزيل وجوده
             if (sectionId !== 'roomMenuSection' && sectionId !== 'lecturesSection') {
                 removeStudentPresence();
             }
@@ -1622,7 +1621,6 @@
             }
         }
 
-        // ==================== نظام تتبع الوجود الفوري (حصرياً عند دخول قسم البث الصوتي) ====================
         function registerStudentPresence(roomId) {
             if (!currentStudentName || currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') return;
             
@@ -1866,7 +1864,7 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
-        // ==================== نظام الصوت المتطور المحدث ====================
+        // ==================== نظام الصوت المحسن والمصحح للجهتين ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -2015,7 +2013,16 @@
                 localAudioStream = stream;
                 stream.getAudioTracks().forEach(track => { track.enabled = true; });
                 
-                const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+                let options = { mimeType: 'audio/webm;codecs=opus' };
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options = { mimeType: 'audio/mp4' };
+                    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                        options = {};
+                    }
+                }
+
+                const mediaRecorder = new MediaRecorder(stream, options);
+                
                 mediaRecorder.ondataavailable = event => {
                     if (event.data && event.data.size > 0 && !isMicMuted) {
                         const reader = new FileReader();
@@ -2023,29 +2030,39 @@
                         reader.onloadend = function() {
                             const base64Audio = reader.result;
                             const senderKey = isTeacher ? 'teacher' : ('student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_'));
+                            
                             db.ref(`live_audio_stream/${activeRoomId}`).set({
                                 sender: senderKey,
                                 audioData: base64Audio,
-                                timestamp: Date.now()
+                                nonce: Date.now()
                             });
                         }
                     }
                 };
-                mediaRecorder.start(300);
-            }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
+                mediaRecorder.start(250);
+            }).catch(err => {
+                console.error("Mic error:", err);
+                alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.');
+            });
         }
 
         function setupAudioReceiver() {
             const audioPlayer = document.getElementById('remoteAudioPlayer');
+            
             db.ref(`live_audio_stream/${activeRoomId}`).on('value', snapshot => {
                 const data = snapshot.val();
                 if (data && data.audioData) {
-                    const myKey = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'teacher' : ('student_' + (currentStudentName ? currentStudentName.replace(/[.#$\/\[\]]/g, '_') : ''));
+                    const myKey = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') 
+                        ? 'teacher' 
+                        : ('student_' + (currentStudentName ? currentStudentName.replace(/[.#$\/\[\]]/g, '_') : ''));
+                    
                     if (data.sender !== myKey) {
-                        audioPlayer.src = data.audioData;
-                        audioPlayer.play().catch(e => {
-                            console.log("Audio autoplay prevented, user interaction required:", e);
-                        });
+                        if (audioPlayer.src !== data.audioData) {
+                            audioPlayer.src = data.audioData;
+                            audioPlayer.play().catch(e => {
+                                console.log("Autoplay blocked, waiting for user interaction:", e);
+                            });
+                        }
                     }
                 }
             });
