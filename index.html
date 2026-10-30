@@ -488,6 +488,15 @@
                                 <p style="color: #94a3b8; font-size: 0.8rem;" id="voiceRoomStatusText">البث الصوتي غير مفعل حالياً. بانتظار بدء الأستاذ...</p>
                             </div>
 
+                            <!-- مشغل صوتي تفاعلي ظاهر للمستخدم لتجاوز قيود المتصفح الهاتفي -->
+                            <div id="audioPlayerWrapper" style="background: rgba(15, 23, 42, 0.9); padding: 12px; border-radius: 12px; margin: 10px auto; text-align: center; border: 1px solid #38bdf8; max-width: 320px;">
+                                <p style="color: #fff; font-size: 0.82rem; margin-bottom: 8px; font-weight: 700;">🔊 انقر لتفعيل وسماع البث الصوتي المباشر:</p>
+                                <button class="btn btn-success" id="forcePlayAudioBtn" onclick="forcePlayAudioStream()" style="padding: 8px 16px; font-size: 0.85rem; width: 100%;">
+                                    <i class="fas fa-volume-up"></i> تشغيل الصوت الآن
+                                </button>
+                                <audio id="remoteAudio" autoplay playsinline style="display:none;"></audio>
+                            </div>
+
                             <div class="tiktok-speakers-grid" id="participantsGridContainer"></div>
                             <div class="tiktok-control-bar" id="liveControlButtons"></div>
                         </div>
@@ -793,9 +802,6 @@
             <button class="btn btn-danger btn-block" id="closeAdminModalBtn" style="margin-top: 12px; background: transparent; color: #64748b;">إلغاء</button>
         </div>
     </div>
-
-    <!-- عناصر مشغلات الصوت المباشرة المحدثة مع تفعيل الخصائص الصوتية -->
-    <audio id="remoteAudio" autoplay controls playsinline style="display:none;"></audio>
 
     <script>
         const DATABASE_URL = "https://waleed-ai-49ebc-default-rtdb.firebaseio.com";
@@ -1863,7 +1869,6 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
-        // ==================== تحسين محرك WebRTC المباشر للصوت الثنائي ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -1883,6 +1888,20 @@
             listenToVoiceParticipants();
             listenToVoiceBroadcastStatus();
             initWebRTCReceiver();
+        }
+
+        function forcePlayAudioStream() {
+            const remoteAudio = document.getElementById('remoteAudio');
+            if (remoteAudio && remoteAudio.srcObject) {
+                remoteAudio.play().then(() => {
+                    alert('🟢 تم تشغيل الصوت بنجاح!');
+                }).catch(err => {
+                    console.error("Audio play blocked:", err);
+                    alert('⚠️ يرجى التأكد من أن الأستاذ قام ببدء البث الصوتي أولاً.');
+                });
+            } else {
+                alert('⏳ بانتظار اتصال الأستاذ بالبث الصوتي...');
+            }
         }
 
         function startWebRTCBroadcast() {
