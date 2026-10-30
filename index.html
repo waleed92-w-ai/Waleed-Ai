@@ -39,13 +39,14 @@
         .avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
         .brand-info h1 { font-size: 1.15rem; font-weight: 800; }
         .brand-info p { font-size: 0.78rem; opacity: 0.85; }
-        .top-btns { display: flex; gap: 10px; }
-        .icon-btn { background: rgba(255,255,255,0.15); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: 0.3s; text-decoration: none; }
+        .top-btns { display: flex; gap: 10px; position: relative; }
+        .icon-btn { background: rgba(255,255,255,0.15); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: 0.3s; text-decoration: none; position: relative; }
         .icon-btn:hover { background: rgba(255,255,255,0.3); }
+        .notif-badge { position: absolute; top: -4px; right: -4px; background: var(--danger); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; font-weight: 800; display: none; align-items: center; justify-content: center; border: 2px solid var(--primary-dark); }
         .layout-wrapper { display: flex; flex: 1; }
         sidebar { width: 280px; background: var(--sidebar-bg); color: var(--text-light); padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: -4px 0 20px rgba(0,0,0,0.05); }
         .sidebar-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 14px 10px 6px 10px; font-weight: 700; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; color: #cbd5e1; text-decoration: none; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.25s ease; border: none; background: transparent; width: 100%; text-align: right; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; color: #cbd5e1; text-decoration: none; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.25s ease; border: none; background: transparent; width: 100%; text-align: right; position: relative; }
         .nav-item i { font-size: 1.1rem; width: 22px; color: #38bdf8; }
         .nav-item:hover, .nav-item.active { background: var(--accent); color: #fff; }
         .nav-item:hover i, .nav-item.active i { color: #fff; }
@@ -96,7 +97,10 @@
         </div>
         <div class="top-btns">
             <a href="https://t.me/WALEED92w" target="_blank" class="icon-btn" title="تيليجرام"><i class="fab fa-telegram-plane"></i></a>
-            <button class="icon-btn" id="adminLockBtn" onclick="openAdminModal()" title="دخول الإدارة / الأساتذة"><i class="fas fa-user-shield"></i></button>
+            <button class="icon-btn" id="adminLockBtn" onclick="openAdminModal()" title="دخول الإدارة / الأساتذة">
+                <i class="fas fa-user-shield"></i>
+                <span class="notif-badge" id="topNotifBadge">0</span>
+            </button>
             <button class="icon-btn" id="adminExitBtn" onclick="logoutSystem()" style="display:none;" title="تسجيل خروج"><i class="fas fa-sign-out-alt"></i></button>
         </div>
     </header>
@@ -117,6 +121,10 @@
 
             <div id="adminSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة الأدمن (الأستاذ وليد)</div>
+                <button class="nav-item" onclick="showSection('sectionNotifications')">
+                    <i class="fas fa-bell"></i> الإشعارات والطلبات المباشرة
+                    <span class="notif-badge" id="sidebarNotifBadge" style="position:static; margin-right:auto; display:none;">0</span>
+                </button>
                 <button class="nav-item" onclick="showSection('sectionVouchers')"><i class="fas fa-ticket-alt"></i> إدارة وتوليد كودات التفعيل</button>
                 <button class="nav-item" onclick="showSection('sectionTeachersManage')"><i class="fas fa-chalkboard-teacher"></i> إدارة المدرسين وغرفهم</button>
                 <button class="nav-item" onclick="showSection('sectionScheduleManage')"><i class="fas fa-calendar-alt"></i> جدول الحصص الأسبوعي</button>
@@ -139,7 +147,7 @@
         </sidebar>
 
         <main>
-            <!-- شاشة التفعيل الفوري للطالب بكود الاشتراك المرسل منه لك -->
+            <!-- شاشة التفعيل الفوري واختيار طريقة الدفع للطلاب -->
             <div class="card" id="authSection">
                 <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في المنصة</div>
                 <div style="background: #eff6ff; padding: 16px; border-radius: 12px; margin-bottom: 18px; border-right: 4px solid var(--accent);">
@@ -149,20 +157,51 @@
                         📱 زين كاش: 07816745861
                         💵 ماستر دينار: 5285780016156442
                     </div>
-                    <p style="font-size: 0.88rem; color: #64748b; margin-top: 10px;">بعد تحويل الاشتراك، راسل الأستاذ وليد على تيليجرام للحصول على (كود التفعيل السري) وأدخله أدناه للدخول فوراً.</p>
                 </div>
 
-                <form onsubmit="activateWithVoucher(event)">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn btn-primary" style="flex:1;" onclick="switchAuthTab('code')">تفعيل مباشر (بكود التفعيل)</button>
+                    <button class="btn btn-secondary" style="flex:1;" onclick="switchAuthTab('notify')">إرسال إشعار تحويل مال للأدمن</button>
+                </div>
+
+                <!-- نموذج 1: التفعيل الفوري بكود -->
+                <form id="formVoucherCode" onsubmit="activateWithVoucher(event)">
                     <div class="form-group">
                         <label>اسم الطالب الثلاثي</label>
                         <input type="text" class="form-control" id="vStudentName" required placeholder="أدخل اسمك الثلاثي">
                     </div>
                     <div class="form-group">
                         <label>كود التفعيل السري</label>
-                        <input type="text" class="form-control" id="vCodeInput" required placeholder="أدخل الكود المرسل لك من الأستاذ وليد">
+                        <input type="text" class="form-control" id="vCodeInput" required placeholder="أدخل كود التفعيل">
                     </div>
-                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-bolt"></i> تفعيل الحساب والدخول للمنصة فوراً</button>
+                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-bolt"></i> تفعيل الحساب والدخول فوراً</button>
                 </form>
+
+                <!-- نموذج 2: إرسال إشعار الدفع مباشرة للأدمن -->
+                <form id="formNotifyAdmin" onsubmit="sendPaymentNotification(event)" style="display: none;">
+                    <div class="form-group">
+                        <label>الاسم الثلاثي للطالب</label>
+                        <input type="text" class="form-control" id="nStudentName" required placeholder="اسمك الكامل">
+                    </div>
+                    <div class="form-group">
+                        <label>طريقة التحويل التي استخدمتها</label>
+                        <select class="form-control" id="nPayMethod">
+                            <option value="زين كاش">زين كاش</option>
+                            <option value="ماستر كارد">ماستر كارد</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>رقم عملية التحويل / رقم المرجع (Transaction ID)</label>
+                        <input type="text" class="form-control" id="nRefNum" required placeholder="أدخل رقم العملية المكتوب في الوصل">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> إرسال الإشعار للأدمن</button>
+                </form>
+            </div>
+
+            <!-- لوحة الأدمن: الإشعارات الفورية المباشرة -->
+            <div class="card" id="sectionNotifications" style="display: none;">
+                <div class="card-header"><i class="fas fa-bell"></i> الإشعارات والطلبات المباشرة من الطلاب</div>
+                <div id="liveNotificationsList">جاري تحميل الإشعارات...</div>
             </div>
 
             <!-- المواد الدراسية -->
@@ -212,9 +251,9 @@
                 </div>
             </div>
 
-            <!-- لوحة الأدمن (خاصة بك لتوليد الكودات وإرسالها للطلاب) -->
+            <!-- لوحة الأدمن: كودات التفعيل -->
             <div class="card" id="sectionVouchers" style="display: none;">
-                <div class="card-header"><i class="fas fa-ticket-alt"></i> توليد وإدارة كودات التفعيل الخاصة بك</div>
+                <div class="card-header"><i class="fas fa-ticket-alt"></i> إدارة وتوليد كودات التفعيل الخاصة بك</div>
                 <form onsubmit="generateVoucher(event)" style="margin-bottom: 20px; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1;">
                     <div class="form-group">
                         <label>عدد الكودات المراد توليدها الآن</label>
@@ -366,6 +405,7 @@
         const ADMIN_HASH = "V0ExOTkyd2E="; // WA1992wa
         let activeClass = ""; let activeSub = ""; let activeTeacherRoom = "";
         let currentRole = ""; let loggedTeacherData = null; let currentTeacherRoomUrl = "";
+        let previousNotificationsCount = 0;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -379,7 +419,16 @@
             { name: "التربية الإسلامية", icon: "fas fa-mosque" }
         ];
 
-        window.onload = function() { loadSettingsData(); checkStudentSession(); };
+        window.onload = function() { 
+            loadSettingsData(); 
+            checkStudentSession(); 
+            listenToNotificationsRealtime();
+        };
+
+        function switchAuthTab(type) {
+            document.getElementById('formVoucherCode').style.display = (type === 'code') ? 'block' : 'none';
+            document.getElementById('formNotifyAdmin').style.display = (type === 'notify') ? 'block' : 'none';
+        }
 
         function loadSettingsData() {
             fetch(`${DATABASE_URL}/settings.json`).then(res => res.json()).then(data => {
@@ -418,8 +467,8 @@
                 document.getElementById('adminExitBtn').style.display = 'flex';
                 document.getElementById('topSubtitle').innerText = "لوحة تحكم الأدمن (الأستاذ وليد)";
                 closeAdminModal();
-                showSection('sectionVouchers');
-                fetchVouchersList(); fetchTeachersList();
+                showSection('sectionNotifications');
+                fetchTeachersList();
             } else { alert('كلمة المرور خطأ!'); }
         }
 
@@ -444,23 +493,6 @@
             });
         }
 
-        function setTeacherCameraOff() { if (currentTeacherRoomUrl) document.getElementById('teacherLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=true"; }
-        function setTeacherCameraOn() { if (currentTeacherRoomUrl) document.getElementById('teacherLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=false"; }
-
-        function registerNewTeacher(e) {
-            e.preventDefault();
-            const name = document.getElementById('regTName').value.trim();
-            const subject = document.getElementById('regTSubject').value;
-            const username = document.getElementById('regTUser').value.trim();
-            const password = document.getElementById('regTPass').value.trim();
-            const tId = 'T_' + Date.now();
-            fetch(`${DATABASE_URL}/teachers/${tId}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({ id: tId, name, subject, username, password }),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم التسجيل بنجاح!'); switchLoginTab('teacher'); });
-        }
-
         function logoutSystem() {
             localStorage.removeItem('student_session');
             currentRole = ''; loggedTeacherData = null; currentTeacherRoomUrl = "";
@@ -474,13 +506,110 @@
         }
 
         function showSection(sectionId) {
-            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'lecturesSection', 'sectionVouchers', 'sectionTeachersManage', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionLiveRoom', 'sectionTeacherReports'].forEach(id => {
+            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'lecturesSection', 'sectionNotifications', 'sectionVouchers', 'sectionTeachersManage', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionLiveRoom', 'sectionTeacherReports'].forEach(id => {
                 document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
             });
             if (sectionId === 'sectionVouchers') fetchVouchersList();
             if (sectionId === 'sectionTeachersManage') fetchTeachersList();
             if (sectionId === 'sectionScheduleManage') renderScheduleManager();
             if (sectionId === 'sectionAdminReports') fetchAdminReports();
+        }
+
+        // إرسال إشعار الدفع المباشر من الطالب
+        function sendPaymentNotification(e) {
+            e.preventDefault();
+            const name = document.getElementById('nStudentName').value.trim();
+            const payMethod = document.getElementById('nPayMethod').value;
+            const refNum = document.getElementById('nRefNum').value.trim();
+            const notifId = 'NOTIF_' + Date.now();
+
+            fetch(`${DATABASE_URL}/notifications/${notifId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: notifId, name, payMethod, refNum, status: 'pending', timestamp: Date.now() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert('تم إرسال الإشعار بنجاح للأستاذ وليد! سيتم التفعيل فور التحقق.');
+                document.getElementById('nStudentName').value = '';
+                document.getElementById('nRefNum').value = '';
+            });
+        }
+
+        // الاستماع المباشر للإشعارات الصوتية والفورية في Realtime
+        function listenToNotificationsRealtime() {
+            db.ref('notifications').on('value', snapshot => {
+                const data = snapshot.val();
+                let count = 0;
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const notif = data[k];
+                        if (notif.status === 'pending') {
+                            count++;
+                            html += `
+                                <div class="list-item" style="border-right: 4px solid var(--accent);">
+                                    <div>
+                                        <strong>🔔 طالب جديد: ${notif.name}</strong><br>
+                                        <small>طريقة التحويل: ${notif.payMethod} | رقم العملية: <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:800;">${notif.refNum}</code></small>
+                                    </div>
+                                    <div style="display:flex; gap:8px;">
+                                        <button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="approvePaymentNotif('${notif.id}', '${notif.name}')">قبول وتفعيل كود</button>
+                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('notifications', '${notif.id}', listenToNotificationsRealtime)">رفض</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+
+                // تنبيه صوتي وعداد الإشعارات
+                if (count > previousNotificationsCount && previousNotificationsCount !== 0) {
+                    playBeepSound();
+                }
+                previousNotificationsCount = count;
+
+                const topBadge = document.getElementById('topNotifBadge');
+                const sidebarBadge = document.getElementById('sidebarNotifBadge');
+                if (count > 0) {
+                    topBadge.innerText = count; topBadge.style.display = 'flex';
+                    sidebarBadge.innerText = count; sidebarBadge.style.display = 'inline-flex';
+                } else {
+                    topBadge.style.display = 'none';
+                    sidebarBadge.style.display = 'none';
+                }
+
+                document.getElementById('liveNotificationsList').innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد إشعارات أو طلبات جديدة حالياً.</p>';
+            });
+        }
+
+        function playBeepSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+                osc.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.3);
+            } catch (e) {}
+        }
+
+        function approvePaymentNotif(notifId, studentName) {
+            const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000) + '-' + Math.floor(1000 + Math.random() * 9000);
+            
+            // إضافة الكود للكروت وتحديث حالة الإشعار
+            fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ code: randomCode, isUsed: false, createdAt: Date.now() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                fetch(`${DATABASE_URL}/notifications/${notifId}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ status: 'approved', generatedCode: randomCode }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => {
+                    alert(`تم قبول طلب الطالب: ${studentName}\nتم توليد الكود السري: ${randomCode}`);
+                });
+            });
         }
 
         function activateWithVoucher(e) {
