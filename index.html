@@ -807,7 +807,7 @@
         </div>
     </div>
 
-    <!-- عناصر مشغل الصوت المتبادل -->
+    <!-- عنصر مشغل الصوت المتبادل -->
     <audio id="remoteAudioPlayer" autoplay playsinline style="display:none;"></audio>
 
     <script>
@@ -1107,7 +1107,8 @@
         }
 
         function showSection(sectionId) {
-            if (sectionId !== 'roomMenuSection' && sectionId !== 'lecturesSection' && activePresenceRef) {
+            // إذا غادر الطالب قسم البث أو الغرفة نهائياً، نزيل وجوده
+            if (sectionId !== 'roomMenuSection' && sectionId !== 'lecturesSection') {
                 removeStudentPresence();
             }
 
@@ -1621,7 +1622,7 @@
             }
         }
 
-        // ==================== نظام تتبع الوجود الفوري (الدخول والخروج) ====================
+        // ==================== نظام تتبع الوجود الفوري (حصرياً عند دخول قسم البث الصوتى) ====================
         function registerStudentPresence(roomId) {
             if (!currentStudentName || currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') return;
             
@@ -1741,7 +1742,8 @@
             activeRoomTitleStr = roomTitle;
             document.getElementById('currentRoomMenuTitle').innerText = `غرفة: ${roomTitle}`;
             
-            registerStudentPresence(roomId);
+            // عند فتح القائمة، نضمن عدم تسجيل الحضور بعد، حتى يدخل قسم البث الصوتي
+            removeStudentPresence();
             showSection('roomMenuSection');
             
             if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher' && currentStudentName) {
@@ -1750,6 +1752,7 @@
         }
 
         function backToRoomMenu() { 
+            removeStudentPresence(); // إزالة الحضور عند الخروج من قسم البث والصوت
             showSection('roomMenuSection'); 
         }
 
@@ -1761,7 +1764,16 @@
             document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
             document.getElementById(paneId).classList.add('active');
 
-            if (paneId === 'paneLive') { setupVoiceControlsAndListeners(); renderVoiceParticipantsGrid(); renderAllAttendeesList(); }
+            // إذا دخل الطالب حصرياً إلى قسم البث الصوتي المباشر، نسجل حضوره الفعلي
+            if (paneId === 'paneLive') { 
+                registerStudentPresence(activeRoomId);
+                setupVoiceControlsAndListeners(); 
+                renderVoiceParticipantsGrid(); 
+                renderAllAttendeesList(); 
+            } else {
+                removeStudentPresence(); // إذا انتقل لقسم آخر، يزول من المتواجدين في البث
+            }
+
             if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
             if (paneId === 'paneQuestions') { renderRoomQuestions(); }
             if (paneId === 'paneQuizzes') { renderRoomQuizzes(); renderRoomHomework(); }
@@ -1785,7 +1797,7 @@
                         const st = data[k];
                         html += `
                             <div class="list-item" style="border-right: 4px solid var(--success);">
-                                <div><strong>👤 الطالب: ${st.name}</strong><br><small style="color:var(--success);">🟢 متواجد في الغرفة</small></div>
+                                <div><strong>👤 الطالب: ${st.name}</strong><br><small style="color:var(--success);">🟢 متواجد في البث</small></div>
                                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
                                     <button class="btn btn-warning" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherWarnStudent('${st.name}')"><i class="fas fa-exclamation-triangle"></i> تنبيه</button>
                                     <button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherKickStudent('${k}', '${st.name}')"><i class="fas fa-ban"></i> طرد</button>
@@ -1795,7 +1807,7 @@
                     });
                 }
                 const activeSList = document.getElementById('activeStudentsLiveManagementList');
-                if (activeSList) activeSList.innerHTML = html || '<p style="color:#64748b;">لا يوجد طلاب متواجدون الآن في هذه الغرفة.</p>';
+                if (activeSList) activeSList.innerHTML = html || '<p style="color:#64748b;">لا يوجد طلاب متواجدون الآن في البث المباشر.</p>';
             });
         }
 
@@ -1821,7 +1833,7 @@
                 }
                 document.getElementById('attendeesCountNum').innerText = count;
                 const listEl = document.getElementById('allAttendeesScrollList');
-                if (listEl) listEl.innerHTML = html || '<p style="color:#64748b; font-size:0.8rem; text-align:center;">لا يوجد طلاب متواجدون حالياً.</p>';
+                if (listEl) listEl.innerHTML = html || '<p style="color:#64748b; font-size:0.8rem; text-align:center;">لا يوجد طلاب متواجدون في البث حالياً.</p>';
             });
         }
 
@@ -1856,7 +1868,7 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح.');
         }
 
-        // ==================== نظام الصوت المعدل لضمان عمل الجهتين وبث الصوت المباشر ====================
+        // ==================== نظام الصوت المتطور ====================
         function setupVoiceControlsAndListeners() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
@@ -2005,7 +2017,6 @@
                 localAudioStream = stream;
                 stream.getAudioTracks().forEach(track => { track.enabled = true; });
                 
-                // بث الصوت الفعلي عبر WebRTC أو Data Stream إذا لزم الأمر، أو تفعيل مشغل الصوت المحلي
                 const mediaRecorder = new MediaRecorder(stream);
                 mediaRecorder.ondataavailable = event => {
                     if (event.data && event.data.size > 0 && !isMicMuted) {
@@ -2022,7 +2033,7 @@
                         }
                     }
                 };
-                mediaRecorder.start(500); // إرسال حزم صوتية كل 500 ميلي ثانية
+                mediaRecorder.start(500);
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
         }
 
@@ -2032,7 +2043,6 @@
                 const data = snapshot.val();
                 if (data && data.audioData) {
                     const myKey = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'teacher' : ('student_' + (currentStudentName ? currentStudentName.replace(/[.#$\/\[\]]/g, '_') : ''));
-                    // لا تقم بتشغيل الصوت الصادر منك لكي لا يحدث صدى
                     if (data.sender !== myKey) {
                         audioPlayer.src = data.audioData;
                         audioPlayer.play().catch(e => console.log("Audio autoplay prevented:", e));
@@ -2341,7 +2351,7 @@
         function fetchSchedules() {
             fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) { Object.keys(data).keys().forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
+                if (data) { Object.keys(data).forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
                 const schList = document.getElementById('schList');
                 if (schList) schList.innerHTML = html || '<p>لا توجد حصص.</p>';
             });
