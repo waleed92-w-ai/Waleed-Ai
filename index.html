@@ -76,17 +76,34 @@
         .file-mini-info { display: flex; align-items: center; gap: 14px; }
         .file-mini-info i { font-size: 2rem; color: #ef4444; }
         .file-mini-info h4 { font-size: 1.05rem; font-weight: 800; color: var(--primary); }
+        
+        /* شاشة الصيانة */
+        #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        #maintenanceScreen i { font-size: 4rem; color: var(--warning); margin-bottom: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        /* نافذة العرض الداخلي والبث مع تكبير وتصغير */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2000; }
-        .modal-content-box { background: #1e293b; border-radius: var(--radius); width: 98%; max-width: 1000px; height: 94vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; }
+        .modal-content-box { background: #1e293b; border-radius: var(--radius); width: 98%; max-width: 1100px; height: 94vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; }
         .modal-header-bar { background: var(--primary); color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; font-weight: 800; }
-        .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; -webkit-overflow-scrolling: touch; }
-        .modal-body-viewer object { width: 100%; height: 100%; border: none; pointer-events: auto; }
+        .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; -webkit-overflow-scrolling: touch; display: flex; align-items: center; justify-content: center; }
         .watermark-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around; opacity: 0.15; overflow: hidden; font-weight: 900; font-size: 1.1rem; color: #ffffff; transform: rotate(-25deg); }
-        .embedded-live-frame { width: 100%; height: 520px; border: none; border-radius: 12px; background: #0f172a; }
-        @media (max-width: 768px) { .layout-wrapper { flex-direction: column; } sidebar { width: 100%; } .embedded-live-frame { height: 380px; } }
+        
+        /* مشغل البث الداخلي */
+        .internal-live-container { width: 100%; height: 500px; background: #000; border-radius: 12px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .internal-live-container iframe { width: 100%; height: 100%; border: none; }
+        
+        @media (max-width: 768px) { .layout-wrapper { flex-direction: column; } sidebar { width: 100%; } .internal-live-container { height: 320px; } }
     </style>
 </head>
 <body oncontextmenu="return false;">
+
+    <!-- شاشة الصيانة العامة (تظهر للجميع عند تفعيلها من الأدمن) -->
+    <div id="maintenanceScreen">
+        <i class="fas fa-tools"></i>
+        <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 10px;">المنصة في حال صيانة حالياً</h2>
+        <p style="font-size: 1.1rem; color: #94a3b8; max-width: 400px;">نقوم بتحديث وتطوير المنصة لتقديم أفضل أداء لكم. انتظر قليلاً وستعود للعمل قريباً...</p>
+    </div>
 
     <header>
         <div class="brand-profile">
@@ -108,7 +125,6 @@
 
     <div class="layout-wrapper">
         <sidebar id="appSidebar">
-            <!-- قائمة الصفوف تظهر للجميع للتصفح ولكن مشروطة بالاشتراك عند النقر -->
             <div class="sidebar-title">الصفوف الدراسية</div>
             <div id="studentNavClasses">
                 <button class="nav-item" onclick="tryOpenClass('الأول المتوسط')"><i class="fas fa-graduation-cap"></i> الأول المتوسط</button>
@@ -122,11 +138,12 @@
             <div id="teacherSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة المدرس / الغرف</div>
                 <button class="nav-item" onclick="showSection('sectionCreateRoom')"><i class="fas fa-plus-circle" style="color:#10b981;"></i> إنشاء غرفة خاصة برمز PIN</button>
+                <button class="nav-item" onclick="showSection('sectionManageRooms')"><i class="fas fa-edit" style="color:#f59e0b;"></i> إدارة وتعديل غرفتي</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF لغرفتي</button>
-                <button class="nav-item" onclick="showSection('sectionTeacherRecordings')"><i class="fas fa-film"></i> رفع محاضرة مسجلة (فيديو طويل)</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherRecordings')"><i class="fas fa-film"></i> رفع محاضرة مسجلة</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherQuiz')"><i class="fas fa-question-circle"></i> إنشاء اختبار إلكتروني</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherHomework')"><i class="fas fa-tasks"></i> إضافة واجب بيتي</button>
-                <button class="nav-item" onclick="showSection('sectionLiveRoom')"><i class="fas fa-video"></i> غرفة البث المباشر الخاصة بي</button>
+                <button class="nav-item" onclick="showSection('sectionLiveRoom')"><i class="fas fa-video"></i> غرفة البث المباشر الداخلية</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherReports')"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار/تقرير طالب</button>
             </div>
 
@@ -140,7 +157,7 @@
                 <button class="nav-item" onclick="showSection('sectionTeachersManage')"><i class="fas fa-chalkboard-teacher"></i> إدارة المدرسين وغرفهم</button>
                 <button class="nav-item" onclick="showSection('sectionScheduleManage')"><i class="fas fa-calendar-alt"></i> جدول الحصص الأسبوعي</button>
                 <button class="nav-item" onclick="showSection('sectionAdminReports')"><i class="fas fa-exclamation-triangle"></i> سجل إنذارات الطلاب</button>
-                <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
+                <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والصيانة</button>
             </div>
 
             <div style="margin-top: auto; padding-top: 15px; display:none;" id="logoutContainer">
@@ -149,7 +166,6 @@
         </sidebar>
 
         <main>
-            <!-- واجهة التفعيل والاشتراك (تظهر للطالب غير المشترك عند النقر على أي صف) -->
             <div class="card" id="authSection">
                 <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في المنصة للدخول إلى الصفوف والمحتوى</div>
                 <div style="background: #eff6ff; padding: 16px; border-radius: 12px; margin-bottom: 18px; border-right: 4px solid var(--accent);">
@@ -216,25 +232,30 @@
                 <div class="grid-cards" id="teachersRoomsGrid"></div>
             </div>
 
+            <!-- غرفة المحتوى والبث الداخلي للطلاب -->
             <div class="card" id="lecturesSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 id="currentRoomTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
                     <button class="btn btn-secondary" onclick="backToRoomsView()"><i class="fas fa-arrow-right"></i> رجوع للغرف</button>
                 </div>
 
-                <div style="background: #1e293b; padding: 14px; border-radius: var(--radius); margin-bottom: 20px;">
+                <!-- شاشة البث الداخلي داخل المنصة بالكامل مع تكبير وتصغير -->
+                <div style="background: #1e293b; padding: 14px; border-radius: var(--radius); margin-bottom: 25px;" id="liveRoomWrapper">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #fff; flex-wrap: wrap; gap: 8px;">
-                        <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-broadcast-tower" style="color: #38bdf8;"></i> البث المباشر</span>
+                        <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-broadcast-tower" style="color: #38bdf8;"></i> البث المباشر الداخلي</span>
                         <div style="display: flex; gap: 8px;">
-                            <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="setStudentCameraOff()"><i class="fas fa-video-slash"></i> صوت فقط</button>
-                            <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.85rem;" onclick="setStudentCameraOn()"><i class="fas fa-video"></i> صوت وصورة</button>
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="setCameraOff()"><i class="fas fa-video-slash"></i> صوت فقط</button>
+                            <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="setCameraOn()"><i class="fas fa-video"></i> صوت وصورة</button>
+                            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="toggleFullScreenLive()"><i class="fas fa-expand"></i> تكبير الشاشة (Full Screen)</button>
                         </div>
                     </div>
-                    <iframe id="studentLiveIframe" class="embedded-live-frame" allow="camera; microphone; fullscreen; display-capture; autoplay"></iframe>
+                    <div class="internal-live-container" id="liveContainerBox">
+                        <iframe id="internalLiveIframe" allow="camera; microphone; fullscreen; display-capture; autoplay"></iframe>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 25px;">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم المادة</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم المادة (مع إمكانية التكبير والتصغير)</h4>
                     <div id="lecturesContainer"><p style="color: #64748b;">جاري التحميل...</p></div>
                 </div>
 
@@ -254,7 +275,7 @@
                 </div>
             </div>
 
-            <!-- لوحة إنشاء غرفة خاصة برمز PIN للمدرسين -->
+            <!-- إنشاء غرفة خاصة بررمز PIN -->
             <div class="card" id="sectionCreateRoom" style="display: none;">
                 <div class="card-header"><i class="fas fa-plus-circle" style="color:var(--success);"></i> إنشاء غرفة خاصة برمز PIN سري</div>
                 <form onsubmit="handleCreateCustomRoom(event)">
@@ -295,6 +316,11 @@
                 </form>
             </div>
 
+            <div class="card" id="sectionManageRooms" style="display: none;">
+                <div class="card-header"><i class="fas fa-edit" style="color:var(--warning);"></i> إدارة وتعديل غرفتي الخاصة</div>
+                <div id="myRoomsListContainer">جاري جلب غرفك...</div>
+            </div>
+
             <div class="card" id="sectionVouchers" style="display: none;">
                 <div class="card-header"><i class="fas fa-ticket-alt"></i> إدارة وتوليد كودات التفعيل الخاصة بك</div>
                 <form onsubmit="generateVoucher(event)" style="margin-bottom: 20px; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid #cbd5e1;">
@@ -311,11 +337,20 @@
             <div class="card" id="sectionScheduleManage" style="display: none;"><div class="card-header"><i class="fas fa-calendar-alt"></i> جدول الحصص الأسبوعي</div><div id="scheduleContainer"></div></div>
             <div class="card" id="sectionAdminReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> سجل إنذارات الطلاب</div><div id="adminReportsList"></div></div>
             
-            <div class="card" id="sectionSettings" style="display: none;"><div class="card-header"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</div>
+            <!-- إعدادات المنصة وتشغيل/إيقاف الصيانة -->
+            <div class="card" id="sectionSettings" style="display: none;">
+                <div class="card-header"><i class="fas fa-sliders-h"></i> إعدادات المنصة والصيانة</div>
                 <form onsubmit="saveSettings(event)">
                     <div class="form-group"><label>سعر الاشتراك</label><input type="text" class="form-control" id="cfgPrice" required></div>
                     <div class="form-group"><label>طرق الدفع (زين كاش / ماستر كارد)</label><textarea class="form-control" id="cfgPayments" rows="3" required></textarea></div>
-                    <button type="submit" class="btn btn-primary btn-block">حفظ الإعدادات</button>
+                    <div class="form-group">
+                        <label>حالة المنصة</label>
+                        <select class="form-control" id="cfgMaintenance">
+                            <option value="false">🟢 المنصة تعمل بشكل طبيعي</option>
+                            <option value="true">🛠️ وضع الصيانة (إظهار شاشة الصيانة للجميع)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">حفظ الإعدادات وتحديث الحالة</button>
                 </form>
             </div>
 
@@ -395,8 +430,10 @@
             </div>
 
             <div class="card" id="sectionLiveRoom" style="display: none;"><div class="card-header"><i class="fas fa-video"></i> غرفة البث الخاصة بي</div>
-                <div style="margin-bottom: 12px; display: flex; gap: 10px;"><button class="btn btn-secondary" onclick="setTeacherCameraOff()">صوت فقط</button><button class="btn btn-success" onclick="setTeacherCameraOn()">صوت وصورة</button></div>
-                <iframe id="teacherLiveIframe" class="embedded-live-frame" allow="camera; microphone; fullscreen; autoplay"></iframe>
+                <div style="margin-bottom: 12px; display: flex; gap: 10px;"><button class="btn btn-secondary" onclick="setCameraOff()">صوت فقط</button><button class="btn btn-success" onclick="setCameraOn()">صوت وصورة</button></div>
+                <div class="internal-live-container">
+                    <iframe id="teacherInternalLive" allow="camera; microphone; fullscreen; autoplay"></iframe>
+                </div>
             </div>
 
             <div class="card" id="sectionTeacherReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار طالب</div>
@@ -410,7 +447,34 @@
         </main>
     </div>
 
-    <!-- نافذة إدخال رمز PIN السري للغرفة للطالب -->
+    <!-- نافذة عارض الملفات مع أزرار التكبير والتصغير -->
+    <div class="modal" id="fileViewerModal">
+        <div class="modal-content-box">
+            <div class="modal-header-bar">
+                <span id="modalFileTitle">عرض الملزمة</span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="zoomPdf(0.1)"><i class="fas fa-search-plus"></i> تكبير</button>
+                    <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.8rem;" onclick="zoomPdf(-0.1)"><i class="fas fa-search-minus"></i> تصغير</button>
+                    <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.8rem;" onclick="closeFileModal()">إغلاق</button>
+                </div>
+            </div>
+            <div class="modal-body-viewer" id="modalViewerContainer">
+                <div class="watermark-overlay" id="pdfWatermarkText"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editRoomModal">
+        <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 380px; padding: 24px;">
+            <div class="card-header"><i class="fas fa-edit" style="color:var(--warning);"></i> تعديل تفاصيل الغرفة</div>
+            <input type="hidden" id="editRoomId">
+            <div class="form-group"><label>عنوان الغرفة الجديد</label><input type="text" class="form-control" id="editRoomTitleInput"></div>
+            <div class="form-group"><label>رمز الدخول السري (PIN) الجديد</label><input type="text" class="form-control" id="editRoomPinInput"></div>
+            <button class="btn btn-success btn-block" onclick="saveEditedRoom()">حفظ التعديلات</button>
+            <button class="btn btn-danger btn-block" onclick="closeEditRoomModal()" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
+        </div>
+    </div>
+
     <div class="modal" id="pinModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 380px; padding: 24px; text-align: center;">
             <div class="card-header" style="justify-content: center;"><i class="fas fa-lock" style="color:var(--danger);"></i> غرفة محمية برمز سري</div>
@@ -420,18 +484,6 @@
             </div>
             <button class="btn btn-success btn-block" onclick="verifyRoomPin()">دخول الغرفة</button>
             <button class="btn btn-danger btn-block" onclick="closePinModal()" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
-        </div>
-    </div>
-
-    <div class="modal" id="fileViewerModal">
-        <div class="modal-content-box" style="position: relative;">
-            <div class="modal-header-bar">
-                <span id="modalFileTitle">عرض المحتوى</span>
-                <button class="btn btn-danger" style="padding: 6px 12px;" onclick="closeFileModal()">إغلاق</button>
-            </div>
-            <div class="modal-body-viewer" id="modalViewerContainer" style="position: relative;">
-                <div class="watermark-overlay" id="pdfWatermarkText"></div>
-            </div>
         </div>
     </div>
 
@@ -483,10 +535,11 @@
 
         const ADMIN_HASH = "V0ExOTkyd2E="; // WA1992wa
         let activeClass = ""; let activeSub = ""; let activeTeacherRoom = "";
-        let currentRole = ""; let loggedTeacherData = null; let currentTeacherRoomUrl = "";
+        let currentRole = ""; let loggedTeacherData = null; let currentRoomLiveUrl = "";
         let previousNotificationsCount = 0;
         let currentStudentName = "";
         let pendingRoomData = null;
+        let currentPdfScale = 1.0;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -502,9 +555,21 @@
 
         window.onload = function() { 
             loadSettingsData(); 
+            checkMaintenanceStatus();
             checkStudentSession(); 
             listenToNotificationsRealtime();
         };
+
+        function checkMaintenanceStatus() {
+            db.ref('settings/maintenance').on('value', snapshot => {
+                const isMaint = snapshot.val();
+                if (isMaint === true && currentRole !== 'admin') {
+                    document.getElementById('maintenanceScreen').style.display = 'flex';
+                } else {
+                    document.getElementById('maintenanceScreen').style.display = 'none';
+                }
+            });
+        }
 
         function switchAuthTab(type) {
             document.getElementById('formVoucherCode').style.display = (type === 'code') ? 'block' : 'none';
@@ -517,16 +582,21 @@
                 document.getElementById('dispPrice').innerText = cfg.price || '5000';
                 document.getElementById('cfgPrice').value = cfg.price || '5000';
                 document.getElementById('cfgPayments').value = cfg.payments || '';
+                document.getElementById('cfgMaintenance').value = cfg.maintenance ? "true" : "false";
             }).catch(() => {});
         }
 
         function saveSettings(e) {
             e.preventDefault();
+            const price = document.getElementById('cfgPrice').value;
+            const payments = document.getElementById('cfgPayments').value;
+            const maintenance = document.getElementById('cfgMaintenance').value === "true";
+
             fetch(`${DATABASE_URL}/settings.json`, {
                 method: 'PUT',
-                body: JSON.stringify({ price: document.getElementById('cfgPrice').value, payments: document.getElementById('cfgPayments').value }),
+                body: JSON.stringify({ price, payments, maintenance }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => alert('تم الحفظ بنجاح!'));
+            }).then(() => alert('تم حفظ الإعدادات وتحديث حالة المنصة بنجاح!'));
         }
 
         function switchLoginTab(tab) {
@@ -547,6 +617,7 @@
                 document.getElementById('adminExitBtn').style.display = 'flex';
                 document.getElementById('logoutContainer').style.display = 'block';
                 document.getElementById('topSubtitle').innerText = "لوحة تحكم الأدمن (الأستاذ وليد)";
+                document.getElementById('maintenanceScreen').style.display = 'none'; // الأدمن لا تُحجب عنه شاشة الصيانة
                 closeAdminModal();
                 showSection('sectionNotifications');
                 fetchTeachersList();
@@ -567,8 +638,8 @@
                     document.getElementById('adminExitBtn').style.display = 'flex';
                     document.getElementById('logoutContainer').style.display = 'block';
                     document.getElementById('topSubtitle').innerText = `المدرس: ${found.name} (${found.subject})`;
-                    currentTeacherRoomUrl = `https://meet.jit.si/WaleedAcademy_Room_${found.id}`;
-                    document.getElementById('teacherLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=true";
+                    currentRoomLiveUrl = `https://meet.jit.si/WaleedAcademy_Room_${found.id}`;
+                    document.getElementById('teacherInternalLive').src = currentRoomLiveUrl + "#config.startWithVideoMuted=true";
                     closeAdminModal(); showSection('sectionCreateRoom');
                 } else { alert('معلومات الدخول غير صحيحة!'); }
             });
@@ -590,7 +661,7 @@
 
         function logoutSystem() {
             localStorage.removeItem('student_session');
-            currentRole = ''; loggedTeacherData = null; currentTeacherRoomUrl = ""; currentStudentName = "";
+            currentRole = ''; loggedTeacherData = null; currentRoomLiveUrl = ""; currentStudentName = "";
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
             document.getElementById('logoutContainer').style.display = 'none';
@@ -601,9 +672,10 @@
         }
 
         function showSection(sectionId) {
-            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'lecturesSection', 'sectionCreateRoom', 'sectionNotifications', 'sectionVouchers', 'sectionTeachersManage', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework', 'sectionLiveRoom', 'sectionTeacherReports'].forEach(id => {
+            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'lecturesSection', 'sectionCreateRoom', 'sectionManageRooms', 'sectionNotifications', 'sectionVouchers', 'sectionTeachersManage', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework', 'sectionLiveRoom', 'sectionTeacherReports'].forEach(id => {
                 document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
             });
+            if (sectionId === 'sectionManageRooms') fetchMyRooms();
             if (sectionId === 'sectionVouchers') fetchVouchersList();
             if (sectionId === 'sectionTeachersManage') fetchTeachersList();
             if (sectionId === 'sectionScheduleManage') renderScheduleManager();
@@ -783,7 +855,6 @@
             return false;
         }
 
-        // دالة حماية الصفوف: لا يُسمح بالدخول إلا إذا كان الأدمن، المدرس، أو طالباً مشتركاً فعالاً
         function tryOpenClass(className) {
             if (currentRole === 'admin' || currentRole === 'teacher' || checkStudentSession()) {
                 openClass(className);
@@ -874,17 +945,83 @@
             });
         }
 
+        function fetchMyRooms() {
+            const creatorName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+            fetch(`${DATABASE_URL}/custom_rooms.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const r = data[k];
+                        if (currentRole === 'admin' || r.creator === creatorName) {
+                            html += `
+                                <div class="list-item">
+                                    <div>
+                                        <strong>${r.title}</strong><br>
+                                        <small>الصف: ${r.grade} | المادة: ${r.subject} | رمز PIN: <code style="background:#e2e8f0; padding:2px 6px; border-radius:4px; font-weight:800;">${r.pin}</code></small>
+                                    </div>
+                                    <div style="display:flex; gap:8px;">
+                                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.8rem;" onclick="openEditRoomModal('${r.id}', '${r.title}', '${r.pin}')">تعديل الاسم والرمز</button>
+                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('custom_rooms', '${r.id}', fetchMyRooms)">حذف الغرفة</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                document.getElementById('myRoomsListContainer').innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد غرف خاصة مسجلة حالياً.</p>';
+            });
+        }
+
+        function openEditRoomModal(roomId, title, pin) {
+            document.getElementById('editRoomId').value = roomId;
+            document.getElementById('editRoomTitleInput').value = title;
+            document.getElementById('editRoomPinInput').value = pin;
+            document.getElementById('editRoomModal').style.display = 'flex';
+        }
+
+        function closeEditRoomModal() { document.getElementById('editRoomModal').style.display = 'none'; }
+
+        function saveEditedRoom() {
+            const roomId = document.getElementById('editRoomId').value;
+            const newTitle = document.getElementById('editRoomTitleInput').value.trim();
+            const newPin = document.getElementById('editRoomPinInput').value.trim();
+
+            if (!newTitle || !newPin) { alert('الرجاء إدخال العنوان ورمز PIN الجديدين!'); return; }
+
+            fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify({ title: newTitle, pin: newPin }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert('تم تحديث تفاصيل الغرفة بنجاح!');
+                closeEditRoomModal();
+                fetchMyRooms();
+            });
+        }
+
         function openTeacherRoom(roomId, roomTitle) {
             activeTeacherRoom = roomTitle;
             document.getElementById('currentRoomTitle').innerText = `غرفة: ${roomTitle} (${activeSub})`;
-            currentTeacherRoomUrl = `https://meet.jit.si/WaleedAcademy_CustomRoom_${roomId}`;
-            document.getElementById('studentLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=true";
+            currentRoomLiveUrl = `https://meet.jit.si/WaleedAcademy_CustomRoom_${roomId}`;
+            document.getElementById('internalLiveIframe').src = currentRoomLiveUrl + "#config.startWithVideoMuted=true";
             showSection('lecturesSection');
             renderTeacherLectures(); renderTeacherRecordings(); renderTeacherQuizzes(); renderTeacherHomework();
         }
 
-        function setStudentCameraOff() { if (currentTeacherRoomUrl) document.getElementById('studentLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=true"; }
-        function setStudentCameraOn() { if (currentTeacherRoomUrl) document.getElementById('studentLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=false"; }
+        function setCameraOff() { if (currentRoomLiveUrl) document.getElementById('internalLiveIframe').src = currentRoomLiveUrl + "#config.startWithVideoMuted=true"; }
+        function setCameraOn() { if (currentRoomLiveUrl) document.getElementById('internalLiveIframe').src = currentRoomLiveUrl + "#config.startWithVideoMuted=false"; }
+        
+        // تكبير وتصغير شاشة البث داخل المنصة
+        function toggleFullScreenLive() {
+            const box = document.getElementById('liveContainerBox');
+            if (!document.fullscreenElement) {
+                if (box.requestFullscreen) { box.requestFullscreen(); }
+                else if (box.webkitRequestFullscreen) { box.webkitRequestFullscreen(); }
+            } else {
+                if (document.exitFullscreen) { document.exitFullscreen(); }
+            }
+        }
+
         function backToSubjectsView() { showSection('subjectsSection'); }
         function backToRoomsView() { showSection('teachersRoomsSection'); }
 
@@ -904,7 +1041,7 @@
                                 <div class="file-mini-card" onclick="openFileModal('${item.title}', '${safeData}')">
                                     <div class="file-mini-info"><i class="fas fa-file-pdf"></i><h4>${item.title}</h4></div>
                                     <div style="display:flex; gap:10px; align-items:center;">
-                                        <span class="badge badge-active">عرض</span>
+                                        <span class="badge badge-active">عرض وتكبير</span>
                                         ${canDelete ? `<button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem;" onclick="event.stopPropagation(); deleteItem('contents', '${item.id}', renderTeacherLectures)">حذف</button>` : ''}
                                     </div>
                                 </div>
@@ -915,6 +1052,35 @@
                 container.innerHTML = html || `<p style="color:#64748b;">لا توجد ملازم مرفوعة.</p>`;
             });
         }
+
+        function openFileModal(title, encodedData) {
+            document.getElementById('modalFileTitle').innerText = title;
+            currentPdfScale = 1.0;
+            let wmHtml = '';
+            for(let i=0; i<12; i++) { wmHtml += `<span>${currentStudentName || 'منصة الأستاذ وليد'} - محمي للأغراض التعليمية</span>`; }
+            document.getElementById('pdfWatermarkText').innerHTML = wmHtml;
+            updatePdfViewer(encodedData);
+            document.getElementById('fileViewerModal').style.display = 'flex';
+        }
+
+        function updatePdfViewer(encodedData) {
+            const decodedUrl = decodeURIComponent(encodedData);
+            document.getElementById('modalViewerContainer').innerHTML = `
+                <object data="${decodedUrl}#view=FitH&toolbar=0" type="application/pdf" width="${100 * currentPdfScale}%" height="${100 * currentPdfScale}%" style="transition:0.2s;"></object>
+                <div class="watermark-overlay" id="pdfWatermarkText"></div>
+            `;
+        }
+
+        function zoomPdf(delta) {
+            currentPdfScale = Math.max(0.6, Math.min(2.5, currentPdfScale + delta));
+            const obj = document.querySelector('#modalViewerContainer object');
+            if(obj) {
+                obj.style.width = (100 * currentPdfScale) + '%';
+                obj.style.height = (100 * currentPdfScale) + '%';
+            }
+        }
+
+        function closeFileModal() { document.getElementById('fileViewerModal').style.display = 'none'; document.getElementById('modalViewerContainer').innerHTML = ''; }
 
         function renderTeacherRecordings() {
             const container = document.getElementById('recordingsContainer');
@@ -940,6 +1106,12 @@
                 }
                 container.innerHTML = html || `<p style="color:#64748b;">لا توجد محاضرات مسجلة.</p>`;
             });
+        }
+
+        function openRecordingModal(title, videoUrl) {
+            document.getElementById('modalFileTitle').innerText = title;
+            document.getElementById('modalViewerContainer').innerHTML = `<iframe src="${videoUrl}" width="100%" height="100%" style="border:none;" allowfullscreen></iframe>`;
+            document.getElementById('fileViewerModal').style.display = 'flex';
         }
 
         function renderTeacherHomework() {
@@ -1011,7 +1183,7 @@
         }
 
         function deleteItem(path, id, callback) {
-            if (confirm('هل تريد حذف هذا العنصر؟')) {
+            if (confirm('هل تريد حذف هذا العنصر نهائياً؟')) {
                 fetch(`${DATABASE_URL}/${path}/${id}.json`, { method: 'DELETE' }).then(() => callback());
             }
         }
@@ -1021,25 +1193,6 @@
             if (chosen === correct) { resBox.innerHTML = `<span style="color:var(--success);">إجابة صحيحة أحسنت!</span>`; }
             else { resBox.innerHTML = `<span style="color:var(--danger);">إجابة خاطئة.</span>`; }
         }
-
-        function openFileModal(title, encodedData) {
-            document.getElementById('modalFileTitle').innerText = title;
-            let wmHtml = '';
-            for(let i=0; i<12; i++) {
-                wmHtml += `<span>${currentStudentName || 'منصة الأستاذ وليد'} - محمي للأغراض التعليمية</span>`;
-            }
-            document.getElementById('pdfWatermarkText').innerHTML = wmHtml;
-            document.getElementById('modalViewerContainer').innerHTML = `<object data="${decodeURIComponent(encodedData)}#view=FitH&toolbar=0" type="application/pdf" width="100%" height="100%"><embed src="${decodeURIComponent(encodedData)}" type="application/pdf" width="100%" height="100%" /></object><div class="watermark-overlay">${wmHtml}</div>`;
-            document.getElementById('fileViewerModal').style.display = 'flex';
-        }
-
-        function openRecordingModal(title, videoUrl) {
-            document.getElementById('modalFileTitle').innerText = title;
-            document.getElementById('modalViewerContainer').innerHTML = `<iframe src="${videoUrl}" width="100%" height="100%" style="border:none;" allowfullscreen></iframe>`;
-            document.getElementById('fileViewerModal').style.display = 'flex';
-        }
-
-        function closeFileModal() { document.getElementById('fileViewerModal').style.display = 'none'; document.getElementById('modalViewerContainer').innerHTML = ''; }
 
         function fetchTeachersList() {
             fetch(`${DATABASE_URL}/teachers.json`).then(res => res.json()).then(data => {
