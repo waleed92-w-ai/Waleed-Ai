@@ -292,10 +292,10 @@
                             <div style="display: flex; gap: 8px; align-items: center;" id="liveControlButtons"></div>
                         </div>
 
-                        <!-- زر تفاعلي لتفعيل الصوت في المتصفحات التي تحظر التشغيل التلقائي -->
+                        <!-- شريط التفعيل الصوتي السريع -->
                         <div id="audioUnlockBanner" style="background: #1e40af; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; color: #fff;">
-                            <span><i class="fas fa-volume-up"></i> انقر هنا لتفعيل سماع الصوت بوضوح في الغرفة:</span>
-                            <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.8rem;" onclick="unlockAudioOutput()">تفعيل الصوت الآن</button>
+                            <span><i class="fas fa-volume-up"></i> اضغط هنا لتنشيط وسماع الصوت بوضوح في الغرفة:</span>
+                            <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.8rem;" onclick="unlockAudioOutput()">تنشيط الصوت الآن</button>
                         </div>
 
                         <div id="teacherLiveAdminBox" style="background: #0f172a; border: 1px solid #334155; border-radius: 10px; padding: 12px; margin-bottom: 12px; display: none;">
@@ -573,7 +573,7 @@
         </div>
     </div>
 
-    <!-- عنصر مشغل الصوت المشترك للسامعين -->
+    <!-- عنصر مشغل الصوت الاحتياطي والمشترك -->
     <audio id="remoteAudioPlayer" autoplay playsinline></audio>
 
     <script>
@@ -1505,25 +1505,25 @@
             });
         }
 
+        // تحسين الحصول على المايك مع تفعيل إلغاء الصدى وتقليل الضوضاء
         function initLocalMicrophone() {
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
                 localAudioStream = stream;
                 const remoteAudio = document.getElementById('remoteAudioPlayer');
                 remoteAudio.srcObject = stream;
-                remoteAudio.muted = true; // كتم الصدى المحلي للمتحدث نفسه
+                remoteAudio.muted = true; // كتم الصوت المحلي لمنع الصدى
                 remoteAudio.play().catch(e => console.log(e));
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في المتصفح.'));
         }
 
-        // دالة زر تفعيل الصوت اليدوي لتجاوز قيود المتصفحات الآمنة
         function unlockAudioOutput() {
             const audioEl = document.getElementById('remoteAudioPlayer');
             audioEl.play().then(() => {
-                alert('🔊 تم تفعيل تشغيل الصوت بنجاح!');
+                alert('🔊 تم تنشيط الصوت بنجاح!');
                 document.getElementById('audioUnlockBanner').style.display = 'none';
             }).catch(err => {
                 console.error(err);
-                alert('يرجى النقر مرة أخرى بعد بدء البث الصوتي.');
+                alert('يرجى النقر مرة أخرى بعد بدء البث.');
             });
         }
 
@@ -1533,9 +1533,23 @@
                 localAudioStream.getAudioTracks().forEach(track => { track.enabled = !isMicMuted; });
                 const icon = document.getElementById('micToggleIcon');
                 if (icon) icon.className = isMicMuted ? "fas fa-microphone-slash" : "fas fa-microphone";
+                
+                // تحديث حالة الكتم في قاعدة البيانات لتنعكس لدى الجميع
+                const userKey = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 'teacher' : 'student';
+                db.ref(`voice_participants/${activeRoomId}`).once('value', snapshot => {
+                    const data = snapshot.val();
+                    if (data) {
+                        Object.keys(data).forEach(k => {
+                            if (k === 'teacher' && (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher')) {
+                                db.ref(`voice_participants/${activeRoomId}/teacher`).update({ isMuted: isMicMuted });
+                            }
+                        });
+                    }
+                });
+
                 alert(isMicMuted ? 'تم كتم المايك.' : 'تم فتح المايك.');
             } else {
-                alert('الميكروفون غير مفعل أو لم يتم بدء البث بعد.');
+                alert('الميكروفون غير مفعل أو لم تقم ببدء/الانضمام للبث الصوتي بعد.');
             }
         }
 
@@ -1804,7 +1818,7 @@
         }
 
         function fetchSchedules() {
-            fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data => {
+            fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data =>.then(res => res.json()).then(data => {
                 let html = '';
                 if (data) { Object.keys(data).forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
                 const schList = document.getElementById('schList');
