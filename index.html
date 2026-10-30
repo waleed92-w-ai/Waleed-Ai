@@ -712,7 +712,6 @@
             });
         }
 
-        // دالة تسجيل الخروج المحسنة التي تعالج إيقاف تدفق الكاميرا وتفريغ بيانات الجلسة بالكامل
         function logoutSystem() {
             try {
                 if (localStream) {
@@ -953,23 +952,34 @@
             });
         }
 
+        // دالة التفعيل المحسنة لتسمح للطالب بالدخول في أي وقت باستخدام نفس الكود والاسم المسجل مسبقاً
         function activateWithVoucher(e) {
             e.preventDefault();
             const name = document.getElementById('vStudentName').value.trim();
             const code = document.getElementById('vCodeInput').value.trim();
+
             fetch(`${DATABASE_URL}/vouchers/${code}.json`).then(res => res.json()).then(voucher => {
-                if (voucher && !voucher.isUsed) {
-                    fetch(`${DATABASE_URL}/vouchers/${code}.json`, {
-                        method: 'PATCH',
-                        body: JSON.stringify({ isUsed: true, usedBy: name, usedAt: Date.now() }),
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                    currentStudentName = name;
-                    localStorage.setItem('student_session', JSON.stringify({ id: code, name: name, status: 'active' }));
-                    document.getElementById('logoutContainer').style.display = 'block';
-                    alert('تم التفعيل بنجاح!');
-                    openClass('الأول المتوسط');
-                } else { alert('الكود غير صحيح أو مستخدم!'); }
+                if (voucher) {
+                    // إذا كان الكود غير مستخدم، أو مستخدم لنفس الطالب تماماً
+                    if (!voucher.isUsed || voucher.usedBy === name) {
+                        if (!voucher.isUsed) {
+                            fetch(`${DATABASE_URL}/vouchers/${code}.json`, {
+                                method: 'PATCH',
+                                body: JSON.stringify({ isUsed: true, usedBy: name, usedAt: Date.now() }),
+                                headers: { 'Content-Type': 'application/json' }
+                            });
+                        }
+                        currentStudentName = name;
+                        localStorage.setItem('student_session', JSON.stringify({ id: code, name: name, status: 'active' }));
+                        document.getElementById('logoutContainer').style.display = 'block';
+                        alert('تم تسجيل الدخول بنجاح!');
+                        openClass('الأول المتوسط');
+                    } else {
+                        alert('⚠️ عذراً، هذا الكود مستخدم بالفعل من قبل طالب آخر!');
+                    }
+                } else { 
+                    alert('كود التفعيل غير صحيح!'); 
+                }
             });
         }
 
@@ -997,20 +1007,20 @@
             });
         }
 
+        // فحص جلسة الطالب المحفوظة في المتصفح ليدخل تلقائياً في أي وقت دون إعادة كتابة الكود
         function checkStudentSession() {
             if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') return true;
             const session = localStorage.getItem('student_session');
             if (session) {
                 const student = JSON.parse(session);
-                if (student && student.id) {
+                if (student && student.id && student.name) {
                     fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
-                        if (voucher && voucher.isUsed) {
+                        if (voucher && voucher.isUsed && voucher.usedBy === student.name) {
                             currentStudentName = student.name;
                             document.getElementById('logoutContainer').style.display = 'block';
                             return true;
                         } else {
                             logoutSystem();
-                            alert('⚠️ انتهى اشتراكك أو تم إنهاؤه من قبل الإدارة. يرجى إعادة التفعيل.');
                         }
                     }).catch(() => {});
                 }
@@ -1122,9 +1132,17 @@
                 const correctPin = String(pendingRoomData.pin).trim();
                 
                 if (enteredPin === correctPin) {
+                    const rId = pendingRoomData.id;
+                    const rTitle = pendingRoomData.title;
+                    
+                    if (currentStudentName) {
+                        const sKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+                        db.ref(`room_permissions/${rId}/${sKey}`).set({ allowed: true, timestamp: Date.now() });
+                    }
+                    
                     closePinModal();
-                    registerStudentPresence(pendingRoomData.id);
-                    openRoomMenu(pendingRoomData.id, pendingRoomData.title);
+                    registerStudentPresence(rId);
+                    openRoomMenu(rId, rTitle);
                 } else {
                     alert('رمز PIN غير صحيح! تأكد من الرمز المدخل.');
                 }
