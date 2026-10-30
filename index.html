@@ -469,6 +469,10 @@
                 </div>
                 <p style="color: #64748b; margin-bottom: 20px; font-weight: 700;">اختر القسم المطلوب للدخول إليه:</p>
                 <div class="grid-cards">
+                    <div class="sub-card menu-pane-link" data-pane="panePreparation">
+                        <i class="fas fa-clipboard-list" style="color: #10b981;"></i>
+                        <span>التحضير والامتحانات اليومية والشهرية</span>
+                    </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLive">
                         <i class="fas fa-microphone-alt" style="color: var(--accent);"></i>
                         <span>البث الصوتي المباشر</span>
@@ -496,6 +500,44 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 id="currentRoomContentTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
                     <button class="btn btn-secondary" id="backToRoomMenuBtn"><i class="fas fa-arrow-right"></i> رجوع لأقسام الغرفة</button>
+                </div>
+
+                <!-- قسم التحضير والامتحانات اليومية والشهرية المتكامل -->
+                <div class="room-section-pane" id="panePreparation">
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-clipboard-list"></i> لوحة التحضير والامتحانات (يومي، شهري، نصف سنة، شفهي)</h4>
+                    
+                    <div id="teacherPrepFormBox" style="display:none; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1.5px solid var(--accent); margin-bottom: 25px;">
+                        <h5 style="color: var(--accent); margin-bottom: 12px; font-weight: 800;">➕ نشر تحضير أو امتحان جديد (للأستاذ):</h5>
+                        <form id="savePreparationForm">
+                            <input type="hidden" id="editPrepId" value="">
+                            <div class="form-group">
+                                <label>نوع النشر (اختر القسم المناسب)</label>
+                                <select class="form-control" id="prepTypeSelect">
+                                    <option value="تحضير يومي">📚 تحضير يومي (من صفحة إلى صفحة)</option>
+                                    <option value="الامتحان الشهري الأول">📝 الامتحان الشهري الأول</option>
+                                    <option value="الامتحان الشهري الثاني">📝 الامتحان الشهري الثاني</option>
+                                    <option value="امتحان نصف السنة">🏆 امتحان نصف السنة</option>
+                                    <option value="اختبار شفهي">🗣️ اختبار شفهي</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>عنوان أو تفاصيل النشر (مثلاً: المواد المطلوبة، الصفحات، أو التوجيهات)</label>
+                                <textarea class="form-control" id="prepTextContent" rows="3" placeholder="اكتب التفاصيل هنا (مثلاً: التحضير من صفحة 12 إلى صفحة 20)..." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>ملف اختياري مرفق (أسئلة PDF أو جدول أو صورة - اختياري)</label>
+                                <input type="file" class="form-control" id="prepFileInput" accept=".pdf,image/*">
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" class="btn btn-success" style="flex: 1;"><i class="fas fa-save"></i> نشر وتحديث</button>
+                                <button type="button" class="btn btn-secondary" id="cancelPrepEditBtn" style="display:none;" onclick="resetPrepForm()">إلغاء التعديل</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div id="studentPrepDisplayContainer">
+                        <p style="color: #64748b;">جاري جلب المنشورات والتحضيرات...</p>
+                    </div>
                 </div>
 
                 <div class="room-section-pane" id="paneLive">
@@ -917,6 +959,7 @@
             document.getElementById('settingsForm').addEventListener('submit', saveSettings);
 
             document.getElementById('universalUploadForm').addEventListener('submit', handleUniversalUpload);
+            document.getElementById('savePreparationForm').addEventListener('submit', handleSavePreparation);
 
             document.getElementById('requestReentryBtn').addEventListener('click', requestReentryToRoom);
             document.getElementById('zoomInBtn').addEventListener('click', () => zoomPdf(0.1));
@@ -1366,6 +1409,133 @@
             }
         }
 
+        function handleSavePreparation(e) {
+            e.preventDefault();
+            const prepId = document.getElementById('editPrepId').value || ('PREP_' + Date.now());
+            const prepType = document.getElementById('prepTypeSelect').value;
+            const textContent = document.getElementById('prepTextContent').value.trim();
+            const fileInput = document.getElementById('prepFileInput');
+
+            const saveProcess = (fileDataBase64 = '', fileName = '') => {
+                fetch(`${DATABASE_URL}/preparations/${activeRoomId}/${prepId}.json`).then(res => res.json()).then(oldData => {
+                    const prepData = {
+                        id: prepId,
+                        prepType,
+                        textContent,
+                        fileData: fileDataBase64 || (oldData ? oldData.fileData : ''),
+                        fileName: fileName || (oldData ? oldData.fileName : ''),
+                        updatedAt: new Date().toLocaleString('ar-EG')
+                    };
+                    fetch(`${DATABASE_URL}/preparations/${activeRoomId}/${prepId}.json`, {
+                        method: 'PUT',
+                        body: JSON.stringify(prepData),
+                        headers: { 'Content-Type': 'application/json' }
+                    }).then(() => {
+                        alert('تم حفظ وتحديث المنشور بنجاح!');
+                        resetPrepForm();
+                        renderRoomPreparation();
+                    });
+                });
+            };
+
+            if (fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    saveProcess(evt.target.result, file.name);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                saveProcess('', '');
+            }
+        }
+
+        function resetPrepForm() {
+            document.getElementById('editPrepId').value = '';
+            document.getElementById('prepTextContent').value = '';
+            document.getElementById('prepFileInput').value = '';
+            document.getElementById('cancelPrepEditBtn').style.display = 'none';
+        }
+
+        function editPreparation(prepId, prepType, textContent) {
+            document.getElementById('editPrepId').value = prepId;
+            document.getElementById('prepTypeSelect').value = prepType;
+            document.getElementById('prepTextContent').value = textContent;
+            document.getElementById('cancelPrepEditBtn').style.display = 'inline-block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deletePreparation(prepId) {
+            if (confirm('هل أنت متأكد من حذف هذا التحضير أو الامتحان؟')) {
+                fetch(`${DATABASE_URL}/preparations/${activeRoomId}/${prepId}.json`, { method: 'DELETE' }).then(() => {
+                    alert('تم الحذف بنجاح!');
+                    renderRoomPreparation();
+                });
+            }
+        }
+
+        function renderRoomPreparation() {
+            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
+            const prepFormBox = document.getElementById('teacherPrepFormBox');
+            if (prepFormBox) {
+                prepFormBox.style.display = isTeacherOrAdmin ? 'block' : 'none';
+            }
+
+            fetch(`${DATABASE_URL}/preparations/${activeRoomId}.json`).then(res => res.json()).then(data => {
+                const container = document.getElementById('studentPrepDisplayContainer');
+                if (!container) return;
+
+                if (!data) {
+                    container.innerHTML = `<p style="color: #64748b; text-align: center; padding: 20px;">لا توجد تحضيرات أو امتحانات منشورة حالياً في هذه الغرفة.</p>`;
+                    return;
+                }
+
+                let html = '';
+                Object.keys(data).forEach(k => {
+                    const item = data[k];
+                    let badgeColor = 'var(--accent)';
+                    if (item.prepType.includes('شهري')) badgeColor = 'var(--warning)';
+                    if (item.prepType.includes('نصف السنة')) badgeColor = 'var(--danger)';
+                    if (item.prepType.includes('شفهي')) badgeColor = 'var(--success)';
+
+                    let fileBtnHtml = '';
+                    if (item.fileData) {
+                        fileBtnHtml = `
+                            <div style="margin-top: 12px;">
+                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openFileModal('${item.fileName || 'ملف مرفق'}', '${encodeURIComponent(item.fileData)}')">
+                                    <i class="fas fa-file-alt"></i> عرض الملف المرفق (${item.fileName || 'ملف'})
+                                </button>
+                            </div>
+                        `;
+                    }
+
+                    let teacherControls = '';
+                    if (isTeacherOrAdmin) {
+                        teacherControls = `
+                            <div style="display: flex; gap: 6px; margin-top: 12px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+                                <button class="btn btn-warning" style="padding: 4px 10px; font-size: 0.75rem;" onclick="editPreparation('${item.id}', '${item.prepType}', '${item.textContent.replace(/'/g, "\\'")}')"><i class="fas fa-edit"></i> تعديل</button>
+                                <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="deletePreparation('${item.id}')"><i class="fas fa-trash"></i> حذف</button>
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                                <span style="background: ${badgeColor}; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 800;">${item.prepType}</span>
+                                <span style="font-size: 0.78rem; color: #64748b;">${item.updatedAt || ''}</span>
+                            </div>
+                            <p style="white-space: pre-line; font-size: 0.98rem; color: #1e293b; line-height: 1.6; font-weight: 600;">${item.textContent}</p>
+                            ${fileBtnHtml}
+                            ${teacherControls}
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html || `<p style="color: #64748b; text-align: center; padding: 20px;">لا توجد تحضيرات أو امتحانات حالياً.</p>`;
+            });
+        }
+
         function openEditItemModal(type, id, currentTitle) {
             document.getElementById('editItemType').value = type;
             document.getElementById('editItemId').value = id;
@@ -1462,19 +1632,16 @@
         function approveAndSendWhatsApp(notifId, studentName, studentPhone) {
             const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
             
-            // حفظ الكود في قاعدة البيانات كـ مستخدم أو جاهز
             fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
                 method: 'PUT',
                 body: JSON.stringify({ code: randomCode, isUsed: true, usedBy: studentName, usedAt: Date.now() }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
-                // تحديث حالة الإشعار
                 fetch(`${DATABASE_URL}/notifications/${notifId}.json`, {
                     method: 'PATCH',
                     body: JSON.stringify({ status: 'approved', generatedCode: randomCode }),
                     headers: { 'Content-Type': 'application/json' }
                 }).then(() => {
-                    // تجهيز رسالة الواتساب وضمان الحقوق
                     let formattedPhone = studentPhone.trim();
                     if (formattedPhone.startsWith('0')) {
                         formattedPhone = '964' + formattedPhone.substring(1);
@@ -1847,6 +2014,10 @@
             
             document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
             document.getElementById(paneId).classList.add('active');
+
+            if (paneId === 'panePreparation') {
+                renderRoomPreparation();
+            }
 
             if (paneId === 'paneLive') { 
                 registerStudentPresence(activeRoomId);
