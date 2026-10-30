@@ -712,16 +712,26 @@
             });
         }
 
-        // دالة تسجيل الخروج المصححة والشاملة
+        // دالة تسجيل الخروج المحسنة التي تعالج إيقاف تدفق الكاميرا وتفريغ بيانات الجلسة بالكامل
         function logoutSystem() {
-            if (localStream) {
-                localStream.getTracks().forEach(track => track.stop());
-                localStream = null;
+            try {
+                if (localStream) {
+                    localStream.getTracks().forEach(track => track.stop());
+                    localStream = null;
+                }
+            } catch (err) {
+                console.error(err);
             }
+
             localStorage.removeItem('student_session');
             currentRole = '';
             loggedTeacherData = null;
             currentStudentName = "";
+            activeClass = "";
+            activeSub = "";
+            activeRoomId = "";
+            activeRoomTitleStr = "";
+            isStudentInLive = false;
             
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
@@ -992,18 +1002,40 @@
             const session = localStorage.getItem('student_session');
             if (session) {
                 const student = JSON.parse(session);
-                if (student && student.status === 'active') {
-                    currentStudentName = student.name;
-                    document.getElementById('logoutContainer').style.display = 'block';
-                    return true;
+                if (student && student.id) {
+                    fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
+                        if (voucher && voucher.isUsed) {
+                            currentStudentName = student.name;
+                            document.getElementById('logoutContainer').style.display = 'block';
+                            return true;
+                        } else {
+                            logoutSystem();
+                            alert('⚠️ انتهى اشتراكك أو تم إنهاؤه من قبل الإدارة. يرجى إعادة التفعيل.');
+                        }
+                    }).catch(() => {});
                 }
             }
             return false;
         }
 
         function tryOpenClass(className) {
-            if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher' || checkStudentSession()) {
+            if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
                 openClass(className);
+                return;
+            }
+            const session = localStorage.getItem('student_session');
+            if (session) {
+                const student = JSON.parse(session);
+                fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
+                    if (voucher && voucher.isUsed) {
+                        currentStudentName = student.name;
+                        openClass(className);
+                    } else {
+                        logoutSystem();
+                        alert('⚠️ عذراً، انتهى اشتراكك أو تم حذفه. يرجى التفعيل من جديد.');
+                        showSection('authSection');
+                    }
+                });
             } else {
                 alert('يجب تفعيل الاشتراك أولاً!');
                 showSection('authSection');
@@ -1052,32 +1084,34 @@
                 return;
             }
 
-            if (isOpen === false) {
-                alert('⚠️ عذراً، هذه الغرفة مغلقة حالياً من قبل الأستاذ. لا يمكن الدخول حتى يتم فتحها.');
-                return;
-            }
+            fetch(`${DATABASE_URL}/custom_rooms/${roomId}/isOpen.json`).then(res => res.json()).then(liveIsOpen => {
+                if (liveIsOpen === false) {
+                    alert('⚠️ عذراً، هذه الغرفة مغلقة حالياً من قبل الأستاذ. لا يمكن الدخول حتى يتم فتحها.');
+                    return;
+                }
 
-            if (currentStudentName) {
-                fetch(`${DATABASE_URL}/room_kicked/${roomId}.json`).then(res => res.json()).then(kickedData => {
-                    if (kickedData) {
-                        let isKicked = false;
-                        Object.keys(kickedData).forEach(k => {
-                            if (kickedData[k].studentName === currentStudentName) isKicked = true;
-                        });
-                        if (isKicked) {
-                            document.getElementById('kickedModal').style.display = 'flex';
-                            return;
+                if (currentStudentName) {
+                    fetch(`${DATABASE_URL}/room_kicked/${roomId}.json`).then(res => res.json()).then(kickedData => {
+                        if (kickedData) {
+                            let isKicked = false;
+                            Object.keys(kickedData).forEach(k => {
+                                if (kickedData[k].studentName === currentStudentName) isKicked = true;
+                            });
+                            if (isKicked) {
+                                document.getElementById('kickedModal').style.display = 'flex';
+                                return;
+                            }
                         }
-                    }
+                        pendingRoomData = { id: roomId, title: roomTitle, pin: roomPin };
+                        document.getElementById('studentPinInput').value = '';
+                        document.getElementById('pinModal').style.display = 'flex';
+                    });
+                } else {
                     pendingRoomData = { id: roomId, title: roomTitle, pin: roomPin };
                     document.getElementById('studentPinInput').value = '';
                     document.getElementById('pinModal').style.display = 'flex';
-                });
-            } else {
-                pendingRoomData = { id: roomId, title: roomTitle, pin: roomPin };
-                document.getElementById('studentPinInput').value = '';
-                document.getElementById('pinModal').style.display = 'flex';
-            }
+                }
+            });
         }
 
         function closePinModal() { document.getElementById('pinModal').style.display = 'none'; pendingRoomData = null; }
