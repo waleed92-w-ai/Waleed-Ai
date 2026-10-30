@@ -339,7 +339,7 @@
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(4px);
+            backdrop-path: blur(4px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -384,7 +384,6 @@
             pointer-events: auto;
         }
 
-        /* حاوية البث المدمجة (الكاميرا مغلقة تلقائياً ولا تفتح إلا بأمر المستخدم) */
         .embedded-live-frame {
             width: 100%;
             height: 520px;
@@ -420,14 +419,17 @@
     <div class="layout-wrapper">
 
         <sidebar id="appSidebar">
-            <div class="sidebar-title">الصفوف الدراسية</div>
-            <div id="studentNavClasses">
-                <button class="nav-item" onclick="openClass('الأول المتوسط')"><i class="fas fa-graduation-cap"></i> الأول المتوسط</button>
-                <button class="nav-item" onclick="openClass('الثاني المتوسط')"><i class="fas fa-graduation-cap"></i> الثاني المتوسط</button>
-                <button class="nav-item" onclick="openClass('الثالث المتوسط')"><i class="fas fa-graduation-cap"></i> الثالث المتوسط</button>
-                <button class="nav-item" onclick="openClass('الرابع الاعدادي')"><i class="fas fa-book-reader"></i> الرابع الإعدادي</button>
-                <button class="nav-item" onclick="openClass('الخامس الاعدادي')"><i class="fas fa-book-reader"></i> الخامس الإعدادي</button>
-                <button class="nav-item" onclick="openClass('السادس الاعدادي')"><i class="fas fa-user-graduate"></i> السادس الإعدادي</button>
+            <!-- بوابات التنقل الخاصة بالطلاب -->
+            <div id="studentNavSection">
+                <div class="sidebar-title">الصفوف الدراسية</div>
+                <div id="studentNavClasses">
+                    <button class="nav-item" onclick="openClass('الأول المتوسط')"><i class="fas fa-graduation-cap"></i> الأول المتوسط</button>
+                    <button class="nav-item" onclick="openClass('الثاني المتوسط')"><i class="fas fa-graduation-cap"></i> الثاني المتوسط</button>
+                    <button class="nav-item" onclick="openClass('الثالث المتوسط')"><i class="fas fa-graduation-cap"></i> الثالث المتوسط</button>
+                    <button class="nav-item" onclick="openClass('الرابع الاعدادي')"><i class="fas fa-book-reader"></i> الرابع الإعدادي</button>
+                    <button class="nav-item" onclick="openClass('الخامس الاعدادي')"><i class="fas fa-book-reader"></i> الخامس الإعدادي</button>
+                    <button class="nav-item" onclick="openClass('السادس الاعدادي')"><i class="fas fa-user-graduate"></i> السادس الإعدادي</button>
+                </div>
             </div>
 
             <!-- لوحة تحكم الأدمن (الأستاذ وليد) -->
@@ -438,11 +440,12 @@
                 <button class="nav-item" onclick="showSection('sectionSettings')"><i class="fas fa-sliders-h"></i> إعدادات المنصة والسعر</button>
             </div>
 
-            <!-- لوحة تحكم المدرس -->
+            <!-- لوحة تحكم المدرس (خاصة بالأساتذة فقط) -->
             <div id="teacherSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة المدرس</div>
                 <button class="nav-item" onclick="showSection('sectionTeacherUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملف لغرفتي الخاصة</button>
                 <button class="nav-item" onclick="showSection('sectionLiveRoom')"><i class="fas fa-video"></i> غرفة البث المباشر الخاصة بي</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherReports')"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار/تقرير طالب</button>
             </div>
 
             <div style="margin-top: auto; padding-top: 15px;">
@@ -532,17 +535,16 @@
                 <div class="grid-cards" id="teachersRoomsGrid"></div>
             </div>
 
-            <!-- 5. عرض محتوى غرفة المدرس (الملزمات + بث مباشر مرن مع أزرار تحكم الكاميرا) -->
+            <!-- 5. عرض محتوى غرفة المدرس (الملزمات + بث مباشر مع صلاحيات المدرس الكاملة) -->
             <div class="card" id="lecturesSection" style="display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                     <h3 id="currentRoomTitle" style="color: var(--primary); font-size: 1.1rem;"></h3>
                     <button class="btn btn-secondary" onclick="backToRoomsView()"><i class="fas fa-arrow-right"></i> رجوع لغرف المدرسين</button>
                 </div>
 
-                <!-- شاشة البث المباشر المدمجة مع زر إغلاق/فتح الكاميرا حسب رغبة المستخدم -->
                 <div style="background: #1e293b; padding: 14px; border-radius: var(--radius); margin-bottom: 20px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; color: #fff; flex-wrap: wrap; gap: 8px;">
-                        <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-broadcast-tower" style="color: #38bdf8;"></i> البث المباشر (الكاميرا مغلقة افتراضياً - تفتحها متى شئت)</span>
+                        <span style="font-weight: 800; font-size: 0.95rem;"><i class="fas fa-broadcast-tower" style="color: #38bdf8;"></i> البث المباشر (تحكم كامل للمدرس والطلاب)</span>
                         <div style="display: flex; gap: 8px;">
                             <button class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem;" onclick="setStudentCameraOff()"><i class="fas fa-video-slash"></i> إغلاق الكاميرا (صوت فقط)</button>
                             <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.85rem;" onclick="setStudentCameraOn()"><i class="fas fa-video"></i> فتح الكاميرا</button>
@@ -584,7 +586,7 @@
                 </form>
             </div>
 
-            <!-- لوحة تحكم المدرس -->
+            <!-- لوحة تحكم المدرس: رفع الملفات -->
             <div class="card" id="sectionTeacherUpload" style="display: none;">
                 <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع ملفات الـ PDF إلى غرفتي الخاصة</div>
                 <form onsubmit="handleTeacherUpload(event)">
@@ -612,16 +614,41 @@
                 </form>
             </div>
 
-            <!-- غرفة البث المباشر الخاصة بالمدرس (الكاميرا مغلقة افتراضياً ولا تفتح إلا برغبة المدرس) -->
+            <!-- غرفة البث المباشر الخاصة بالمدرس (مع تحكم الغرفة وصلاحية الطرد ودعوة انضمام الطلاب) -->
             <div class="card" id="sectionLiveRoom" style="display: none;">
-                <div class="card-header"><i class="fas fa-video"></i> غرفة البث المباشر الخاصة بي (مدمجة بالمنصة)</div>
+                <div class="card-header"><i class="fas fa-video"></i> غرفة البث المباشر الخاصة بي (تحكم كامل)</div>
                 <div style="margin-bottom: 12px; display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="btn btn-secondary" onclick="setTeacherCameraOff()"><i class="fas fa-video-slash"></i> إغلاق الكاميرا (صوت فقط)</button>
-                    <button class="btn btn-success" onclick="setTeacherCameraOn()"><i class="fas fa-video"></i> فتح الكاميرا (حسب رغبتك)</button>
+                    <button class="btn btn-success" onclick="setTeacherCameraOn()"><i class="fas fa-video"></i> فتح الكاميرا</button>
                 </div>
                 <div style="background: #1e293b; padding: 10px; border-radius: 12px;">
                     <iframe id="teacherLiveIframe" class="embedded-live-frame" allow="camera; microphone; fullscreen; display-capture; autoplay"></iframe>
                 </div>
+            </div>
+
+            <!-- لوحة إرسال إنذار أو تقرير طالب من قبل المدرس (مرتبط بتليجرام) -->
+            <div class="card" id="sectionTeacherReports" style="display: none;">
+                <div class="card-header"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار أو تقرير بحق طالب</div>
+                <form onsubmit="submitTeacherReport(event)">
+                    <div class="form-group">
+                        <label>اسم الطالب أو معرفه</label>
+                        <input type="text" class="form-control" id="repStudentName" required placeholder="أدخل اسم الطالب المخالف">
+                    </div>
+                    <div class="form-group">
+                        <label>نوع التنبيه / المخالفة</label>
+                        <select class="form-control" id="repType">
+                            <option value="سلوك غير لائق داخل البث">سلوك غير لائق داخل البث</option>
+                            <option value="إزعاج ومقاطعة الشرح">إزعاج ومقاطعة الشرح</option>
+                            <option value="غش أو مشاركة الحساب">غش أو مشاركة الحساب</option>
+                            <option value="تنبيه أداء عام">تنبيه أداء عام</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>تفاصيل التقرير أو التحذير</label>
+                        <textarea class="form-control" id="repDetails" rows="3" required placeholder="اكتب تفاصيل المخالفة ليتم إرسالها للأدمن عبر تليجرام..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-warning btn-block" style="color:#0f172a; font-weight:900;"><i class="fas fa-paper-plane"></i> إرسال التقرير والإنذار الفوري</button>
+                </form>
             </div>
 
         </main>
@@ -638,7 +665,7 @@
         </div>
     </div>
 
-    <!-- نافذة تسجيل الدخول الشاملة -->
+    <!-- نافذة تسجيل الدخول الشاملة (منفصلة تماماً للأساتذة وللأدمن) -->
     <div class="modal" id="adminModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 440px; padding: 24px; max-height: 90vh; overflow-y: auto;">
             <div class="card-header"><i class="fas fa-user-shield"></i> بوابة الإدارة والأساتذة</div>
@@ -661,14 +688,14 @@
             <!-- نموذج دخول المدرس -->
             <div id="loginTeacherBox" style="display: none;">
                 <div class="form-group">
-                    <label>يوزر المدرس</label>
-                    <input type="text" class="form-control" id="teacherUsername" placeholder="يوزر المدرس">
+                    <label>يوزر المدرس (Username)</label>
+                    <input type="text" class="form-control" id="teacherUsername" placeholder="يوزر المدرس الخاص بك">
                 </div>
                 <div class="form-group">
-                    <label>كلمة المرور</label>
+                    <label>كلمة المرور (Password)</label>
                     <input type="password" class="form-control" id="teacherPassword" placeholder="كلمة المرور">
                 </div>
-                <button class="btn btn-success btn-block" onclick="verifyTeacherLogin()">دخول المدرس</button>
+                <button class="btn btn-success btn-block" onclick="verifyTeacherLogin()">دخول لوحة المدرس</button>
             </div>
 
             <!-- نموذج تسجيل مدرس جديد -->
@@ -790,6 +817,7 @@
             const pass = document.getElementById('adminPassInput').value;
             if (btoa(pass) === ADMIN_HASH) {
                 currentRole = 'admin';
+                document.getElementById('studentNavSection').style.display = 'none';
                 document.getElementById('adminSidebarSection').style.display = 'block';
                 document.getElementById('teacherSidebarSection').style.display = 'none';
                 document.getElementById('adminLockBtn').style.display = 'none';
@@ -825,6 +853,7 @@
                     if (found) {
                         currentRole = 'teacher';
                         loggedTeacherData = found;
+                        document.getElementById('studentNavSection').style.display = 'none';
                         document.getElementById('adminSidebarSection').style.display = 'none';
                         document.getElementById('teacherSidebarSection').style.display = 'block';
                         document.getElementById('adminLockBtn').style.display = 'none';
@@ -832,7 +861,6 @@
                         document.getElementById('topSubtitle').innerText = `المدرس: ${found.name} (${found.subject}) - غرفتك الخاصة`;
                         
                         currentTeacherRoomUrl = `https://meet.jit.si/WaleedAcademy_Room_${found.id}`;
-                        // الكاميرا مغلقة افتراضياً عند الدخول
                         document.getElementById('teacherLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=true&config.startWithAudioMuted=false";
 
                         closeAdminModal();
@@ -885,6 +913,7 @@
             currentRole = '';
             loggedTeacherData = null;
             currentTeacherRoomUrl = "";
+            document.getElementById('studentNavSection').style.display = 'block';
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
             document.getElementById('adminLockBtn').style.display = 'flex';
@@ -894,7 +923,7 @@
         }
 
         function showSection(sectionId) {
-            const sections = ['authSection', 'pendingNotice', 'subjectsSection', 'teachersRoomsSection', 'lecturesSection', 'sectionRequests', 'sectionTeachersManage', 'sectionSettings', 'sectionTeacherUpload', 'sectionLiveRoom'];
+            const sections = ['authSection', 'pendingNotice', 'subjectsSection', 'teachersRoomsSection', 'lecturesSection', 'sectionRequests', 'sectionTeachersManage', 'sectionSettings', 'sectionTeacherUpload', 'sectionLiveRoom', 'sectionTeacherReports'];
             sections.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
@@ -1038,7 +1067,6 @@
             document.getElementById('currentRoomTitle').innerText = `غرفة الأستاذ: ${teacherName} (${activeSub} - ${activeClass})`;
             
             currentTeacherRoomUrl = `https://meet.jit.si/WaleedAcademy_Room_${teacherId}`;
-            // الطالب يدخل والكاميرا مغلقة تلقائياً تماماً
             document.getElementById('studentLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=true";
 
             showSection('lecturesSection');
@@ -1254,6 +1282,34 @@
                 });
             };
             reader.readAsDataURL(file);
+        }
+
+        function submitTeacherReport(e) {
+            e.preventDefault();
+            const studentName = document.getElementById('repStudentName').value.trim();
+            const repType = document.getElementById('repType').value;
+            const details = document.getElementById('repDetails').value.trim();
+
+            const reportData = {
+                teacher: loggedTeacherData.name,
+                subject: loggedTeacherData.subject,
+                student: studentName,
+                type: repType,
+                details: details,
+                timestamp: Date.now(),
+                date: new Date().toLocaleString()
+            };
+
+            // حفظ التقرير في قاعدة البيانات وإرسال إشعار فوري
+            fetch(`${DATABASE_URL}/reports.json`, {
+                method: 'POST',
+                body: JSON.stringify(reportData),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert('تم إرسال الإنذار والتقرير بنجاح! سيتم تنبيه الأدمن عبر تيليجرام.');
+                document.getElementById('repStudentName').value = '';
+                document.getElementById('repDetails').value = '';
+            }).catch(() => alert('حدث خطأ أثناء إرسال التقرير.'));
         }
     </script>
 </body>
