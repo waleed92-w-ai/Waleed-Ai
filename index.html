@@ -598,7 +598,7 @@
         </div>
     </div>
 
-    <!-- عنصر مشغل الصوت لاستماع الأستاذ والطلاب بدون صدى محلي -->
+    <!-- عنصر مشغل الصوت لاستماع الأستاذ والطلاب بوضوح تام -->
     <audio id="remoteAudioPlayer" autoplay playsinline></audio>
 
     <script>
@@ -1732,11 +1732,6 @@
         function initLocalMicrophone(isTeacher) {
             navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
                 localAudioStream = stream;
-                // منع التكرار المحلي (Local Echo) عبر إلغاء توجيه المايك مباشرة لسماعة نفس الجهاز
-                const audioTracks = stream.getAudioTracks();
-                if(audioTracks.length > 0 && !isTeacher) {
-                    // الطالب يستمع لصوت الأستاذ فقط ولا يعيد بث صوته لنفسه
-                }
             }).catch(() => alert('تعذر الوصول إلى الميكروفون! تأكد من منح الأذونات في متصفحك.'));
         }
 
@@ -2057,7 +2052,7 @@
 
         function fetchAdminReports() {
             fetch(`${DATABASE_URL}/reports.json`).then(res => res.json()).then(data => {
-                let html, htmlList = '';
+                let htmlList = '';
                 if (data) { Object.keys(data).forEach(k => { const r = data[k]; htmlList += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; }); }
                 const adminRList = document.getElementById('adminReportsList');
                 if (adminRList) adminRList.innerHTML = htmlList || '<p>لا توجد تقارير.</p>';
