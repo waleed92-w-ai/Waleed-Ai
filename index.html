@@ -81,6 +81,8 @@
         .modal-header-bar { background: var(--primary); color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; font-weight: 800; }
         .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; -webkit-overflow-scrolling: touch; }
         .modal-body-viewer object { width: 100%; height: 100%; border: none; pointer-events: auto; }
+        /* العلامة المائية الأمنية المتحركة لحماية الملازم */
+        .watermark-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around; opacity: 0.15; overflow: hidden; font-weight: 900; font-size: 1.1rem; color: #ffffff; transform: rotate(-25deg); }
         .embedded-live-frame { width: 100%; height: 520px; border: none; border-radius: 12px; background: #0f172a; }
         @media (max-width: 768px) { .layout-wrapper { flex-direction: column; } sidebar { width: 100%; } .embedded-live-frame { height: 380px; } }
     </style>
@@ -137,6 +139,7 @@
                 <button class="nav-item" onclick="showSection('sectionTeacherUpload')"><i class="fas fa-cloud-upload-alt"></i> رفع ملزمة PDF لغرفتي</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherRecordings')"><i class="fas fa-film"></i> رفع محاضرة مسجلة</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherQuiz')"><i class="fas fa-question-circle"></i> إنشاء اختبار إلكتروني</button>
+                <button class="nav-item" onclick="showSection('sectionTeacherHomework')"><i class="fas fa-tasks"></i> إضافة واجب بيتي</button>
                 <button class="nav-item" onclick="showSection('sectionLiveRoom')"><i class="fas fa-video"></i> غرفة البث المباشر الخاصة بي</button>
                 <button class="nav-item" onclick="showSection('sectionTeacherReports')"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار/تقرير طالب</button>
             </div>
@@ -164,7 +167,6 @@
                     <button class="btn btn-secondary" style="flex:1;" onclick="switchAuthTab('notify')">إرسال إشعار تحويل مال للأدمن</button>
                 </div>
 
-                <!-- نموذج 1: التفعيل الفوري بكود -->
                 <form id="formVoucherCode" onsubmit="activateWithVoucher(event)">
                     <div class="form-group">
                         <label>اسم الطالب الثلاثي</label>
@@ -177,7 +179,6 @@
                     <button type="submit" class="btn btn-success btn-block"><i class="fas fa-bolt"></i> تفعيل الحساب والدخول فوراً</button>
                 </form>
 
-                <!-- نموذج 2: إرسال إشعار الدفع مباشرة للأدمن -->
                 <form id="formNotifyAdmin" onsubmit="sendPaymentNotification(event)" style="display: none;">
                     <div class="form-group">
                         <label>الاسم الثلاثي للطالب</label>
@@ -243,6 +244,11 @@
                 <div style="margin-bottom: 25px;">
                     <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-film"></i> المحاضرات المسجلة</h4>
                     <div id="recordingsContainer"><p style="color: #64748b;">لا توجد محاضرات مسجلة.</p></div>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-tasks"></i> الواجبات البيتية والتسليم</h4>
+                    <div id="homeworkContainer"><p style="color: #64748b;">لا توجد واجبات مطلوبة حالياً.</p></div>
                 </div>
 
                 <div>
@@ -333,6 +339,23 @@
                 </form>
             </div>
 
+            <div class="card" id="sectionTeacherHomework" style="display: none;"><div class="card-header"><i class="fas fa-tasks"></i> إضافة واجب بيتي للطلاب</div>
+                <form onsubmit="handleTeacherHomework(event)">
+                    <div class="form-group"><label>اختر الصف الدراسي</label>
+                        <select class="form-control" id="hwGrade">
+                            <option value="الأول المتوسط">الأول المتوسط</option>
+                            <option value="الثاني المتوسط">الثاني المتوسط</option>
+                            <option value="الثالث المتوسط">الثالث المتوسط</option>
+                            <option value="الرابع الاعدادي">الرابع الإعدادي</option>
+                            <option value="الخامس الاعدادي">الخامس الإعدادي</option>
+                            <option value="السادس الاعدادي">السادس الإعدادي</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>عنوان الواجب / التعليمات</label><input type="text" class="form-control" id="hwTitle" required placeholder="مثال: حل التمارين صف 45"></div>
+                    <button type="submit" class="btn btn-primary btn-block">نشر الواجب</button>
+                </form>
+            </div>
+
             <div class="card" id="sectionLiveRoom" style="display: none;"><div class="card-header"><i class="fas fa-video"></i> غرفة البث الخاصة بي</div>
                 <div style="margin-bottom: 12px; display: flex; gap: 10px;"><button class="btn btn-secondary" onclick="setTeacherCameraOff()">صوت فقط</button><button class="btn btn-success" onclick="setTeacherCameraOn()">صوت وصورة</button></div>
                 <iframe id="teacherLiveIframe" class="embedded-live-frame" allow="camera; microphone; fullscreen; autoplay"></iframe>
@@ -349,10 +372,16 @@
         </main>
     </div>
 
+    <!-- نافذة عرض الملفات مع العلامة المائية الأمنية لحمايتها من التسريب -->
     <div class="modal" id="fileViewerModal">
-        <div class="modal-content-box">
-            <div class="modal-header-bar"><span id="modalFileTitle">عرض المحتوى</span><button class="btn btn-danger" style="padding: 6px 12px;" onclick="closeFileModal()">إغلاق</button></div>
-            <div class="modal-body-viewer" id="modalViewerContainer"></div>
+        <div class="modal-content-box" style="position: relative;">
+            <div class="modal-header-bar">
+                <span id="modalFileTitle">عرض المحتوى</span>
+                <button class="btn btn-danger" style="padding: 6px 12px;" onclick="closeFileModal()">إغلاق</button>
+            </div>
+            <div class="modal-body-viewer" id="modalViewerContainer" style="position: relative;">
+                <div class="watermark-overlay" id="pdfWatermarkText"></div>
+            </div>
         </div>
     </div>
 
@@ -406,6 +435,7 @@
         let activeClass = ""; let activeSub = ""; let activeTeacherRoom = "";
         let currentRole = ""; let loggedTeacherData = null; let currentTeacherRoomUrl = "";
         let previousNotificationsCount = 0;
+        let currentStudentName = "";
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -495,7 +525,7 @@
 
         function logoutSystem() {
             localStorage.removeItem('student_session');
-            currentRole = ''; loggedTeacherData = null; currentTeacherRoomUrl = "";
+            currentRole = ''; loggedTeacherData = null; currentTeacherRoomUrl = ""; currentStudentName = "";
             document.getElementById('studentNavSection').style.display = 'block';
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
@@ -506,7 +536,7 @@
         }
 
         function showSection(sectionId) {
-            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'lecturesSection', 'sectionNotifications', 'sectionVouchers', 'sectionTeachersManage', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionLiveRoom', 'sectionTeacherReports'].forEach(id => {
+            ['authSection', 'subjectsSection', 'teachersRoomsSection', 'lecturesSection', 'sectionNotifications', 'sectionVouchers', 'sectionTeachersManage', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionTeacherUpload', 'sectionTeacherRecordings', 'sectionTeacherQuiz', 'sectionTeacherHomework', 'sectionLiveRoom', 'sectionTeacherReports'].forEach(id => {
                 document.getElementById(id).style.display = (id === sectionId) ? 'block' : 'none';
             });
             if (sectionId === 'sectionVouchers') fetchVouchersList();
@@ -621,6 +651,7 @@
                         headers: { 'Content-Type': 'application/json' }
                     });
 
+                    currentStudentName = name;
                     const studentSession = { id: code, name: name, status: 'active' };
                     localStorage.setItem('student_session', JSON.stringify(studentSession));
                     alert('تم تفعيل اشتراكك بنجاح! أهلاً بك في المنصة.');
@@ -676,8 +707,10 @@
             const session = localStorage.getItem('student_session');
             if (session) {
                 const student = JSON.parse(session);
-                if (student && student.status === 'active') openClass('الأول المتوسط');
-                else { localStorage.removeItem('student_session'); showSection('authSection'); }
+                if (student && student.status === 'active') {
+                    currentStudentName = student.name;
+                    openClass('الأول المتوسط');
+                } else { localStorage.removeItem('student_session'); showSection('authSection'); }
             } else { showSection('authSection'); }
         }
 
@@ -716,7 +749,7 @@
             currentTeacherRoomUrl = `https://meet.jit.si/WaleedAcademy_Room_${teacherId}`;
             document.getElementById('studentLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=true";
             showSection('lecturesSection');
-            renderTeacherLectures(); renderTeacherRecordings(); renderTeacherQuizzes();
+            renderTeacherLectures(); renderTeacherRecordings(); renderTeacherQuizzes(); renderTeacherHomework();
         }
 
         function setStudentCameraOff() { if (currentTeacherRoomUrl) document.getElementById('studentLiveIframe').src = currentTeacherRoomUrl + "#config.startWithVideoMuted=true"; }
@@ -778,6 +811,44 @@
             });
         }
 
+        function renderTeacherHomework() {
+            const container = document.getElementById('homeworkContainer');
+            container.innerHTML = `<p style="color:#64748b;">جاري التحميل...</p>`;
+            fetch(`${DATABASE_URL}/homework.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const hw = data[k];
+                        if (hw.grade === activeClass && hw.subject === activeSub && hw.teacherName === activeTeacherRoom) {
+                            let canDelete = (currentRole === 'admin' || (currentRole === 'teacher' && loggedTeacherData && loggedTeacherData.name === activeTeacherRoom));
+                            html += `
+                                <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px; position:relative;">
+                                    <h5 style="color:var(--primary); font-weight:800; margin-bottom:8px;">📌 ${hw.title}</h5>
+                                    <div style="margin-top:10px; display:flex; gap:10px; align-items:center;">
+                                        <input type="text" class="form-control" id="ans_${k}" placeholder="اكتب إجابتك أو رابط الحل هنا" style="flex:1;">
+                                        <button class="btn btn-success" style="padding:10px 16px;" onclick="submitHomeworkAnswer('${k}')">إرسال الحل</button>
+                                    </div>
+                                    ${canDelete ? `<button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem; position:absolute; top:12px; left:12px;" onclick="deleteItem('homework', '${k}', renderTeacherHomework)">حذف</button>` : ''}
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                container.innerHTML = html || `<p style="color:#64748b;">لا توجد واجبات حالياً.</p>`;
+            });
+        }
+
+        function submitHomeworkAnswer(hwId) {
+            const answerText = document.getElementById(`ans_${hwId}`).value.trim();
+            if(!answerText) { alert('الرجاء كتابة الحل أولاً!'); return; }
+            const subId = 'SUB_' + Date.now();
+            fetch(`${DATABASE_URL}/homework_submits/${subId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: subId, hwId, studentName: currentStudentName || 'طالب', answer: answerText, date: new Date().toLocaleString() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => alert('تم إرسال حل الواجب للأستاذ بنجاح!'));
+        }
+
         function renderTeacherQuizzes() {
             const container = document.getElementById('quizzesContainer');
             container.innerHTML = `<p style="color:#64748b;">جاري التحميل...</p>`;
@@ -822,7 +893,13 @@
 
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
-            document.getElementById('modalViewerContainer').innerHTML = `<object data="${decodeURIComponent(encodedData)}#view=FitH&toolbar=0" type="application/pdf" width="100%" height="100%"><embed src="${decodeURIComponent(encodedData)}" type="application/pdf" width="100%" height="100%" /></object>`;
+            // حقن العلامة المائية برمجياً باسم الطالب الحالي لمنع التسريب وتصوير الشاشة
+            let wmHtml = '';
+            for(let i=0; i<12; i++) {
+                wmHtml += `<span>${currentStudentName || 'منصة الأستاذ وليد'} - محمي للأغراض التعليمية</span>`;
+            }
+            document.getElementById('pdfWatermarkText').innerHTML = wmHtml;
+            document.getElementById('modalViewerContainer').innerHTML = `<object data="${decodeURIComponent(encodedData)}#view=FitH&toolbar=0" type="application/pdf" width="100%" height="100%"><embed src="${decodeURIComponent(encodedData)}" type="application/pdf" width="100%" height="100%" /></object><div class="watermark-overlay">${wmHtml}</div>`;
             document.getElementById('fileViewerModal').style.display = 'flex';
         }
 
@@ -896,6 +973,18 @@
                 body: JSON.stringify({ id: qId, grade, subject: loggedTeacherData.subject, teacherName: loggedTeacherData.name, title, question, opt1, opt2, opt3, correct }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => { alert('تم نشر الاختبار!'); document.getElementById('qTitle').value = ''; document.getElementById('qQuestion').value = ''; });
+        }
+
+        function handleTeacherHomework(e) {
+            e.preventDefault();
+            const grade = document.getElementById('hwGrade').value;
+            const title = document.getElementById('hwTitle').value.trim();
+            const hwId = 'HW_' + Date.now();
+            fetch(`${DATABASE_URL}/homework/${hwId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: hwId, grade, subject: loggedTeacherData.subject, teacherName: loggedTeacherData.name, title }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم نشر الواجب بنجاح!'); document.getElementById('hwTitle').value = ''; });
         }
 
         function submitTeacherReport(e) {
