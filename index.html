@@ -88,8 +88,8 @@
             position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; border-radius: 0 !important; border: none !important;
         }
 
-        .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; flex: 1; height: 260px; display: flex; flex-direction: column; overflow: hidden; }
-        .whatsapp-whatsapp-style-container.chat-fullscreen-mode .whatsapp-chat-box { height: calc(100vh - 420px) !important; }
+        .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; flex: 1; height: 220px; display: flex; flex-direction: column; overflow: hidden; }
+        .whatsapp-whatsapp-style-container.chat-fullscreen-mode .whatsapp-chat-box { height: calc(100vh - 450px) !important; }
 
         .whatsapp-messages-scroll { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         .wa-bubble { max-width: 75%; padding: 8px 12px 6px 12px; border-radius: 10px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-break: break-word; font-size: 0.9rem; }
@@ -370,7 +370,7 @@
                     </div>
                 </div>
 
-                <!-- واجهة الاتصال الصوتي المدمجة والنظيفة (بدون تطبيقات خارجية وبدون شاشات ترحيب مزعجة) -->
+                <!-- واجهة الاتصال المباشر والظاهرة بوضوح تام مع أدوات التحكم -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
@@ -390,17 +390,12 @@
                             </div>
                         </div>
 
-                        <!-- حاوية الاتصال الصوتي النظيف -->
-                        <div style="width: 100%; height: 260px; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: white;">
-                            <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(16, 185, 129, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 2px solid var(--success); animation: pulseBadge 1.5s infinite;">
-                                <i class="fas fa-headset" style="font-size: 2rem; color: var(--success);"></i>
-                            </div>
-                            <h3 style="font-weight: 800; font-size: 1.1rem; margin-bottom: 6px;">قناة البث الصوتي المباشر مفعلة</h3>
-                            <p style="font-size: 0.85rem; color: #94a3b8; max-width: 320px; margin-bottom: 15px;">استمع للأستاذ وتحدث معه مباشرة من خلال تفعيل الميكروفون بالأسفل أو متابعة الدردشة النصية.</p>
-                            <div style="display: flex; gap: 10px;">
-                                <button class="btn btn-success" onclick="toggleAudioMicrophone(this)" id="micToggleBtn"><i class="fas fa-microphone"></i> كتم / فتح الميكروفون</button>
-                            </div>
-                            <iframe id="directNativeFrame" style="display:none;" allow="microphone; autoplay"></iframe>
+                        <!-- حاوية الاتصال الصوتي والمرئي الفعلي -->
+                        <div style="width: 100%; height: 320px; background: #000; position: relative;">
+                            <iframe id="directNativeFrame" 
+                                    style="width: 100%; height: 100%; border: none;" 
+                                    allow="microphone; camera; fullscreen; autoplay; display-capture">
+                            </iframe>
                         </div>
 
                         <!-- صندوق المحادثة النصية التفاعلية -->
@@ -735,7 +730,6 @@
         let currentPdfScale = 1.0;
         let selectedWaFileData = null;
         let selectedWaFileName = "";
-        let isMicMuted = false;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -862,22 +856,6 @@
             
             document.getElementById('saveEditedItemBtn').addEventListener('click', saveEditedItem);
             document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
-        }
-
-        function toggleAudioMicrophone(btn) {
-            isMicMuted = !isMicMuted;
-            const iframe = document.getElementById('directNativeFrame');
-            if (isMicMuted) {
-                btn.innerHTML = '<i class="fas fa-microphone-slash" style="color:var(--danger);"></i> الميكروفون مكتوم';
-                btn.style.background = '#334155';
-            } else {
-                btn.innerHTML = '<i class="fas fa-microphone"></i> الميكروفون مَفعل';
-                btn.style.background = 'var(--success)';
-            }
-            if (iframe && iframe.src === '') {
-                const roomSafeName = "WaleedAudio_" + (activeRoomId || 'MainRoom');
-                iframe.src = `https://meet.jit.si/${roomSafeName}#config.prejoinPageEnabled=false&config.disableDeepLinking=true&config.startWithAudioMuted=${isMicMuted}&config.startWithVideoMuted=true&config.hideLobbyButton=true`;
-            }
         }
 
         function toggleChatFullscreen() {
@@ -2053,10 +2031,10 @@
             }
 
             if (paneId === 'paneLiveAndChat') { 
-                const roomSafeName = "WaleedAudio_" + (activeRoomId || 'MainRoom');
+                const roomSafeName = "WaleedPlatform_" + (activeRoomId || 'MainRoom');
                 const iframeEl = document.getElementById('directNativeFrame');
                 if (iframeEl) {
-                    iframeEl.src = `https://meet.jit.si/${roomSafeName}#config.prejoinPageEnabled=false&config.disableDeepLinking=true&config.startWithAudioMuted=false&config.startWithVideoMuted=true&config.hideLobbyButton=true`;
+                    iframeEl.src = `https://meet.jit.si/${roomSafeName}#config.prejoinPageEnabled=false&config.disableDeepLinking=true&config.startWithAudioMuted=false&config.startWithVideoMuted=true&interfaceConfigOverwrite.TOOLBAR_BUTTONS=['microphone','chat','raisehand','tileview','fullscreen']`;
                 }
                 openWhatsappChatSection();
             } else {
