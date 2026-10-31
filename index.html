@@ -76,14 +76,13 @@
         .room-section-pane.active { display: block; }
 
         /* ========================================== */
-        /* شات واتساب الشبيه بتطبيق واتساب مع شريط المكالمة العلوي */
+        /* شات واتساب الشبيه بتطبيق واتساب مع شريط المكالمة العلوي وأزرار التكبير */
         /* ========================================== */
-        .whatsapp-whatsapp-style-container { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; background: #efeae2; box-shadow: 0 6px 25px rgba(0,0,0,0.08); position: relative; }
+        .whatsapp-whatsapp-style-container { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; background: #efeae2; box-shadow: 0 6px 25px rgba(0,0,0,0.08); position: relative; transition: transform 0.2s ease; }
         
-        /* شريط مكالمة واتساب العلوي (يظهر عند بدء الاتصال تماماً مثل صورتك) */
-        .whatsapp-call-banner { background: #075e54; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+        /* شريط مكالمة واتساب العلوي */
+        .whatsapp-call-banner { background: #075e54; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); box-shadow: 0 2px 6px rgba(0,0,0,0.2); flex-wrap: wrap; gap: 8px; }
         .call-banner-left { display: flex; align-items: center; gap: 10px; }
-        .call-banner-avatar { width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 2px solid #25d366; }
         
         /* الفقاعة العائمة للمكالمة عند تصغيرها */
         .whatsapp-floating-call-bubble {
@@ -383,7 +382,7 @@
                 </div>
 
                 <!-- ========================================== -->
-                <!-- محادثة واتساب كاملة + شريط مكالمة علوي يمكن تصغيره لفقاعة عائمة -->
+                <!-- محادثة واتساب كاملة + شريط مكالمة علوي مع أزرار التكبير والتصغير -->
                 <!-- ========================================== -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     
@@ -395,7 +394,7 @@
 
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
-                        <!-- شريط مكالمة واتساب العلوي (يماثل صورتك تماماً عند الاتصال) -->
+                        <!-- شريط مكالمة واتساب العلوي (يحتوي أزرار التحكم والتكبير/التصغير) -->
                         <div class="whatsapp-call-banner" id="whatsappCallBanner">
                             <div class="call-banner-left">
                                 <button class="btn btn-danger" onclick="stopWirelessAudioSession()" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;" title="إنهاء المكالمة">
@@ -404,7 +403,13 @@
                                 <span id="callDurationTimer" style="font-size: 0.85rem; font-weight: 800; color: #a7f3d0;">0:00</span>
                                 <span style="font-size: 0.85rem; font-weight: 800; color: #fff;">- <span id="liveRoomTitleDisplay">مجموعة الدرس</span></span>
                             </div>
-                            <div style="display: flex; gap: 8px; align-items: center;">
+                            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                                <button class="btn btn-secondary" onclick="zoomChatContainer(0.1)" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تكبير الشاشة">
+                                    <i class="fas fa-search-plus"></i> تكبير
+                                </button>
+                                <button class="btn btn-secondary" onclick="zoomChatContainer(-0.1)" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تصغير الشاشة">
+                                    <i class="fas fa-search-minus"></i> تصغير
+                                </button>
                                 <button class="btn btn-secondary" onclick="toggleWirelessMicrophone()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="كتم/إلغاء الكتم">
                                     <i class="fas fa-microphone" id="micToggleIcon"></i>
                                 </button>
@@ -418,8 +423,8 @@
                             </div>
                         </div>
 
-                        <!-- أزرار بدء الاتصال (تظهر إذا لم تكن المكالمة جارية، لكي تبدأها وقتما تشاء) -->
-                        <div id="startCallBarArea" style="background: #075e54; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; color: white;">
+                        <!-- أزرار بدء الاتصال -->
+                        <div id="startCallBarArea" style="background: #075e54; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; color: white; flex-wrap: wrap; gap: 8px;">
                             <span style="font-size: 0.85rem; font-weight: 800;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> مكالمة واتساب الصوتية الجماعية</span>
                             <div style="display: flex; gap: 8px;">
                                 <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.8rem;" onclick="startWirelessAudioSession()"><i class="fas fa-phone-alt"></i> بدء المكالمة الصوتية</button>
@@ -752,6 +757,7 @@
         let currentStudentName = "";
         let pendingRoomData = null;
         let currentPdfScale = 1.0;
+        let currentChatZoomScale = 1.0;
         let localStream = null;
         let remoteAudioEl = null;
         let isMicMuted = false;
@@ -856,6 +862,17 @@
             
             document.getElementById('saveEditedItemBtn').addEventListener('click', saveEditedItem);
             document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
+        }
+
+        /* دوال تكبير وتصغير واجهة الشات والمكالمة */
+        function zoomChatContainer(delta) {
+            currentChatZoomScale = Math.max(0.75, Math.min(1.5, currentChatZoomScale + delta));
+            const container = document.getElementById('whatsappMainContainer');
+            if (container) {
+                container.style.transform = `scale(${currentChatZoomScale})`;
+                container.style.transformOrigin = 'top center';
+                container.style.transition = 'transform 0.2s ease';
+            }
         }
 
         /* دوال تصغير وتكبير شريط المكالمة إلى فقاعة عائمة تماماً كواتساب */
@@ -2020,9 +2037,6 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح. يمكنك الدخول.');
         }
 
-        /* ========================================== */
-        /* نظام محادثة واتساب المدمجة (إرسال، صور، ملفات، تعديل، حذف) */
-        /* ========================================== */
         function handleWaFileSelected(input) {
             if (input.files[0]) {
                 const file = input.files[0];
@@ -2151,9 +2165,6 @@
             }
         }
 
-        /* ========================================== */
-        /* نظام المكالمة الصوتية المدمجة في شريط واتساب العلوي */
-        /* ========================================== */
         function setupWirelessAudioControls() {
             const adminBox = document.getElementById('teacherLiveAdminBox');
             if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
