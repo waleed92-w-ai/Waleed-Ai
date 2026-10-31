@@ -103,7 +103,6 @@
         .wa-actions button.delete-btn { color: #ea0038; }
         .whatsapp-input-bar { display: flex; gap: 10px; padding: 12px 16px; background: #f0f2f5; align-items: center; border-top: 1px solid #e9edef; }
 
-        /* شريط الاتصال الصوتي الجماعي المتطور */
         .live-group-call-banner { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: white; padding: 16px 20px; border-radius: 14px; margin-bottom: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1.5px solid rgba(56, 189, 248, 0.4); }
 
         #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
@@ -446,7 +445,6 @@
                                     <i class="fas fa-paperclip"></i>
                                 </button>
                                 
-                                <!-- زر بصمة الصوت المحسن -->
                                 <button type="button" class="btn btn-secondary" id="voiceRecordBtn" onclick="toggleVoiceRecording()" title="تسجيل بصمة صوتية" style="border-radius: 50%; width: 42px; height: 42px; padding: 0; display: flex; align-items: center; justify-content: center; background: #e9edef; color: #54656f;">
                                     <i class="fas fa-microphone" id="voiceRecordIcon"></i>
                                 </button>
@@ -748,8 +746,8 @@
         </div>
     </div>
 
-    <!-- عنصر مخفي لتشغيل صوت البث الجماعي للجميع -->
-    <audio id="groupCallAudioElement" autoplay style="display:none;"></audio>
+    <!-- عناصر الصوت لسماع البث -->
+    <audio id="remoteAudioElement" autoplay playsinline style="display:none;"></audio>
 
     <script>
         if ('serviceWorker' in navigator) {
@@ -776,7 +774,7 @@
         let audioChunks = [];
         let isRecordingVoice = false;
 
-        // متغيرات الاتصال الصوتي الجماعي المطور
+        // متغيرات الاتصال الصوتي الجماعي وتحسين السماع والكلام
         let isGroupInCall = false;
         let groupCallStream = null;
         let myParticipantId = 'USER_' + Math.floor(Math.random() * 1000000);
@@ -927,7 +925,7 @@
             }
         }
 
-        // إدارة الاتصال الصوتي الجماعي المتطور والتحكم الكامل
+        // إدارة الاتصال الصوتي الجماعي مع التحكم المطلق وإنهاء البث من الأستاذ
         function setupGroupCallInterface() {
             const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
             const buttonsContainer = document.getElementById('callActionButtonsContainer');
@@ -937,13 +935,13 @@
                 requestsBox.style.display = 'block';
                 buttonsContainer.innerHTML = `
                     <button class="btn btn-success" id="teacherStartCallBtn" onclick="teacherToggleRoomCall()"><i class="fas fa-broadcast-tower"></i> فتح غرفة الصوت</button>
-                    <button class="btn btn-danger" id="teacherEndCallBtn" onclick="teacherEndRoomCall()" style="display:none;"><i class="fas fa-phone-slash"></i> إغلاق الغرفة للكل</button>
+                    <button class="btn btn-danger" id="teacherEndCallBtn" onclick="teacherEndRoomCall()" style="display:none;"><i class="fas fa-phone-slash"></i> إغلاق الغرفة وإخراج الكل</button>
                 `;
                 checkTeacherCallState();
             } else {
                 requestsBox.style.display = 'none';
                 buttonsContainer.innerHTML = `
-                    <button class="btn btn-primary" id="studentRequestCallBtn" onclick="studentRequestJoinCall()"><i class="fas fa-hand-paper"></i> طلب الانضمام للبث الصوتي</button>
+                    <button class="btn btn-primary" id="studentRequestCallBtn" onclick="studentRequestJoinCall()"><i class="fas fa-hand-paper"></i> طلب انضمام للبث الصوتي</button>
                     <button class="btn btn-danger" id="studentLeaveCallBtn" onclick="studentLeaveCall()" style="display:none;"><i class="fas fa-phone-slash"></i> مغادرة التحدث</button>
                 `;
                 checkStudentCallState();
@@ -951,9 +949,10 @@
 
             listenToRoomActiveParticipants();
             listenToCallRequests();
+            monitorRoomCallStatusRealtime();
         }
 
-        // دالة الأستاذ لفتح أو إغلاق البث الصوتي
+        // الأستاذ يفتح البث
         function teacherToggleRoomCall() {
             if (!isGroupInCall) {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -961,17 +960,15 @@
                     return;
                 }
 
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(stream => {
                     groupCallStream = stream;
                     isGroupInCall = true;
 
-                    const audioElement = document.getElementById('groupCallAudioElement');
-                    audioElement.srcObject = stream;
-                    audioElement.muted = true; // كتم صوت الأستاذ لنفسه
-
+                    // تفعيل بث الأستاذ الصوتي وتخزين البث في قاعدة البيانات للإذاعة للجميع
                     db.ref(`room_calls/${activeRoomId}`).set({
                         status: 'active',
-                        teacherName: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ'
+                        teacherName: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ',
+                        timestamp: Date.now()
                     }).then(() => {
                         const myName = loggedTeacherData ? loggedTeacherData.name + ' (الأستاذ)' : 'الأستاذ';
                         registerParticipantInRoom(myName, true);
@@ -983,15 +980,18 @@
                         document.getElementById('callStatusIcon').className = "fas fa-microphone";
                     });
                 }).catch(err => {
-                    alert("⚠️ تعذر الوصول إلى الميكروفون.");
+                    alert("⚠️ تعذر الوصول إلى الميكروفون. يرجى السماح للمتصفح بالوصول للميكروفون.");
                 });
             }
         }
 
+        // الأستاذ يغلق البث ويخرج الكل تلقائياً
         function teacherEndRoomCall() {
             leaveGroupVoiceCallRealtime();
+            // حذف عقدة الاتصال بالكامل من القاعدة ليتم إغلاق البث لدى جميع الطلبة تلقائياً
             db.ref(`room_calls/${activeRoomId}`).remove();
             db.ref(`call_requests/${activeRoomId}`).remove();
+            db.ref(`room_participants/${activeRoomId}`).remove();
 
             document.getElementById('teacherStartCallBtn').style.display = 'inline-flex';
             document.getElementById('teacherEndCallBtn').style.display = 'none';
@@ -1003,11 +1003,28 @@
         function checkTeacherCallState() {
             db.ref(`room_calls/${activeRoomId}`).on('value', snapshot => {
                 const callData = snapshot.val();
-                if (callData && callData.status === 'active') {
-                    // البث مفتوح
-                } else {
+                if (!callData || callData.status !== 'active') {
                     if (isGroupInCall) {
                         leaveGroupVoiceCallRealtime();
+                    }
+                }
+            });
+        }
+
+        // مراقبة إغلاق الأستاذ للاتصال ليخرج الكل فوراً
+        function monitorRoomCallStatusRealtime() {
+            db.ref(`room_calls/${activeRoomId}`).on('value', snap => {
+                const callData = snap.val();
+                if (!callData || callData.status !== 'active') {
+                    // إذا أغلق الأستاذ الاتصال، يتم قطع الصوت وإعادة واجهة الطالب لحالتها الطبيعية
+                    if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
+                        leaveGroupVoiceCallRealtime();
+                        const btn = document.getElementById('studentRequestCallBtn');
+                        const leaveBtn = document.getElementById('studentLeaveCallBtn');
+                        if (btn) { btn.style.display = 'inline-flex'; btn.innerText = "طلب الانضمام للبث الصوتي"; btn.disabled = false; }
+                        if (leaveBtn) { leaveBtn.style.display = 'none'; }
+                        const stateLbl = document.getElementById('callStateLabel');
+                        if (stateLbl) { stateLbl.innerText = "غرفة الصوت مغلقة حالياً من قبل الأستاذ"; stateLbl.style.color = "#cbd5e1"; }
                     }
                 }
             });
@@ -1041,23 +1058,23 @@
         }
 
         function checkStudentCallState() {
-            // الاستماع لحالة الطلب الخاص بالطالب
             db.ref(`call_requests/${activeRoomId}/${myParticipantId}`).on('value', snap => {
                 const req = snap.val();
                 const btn = document.getElementById('studentRequestCallBtn');
                 const leaveBtn = document.getElementById('studentLeaveCallBtn');
 
                 if (req && req.status === 'approved') {
-                    // وافق الأستاذ - تفعيل الميكروفون والصوت
                     startStudentAudioTransmission();
-                    btn.style.display = 'none';
-                    leaveBtn.style.display = 'inline-flex';
-                    document.getElementById('callStateLabel').innerText = "🟢 أنت متحدث مع الأستاذ والجميع يسمعك";
-                    document.getElementById('callStateLabel').style.color = "#34d399";
+                    if (btn) btn.style.display = 'none';
+                    if (leaveBtn) leaveBtn.style.display = 'inline-flex';
+                    const stateLbl = document.getElementById('callStateLabel');
+                    if (stateLbl) {
+                        stateLbl.innerText = "🟢 أنت متحدث مع الأستاذ والجميع يسمعك";
+                        stateLbl.style.color = "#34d399";
+                    }
                 } else if (req && req.status === 'rejected') {
                     alert('❌ تم رفض طلب الانضمام للبث الصوتي من قبل الأستاذ.');
-                    btn.innerText = "طلب الانضمام للبث الصوتي";
-                    btn.disabled = false;
+                    if (btn) { btn.innerText = "طلب الانضمام للبث الصوتي"; btn.disabled = false; }
                     db.ref(`call_requests/${activeRoomId}/${myParticipantId}`).remove();
                 }
             });
@@ -1066,7 +1083,7 @@
         function startStudentAudioTransmission() {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
 
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(stream => {
                 groupCallStream = stream;
                 isGroupInCall = true;
                 registerParticipantInRoom(currentStudentName, false);
@@ -1081,11 +1098,10 @@
 
             const btn = document.getElementById('studentRequestCallBtn');
             const leaveBtn = document.getElementById('studentLeaveCallBtn');
-            btn.style.display = 'inline-flex';
-            btn.innerText = "طلب الانضمام للبث الصوتي";
-            btn.disabled = false;
-            leaveBtn.style.display = 'none';
-            document.getElementById('callStateLabel').innerText = "🟢 البث يعمل (أنت تستمع فقط الآن)";
+            if (btn) { btn.style.display = 'inline-flex'; btn.innerText = "طلب الانضمام للبث الصوتي"; btn.disabled = false; }
+            if (leaveBtn) leaveBtn.style.display = 'none';
+            const stateLbl = document.getElementById('callStateLabel');
+            if (stateLbl) stateLbl.innerText = "🟢 البث يعمل (أنت تستمع فقط الآن)";
         }
 
         function registerParticipantInRoom(name, isTeacher) {
@@ -1095,7 +1111,6 @@
                 isTeacher: isTeacher,
                 joinedAt: Date.now()
             });
-            // حذف عند الخروج التلقائي
             db.ref(`room_participants/${activeRoomId}/${myParticipantId}`).onDisconnect().remove();
         }
 
@@ -1116,18 +1131,16 @@
             db.ref(`call_requests/${activeRoomId}`).on('value', snap => {
                 const reqs = snap.val();
                 let html = '';
-                let count = 0;
 
                 if (reqs) {
                     Object.keys(reqs).forEach(k => {
                         const r = reqs[k];
                         if (r.status === 'pending') {
-                            count++;
                             html += `
                                 <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.07); padding: 6px 10px; border-radius: 8px;">
                                     <span style="font-size: 0.85rem; color: #fff;">👤 ${r.studentName}</span>
                                     <div style="display: flex; gap: 6px;">
-                                        <button class="btn btn-success" style="padding: 3px 8px; font-size: 0.72rem;" onclick="approveCallRequest('${r.id}', '${r.studentName}')">قبول ✅</button>
+                                        <button class="btn btn-success" style="padding: 3px 8px; font-size: 0.72rem;" onclick="approveCallRequest('${r.id}')">قبول ✅</button>
                                         <button class="btn btn-danger" style="padding: 3px 8px; font-size: 0.72rem;" onclick="rejectCallRequest('${r.id}')">رفض ❌</button>
                                     </div>
                                 </div>
@@ -1143,7 +1156,7 @@
             });
         }
 
-        function approveCallRequest(reqId, studentName) {
+        function approveCallRequest(reqId) {
             db.ref(`call_requests/${activeRoomId}/${reqId}`).update({ status: 'approved' });
         }
 
@@ -1151,7 +1164,7 @@
             db.ref(`call_requests/${activeRoomId}/${reqId}`).update({ status: 'rejected' });
         }
 
-        // الاستماع للمتواجدين في الغرفة وعرضهم بأسماء حقيقية وتحديث فوري عند الخروج
+        // عرض المتواجدين في الغرفة
         function listenToRoomActiveParticipants() {
             db.ref(`room_participants/${activeRoomId}`).on('value', snap => {
                 const parts = snap.val();
