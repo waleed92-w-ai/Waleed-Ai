@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الأستاذ وليد التعليمية - المرحلة الثانوية</title>
+    <title>منصة الطالب المتفوق التعليمية - المرحلة الثانوية</title>
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3a8a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="منصة وليد">
+    <meta name="apple-mobile-web-app-title" content="منصة الطالب المتفوق">
 
     <link rel="icon" type="image/jpeg" href="IMG_1507.jpeg">
     <link rel="apple-touch-icon" href="IMG_1507.jpeg">
@@ -83,25 +83,26 @@
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
 
+        /* تعديلات المحادثة المتجاوبة والواسعة لتناسب الشاشة */
         .whatsapp-whatsapp-style-container { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; background: #efeae2; box-shadow: 0 6px 25px rgba(0,0,0,0.08); position: relative; transition: all 0.3s ease; }
         .whatsapp-whatsapp-style-container.chat-fullscreen-mode {
             position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; border-radius: 0 !important; border: none !important;
         }
 
-        .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; flex: 1; height: 450px; display: flex; flex-direction: column; overflow: hidden; }
-        .whatsapp-whatsapp-style-container.chat-fullscreen-mode .whatsapp-chat-box { height: calc(100vh - 70px) !important; }
+        .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; flex: 1; height: 60vh; min-height: 480px; max-height: 75vh; display: flex; flex-direction: column; overflow: hidden; }
+        .whatsapp-whatsapp-style-container.chat-fullscreen-mode .whatsapp-chat-box { height: calc(100vh - 70px) !important; max-height: none !important; }
 
-        .whatsapp-messages-scroll { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .wa-bubble { max-width: 75%; padding: 8px 12px 6px 12px; border-radius: 10px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-break: break-word; font-size: 0.9rem; }
+        .whatsapp-messages-scroll { flex: 1; padding: 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .wa-bubble { max-width: 80%; padding: 10px 14px 8px 14px; border-radius: 12px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-break: break-word; font-size: 0.95rem; }
         .wa-bubble.incoming { background: #ffffff; color: #111b21; align-self: flex-start; border-top-right-radius: 4px; }
         .wa-bubble.outgoing { background: #d9fdd3; color: #111b21; align-self: flex-end; border-top-left-radius: 4px; }
-        .wa-sender-name { font-size: 0.75rem; font-weight: 900; color: #005c4b; margin-bottom: 2px; }
-        .wa-time { font-size: 0.65rem; color: #667781; text-align: left; margin-top: 2px; float: left; margin-right: 4px; }
-        .wa-actions { display: flex; gap: 8px; margin-top: 4px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 3px; justify-content: flex-end; clear: both; }
-        .wa-actions button { background: transparent; border: none; cursor: pointer; font-size: 0.73rem; font-weight: 700; padding: 2px 4px; }
+        .wa-sender-name { font-size: 0.78rem; font-weight: 900; color: #005c4b; margin-bottom: 3px; }
+        .wa-time { font-size: 0.68rem; color: #667781; text-align: left; margin-top: 3px; float: left; margin-right: 6px; }
+        .wa-actions { display: flex; gap: 8px; margin-top: 6px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 4px; justify-content: flex-end; clear: both; }
+        .wa-actions button { background: transparent; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 700; padding: 2px 6px; }
         .wa-actions button.edit-btn { color: #005c4b; }
         .wa-actions button.delete-btn { color: #ea0038; }
-        .whatsapp-input-bar { display: flex; gap: 8px; padding: 10px 12px; background: #f0f2f5; align-items: center; border-top: 1px solid #e9edef; }
+        .whatsapp-input-bar { display: flex; gap: 10px; padding: 12px 16px; background: #f0f2f5; align-items: center; border-top: 1px solid #e9edef; }
 
         #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         #maintenanceScreen i { font-size: 4rem; color: var(--warning); margin-bottom: 20px; animation: bounce 2s infinite; }
@@ -132,7 +133,7 @@
         <div class="brand-profile">
             <img src="IMG_1507.jpeg" alt="الأستاذ وليد" class="avatar" onerror="this.src='https://via.placeholder.com/50'">
             <div class="brand-info">
-                <h1>منصة الأستاذ وليد التعليمية</h1>
+                <h1>منصة الطالب المتفوق التعليمية</h1>
                 <p id="topSubtitle">المرحلة الثانوية</p>
             </div>
         </div>
@@ -187,7 +188,7 @@
 
         <main>
             <div class="card" id="authSection">
-                <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في المنصة للدخول إلى الصفوف والمحتوى</div>
+                <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في منصة الطالب المتفوق للدخول إلى الصفوف والمحتوى</div>
                 <div style="background: #eff6ff; padding: 16px; border-radius: 12px; margin-bottom: 18px; border-right: 4px solid var(--accent);">
                     <p style="font-weight: 800; color: var(--primary);"><i class="fas fa-tag"></i> سعر الاشتراك الشهري: <span id="dispPrice">5000</span> دينار</p>
                     <div id="dispPayment" style="font-size: 0.88rem; margin-top: 6px; white-space: pre-line; color: #334155;">
@@ -370,7 +371,7 @@
                     </div>
                 </div>
 
-                <!-- شاشة محادثة الواتساب مع دعم البصمة الصوتية وتشغيلها -->
+                <!-- شاشة محادثة الواتساب مع تكبير المساحة لملء الشاشة بمرونة -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
@@ -379,13 +380,13 @@
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <i class="fas fa-comments" style="font-size: 1.3rem; color: #10b981;"></i>
                                 <div>
-                                    <strong style="font-size: 0.9rem;">غرفة المحادثة والمتابعة التفاعلية</strong><br>
+                                    <strong style="font-size: 0.95rem;">غرفة المحادثة والمتابعة التفاعلية (الطالب المتفوق)</strong><br>
                                     <small style="color: #38bdf8;" id="liveRoomTitleDisplay">نظام محادثة وبصمات صوتية شبيه بالواتساب</small>
                                 </div>
                             </div>
                             <div style="display: flex; gap: 8px;">
-                                <button class="btn btn-secondary" id="chatFullscreenToggleBtn" onclick="toggleChatFullscreen()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;">
-                                    <i class="fas fa-expand" id="chatFullscreenIcon"></i> تكبير الشاشة
+                                <button class="btn btn-secondary" id="chatFullscreenToggleBtn" onclick="toggleChatFullscreen()" style="padding: 6px 12px; font-size: 0.8rem; background: rgba(255,255,255,0.2); color: #fff;">
+                                    <i class="fas fa-expand" id="chatFullscreenIcon"></i> تكبير الشاشة بالكامل
                                 </button>
                             </div>
                         </div>
@@ -398,23 +399,23 @@
                             
                             <form id="whatsappSendForm" class="whatsapp-input-bar">
                                 <input type="hidden" id="editChatMsgId" value="">
-                                <input type="text" class="form-control" id="whatsappTextInput" placeholder="اكتب رسالة أو استفساراً..." style="flex: 1; margin: 0; background: #fff; border-radius: 20px; padding: 8px 14px; border: 1px solid #d1d5db; font-size: 0.9rem;">
+                                <input type="text" class="form-control" id="whatsappTextInput" placeholder="اكتب رسالة أو استفساراً..." style="flex: 1; margin: 0; background: #fff; border-radius: 20px; padding: 10px 16px; border: 1px solid #d1d5db; font-size: 0.95rem;">
                                 
                                 <input type="file" id="whatsappFileInput" accept="image/*,.pdf" style="display: none;" onchange="handleWaFileSelected(this)">
-                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('whatsappFileInput').click()" title="إرفاق صورة أو ملف" style="border-radius: 50%; width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: #e9edef; color: #54656f;">
+                                <button type="button" class="btn btn-secondary" onclick="document.getElementById('whatsappFileInput').click()" title="إرفاق صورة أو ملف" style="border-radius: 50%; width: 42px; height: 42px; padding: 0; display: flex; align-items: center; justify-content: center; background: #e9edef; color: #54656f;">
                                     <i class="fas fa-paperclip"></i>
                                 </button>
                                 
                                 <!-- زر بصمة الصوت المحسن -->
-                                <button type="button" class="btn btn-secondary" id="voiceRecordBtn" onclick="toggleVoiceRecording()" title="تسجيل بصمة صوتية" style="border-radius: 50%; width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: #e9edef; color: #54656f;">
+                                <button type="button" class="btn btn-secondary" id="voiceRecordBtn" onclick="toggleVoiceRecording()" title="تسجيل بصمة صوتية" style="border-radius: 50%; width: 42px; height: 42px; padding: 0; display: flex; align-items: center; justify-content: center; background: #e9edef; color: #54656f;">
                                     <i class="fas fa-microphone" id="voiceRecordIcon"></i>
                                 </button>
 
-                                <button type="submit" class="btn btn-primary" style="border-radius: 50%; width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: #005c4b; color: white;" title="إرسال">
+                                <button type="submit" class="btn btn-primary" style="border-radius: 50%; width: 42px; height: 42px; padding: 0; display: flex; align-items: center; justify-content: center; background: #005c4b; color: white;" title="إرسال">
                                     <i class="fas fa-paper-plane"></i>
                                 </button>
                             </form>
-                            <div id="waFilePreviewName" style="font-size: 0.75rem; color: #005c4b; padding: 3px 12px; background: #f0f2f5; font-weight: 700;"></div>
+                            <div id="waFilePreviewName" style="font-size: 0.78rem; color: #005c4b; padding: 4px 14px; background: #f0f2f5; font-weight: 700;"></div>
                         </div>
 
                     </div>
@@ -870,7 +871,7 @@
                 btn.innerHTML = '<i class="fas fa-compress"></i> تصغير الشاشة';
             } else {
                 icon.className = "fas fa-expand";
-                btn.innerHTML = '<i class="fas fa-expand"></i> تكبير الشاشة';
+                btn.innerHTML = '<i class="fas fa-expand"></i> تكبير الشاشة بالكامل';
             }
         }
 
@@ -1541,7 +1542,7 @@
         }
 
         function approveAndSendWhatsApp(notifId, studentName, studentPhone) {
-            const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
+            const randomCode = 'T-MATFAWIK-' + Math.floor(1000 + Math.random() * 9000);
             
             fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
                 method: 'PUT',
@@ -1558,7 +1559,7 @@
                         formattedPhone = '964' + formattedPhone.substring(1);
                     }
                     
-                    const message = `🎓 *منصة الأستاذ وليد التعليمية - إيصال اشتراك رسمي*\n\n` +
+                    const message = `🎓 *منصة الطالب المتفوق التعليمية - إيصال اشتراك رسمي*\n\n` +
                                     `أهلاً بك عزيزي الطالب *${studentName}*.\n` +
                                     `تم تأكيد استلام التحويل المالي وتفعيل اشتراكك الشهري بنجاح.\n\n` +
                                     `📌 *معلومات حسابك السري:*\n` +
@@ -1604,7 +1605,7 @@
 
         function generateVoucher(e) {
             e.preventDefault();
-            const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
+            const randomCode = 'T-MATFAWIK-' + Math.floor(1000 + Math.random() * 9000);
             fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
                 method: 'PUT',
                 body: JSON.stringify({ code: randomCode, isUsed: false, createdAt: Date.now() }),
@@ -2114,7 +2115,7 @@
                     micIcon.className = "fas fa-stop";
                     micBtn.style.background = "#ea0038";
                     micBtn.style.color = "#fff";
-                    document.getElementById('waFilePreviewName').innerText = "🎙️ جاري تسجيل البصمة الصوتية... (اضغط مجدداً لإيقاف والإرسال)";
+                    document.getElementById('waFilePreviewName').innerText = "🎙️ جاري تسجيل البصمة الصوتية... (اضغط مجدداً للإيقاف والإرسال)";
                 }).catch(err => {
                     alert("⚠️ تعذر الوصول إلى الميكروفون. يرجى التأكد من السماح للمتصفح بالوصول للميكروفون.");
                 });
@@ -2174,7 +2175,7 @@
                         if (msg.voiceData) {
                             mediaHtml = `
                                 <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
-                                    <audio controls preload="auto" style="height: 38px; max-width: 230px;">
+                                    <audio controls preload="auto" style="height: 38px; max-width: 250px;">
                                         <source src="${msg.voiceData}" type="audio/webm">
                                         <source src="${msg.voiceData}" type="audio/mp4">
                                         <source src="${msg.voiceData}" type="audio/aac">
@@ -2184,7 +2185,7 @@
                             `;
                         } else if (msg.fileData) {
                             if (msg.fileName && (msg.fileName.endsWith('.jpg') || msg.fileName.endsWith('.png') || msg.fileName.endsWith('.jpeg'))) {
-                                mediaHtml = `<div style="margin-top: 6px;"><img src="${msg.fileData}" style="max-width: 200px; border-radius: 8px; cursor: pointer;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"></div>`;
+                                mediaHtml = `<div style="margin-top: 6px;"><img src="${msg.fileData}" style="max-width: 220px; border-radius: 8px; cursor: pointer;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"></div>`;
                             } else {
                                 mediaHtml = `<div style="margin-top: 6px;"><button class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"><i class="fas fa-file-pdf"></i> عرض الملف (${msg.fileName})</button></div>`;
                             }
@@ -2386,7 +2387,7 @@
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             currentPdfScale = 1.0;
-            let wmHtml = ''; for(let i=0; i<12; i++) { wmHtml += `<span>${currentStudentName || 'منصة وليد'}</span>`; }
+            let wmHtml = ''; for(let i=0; i<12; i++) { wmHtml += `<span>${currentStudentName || 'منصة الطالب المتفوق'}</span>`; }
             document.getElementById('pdfWatermarkText').innerHTML = wmHtml;
             updatePdfViewer(encodedData);
             document.getElementById('fileViewerModal').style.display = 'flex';
