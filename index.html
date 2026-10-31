@@ -75,7 +75,7 @@
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
 
-        /* تصميم شات واتساب */
+        /* تصميم شات واتساب (WhatsApp Style Chat) */
         .whatsapp-chat-box {
             background: #efeae2;
             background-image: radial-gradient(#d1d5db 1px, transparent 1px);
@@ -88,37 +88,279 @@
             overflow: hidden;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.06);
         }
-        .whatsapp-messages-scroll { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .wa-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.15); word-break: break-word; font-size: 0.92rem; }
-        .wa-bubble.incoming { background: #ffffff; color: #111827; align-self: flex-start; border-top-right-radius: 4px; }
-        .wa-bubble.outgoing { background: #dcf8c6; color: #111827; align-self: flex-end; border-top-left-radius: 4px; }
-        .wa-sender-name { font-size: 0.72rem; font-weight: 800; color: #2563eb; margin-bottom: 3px; }
-        .wa-time { font-size: 0.65rem; color: #6b7280; text-align: left; margin-top: 4px; }
+        .whatsapp-messages-scroll {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .wa-bubble {
+            max-width: 75%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            position: relative;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+            word-break: break-word;
+            font-size: 0.92rem;
+        }
+        .wa-bubble.incoming {
+            background: #ffffff;
+            color: #111827;
+            align-self: flex-start;
+            border-top-right-radius: 4px;
+        }
+        .wa-bubble.outgoing {
+            background: #dcf8c6;
+            color: #111827;
+            align-self: flex-end;
+            border-top-left-radius: 4px;
+        }
+        .wa-sender-name {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: #2563eb;
+            margin-bottom: 3px;
+        }
+        .wa-time {
+            font-size: 0.65rem;
+            color: #6b7280;
+            text-align: left;
+            margin-top: 4px;
+        }
+        .wa-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+            border-top: 1px solid rgba(0,0,0,0.08);
+            padding-top: 4px;
+            justify-content: flex-end;
+        }
+        .wa-actions button {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .wa-actions button.edit-btn { color: #2563eb; }
+        .wa-actions button.delete-btn { color: #ef4444; }
 
-        /* شاشة الاتصال */
-        .tiktok-live-container { width: 100%; height: 600px; background: linear-gradient(135deg, #090d16, #111827); border-radius: 20px; display: flex; position: relative; overflow: hidden; border: 2px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.3s ease; }
-        .tiktok-live-container.fullscreen-mode { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; border-radius: 0 !important; border: none !important; }
-        .tiktok-stage-area { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; justify-content: space-between; }
-        .tiktok-top-bar { display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        .live-badge-pill { background: linear-gradient(45deg, #10b981, #2563eb); color: #fff; padding: 6px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 900; display: flex; align-items: center; gap: 6px; }
-        .tiktok-speakers-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center; margin: auto; width: 100%; }
-        .speaker-bubble { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 110px; background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(10px); padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); }
-        .speaker-avatar-wrap { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #64748b; overflow: hidden; background: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; }
-        .speaker-avatar-wrap.speaking { border-color: var(--success); box-shadow: 0 0 20px var(--success); }
+        .tiktok-live-container {
+            width: 100%;
+            height: 600px;
+            background: linear-gradient(135deg, #090d16, #111827);
+            border-radius: 20px;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #334155;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+        
+        .tiktok-live-container.fullscreen-mode {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 99999 !important;
+            border-radius: 0 !important;
+            border: none !important;
+        }
+
+        .tiktok-stage-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+            justify-content: space-between;
+        }
+
+        .tiktok-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .live-badge-pill {
+            background: linear-gradient(45deg, #10b981, #2563eb);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+
+        .tiktok-speakers-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+            width: 100%;
+        }
+
+        .speaker-bubble {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 110px;
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .speaker-avatar-wrap {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid #64748b;
+            overflow: hidden;
+            background: #1e293b;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .speaker-avatar-wrap.speaking {
+            border-color: var(--success);
+            box-shadow: 0 0 20px var(--success);
+            animation: ringPulse 1.5s infinite;
+        }
+
+        @keyframes ringPulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .speaker-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .speaker-mic-badge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--danger);
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            border: 1.5px solid #fff;
+        }
+        .speaker-mic-badge.active { background: var(--success); }
+
         .speaker-name { color: #fff; font-size: 0.8rem; font-weight: 800; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .tiktok-control-bar { display: flex; gap: 10px; justify-content: center; align-items: center; background: rgba(15, 23, 42, 0.8); padding: 12px; border-radius: 14px; backdrop-filter: blur(10px); flex-wrap: wrap; }
-        .tiktok-sidebar-panel { width: 320px; background: rgba(15, 23, 42, 0.95); border-right: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; padding: 16px; gap: 16px; z-index: 15; }
-        .panel-box-title { color: #38bdf8; font-size: 0.88rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-        .attendees-scroll-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; max-height: 250px; }
-        .attendee-item { display: flex; align-items: center; justify-content: space-between; background: rgba(30, 41, 59, 0.6); padding: 8px 12px; border-radius: 10px; }
+        .speaker-role { font-size: 0.65rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 6px; border-radius: 6px; }
+
+        .tiktok-control-bar {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 12px;
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+        }
+
+        .tiktok-sidebar-panel {
+            width: 320px;
+            background: rgba(15, 23, 42, 0.95);
+            border-right: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            gap: 16px;
+            z-index: 15;
+            backdrop-filter: blur(15px);
+        }
+
+        .panel-box-title {
+            color: #38bdf8;
+            font-size: 0.88rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+
+        .attendees-scroll-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 250px;
+        }
+
+        .attendee-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .attendee-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .attendee-mini-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid var(--success);
+        }
+
+        .requests-scroll-list {
+            max-height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
         #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2000; }
-        .modal-content-box { background: #1e293b; border-radius: var(--radius); width: 98%; max-width: 1100px; height: 94vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; }
-        .modal-content-box.fullscreen-mode { width: 100vw !important; height: 100vh !important; border-radius: 0 !important; max-width: none !important; }
-        .modal-header-bar { background: var(--primary); color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; font-weight: 800; }
-        .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; display: flex; align-items: center; justify-content: center; }
+        #maintenanceScreen i { font-size: 4rem; color: var(--warning); margin-bottom: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2000; }
+        .modal-content-box { background: #1e293b; border-radius: var(--radius); width: 98%; max-width: 1100px; height: 94vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; transition: all 0.3s ease; }
+        .modal-content-box.fullscreen-mode { width: 100vw !important; height: 100vh !important; border-radius: 0 !important; max-width: none !important; }
+        
+        .modal-header-bar { background: var(--primary); color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; font-weight: 800; }
+        .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; -webkit-overflow-scrolling: touch; display: flex; align-items: center; justify-content: center; }
+        .watermark-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around; opacity: 0.15; overflow: hidden; font-weight: 900; font-size: 1.1rem; color: #ffffff; transform: rotate(-25deg); }
+        
         @media (max-width: 900px) { 
             .layout-wrapper { flex-direction: column; } 
             sidebar { width: 100%; } 
@@ -130,7 +372,7 @@
 <body oncontextmenu="return false;">
 
     <div id="maintenanceScreen">
-        <i class="fas fa-tools" style="font-size: 4rem; color: var(--warning); margin-bottom: 20px;"></i>
+        <i class="fas fa-tools"></i>
         <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 10px;">المنصة في حال صيانة حالياً</h2>
         <p style="font-size: 1.1rem; color: #94a3b8; max-width: 400px;">نقوم بتحديث وتطوير المنصة لتقديم أفضل أداء لكم. انتظر قليلاً وستعود للعمل قريباً...</p>
     </div>
@@ -167,10 +409,10 @@
 
             <div id="teacherSidebarSection" style="display: none;">
                 <div class="sidebar-title" style="color: #38bdf8; margin-top: 20px;">لوحة المدرس / الغرف</div>
-                <button class="nav-item" id="navCreateRoom"><i class="fas fa-plus-circle" style="color:#10b981;"></i> إنشاء غرفة جديدة</button>
+                <button class="nav-item" id="navCreateRoom"><i class="fas fa-plus-circle" style="color:#10b981;"></i> إنشاء غرفة (عامة أو برمز)</button>
                 <button class="nav-item" id="navManageRooms"><i class="fas fa-edit" style="color:#f59e0b;"></i> إدارة وتعديل غرفتي</button>
-                <button class="nav-item" id="navUniversalUpload"><i class="fas fa-cloud-upload-alt" style="color:#38bdf8;"></i> رفع محتوى / ملف</button>
-                <button class="nav-item" id="navTeacherReports"><i class="fas fa-exclamation-triangle"></i> إنذار طالب</button>
+                <button class="nav-item" id="navUniversalUpload"><i class="fas fa-cloud-upload-alt" style="color:#38bdf8;"></i> رفع محتوى / ملف للغرفة</button>
+                <button class="nav-item" id="navTeacherReports"><i class="fas fa-exclamation-triangle"></i> إرسال إنذار طالب</button>
             </div>
 
             <div id="adminSidebarSection" style="display: none;">
@@ -179,10 +421,10 @@
                     <i class="fas fa-bell"></i> طلبات الاشتراكات والدفع
                     <span class="notif-badge" id="sidebarNotifBadge" style="position:static; margin-right:auto; display:none;">0</span>
                 </button>
-                <button class="nav-item" id="navPlatformUsers"><i class="fas fa-users-cog" style="color:#38bdf8;"></i> متابعة الطلاب والمدرسين</button>
-                <button class="nav-item" id="navVouchers"><i class="fas fa-ticket-alt"></i> كودات الاشتراكات</button>
-                <button class="nav-item" id="navScheduleManage"><i class="fas fa-calendar-alt"></i> جدول الحصص</button>
-                <button class="nav-item" id="navAdminReports"><i class="fas fa-exclamation-triangle"></i> سجل الإنذارات</button>
+                <button class="nav-item" id="navPlatformUsers"><i class="fas fa-users-cog" style="color:#38bdf8;"></i> متابعة وإدارة المدرسين والطلبة</button>
+                <button class="nav-item" id="navVouchers"><i class="fas fa-ticket-alt"></i> توليد وتفعيل كودات الاشتراكات</button>
+                <button class="nav-item" id="navScheduleManage"><i class="fas fa-calendar-alt"></i> جدول الحصص الأسبوعي</button>
+                <button class="nav-item" id="navAdminReports"><i class="fas fa-exclamation-triangle"></i> سجل إنذارات الطلاب</button>
                 <button class="nav-item" id="settingsNavBtn"><i class="fas fa-sliders-h"></i> إعدادات المنصة والصيانة</button>
             </div>
 
@@ -193,30 +435,22 @@
 
         <main>
             <div class="card" id="authSection">
-                <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في المنصة ودخول الصفوف</div>
+                <div class="card-header"><i class="fas fa-id-card"></i> تفعيل الاشتراك في المنصة للدخول إلى الصفوف والمحتوى</div>
                 <div style="background: #eff6ff; padding: 16px; border-radius: 12px; margin-bottom: 18px; border-right: 4px solid var(--accent);">
-                    <p style="font-weight: 800; color: var(--primary);"><i class="fas fa-gift" style="color:var(--success);"></i> عرض خاص: الشهر الأول مجاناً للطلاب الجدد!</p>
-                    <p style="font-size: 0.88rem; margin-top: 6px; color: #334155;">سعر الاشتراك الشهري بعد التجربة: <span id="dispPrice">5000</span> دينار</p>
-                    <div id="dispPayment" style="font-size: 0.85rem; margin-top: 6px; white-space: pre-line; color: #64748b;">
-                        💳 ماستر كارد: 9061913829 | 📱 زين كاش: 07816745861
+                    <p style="font-weight: 800; color: var(--primary);"><i class="fas fa-tag"></i> سعر الاشتراك الشهري: <span id="dispPrice">5000</span> دينار</p>
+                    <div id="dispPayment" style="font-size: 0.88rem; margin-top: 6px; white-space: pre-line; color: #334155;">
+                        💳 ماستر كارد: 9061913829
+                        📱 زين كاش: 07816745861
+                        💵 ماستر دينار: 5285780016156442
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;">
-                    <button class="btn btn-success" id="btnTabTrial" style="flex:1;">تجربة الشهر الأول مجاناً</button>
-                    <button class="btn btn-primary" id="btnTabCode" style="flex:1;">تفعيل بكود الاشتراك</button>
-                    <button class="btn btn-secondary" id="btnTabNotify" style="flex:1;">إشعار تحويل مال للأدمن</button>
+                <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <button class="btn btn-primary" id="btnTabCode" style="flex:1;">تفعيل مباشر (بكود التفعيل)</button>
+                    <button class="btn btn-secondary" id="btnTabNotify" style="flex:1;">إرسال إشعار تحويل مال للأدمن</button>
                 </div>
 
-                <form id="formFreeTrial">
-                    <div class="form-group">
-                        <label>اسم الطالب الثلاثي (للحصول على الشهر المجاني)</label>
-                        <input type="text" class="form-control" id="tStudentName" required placeholder="أدخل اسمك الثلاثي">
-                    </div>
-                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-star"></i> ابدأ الشهر الأول المجاني وفعل الحساب فوراً</button>
-                </form>
-
-                <form id="formVoucherCode" style="display: none;">
+                <form id="formVoucherCode">
                     <div class="form-group">
                         <label>اسم الطالب الثلاثي</label>
                         <input type="text" class="form-control" id="vStudentName" required placeholder="أدخل اسمك الثلاثي">
@@ -225,7 +459,7 @@
                         <label>كود التفعيل السري</label>
                         <input type="text" class="form-control" id="vCodeInput" required placeholder="أدخل كود التفعيل">
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-bolt"></i> تفعيل الحساب ودخول الصفوف</button>
+                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-bolt"></i> تفعيل الحساب ودخول الصفوف فوراً</button>
                 </form>
 
                 <form id="formNotifyAdmin" style="display: none;">
@@ -234,46 +468,57 @@
                         <input type="text" class="form-control" id="nStudentName" required placeholder="اسمك الكامل">
                     </div>
                     <div class="form-group">
-                        <label>رقم هاتف الطالب (الواتساب)</label>
-                        <input type="text" class="form-control" id="nPhone" required placeholder="مثال: 07800000000">
+                        <label>رقم هاتف الطالب (الواتساب للتواصل وإرسال الكود)</label>
+                        <input type="text" class="form-control" id="nPhone" required placeholder="مثال: 07800000000 أو 9647800000000">
                     </div>
                     <div class="form-group">
-                        <label>طريقة التحويل</label>
+                        <label>طريقة التحويل التي استخدمتها</label>
                         <select class="form-control" id="nPayMethod">
                             <option value="زين كاش">زين كاش</option>
                             <option value="ماستر كارد">ماستر كارد</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>رقم عملية التحويل / المرجع</label>
-                        <input type="text" class="form-control" id="nRefNum" required placeholder="رقم العملية">
+                        <label>رقم عملية التحويل / رقم المرجع (Transaction ID)</label>
+                        <input type="text" class="form-control" id="nRefNum" required placeholder="أدخل رقم العملية المكتوب في الوصل">
                     </div>
                     <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> إرسال طلب التحويل للأدمن</button>
                 </form>
             </div>
 
             <div class="card" id="sectionNotifications" style="display: none;">
-                <div class="card-header"><i class="fas fa-bell"></i> طلبات الاشتراكات والدفع المعلقة</div>
+                <div class="card-header"><i class="fas fa-bell"></i> طلبات الاشتراكات والدفع المعلقة (مع زر إرسال الكود عبر واتساب)</div>
                 <div id="liveNotificationsList">جاري تحميل الطلبات...</div>
             </div>
 
             <div class="card" id="sectionPlatformUsers" style="display: none;">
-                <div class="card-header"><i class="fas fa-users-cog"></i> سجل ومتابعة المنصة</div>
+                <div class="card-header"><i class="fas fa-users-cog"></i> سجل ومتابعة المنصة (المدرسون، والطلبة المشتركون وإدارة الحذف)</div>
                 
                 <div style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1.5px dashed var(--danger); margin-bottom: 25px;">
-                    <h4 style="color: var(--danger); font-weight: 900; margin-bottom: 10px;"><i class="fas fa-trash-alt"></i> إنهاء الدوام وحذف الطلاب</h4>
-                    <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">حذف الطلاب دفعة واحدة لإنهاء الدوام الدراسي.</p>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <h4 style="color: var(--danger); font-weight: 900; margin-bottom: 10px;"><i class="fas fa-trash-alt"></i> إنهاء الدوام وحذف الطلاب (يبقى المحتوى والغرف سليمة)</h4>
+                    <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 15px;">يمكنك حذف جميع الطلاب دفعة واحدة أو حذف صف محدد بانتهاء الدوام. سيحتاج الطلاب لكودات جديدة للدخول مرة أخرى.</p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
                         <button class="btn btn-danger" onclick="deleteAllStudentsBatch()"><i class="fas fa-user-slash"></i> حذف جميع الطلاب دفعة واحدة</button>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <select class="form-control" id="batchGradeSelect" style="width: 180px; padding: 8px;">
+                                <option value="الأول المتوسط">الأول المتوسط</option>
+                                <option value="الثاني المتوسط">الثاني المتوسط</option>
+                                <option value="الثالث المتوسط">الثالث المتوسط</option>
+                                <option value="الرابع الاعدادي">الرابع الإعدادي</option>
+                                <option value="الخامس الاعدادي">الخامس الإعدادي</option>
+                                <option value="السادس الاعدادي">السادس الإعدادي</option>
+                            </select>
+                            <button class="btn btn-warning" onclick="deleteStudentsByGradeBatch()"><i class="fas fa-filter"></i> حذف طلاب هذا الصف</button>
+                        </div>
                     </div>
                 </div>
 
                 <div style="margin-bottom: 25px;">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;">حقل المدرسين</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-chalkboard-teacher" style="color:var(--success);"></i> 1. حقل المدرسين وصلاحيات الإشراف</h4>
                     <div id="adminTeachersListContainer"><p style="color: #64748b;">جاري جلب المدرسين...</p></div>
                 </div>
                 <div>
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;">حقل الطلبة المشتركين</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-user-graduate" style="color:var(--accent);"></i> 2. حقل الطلبة المشتركين (حذف فردي أو متابعة)</h4>
                     <div id="adminStudentsListContainer"><p style="color: #64748b;">جاري جلب الطلبة...</p></div>
                 </div>
             </div>
@@ -296,19 +541,19 @@
                     <h3 id="currentRoomMenuTitle" style="color: var(--primary); font-size: 1.2rem; font-weight: 900;"></h3>
                     <button class="btn btn-secondary" id="backToRoomsBtn"><i class="fas fa-arrow-right"></i> رجوع للغرف</button>
                 </div>
-                <p style="color: #64748b; margin-bottom: 20px; font-weight: 700;">اختر القسم المطلوب:</p>
+                <p style="color: #64748b; margin-bottom: 20px; font-weight: 700;">اختر القسم المطلوب للدخول إليه:</p>
                 <div class="grid-cards">
                     <div class="sub-card menu-pane-link" data-pane="panePreparation">
                         <i class="fas fa-clipboard-list" style="color: #10b981;"></i>
-                        <span>التحضير والامتحانات</span>
+                        <span>التحضير والامتحانات اليومية والشهرية</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLive">
                         <i class="fas fa-broadcast-tower" style="color: var(--accent);"></i>
-                        <span>الاتصال الصوتي المباشر</span>
+                        <span>الاتصال اللاسلكي الصوتي المباشر</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneChatRoom">
                         <i class="fab fa-whatsapp" style="color: #25d366;"></i>
-                        <span>محادثة الغرفة</span>
+                        <span>محادثة الغرفة (مثل واتساب)</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLectures">
                         <i class="fas fa-book-reader" style="color: var(--success);"></i>
@@ -324,7 +569,7 @@
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneGrades">
                         <i class="fas fa-star" style="color: #f59e0b;"></i>
-                        <span>التقييم والدرجات</span>
+                        <span>التقييم وأسماء الطلاب</span>
                     </div>
                 </div>
             </div>
@@ -336,33 +581,40 @@
                 </div>
 
                 <div class="room-section-pane" id="panePreparation">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-clipboard-list"></i> لوحة التحضير والامتحانات</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-clipboard-list"></i> لوحة التحضير والامتحانات (يومي، شهري، نصف سنة، شفهي)</h4>
+                    
                     <div id="teacherPrepFormBox" style="display:none; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1.5px solid var(--accent); margin-bottom: 25px;">
-                        <h5 style="color: var(--accent); margin-bottom: 12px; font-weight: 800;">➕ نشر تحضير أو امتحان جديد:</h5>
+                        <h5 style="color: var(--accent); margin-bottom: 12px; font-weight: 800;">➕ نشر تحضير أو امتحان جديد (للأستاذ):</h5>
                         <form id="savePreparationForm">
                             <input type="hidden" id="editPrepId" value="">
                             <div class="form-group">
-                                <label>نوع النشر</label>
+                                <label>نوع النشر (اختر القسم المناسب)</label>
                                 <select class="form-control" id="prepTypeSelect">
-                                    <option value="تحضير يومي">تحضير يومي</option>
-                                    <option value="الامتحان الشهري الأول">الامتحان الشهري الأول</option>
-                                    <option value="الامتحان الشهري الثاني">الامتحان الشهري الثاني</option>
-                                    <option value="امتحان نصف السنة">امتحان نصف السنة</option>
-                                    <option value="اختبار شفهي">اختبار شفهي</option>
+                                    <option value="تحضير يومي">📚 تحضير يومي (من صفحة إلى صفحة)</option>
+                                    <option value="الامتحان الشهري الأول">📝 الامتحان الشهري الأول</option>
+                                    <option value="الامتحان الشهري الثاني">📝 الامتحان الشهري الثاني</option>
+                                    <option value="امتحان نصف السنة">🏆 امتحان نصف السنة</option>
+                                    <option value="اختبار شفهي">🗣️ اختبار شفهي</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>التفاصيل</label>
-                                <textarea class="form-control" id="prepTextContent" rows="3" placeholder="تفاصيل التحضير أو الامتحان..." required></textarea>
+                                <label>عنوان أو تفاصيل النشر (مثلاً: المواد المطلوبة، الصفحات، أو التوجيهات)</label>
+                                <textarea class="form-control" id="prepTextContent" rows="3" placeholder="اكتب التفاصيل هنا (مثلاً: التحضير من صفحة 12 إلى صفحة 20)..." required></textarea>
                             </div>
                             <div class="form-group">
-                                <label>ملف اختياري مرفق</label>
+                                <label>ملف اختياري مرفق (أسئلة PDF أو جدول أو صورة - اختياري)</label>
                                 <input type="file" class="form-control" id="prepFileInput" accept=".pdf,image/*">
                             </div>
-                            <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> نشر وتحديث</button>
+                            <div style="display: flex; gap: 10px;">
+                                <button type="submit" class="btn btn-success" style="flex: 1;"><i class="fas fa-save"></i> نشر وتحديث</button>
+                                <button type="button" class="btn btn-secondary" id="cancelPrepEditBtn" style="display:none;" onclick="resetPrepForm()">إلغاء التعديل</button>
+                            </div>
                         </form>
                     </div>
-                    <div id="studentPrepDisplayContainer"><p style="color: #64748b;">جاري جلب التحضيرات...</p></div>
+
+                    <div id="studentPrepDisplayContainer">
+                        <p style="color: #64748b;">جاري جلب المنشورات والتحضيرات...</p>
+                    </div>
                 </div>
 
                 <div class="room-section-pane" id="paneLive">
@@ -370,18 +622,18 @@
                         <div class="tiktok-stage-area">
                             <div class="tiktok-top-bar">
                                 <div class="live-badge-pill">
-                                    <i class="fas fa-broadcast-tower"></i> اتصال صوتي فائق السرعة
+                                    <i class="fas fa-broadcast-tower"></i> اتصال لاسلكي مباشر (Voice P2P)
                                 </div>
-                                <button class="btn btn-secondary" id="toggleLiveFullscreenBtn" style="padding: 6px 12px; font-size: 0.78rem;"><i class="fas fa-expand"></i> ملء الشاشة</button>
+                                <button class="btn btn-secondary" id="toggleLiveFullscreenBtn" style="padding: 6px 12px; font-size: 0.78rem;" title="تكبير/تصغير الشاشة"><i class="fas fa-expand"></i> ملء الشاشة</button>
                             </div>
 
                             <div style="text-align: center; margin: 10px 0;">
                                 <h4 style="color: #fff; font-size: 1.05rem; font-weight: 800;" id="liveRoomTitleDisplay">غرفة الدرس</h4>
-                                <p style="color: #94a3b8; font-size: 0.8rem;" id="voiceRoomStatusText">الاتصال الصوتي جاهز...</p>
+                                <p style="color: #94a3b8; font-size: 0.8rem;" id="voiceRoomStatusText">الاتصال اللاسلكي متوقف حالياً. بانتظار بدء الأستاذ...</p>
                             </div>
 
                             <div id="audioPlayerWrapper" style="background: rgba(15, 23, 42, 0.9); padding: 12px; border-radius: 12px; margin: 10px auto; text-align: center; border: 1px solid #38bdf8; max-width: 320px;">
-                                <p style="color: #fff; font-size: 0.82rem; margin-bottom: 8px; font-weight: 700;">🔊 تفعيل الصوت:</p>
+                                <p style="color: #fff; font-size: 0.82rem; margin-bottom: 8px; font-weight: 700;">🔊 انقر لتفعيل وسماع الاتصال اللاسلكي:</p>
                                 <button class="btn btn-success" id="forcePlayAudioBtn" onclick="forcePlayAudioStream()" style="padding: 8px 16px; font-size: 0.85rem; width: 100%;">
                                     <i class="fas fa-volume-up"></i> تشغيل الصوت الآن
                                 </button>
@@ -394,9 +646,20 @@
 
                         <div class="tiktok-sidebar-panel">
                             <div>
-                                <div class="panel-box-title"><i class="fas fa-users" style="color:#10b981;"></i> المتواجدون (<span id="attendeesCountNum">0</span>)</div>
+                                <div class="panel-box-title">
+                                    <i class="fas fa-users" style="color:#10b981;"></i> المتواجدون الآن في الغرفة (<span id="attendeesCountNum">0</span>)
+                                </div>
                                 <div class="attendees-scroll-list" id="allAttendeesScrollList">
-                                    <p style="color: #64748b; font-size: 0.85rem; text-align: center;">جاري التحميل...</p>
+                                    <p style="color: #64748b; font-size: 0.85rem; text-align: center;">جاري جلب المتواجدين...</p>
+                                </div>
+                            </div>
+
+                            <div id="teacherLiveAdminBox" style="display: none; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+                                <div class="panel-box-title" style="color: #f59e0b;">
+                                    <i class="fas fa-user-clock"></i> طلبات التحدث للاتصال:
+                                </div>
+                                <div class="requests-scroll-list" id="liveRequestsListContainer">
+                                    <p style="color: #94a3b8; font-size: 0.8rem;">لا توجد طلبات معلقة.</p>
                                 </div>
                             </div>
                         </div>
@@ -404,17 +667,25 @@
                 </div>
 
                 <div class="room-section-pane" id="paneChatRoom">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> محادثة الغرفة</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> محادثة الغرفة (مثل واتساب)</h4>
+                    
                     <div class="whatsapp-chat-box">
                         <div class="whatsapp-messages-scroll" id="whatsappMessagesContainer">
                             <p style="color: #6b7280; text-align: center; margin: auto;">جاري تحميل الرسائل...</p>
                         </div>
+                        
                         <form id="whatsappSendForm" style="display: flex; gap: 8px; padding: 12px; background: #f0f2f5; align-items: center; border-top: 1px solid #d1d5db;">
                             <input type="hidden" id="editChatMsgId" value="">
                             <input type="text" class="form-control" id="whatsappTextInput" placeholder="اكتب رسالة..." style="flex: 1; margin: 0; background: #fff; border-radius: 20px; padding: 10px 16px;">
+                            
                             <input type="file" id="whatsappFileInput" accept="image/*,.pdf" style="display: none;" onchange="handleWaFileSelected(this)">
-                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('whatsappFileInput').click()" style="border-radius: 50%; width: 42px; height: 42px; padding: 0;"><i class="fas fa-paperclip"></i></button>
-                            <button type="submit" class="btn btn-primary" style="border-radius: 50%; width: 42px; height: 42px; padding: 0;"><i class="fas fa-paper-plane"></i></button>
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('whatsappFileInput').click()" title="إرفاق صورة أو ملف" style="border-radius: 50%; width: 42px; height: 42px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            
+                            <button type="submit" class="btn btn-primary" style="border-radius: 50%; width: 42px; height: 42px; padding: 0; display: flex; align-items: center; justify-content: center;" title="إرسال">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
                         </form>
                         <div id="waFilePreviewName" style="font-size: 0.78rem; color: var(--success); padding: 4px 12px; background: #f0f2f5; font-weight: 700;"></div>
                     </div>
@@ -422,43 +693,53 @@
 
                 <div class="room-section-pane" id="paneLectures">
                     <div style="margin-bottom: 25px;">
-                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم المادة</h4>
+                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم المادة (تكبير / تصغير)</h4>
                         <div id="lecturesContainer"><p style="color: #64748b;">جاري التحميل...</p></div>
                     </div>
                     <div>
                         <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-film"></i> المحاضرات المسجلة</h4>
-                        <div id="recordingsContainer"><p style="color: #64748b;">لا توجد محاضرات.</p></div>
+                        <div id="recordingsContainer"><p style="color: #64748b;">لا توجد محاضرات مسجلة.</p></div>
                     </div>
                 </div>
 
                 <div class="room-section-pane" id="paneQuestions">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-comments"></i> أسئلة الطلاب</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-comments"></i> أسئلة واستفسارات الطلاب</h4>
                     <div style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1.5px solid #cbd5e1; margin-bottom: 15px;">
-                        <textarea class="form-control" id="studentQuestionInput" rows="3" placeholder="اكتب سؤالك هنا..."></textarea>
+                        <textarea class="form-control" id="studentQuestionInput" rows="3" placeholder="اكتب سؤالك أو استفسارك هنا للأستاذ..."></textarea>
                         <button class="btn btn-primary" id="sendQuestionBtn" style="margin-top: 10px;">إرسال السؤال</button>
                     </div>
-                    <div id="questionsListContainer"><p style="color: #64748b;">لا توجد أسئلة.</p></div>
+                    <div id="questionsListContainer"><p style="color: #64748b;">لا توجد أسئلة مرسلة.</p></div>
                 </div>
 
                 <div class="room-section-pane" id="paneQuizzes">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-question-circle"></i> الاختبارات</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-question-circle"></i> الاختبارات الإلكترونية</h4>
                     <div id="quizzesContainer"><p style="color: #64748b;">لا توجد اختبارات.</p></div>
                     <div style="margin-top: 25px;">
-                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-tasks"></i> الواجبات</h4>
-                        <div id="homeworkContainer"><p style="color: #64748b;">لا توجد واجبات.</p></div>
+                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-tasks"></i> الواجبات البيتية</h4>
+                        <div id="homeworkContainer"><p style="color: #64748b;">لا توجد واجبات حالياً.</p></div>
                     </div>
                 </div>
 
                 <div class="room-section-pane" id="paneGrades">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-star"></i> التقييم والدرجات</h4>
-                    <div id="studentsGradesList"><p style="color: #64748b;">لا توجد تقييمات.</p></div>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-users" style="color:var(--accent);"></i> إدارة المتواجدين الآن في الغرفة (طرد / تنبيه)</h4>
+                    <div id="activeStudentsLiveManagementList" style="margin-bottom: 20px;">
+                        <p style="color: #64748b;">جاري جلب المتواجدين في الغرفة...</p>
+                    </div>
+
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-star" style="color:var(--warning);"></i> سجل التقييمات والدرجات</h4>
+                    <div style="margin-bottom: 15px; display: flex; gap: 10px; display:none;" id="teacherGradeAddBox">
+                        <input type="text" class="form-control" id="gradeStudentName" placeholder="اسم الطالب">
+                        <input type="text" class="form-control" id="gradeStudentVal" placeholder="التقييم / الدرجة (مثلاً: ممتاز / 95%)">
+                        <button class="btn btn-success" id="saveGradeBtn">حفظ التقييم</button>
+                    </div>
+                    <div id="studentsGradesList"><p style="color: #64748b;">جاري جلب تقييمات الطلاب...</p></div>
                 </div>
             </div>
 
             <div class="card" id="sectionCreateRoom" style="display: none;">
                 <div class="card-header"><i class="fas fa-plus-circle" style="color:var(--success);"></i> إنشاء غرفة دراسية جديدة</div>
                 <form id="createRoomForm">
-                    <div class="form-group"><label>عنوان الغرفة</label><input type="text" class="form-control" id="crTitle" required placeholder="عنوان الغرفة"></div>
+                    <div class="form-group"><label>عنوان الغرفة</label><input type="text" class="form-control" id="crTitle" required placeholder="مثال: مراجعة مركزة لمادة الرياضيات"></div>
                     <div class="form-group"><label>الصف الدراسي</label>
                         <select class="form-control" id="crGrade">
                             <option value="الأول المتوسط">الأول المتوسط</option>
@@ -471,75 +752,105 @@
                     </div>
                     <div class="form-group"><label>المادة</label>
                         <select class="form-control" id="crSubject">
-                            <option value="الحاسوب">الحاسوب</option>
-                            <option value="الرياضيات">الرياضيات</option>
-                            <option value="اللغة العربية">اللغة العربية</option>
-                            <option value="اللغة الإنجليزية">اللغة الإنجليزية</option>
-                            <option value="الفيزياء">الفيزياء</option>
-                            <option value="الكيمياء">الكيمياء</option>
-                            <option value="الأحياء">الأحياء</option>
+                            <option value="الحاسوب">💻 الحاسوب</option>
+                            <option value="الرياضيات">📐 الرياضيات</option>
+                            <option value="اللغة العربية">📖 اللغة العربية</option>
+                            <option value="اللغة الإنجليزية">🔤 اللغة الإنجليزية</option>
+                            <option value="الفيزياء">⚡ الفيزياء</option>
+                            <option value="الكيمياء">🧪 الكيمياء</option>
+                            <option value="الأحياء">🧬 الأحياء</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>نوع الوصول</label>
+                    <div class="form-group"><label>نوع الوصول للغرفة</label>
                         <select class="form-control" id="crAccessType">
-                            <option value="free">مجانية</option>
-                            <option value="protected">خاصة بررمز</option>
+                            <option value="free">🟢 مجانية (يمكن لأي شخص الدخول مباشرة بدون رمز)</option>
+                            <option value="protected">🔒 خاصة / مغلقة (تتطلب رمز PIN سري للدخول)</option>
                         </select>
                     </div>
                     <div class="form-group" id="pinInputGroup" style="display: none;">
-                        <label>رمز PIN</label><input type="text" class="form-control" id="crPin" placeholder="PIN">
+                        <label>رمز الدخول السري (PIN)</label>
+                        <input type="text" class="form-control" id="crPin" placeholder="مثال: 1234">
                     </div>
                     <button type="submit" class="btn btn-success btn-block">إنشاء الغرفة ونشرها</button>
                 </form>
             </div>
 
-            <div class="card" id="sectionManageRooms" style="display: none;"><div class="card-header">إدارة غرفتي</div><div id="myRoomsListContainer">جاري التحميل...</div></div>
+            <div class="card" id="sectionManageRooms" style="display: none;"><div class="card-header"><i class="fas fa-edit"></i> إدارة وتعديل غرفتي</div><div id="myRoomsListContainer">جاري التحميل...</div></div>
             
             <div class="card" id="sectionUniversalUpload" style="display: none;">
-                <div class="card-header"><i class="fas fa-cloud-upload-alt"></i> رفع محتوى أو ملف</div>
+                <div class="card-header"><i class="fas fa-cloud-upload-alt" style="color:var(--accent);"></i> رفع محتوى أو ملف جديد لأي قسم بالغرفة</div>
                 <form id="universalUploadForm">
-                    <div class="form-group"><label>اختر الغرفة</label><select class="form-control" id="uniRoomId" required></select></div>
-                    <div class="form-group"><label>اختر القسم</label>
+                    <div class="form-group">
+                        <label>اختر الغرفة</label>
+                        <select class="form-control" id="uniRoomId" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>اختر القسم (المكان الذي سيظهر فيه المحتوى داخل الغرفة)</label>
                         <select class="form-control" id="uniSectionType" required onchange="handleUniSectionChange(this.value)">
-                            <option value="lecture_pdf">📄 ملزمة PDF</option>
-                            <option value="recording_video">🎥 محاضرة مسجلة</option>
-                            <option value="quiz">📝 اختبار</option>
-                            <option value="homework">📌 واجب</option>
+                            <option value="lecture_pdf">📄 ملزمة / ملف PDF (قسم المحاضرات والملازم)</option>
+                            <option value="recording_video">🎥 محاضرة مسجلة / فيديو (قسم المحاضرات والملازم)</option>
+                            <option value="quiz">📝 اختبار إلكتروني (قسم الاختبارات والواجبات)</option>
+                            <option value="homework">📌 واجب بيتي (قسم الاختبارات والواجبات)</option>
                         </select>
                     </div>
-                    <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="uniTitle" required placeholder="العنوان..."></div>
-                    <div class="form-group" id="uniFieldFileWrap"><label>ملف PDF</label><input type="file" class="form-control" id="uniFile" accept=".pdf"></div>
-                    <div class="form-group" id="uniFieldUrlWrap" style="display: none;"><label>رابط الفيديو</label><input type="text" class="form-control" id="uniUrl" placeholder="رابط الفيديو..."></div>
-                    <button type="submit" class="btn btn-success btn-block">نشر المحتوى</button>
+                    <div class="form-group">
+                        <label>عنوان المحتوى / الملزمة / الواجب</label>
+                        <input type="text" class="form-control" id="uniTitle" required placeholder="مثال: المحاضرة الأولى في الرياضيات أو ملزمة الفصل الأول">
+                    </div>
+
+                    <div class="form-group" id="uniFieldFileWrap">
+                        <label>اختر ملف (PDF)</label>
+                        <input type="file" class="form-control" id="uniFile" accept=".pdf">
+                    </div>
+
+                    <div class="form-group" id="uniFieldUrlWrap" style="display: none;">
+                        <label>رابط الفيديو أو المحاضرة المسجلة</label>
+                        <input type="text" class="form-control" id="uniUrl" placeholder="أدخل رابط الفيديو (يوتيوب أو رابط مباشر)">
+                    </div>
+
+                    <div id="uniQuizFieldsWrap" style="display: none;">
+                        <div class="form-group"><label>نص السؤال</label><input type="text" class="form-control" id="uniQQuestion" placeholder="السؤال..."></div>
+                        <div class="form-group"><label>الخيار الأول</label><input type="text" class="form-control" id="uniQOpt1" placeholder="خيار 1"></div>
+                        <div class="form-group"><label>الخيار الثاني</label><input type="text" class="form-control" id="uniQOpt2" placeholder="خيار 2"></div>
+                        <div class="form-group"><label>الخيار الثالث</label><input type="text" class="form-control" id="uniQOpt3" placeholder="خيار 3"></div>
+                        <div class="form-group"><label>رقم الإجابة الصحيحة (1 أو 2 أو 3)</label><input type="number" class="form-control" id="uniQCorrect" min="1" max="3" value="1"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-upload"></i> نشر المحتوى في الغرفة فوراً</button>
                 </form>
             </div>
 
             <div class="card" id="sectionVouchers" style="display: none;">
-                <div class="card-header"><i class="fas fa-ticket-alt"></i> كودات الاشتراكات</div>
-                <form id="generateVoucherForm" style="margin-bottom: 20px;"><button type="submit" class="btn btn-success">توليد كود جديد</button></form>
+                <div class="card-header"><i class="fas fa-ticket-alt"></i> توليد وتفعيل كودات الاشتراكات</div>
+                <form id="generateVoucherForm" style="margin-bottom: 20px; background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #cbd5e1;">
+                    <p style="font-weight: 700; margin-bottom: 10px; color:var(--primary);">توليد كود تفعيل اشتراك جديد:</p>
+                    <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> توليد كود اشتراك جديد الآن</button>
+                </form>
                 <div id="vouchersList">جاري التحميل...</div>
             </div>
 
-            <div class="card" id="sectionScheduleManage" style="display: none;"><div class="card-header">جدول الحصص</div><div id="scheduleContainer"></div></div>
-            <div class="card" id="sectionAdminReports" style="display: none;"><div class="card-header">التقارير</div><div id="adminReportsList"></div></div>
+            <div class="card" id="sectionScheduleManage" style="display: none;"><div class="card-header"><i class="fas fa-calendar-alt"></i> جدول الحصص</div><div id="scheduleContainer"></div></div>
+            <div class="card" id="sectionAdminReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> التقارير</div><div id="adminReportsList"></div></div>
+            
             <div class="card" id="sectionSettings" style="display: none;">
-                <div class="card-header">الإعدادات</div>
+                <div class="card-header"><i class="fas fa-sliders-h"></i> إعدادات المنصة والصيانة</div>
                 <form id="settingsForm">
                     <div class="form-group"><label>سعر الاشتراك</label><input type="text" class="form-control" id="cfgPrice" required></div>
                     <div class="form-group"><label>طرق الدفع</label><textarea class="form-control" id="cfgPayments" rows="3" required></textarea></div>
                     <div class="form-group"><label>حالة الصيانة</label>
                         <select class="form-control" id="cfgMaintenance">
-                            <option value="false">تعمل طبيعي</option>
-                            <option value="true">وضع الصيانة</option>
+                            <option value="false">🟢 تعمل طبيعي</option>
+                            <option value="true">🛠️ وضع الصيانة</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">حفظ</button>
                 </form>
             </div>
-            <div class="card" id="sectionTeacherReports" style="display: none;"><div class="card-header">إنذار طالب</div>
+
+            <div class="card" id="sectionTeacherReports" style="display: none;"><div class="card-header"><i class="fas fa-exclamation-triangle"></i> إنذار طالب</div>
                 <form id="teacherReportForm">
                     <div class="form-group"><label>اسم الطالب</label><input type="text" class="form-control" id="repStudentName" required></div>
-                    <div class="form-group"><label>النوع</label><select class="form-control" id="repType"><option value="سلوك">سلوك غير لائق</option><option value="إزعاج">إزعاج</option></select></div>
+                    <div class="form-group"><label>النوع</label><select class="form-control" id="repType"><option value="سلوك غير لائق">سلوك غير لائق</option><option value="إزعاج">إزعاج</option></select></div>
                     <div class="form-group"><label>التفاصيل</label><textarea class="form-control" id="repDetails" rows="3" required></textarea></div>
                     <button type="submit" class="btn btn-warning btn-block">إرسال</button>
                 </form>
@@ -547,43 +858,114 @@
         </main>
     </div>
 
+    <div class="modal" id="editItemModal">
+        <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 400px; padding: 24px;">
+            <div class="card-header"><i class="fas fa-edit" style="color:var(--warning);"></i> تعديل عنوان أو اسم العنصر</div>
+            <input type="hidden" id="editItemType">
+            <input type="hidden" id="editItemId">
+            <div class="form-group">
+                <label>العنوان الجديد</label>
+                <input type="text" class="form-control" id="editItemTitleInput">
+            </div>
+            <button class="btn btn-success btn-block" id="saveEditedItemBtn">حفظ التعديل</button>
+            <button class="btn btn-danger btn-block" id="closeEditItemModalBtn" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
+        </div>
+    </div>
+
+    <div class="modal" id="kickedModal" style="background: rgba(15, 23, 42, 0.95); z-index: 3000;">
+        <div class="modal-body" style="background: #1e293b; color: white; border-radius: var(--radius); width: 90%; max-width: 400px; padding: 30px; text-align: center;">
+            <i class="fas fa-ban" style="font-size: 3.5rem; color: var(--danger); margin-bottom: 15px;"></i>
+            <h3 style="font-size: 1.3rem; font-weight: 900; margin-bottom: 10px;">تم إخراجك من الغرفة</h3>
+            <p id="kickedReasonText" style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 20px;">قام الأستاذ أو المشرف بطردك من هذه الغرفة مؤقتاً.</p>
+            <button class="btn btn-success btn-block" id="requestReentryBtn"><i class="fas fa-redo"></i> طلب العودة والدخول (بموافقة الأستاذ)</button>
+        </div>
+    </div>
+
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box" id="fileModalContentBox">
             <div class="modal-header-bar">
                 <span id="modalFileTitle">عرض الملزمة</span>
                 <div style="display: flex; gap: 8px; align-items: center;">
-                    <button class="btn btn-secondary" id="toggleModalFullscreenBtn" style="padding: 4px 10px; font-size: 0.8rem;">ملء الشاشة</button>
+                    <button class="btn btn-secondary" id="toggleModalFullscreenBtn" style="padding: 4px 10px; font-size: 0.8rem;" title="تكبير/تصغير النافذة"><i class="fas fa-expand"></i> ملء الشاشة</button>
+                    <button class="btn btn-secondary" id="zoomInBtn" style="padding: 4px 10px; font-size: 0.8rem;" title="تكبير النص"><i class="fas fa-search-plus"></i> تكبير</button>
+                    <button class="btn btn-secondary" id="zoomOutBtn" style="padding: 4px 10px; font-size: 0.8rem;" title="تصغير النص"><i class="fas fa-search-minus"></i> تصغير</button>
                     <button class="btn btn-danger" id="closeFileModalBtn" style="padding: 4px 10px; font-size: 0.8rem;">إغلاق</button>
                 </div>
             </div>
-            <div class="modal-body-viewer" id="modalViewerContainer"></div>
+            <div class="modal-body-viewer" id="modalViewerContainer">
+                <div class="watermark-overlay" id="pdfWatermarkText"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editRoomModal">
+        <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 380px; padding: 24px;">
+            <div class="card-header"><i class="fas fa-edit" style="color:var(--warning);"></i> تعديل الغرفة والخصوصية</div>
+            <input type="hidden" id="editRoomId">
+            <div class="form-group"><label>العنوان</label><input type="text" class="form-control" id="editRoomTitleInput"></div>
+            <div class="form-group"><label>نوع الدخول</label>
+                <select class="form-control" id="editRoomAccessType">
+                    <option value="free">🟢 مجانية بالكامل</option>
+                    <option value="protected">🔒 محمية بررمز PIN (خصوصي)</option>
+                </select>
+            </div>
+            <div class="form-group" id="editPinInputGroup" style="display: none;">
+                <label>رمز PIN السري</label><input type="text" class="form-control" id="editRoomPinInput">
+            </div>
+            <div class="form-group"><label>حالة الغرفة العامة</label>
+                <select class="form-control" id="editRoomIsOpen">
+                    <option value="true">🟢 مفتوحة</option>
+                    <option value="false">🔴 مغلقة تماماً</option>
+                </select>
+            </div>
+            <button class="btn btn-success btn-block" id="saveEditedRoomBtn">حفظ التعديلات</button>
+            <button class="btn btn-danger btn-block" id="closeEditModalBtn" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
         </div>
     </div>
 
     <div class="modal" id="pinModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 380px; padding: 24px; text-align: center;">
-            <div class="card-header" style="justify-content: center;"><i class="fas fa-lock"></i> غرفة محمية بررمز</div>
-            <div class="form-group"><input type="text" class="form-control" id="studentPinInput" placeholder="PIN" style="text-align: center; font-size: 1.2rem;"></div>
-            <button class="btn btn-success btn-block" id="verifyPinBtn">دخول</button>
+            <div class="card-header" style="justify-content: center;"><i class="fas fa-lock" style="color:var(--danger);"></i> غرفة خاصة بمدرس آخر</div>
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #334155;">هذه الغرفة ليست ملكاً لحسابك. أدخل رمز الدخول (PIN) الخاص بالأستاذ للدخول:</p>
+            <div class="form-group"><input type="text" class="form-control" id="studentPinInput" placeholder="PIN" style="text-align: center; font-size: 1.2rem; font-weight: 800;"></div>
+            <button class="btn btn-success btn-block" id="verifyPinBtn">دخول الغرفة</button>
             <button class="btn btn-danger btn-block" id="closePinModalBtn" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
         </div>
     </div>
 
     <div class="modal" id="adminModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 440px; padding: 24px;">
-            <div class="card-header"><i class="fas fa-user-shield"></i> بوابة الإدارة</div>
+            <div class="card-header"><i class="fas fa-user-shield"></i> بوابة الإدارة والأساتذة</div>
             <div style="display: flex; gap: 8px; margin-bottom: 15px;">
                 <button class="btn btn-primary" id="loginTabAdminBtn" style="flex:1;">الأدمن</button>
-                <button class="btn btn-secondary" id="loginTabTeacherBtn" style="flex:1;">مدرس</button>
+                <button class="btn btn-secondary" id="loginTabTeacherBtn" style="flex:1;">مدرس / مشرف</button>
+                <button class="btn btn-warning" id="loginTabRegisterBtn" style="flex:1;">تسجيل جديد</button>
             </div>
             <div id="loginAdminBox">
-                <div class="form-group"><label>كلمة المرور</label><input type="password" class="form-control" id="adminPassInput"></div>
-                <button class="btn btn-primary btn-block" id="verifyAdminBtn">دخول</button>
+                <div class="form-group"><label>كلمة مرور الأدمن</label><input type="password" class="form-control" id="adminPassInput"></div>
+                <button class="btn btn-primary btn-block" id="verifyAdminBtn">دخول الأدمن</button>
             </div>
             <div id="loginTeacherBox" style="display: none;">
-                <div class="form-group"><label>يوزر المدرس</label><input type="text" class="form-control" id="teacherUsername"></div>
+                <div class="form-group"><label>يوزر المدرس / المشرف</label><input type="text" class="form-control" id="teacherUsername"></div>
                 <div class="form-group"><label>كلمة المرور</label><input type="password" class="form-control" id="teacherPassword"></div>
                 <button class="btn btn-success btn-block" id="verifyTeacherBtn">دخول المدرس</button>
+            </div>
+            <div id="registerTeacherBox" style="display: none;">
+                <div class="form-group"><label>اسم المدرس</label><input type="text" class="form-control" id="regTName"></div>
+                <div class="form-group"><label>المادة</label>
+                    <select class="form-control" id="regTSubject">
+                        <option value="الحاسوب">💻 الحاسوب</option>
+                        <option value="الرياضيات">📐 الرياضيات</option>
+                        <option value="اللغة العربية">📖 اللغة العربية</option>
+                        <option value="اللغة الإنجليزية">🔤 اللغة الإنجليزية</option>
+                        <option value="الفيزياء">⚡ الفيزياء</option>
+                        <option value="الكيمياء">🧪 الكيمياء</option>
+                        <option value="الأحياء">🧬 الأحياء</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>يوزر</label><input type="text" class="form-control" id="regTUser"></div>
+                <div class="form-group"><label>كلمة المرور</label><input type="password" class="form-control" id="regTPass"></div>
+                <button class="btn btn-warning btn-block" id="registerTeacherBtn">تسجيل طلب الانضمام</button>
             </div>
             <button class="btn btn-danger btn-block" id="closeAdminModalBtn" style="margin-top: 12px; background: transparent; color: #64748b;">إلغاء</button>
         </div>
@@ -600,8 +982,10 @@
         let currentRole = ""; let loggedTeacherData = null;
         let currentStudentName = "";
         let pendingRoomData = null;
+        let currentPdfScale = 1.0;
         let localStream = null;
         let remoteAudioEl = null;
+        let isMicMuted = false;
         let activePresenceRef = null; 
         let selectedWaFileData = null;
         let selectedWaFileName = "";
@@ -619,24 +1003,28 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadSettingsData(); 
             checkMaintenanceStatus();
+            checkTeacherSessionLive();
             checkStudentSession(); 
             listenToNotificationsRealtime();
             initEventListeners();
         });
 
         function initEventListeners() {
-            document.getElementById('adminLockBtn').addEventListener('click', () => document.getElementById('adminModal').style.display = 'flex');
+            document.getElementById('adminLockBtn').addEventListener('click', openAdminModal);
             document.getElementById('adminExitBtn').addEventListener('click', logoutSystem);
             document.getElementById('logoutBtn').addEventListener('click', logoutSystem);
 
             document.querySelectorAll('.class-nav-btn').forEach(btn => {
-                btn.addEventListener('click', function() { tryOpenClass(this.getAttribute('data-class')); });
+                btn.addEventListener('click', function() {
+                    tryOpenClass(this.getAttribute('data-class'));
+                });
             });
 
             document.getElementById('navCreateRoom').addEventListener('click', () => showSection('sectionCreateRoom'));
             document.getElementById('navManageRooms').addEventListener('click', () => showSection('sectionManageRooms'));
             document.getElementById('navUniversalUpload').addEventListener('click', () => showSection('sectionUniversalUpload'));
             document.getElementById('navTeacherReports').addEventListener('click', () => showSection('sectionTeacherReports'));
+
             document.getElementById('navNotifications').addEventListener('click', () => showSection('sectionNotifications'));
             document.getElementById('navPlatformUsers').addEventListener('click', () => showSection('sectionPlatformUsers'));
             document.getElementById('navVouchers').addEventListener('click', () => showSection('sectionVouchers'));
@@ -644,90 +1032,175 @@
             document.getElementById('navAdminReports').addEventListener('click', () => showSection('sectionAdminReports'));
             document.getElementById('settingsNavBtn').addEventListener('click', () => showSection('sectionSettings'));
 
-            document.getElementById('btnTabTrial').addEventListener('click', () => switchAuthTab('trial'));
             document.getElementById('btnTabCode').addEventListener('click', () => switchAuthTab('code'));
             document.getElementById('btnTabNotify').addEventListener('click', () => switchAuthTab('notify'));
 
-            document.getElementById('formFreeTrial').addEventListener('submit', activateFreeTrial);
             document.getElementById('formVoucherCode').addEventListener('submit', activateWithVoucher);
             document.getElementById('formNotifyAdmin').addEventListener('submit', sendPaymentNotification);
 
-            document.getElementById('backToSubjectsBtn').addEventListener('click', () => showSection('subjectsSection'));
-            document.getElementById('backToRoomsBtn').addEventListener('click', () => showSection('teachersRoomsSection'));
-            document.getElementById('backToRoomMenuBtn').addEventListener('click', () => showSection('roomMenuSection'));
+            document.getElementById('backToSubjectsBtn').addEventListener('click', backToSubjectsView);
+            document.getElementById('backToRoomsBtn').addEventListener('click', backToRoomsView);
+            document.getElementById('backToRoomMenuBtn').addEventListener('click', backToRoomMenu);
 
             document.querySelectorAll('.menu-pane-link').forEach(card => {
-                card.addEventListener('click', function() { openRoomSection(this.getAttribute('data-pane')); });
+                card.addEventListener('click', function() {
+                    openRoomSection(this.getAttribute('data-pane'));
+                });
             });
 
             document.getElementById('sendQuestionBtn').addEventListener('click', sendStudentQuestion);
+            document.getElementById('saveGradeBtn').addEventListener('click', saveStudentGrade);
+
             document.getElementById('createRoomForm').addEventListener('submit', handleCreateCustomRoom);
-            document.getElementById('crAccessType').addEventListener('change', function() { document.getElementById('pinInputGroup').style.display = (this.value === 'protected') ? 'block' : 'none'; });
+            document.getElementById('crAccessType').addEventListener('change', function() { togglePinInput(this.value); });
             document.getElementById('generateVoucherForm').addEventListener('submit', generateVoucher);
             document.getElementById('settingsForm').addEventListener('submit', saveSettings);
+
             document.getElementById('universalUploadForm').addEventListener('submit', handleUniversalUpload);
             document.getElementById('savePreparationForm').addEventListener('submit', handleSavePreparation);
             document.getElementById('whatsappSendForm').addEventListener('submit', handleSendWhatsappMessage);
 
-            document.getElementById('toggleLiveFullscreenBtn').addEventListener('click', () => document.getElementById('tiktokLiveContainerBox').classList.toggle('fullscreen-mode'));
-            document.getElementById('toggleModalFullscreenBtn').addEventListener('click', () => document.getElementById('fileModalContentBox').classList.toggle('fullscreen-mode'));
-            document.getElementById('closeFileModalBtn').addEventListener('click', () => document.getElementById('fileViewerModal').style.display = 'none');
-            document.getElementById('verifyPinBtn').addEventListener('click', verifyRoomPin);
-            document.getElementById('closePinModalBtn').addEventListener('click', () => document.getElementById('pinModal').style.display = 'none');
+            document.getElementById('requestReentryBtn').addEventListener('click', requestReentryToRoom);
+            document.getElementById('zoomInBtn').addEventListener('click', () => zoomPdf(0.1));
+            document.getElementById('zoomOutBtn').addEventListener('click', () => zoomPdf(-0.1));
+            document.getElementById('closeFileModalBtn').addEventListener('click', closeFileModal);
+            
+            document.getElementById('toggleLiveFullscreenBtn').addEventListener('click', toggleLiveBoxFullscreen);
+            document.getElementById('toggleModalFullscreenBtn').addEventListener('click', toggleFileModalFullscreen);
 
-            document.getElementById('loginTabAdminBtn').addEventListener('click', () => { document.getElementById('loginAdminBox').style.display = 'block'; document.getElementById('loginTeacherBox').style.display = 'none'; });
-            document.getElementById('loginTabTeacherBtn').addEventListener('click', () => { document.getElementById('loginAdminBox').style.display = 'none'; document.getElementById('loginTeacherBox').style.display = 'block'; });
+            document.getElementById('editRoomAccessType').addEventListener('change', function() { toggleEditPinInput(this.value); });
+            document.getElementById('saveEditedRoomBtn').addEventListener('click', saveEditedRoom);
+            document.getElementById('closeEditModalBtn').addEventListener('click', closeEditRoomModal);
+
+            document.getElementById('verifyPinBtn').addEventListener('click', verifyRoomPin);
+            document.getElementById('closePinModalBtn').addEventListener('click', closePinModal);
+
+            document.getElementById('loginTabAdminBtn').addEventListener('click', () => switchLoginTab('admin'));
+            document.getElementById('loginTabTeacherBtn').addEventListener('click', () => switchLoginTab('teacher'));
+            document.getElementById('loginTabRegisterBtn').addEventListener('click', () => switchLoginTab('registerTeacher'));
+
             document.getElementById('verifyAdminBtn').addEventListener('click', verifyAdminLogin);
             document.getElementById('verifyTeacherBtn').addEventListener('click', verifyTeacherLogin);
-            document.getElementById('closeAdminModalBtn').addEventListener('click', () => document.getElementById('adminModal').style.display = 'none');
+            document.getElementById('registerTeacherBtn').addEventListener('click', registerNewTeacher);
+            document.getElementById('closeAdminModalBtn').addEventListener('click', closeAdminModal);
+            
+            document.getElementById('saveEditedItemBtn').addEventListener('click', saveEditedItem);
+            document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
+        }
+
+        function checkTeacherSessionLive() {
+            const session = localStorage.getItem('teacher_session');
+            if (session) {
+                const teacherObj = JSON.parse(session);
+                if (teacherObj && teacherObj.id) {
+                    db.ref(`teachers/${teacherObj.id}`).on('value', snapshot => {
+                        if (!snapshot.exists()) {
+                            alert('⚠️ تم حذف حسابك من قبل الأدمن. تم تسجيل خروجك من المنصة.');
+                            logoutSystem();
+                        }
+                    });
+                }
+            }
+        }
+
+        function toggleLiveBoxFullscreen() {
+            const box = document.getElementById('tiktokLiveContainerBox');
+            const btn = document.getElementById('toggleLiveFullscreenBtn');
+            box.classList.toggle('fullscreen-mode');
+            if (box.classList.contains('fullscreen-mode')) {
+                btn.innerHTML = '<i class="fas fa-compress"></i> تصغير الشاشة';
+            } else {
+                btn.innerHTML = '<i class="fas fa-expand"></i> ملء الشاشة';
+            }
+        }
+
+        function toggleFileModalFullscreen() {
+            const box = document.getElementById('fileModalContentBox');
+            const btn = document.getElementById('toggleModalFullscreenBtn');
+            box.classList.toggle('fullscreen-mode');
+            if (box.classList.contains('fullscreen-mode')) {
+                btn.innerHTML = '<i class="fas fa-compress"></i> تصغير النافذة';
+            } else {
+                btn.innerHTML = '<i class="fas fa-expand"></i> ملء الشاشة';
+            }
         }
 
         function checkMaintenanceStatus() {
             db.ref('settings/maintenance').on('value', snapshot => {
-                document.getElementById('maintenanceScreen').style.display = (snapshot.val() === true && currentRole !== 'admin') ? 'flex' : 'none';
+                if (snapshot.val() === true && currentRole !== 'admin') {
+                    document.getElementById('maintenanceScreen').style.display = 'flex';
+                } else {
+                    document.getElementById('maintenanceScreen').style.display = 'none';
+                }
             });
         }
 
         function switchAuthTab(type) {
-            document.getElementById('formFreeTrial').style.display = (type === 'trial') ? 'block' : 'none';
-            document.getElementById('formVoucherCode').style.display = (type === 'code') ? 'block' : 'none';
-            document.getElementById('formNotifyAdmin').style.display = (type === 'notify') ? 'block' : 'none';
-            document.getElementById('btnTabTrial').className = (type === 'trial') ? 'btn btn-success' : 'btn btn-secondary';
-            document.getElementById('btnTabCode').className = (type === 'code') ? 'btn btn-primary' : 'btn btn-secondary';
-            document.getElementById('btnTabNotify').className = (type === 'notify') ? 'btn btn-primary' : 'btn btn-secondary';
+            const btnCode = document.getElementById('btnTabCode');
+            const btnNotify = document.getElementById('btnTabNotify');
+            const formCode = document.getElementById('formVoucherCode');
+            const formNotify = document.getElementById('formNotifyAdmin');
+
+            if (type === 'code') {
+                formCode.style.display = 'block';
+                formNotify.style.display = 'none';
+                btnCode.className = 'btn btn-primary';
+                btnNotify.className = 'btn btn-secondary';
+            } else {
+                formCode.style.display = 'none';
+                formNotify.style.display = 'block';
+                btnCode.className = 'btn btn-secondary';
+                btnNotify.className = 'btn btn-primary';
+            }
         }
 
         function loadSettingsData() {
             fetch(`${DATABASE_URL}/settings.json`).then(res => res.json()).then(data => {
-                if (data) {
-                    document.getElementById('dispPrice').innerText = data.price || '5000';
-                    document.getElementById('cfgPrice').value = data.price || '5000';
-                    document.getElementById('cfgPayments').value = data.payments || '';
-                    document.getElementById('cfgMaintenance').value = data.maintenance ? "true" : "false";
-                }
+                const cfg = data || {};
+                document.getElementById('dispPrice').innerText = cfg.price || '5000';
+                document.getElementById('cfgPrice').value = cfg.price || '5000';
+                document.getElementById('cfgPayments').value = cfg.payments || '';
+                document.getElementById('cfgMaintenance').value = cfg.maintenance ? "true" : "false";
             }).catch(() => {});
         }
 
         function saveSettings(e) {
             e.preventDefault();
+            const price = document.getElementById('cfgPrice').value;
+            const payments = document.getElementById('cfgPayments').value;
+            const maintenance = document.getElementById('cfgMaintenance').value === "true";
             fetch(`${DATABASE_URL}/settings.json`, {
                 method: 'PUT',
-                body: JSON.stringify({ price: document.getElementById('cfgPrice').value, payments: document.getElementById('cfgPayments').value, maintenance: document.getElementById('cfgMaintenance').value === "true" }),
+                body: JSON.stringify({ price, payments, maintenance }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => alert('تم الحفظ!'));
+            }).then(() => alert('تم حفظ الإعدادات!'));
         }
+
+        function switchLoginTab(tab) {
+            document.getElementById('loginAdminBox').style.display = (tab === 'admin') ? 'block' : 'none';
+            document.getElementById('loginTeacherBox').style.display = (tab === 'teacher') ? 'block' : 'none';
+            document.getElementById('registerTeacherBox').style.display = (tab === 'registerTeacher') ? 'block' : 'none';
+        }
+
+        function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
+        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
 
         function verifyAdminLogin() {
             if (btoa(document.getElementById('adminPassInput').value) === ADMIN_HASH) {
                 currentRole = 'admin';
                 document.getElementById('adminSidebarSection').style.display = 'block';
                 document.getElementById('teacherSidebarSection').style.display = 'block';
+                document.getElementById('adminSidebarTitleText').innerText = "لوحة الأدمن الرئيسي";
+                document.getElementById('settingsNavBtn').style.display = 'flex';
                 document.getElementById('adminLockBtn').style.display = 'none';
                 document.getElementById('adminExitBtn').style.display = 'flex';
                 document.getElementById('logoutContainer').style.display = 'block';
-                document.getElementById('adminModal').style.display = 'none';
+                document.getElementById('topSubtitle').innerText = "لوحة تحكم الأدمن";
+                document.getElementById('maintenanceScreen').style.display = 'none';
+                closeAdminModal();
                 showSection('sectionPlatformUsers');
                 loadPlatformUsersOverview();
+                loadTeacherRoomsIntoDropdowns();
             } else { alert('كلمة المرور خطأ!'); }
         }
 
@@ -736,159 +1209,670 @@
             const pass = document.getElementById('teacherPassword').value.trim();
             fetch(`${DATABASE_URL}/teachers.json`).then(res => res.json()).then(data => {
                 let found = null;
-                if (data) Object.keys(data).forEach(k => { if (data[k].username === user && data[k].password === pass) found = data[k]; });
+                if (data) { Object.keys(data).forEach(k => { if (data[k].username === user && data[k].password === pass) found = data[k]; }); }
                 if (found) {
-                    currentRole = 'teacher'; loggedTeacherData = found;
+                    currentRole = found.isSupervisor ? 'supervisor' : 'teacher'; 
+                    loggedTeacherData = found;
+                    localStorage.setItem('teacher_session', JSON.stringify({ id: found.id }));
+                    
                     document.getElementById('teacherSidebarSection').style.display = 'block';
                     document.getElementById('adminLockBtn').style.display = 'none';
                     document.getElementById('adminExitBtn').style.display = 'flex';
                     document.getElementById('logoutContainer').style.display = 'block';
-                    document.getElementById('adminModal').style.display = 'none';
-                    showSection('sectionUniversalUpload');
+
+                    if (found.isSupervisor) {
+                        document.getElementById('adminSidebarSection').style.display = 'block';
+                        document.getElementById('adminSidebarTitleText').innerText = "لوحة المشرف المساعد";
+                        document.getElementById('settingsNavBtn').style.display = 'none';
+                        document.getElementById('topSubtitle').innerText = `المشرف: ${found.name} (${found.subject})`;
+                        showSection('sectionPlatformUsers');
+                        loadPlatformUsersOverview();
+                    } else {
+                        document.getElementById('adminSidebarSection').style.display = 'none';
+                        document.getElementById('topSubtitle').innerText = `المدرس: ${found.name} (${found.subject})`;
+                        showSection('sectionUniversalUpload');
+                    }
+
+                    closeAdminModal(); 
                     loadTeacherRoomsIntoDropdowns();
-                } else { alert('معلومات الدخول غير صحيحة!'); }
+                    checkTeacherSessionLive();
+                } else { alert('معلومات الدخول غير صحيحة أو بانتظار موافقة الأدمن!'); }
+            });
+        }
+
+        function registerNewTeacher(e) {
+            e.preventDefault();
+            const name = document.getElementById('regTName').value.trim();
+            const subject = document.getElementById('regTSubject').value;
+            const username = document.getElementById('regTUser').value.trim();
+            const password = document.getElementById('regTPass').value.trim();
+            const reqId = 'TREQ_' + Date.now();
+
+            fetch(`${DATABASE_URL}/teacher_requests/${reqId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: reqId, name, subject, username, password, status: 'pending', timestamp: Date.now() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert('تم إرسال طلب تسجيل المدرس بنجاح إلى الإدارة بانتظار القبول!');
+                switchLoginTab('teacher');
             });
         }
 
         function logoutSystem() {
             cleanupActiveSession();
             localStorage.removeItem('student_session');
-            currentRole = ''; loggedTeacherData = null; currentStudentName = "";
+            localStorage.removeItem('teacher_session');
+            currentRole = '';
+            loggedTeacherData = null;
+            currentStudentName = "";
+            activeClass = "";
+            activeSub = "";
+            activeRoomId = "";
+            activeRoomTitleStr = "";
+            
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
             document.getElementById('logoutContainer').style.display = 'none';
             document.getElementById('adminLockBtn').style.display = 'flex';
             document.getElementById('adminExitBtn').style.display = 'none';
+            document.getElementById('topSubtitle').innerText = "المرحلة الثانوية";
+            
             showSection('authSection');
         }
 
         function cleanupActiveSession() {
-            if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-            if (remoteAudioEl) remoteAudioEl.srcObject = null;
-            if (activePresenceRef) { activePresenceRef.remove(); activePresenceRef = null; }
+            try {
+                if (localStream) {
+                    localStream.getTracks().forEach(track => track.stop());
+                    localStream = null;
+                }
+                if (remoteAudioEl) {
+                    remoteAudioEl.srcObject = null;
+                }
+                removeStudentPresence();
+            } catch (err) {
+                console.error(err);
+            }
         }
 
         function showSection(sectionId) {
-            if (sectionId !== 'roomMenuSection' && sectionId !== 'lecturesSection') cleanupActiveSession();
+            if (sectionId !== 'roomMenuSection' && sectionId !== 'lecturesSection') {
+                cleanupActiveSession();
+            }
+
             ['authSection', 'subjectsSection', 'teachersRoomsSection', 'roomMenuSection', 'lecturesSection', 'sectionCreateRoom', 'sectionManageRooms', 'sectionNotifications', 'sectionPlatformUsers', 'sectionVouchers', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionUniversalUpload', 'sectionTeacherReports'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
             });
+            if (sectionId === 'sectionManageRooms') fetchMyRooms();
             if (sectionId === 'sectionPlatformUsers') loadPlatformUsersOverview();
             if (sectionId === 'sectionVouchers') fetchVouchersList();
+            if (sectionId === 'sectionScheduleManage') renderScheduleManager();
+            if (sectionId === 'sectionAdminReports') fetchAdminReports();
             if (sectionId === 'sectionUniversalUpload') loadTeacherRoomsIntoDropdowns();
         }
 
-        function activateFreeTrial(e) {
-            e.preventDefault();
-            const name = document.getElementById('tStudentName').value.trim();
-            if (!name) return;
-            const studentData = { name, isFreeTrial: true, joinedAt: Date.now() };
-            currentStudentName = name;
-            localStorage.setItem('student_session', JSON.stringify(studentData));
-            document.getElementById('logoutContainer').style.display = 'block';
-            alert('🎉 تم تفعيل الشهر الأول التجريبي المجاني بنجاح.');
-            openClass('الأول المتوسط');
+        function loadPlatformUsersOverview() {
+            fetch(`${DATABASE_URL}/teachers.json`).then(res => res.json()).then(teachersData => {
+                let teachersHtml = '';
+                if (teachersData) {
+                    Object.keys(teachersData).forEach(k => {
+                        const t = teachersData[k];
+                        const isSup = t.isSupervisor === true;
+                        teachersHtml += `
+                            <div class="list-item" style="border-right: 4px solid ${isSup ? 'var(--warning)' : 'var(--success)'};">
+                                <div>
+                                    <strong>👨‍🏫 المدرس: ${t.name} ${isSup ? '⭐ (مشرف مساعد)' : ''}</strong><br>
+                                    <small style="color:var(--accent); font-weight:800;"><i class="fas fa-book"></i> المادة: ${t.subject}</small><br>
+                                    <small style="color:#64748b;">يوزر: ${t.username} | الباسورد: ${t.password}</small>
+                                </div>
+                                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                    ${currentRole === 'admin' ? `<button class="btn ${isSup ? 'btn-secondary' : 'btn-warning'}" style="padding:6px 10px; font-size:0.75rem;" onclick="toggleSupervisor('${t.id}', ${!isSup})">${isSup ? 'إلغاء الإشراف' : 'ترقية مشرف'}</button>` : ''}
+                                    <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteItem('teachers', '${t.id}', loadPlatformUsersOverview)">حذف المدرس</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                fetch(`${DATABASE_URL}/teacher_requests.json`).then(r => r.json()).then(reqs => {
+                    if (reqs) {
+                        Object.keys(reqs).forEach(rk => {
+                            const req = reqs[rk];
+                            if (req.status === 'pending') {
+                                teachersHtml += `
+                                    <div class="list-item" style="border-right: 4px solid var(--warning); background:#fffbeb;">
+                                        <div>
+                                            <strong>⏳ طلب مدرس جديد: ${req.name}</strong><br>
+                                            <small>المادة: ${req.subject} | اليوزر: ${req.username}</small>
+                                        </div>
+                                        <div style="display:flex; gap:6px;">
+                                            <button class="btn btn-success" style="padding:6px 10px; font-size:0.75rem;" onclick="approveTeacherRequest('${req.id}', '${req.name}', '${req.subject}', '${req.username}', '${req.password}')">قبول المدرس</button>
+                                            <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteItem('teacher_requests', '${req.id}', loadPlatformUsersOverview)">رفض</button>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    const tContainer = document.getElementById('adminTeachersListContainer');
+                    if (tContainer) tContainer.innerHTML = teachersHtml || '<p style="color:#64748b;">لا يوجد مدرسين مسجلين حالياً.</p>';
+                });
+            });
+
+            fetch(`${DATABASE_URL}/vouchers.json`).then(res => res.json()).then(vouchersData => {
+                let studentsHtml = '';
+                const now = Date.now();
+                const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+
+                if (vouchersData) {
+                    Object.keys(vouchersData).forEach(code => {
+                        const v = vouchersData[code];
+                        if (v.isUsed && v.usedBy) {
+                            const usedAt = v.usedAt || now;
+                            const expirationTime = usedAt + thirtyDaysMs;
+                            const diffTime = expirationTime - now;
+                            const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            const isExpired = daysLeft <= 0;
+
+                            studentsHtml += `
+                                <div class="list-item" style="border-right: 4px solid ${isExpired ? 'var(--danger)' : 'var(--accent)'};">
+                                    <div>
+                                        <strong>👤 الطالب: ${v.usedBy}</strong><br>
+                                        <small>الكود: <code>${v.code}</code></small><br>
+                                        <small style="font-weight:800; color:${isExpired ? 'var(--danger)' : 'var(--success)'};">
+                                            ${isExpired ? '⚠️ انتهى الاشتراك' : `⏳ الأيام المتبقية لنهاية الاشتراك: ${daysLeft} يوم`}
+                                        </small>
+                                    </div>
+                                    <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('vouchers', '${code}', loadPlatformUsersOverview)">حذف الطالب / انهاء اشتراكه</button>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                const sContainer = document.getElementById('adminStudentsListContainer');
+                if (sContainer) sContainer.innerHTML = studentsHtml || '<p style="color:#64748b;">لا توجد اشتراكات طلاب نشطة حالياً.</p>';
+            });
         }
 
-        function checkStudentSession() {
-            if (currentRole === 'admin' || currentRole === 'teacher') return true;
-            const session = localStorage.getItem('student_session');
-            if (session) {
-                const student = JSON.parse(session);
-                if (student && student.name) {
-                    const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-                    const now = Date.now();
-                    const elapsed = now - (student.joinedAt || now);
-                    if (elapsed <= thirtyDaysMs) {
-                        currentStudentName = student.name;
-                        document.getElementById('logoutContainer').style.display = 'block';
-                        return true;
+        function deleteAllStudentsBatch() {
+            if (confirm("⚠️ هل أنت متأكد من حذف وحذف اشتراكات جميع الطلاب دفعة واحدة لإنهاء الدوام؟")) {
+                fetch(`${DATABASE_URL}/vouchers.json`, { method: 'DELETE' }).then(() => {
+                    db.ref('active_students').remove();
+                    db.ref('room_permissions').remove();
+                    alert('تم حذف جميع الطلاب واشتراكاتهم بنجاح!');
+                    loadPlatformUsersOverview();
+                });
+            }
+        }
+
+        function deleteStudentsByGradeBatch() {
+            const gradeName = document.getElementById('batchGradeSelect').value;
+            if (confirm(`⚠️ هل أنت متأكد من حذف طلاب صف (${gradeName}) فقط؟`)) {
+                fetch(`${DATABASE_URL}/vouchers.json`).then(res => res.json()).then(data => {
+                    if (data) {
+                        Object.keys(data).forEach(k => {
+                            fetch(`${DATABASE_URL}/vouchers/${k}.json`, { method: 'DELETE' });
+                        });
+                    }
+                    alert(`تم حذف طلاب صف ${gradeName} بنجاح!`);
+                    loadPlatformUsersOverview();
+                });
+            }
+        }
+
+        function toggleSupervisor(teacherId, makeSuper) {
+            fetch(`${DATABASE_URL}/teachers/${teacherId}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify({ isSupervisor: makeSuper }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert(makeSuper ? '⭐ تم ترقية المدرس ليصبح مشرفاً مساعداً بنجاح!' : 'تم إلغاء صلاحية الإشراف عن المدرس.');
+                loadPlatformUsersOverview();
+            });
+        }
+
+        function approveTeacherRequest(reqId, name, subject, username, password) {
+            const tId = 'T_' + Date.now();
+            fetch(`${DATABASE_URL}/teachers/${tId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: tId, name, subject, username, password, isSupervisor: false }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                fetch(`${DATABASE_URL}/teacher_requests/${reqId}.json`, { method: 'DELETE' }).then(() => {
+                    alert(`تم قبول المدرس ${name} بنجاح!`);
+                    loadPlatformUsersOverview();
+                });
+            });
+        }
+
+        function loadTeacherRoomsIntoDropdowns() {
+            const creatorName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+            fetch(`${DATABASE_URL}/custom_rooms.json`).then(res => res.json()).then(data => {
+                let optionsHtml = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const r = data[k];
+                        if (currentRole === 'admin' || currentRole === 'supervisor' || r.creator === creatorName) {
+                            optionsHtml += `<option value="${r.id}">${r.title} (${r.grade})</option>`;
+                        }
+                    });
+                }
+                const uniRoomSel = document.getElementById('uniRoomId');
+                if (uniRoomSel) uniRoomSel.innerHTML = optionsHtml || '<option value="">أنشئ غرفة أولاً</option>';
+            });
+        }
+
+        function handleUniSectionChange(sectionVal) {
+            document.getElementById('uniFieldFileWrap').style.display = (sectionVal === 'lecture_pdf') ? 'block' : 'none';
+            document.getElementById('uniFieldUrlWrap').style.display = (sectionVal === 'recording_video') ? 'block' : 'none';
+            document.getElementById('uniQuizFieldsWrap').style.display = (sectionVal === 'quiz') ? 'block' : 'none';
+        }
+
+        function handleUniversalUpload(e) {
+            e.preventDefault();
+            const roomId = document.getElementById('uniRoomId').value;
+            const sectionType = document.getElementById('uniSectionType').value;
+            const title = document.getElementById('uniTitle').value.trim();
+
+            if (!roomId) { alert('اختر الغرفة أولاً!'); return; }
+
+            if (sectionType === 'lecture_pdf') {
+                const fileInput = document.getElementById('uniFile');
+                if (!fileInput.files[0]) { alert('اختر ملف PDF!'); return; }
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const contentId = 'CONT_' + Date.now();
+                    const base64Data = evt.target.result;
+                    const chunks = {};
+                    for (let i = 0; i < base64Data.length; i += 2 * 1024 * 1024) { chunks['part_' + Math.floor(i / (2 * 1024 * 1024))] = base64Data.substring(i, i + (2 * 1024 * 1024)); }
+                    fetch(`${DATABASE_URL}/contents/${contentId}.json`, {
+                        method: 'PUT',
+                        body: JSON.stringify({ id: contentId, roomId, title, chunks, date: new Date().toLocaleDateString('ar-EG') }),
+                        headers: { 'Content-Type': 'application/json' }
+                    }).then(() => { alert('تم رفع الملزمة بنجاح!'); document.getElementById('uniTitle').value = ''; fileInput.value = ''; });
+                };
+                reader.readAsDataURL(file);
+            } else if (sectionType === 'recording_video') {
+                const url = document.getElementById('uniUrl').value.trim();
+                if (!url) { alert('أدخل رابط الفيديو!'); return; }
+                const recId = 'REC_' + Date.now();
+                fetch(`${DATABASE_URL}/recordings/${recId}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ id: recId, roomId, title, url }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => { alert('تم نشر المحاضرة المسجلة بنجاح!'); document.getElementById('uniTitle').value = ''; document.getElementById('uniUrl').value = ''; });
+            } else if (sectionType === 'quiz') {
+                const question = document.getElementById('uniQQuestion').value.trim();
+                const opt1 = document.getElementById('uniQOpt1').value.trim();
+                const opt2 = document.getElementById('uniQOpt2').value.trim();
+                const opt3 = document.getElementById('uniQOpt3').value.trim();
+                const correct = parseInt(document.getElementById('uniQCorrect').value);
+                const qId = 'QUIZ_' + Date.now();
+                fetch(`${DATABASE_URL}/quizzes/${qId}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ id: qId, roomId, title, question, opt1, opt2, opt3, correct }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => { alert('تم نشر الاختبار بنجاح!'); document.getElementById('uniTitle').value = ''; document.getElementById('uniQQuestion').value = ''; });
+            } else if (sectionType === 'homework') {
+                const hwId = 'HW_' + Date.now();
+                fetch(`${DATABASE_URL}/homework/${hwId}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ id: hwId, roomId, title }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => { alert('تم نشر الواجب البيتي بنجاح!'); document.getElementById('uniTitle').value = ''; });
+            }
+        }
+
+        function handleSavePreparation(e) {
+            e.preventDefault();
+            const prepId = document.getElementById('editPrepId').value || ('PREP_' + Date.now());
+            const prepType = document.getElementById('prepTypeSelect').value;
+            const textContent = document.getElementById('prepTextContent').value.trim();
+            const fileInput = document.getElementById('prepFileInput');
+
+            const saveProcess = (fileDataBase64 = '', fileName = '') => {
+                fetch(`${DATABASE_URL}/preparations/${activeRoomId}/${prepId}.json`).then(res => res.json()).then(oldData => {
+                    const prepData = {
+                        id: prepId,
+                        prepType,
+                        textContent,
+                        fileData: fileDataBase64 || (oldData ? oldData.fileData : ''),
+                        fileName: fileName || (oldData ? oldData.fileName : ''),
+                        updatedAt: new Date().toLocaleString('ar-EG')
+                    };
+                    fetch(`${DATABASE_URL}/preparations/${activeRoomId}/${prepId}.json`, {
+                        method: 'PUT',
+                        body: JSON.stringify(prepData),
+                        headers: { 'Content-Type': 'application/json' }
+                    }).then(() => {
+                        alert('تم حفظ وتحديث المنشور بنجاح!');
+                        resetPrepForm();
+                        renderRoomPreparation();
+                    });
+                });
+            };
+
+            if (fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    saveProcess(evt.target.result, file.name);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                saveProcess('', '');
+            }
+        }
+
+        function resetPrepForm() {
+            document.getElementById('editPrepId').value = '';
+            document.getElementById('prepTextContent').value = '';
+            document.getElementById('prepFileInput').value = '';
+            document.getElementById('cancelPrepEditBtn').style.display = 'none';
+        }
+
+        function editPreparation(prepId, prepType, textContent) {
+            document.getElementById('editPrepId').value = prepId;
+            document.getElementById('prepTypeSelect').value = prepType;
+            document.getElementById('prepTextContent').value = textContent;
+            document.getElementById('cancelPrepEditBtn').style.display = 'inline-block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deletePreparation(prepId) {
+            if (confirm('هل أنت متأكد من حذف هذا التحضير أو الامتحان؟')) {
+                fetch(`${DATABASE_URL}/preparations/${activeRoomId}/${prepId}.json`, { method: 'DELETE' }).then(() => {
+                    alert('تم الحذف بنجاح!');
+                    renderRoomPreparation();
+                });
+            }
+        }
+
+        function renderRoomPreparation() {
+            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
+            const prepFormBox = document.getElementById('teacherPrepFormBox');
+            if (prepFormBox) {
+                prepFormBox.style.display = isTeacherOrAdmin ? 'block' : 'none';
+            }
+
+            fetch(`${DATABASE_URL}/preparations/${activeRoomId}.json`).then(res => res.json()).then(data => {
+                const container = document.getElementById('studentPrepDisplayContainer');
+                if (!container) return;
+
+                if (!data) {
+                    container.innerHTML = `<p style="color: #64748b; text-align: center; padding: 20px;">لا توجد تحضيرات أو امتحانات منشورة حالياً في هذه الغرفة.</p>`;
+                    return;
+                }
+
+                let html = '';
+                Object.keys(data).forEach(k => {
+                    const item = data[k];
+                    let badgeColor = 'var(--accent)';
+                    if (item.prepType.includes('شهري')) badgeColor = 'var(--warning)';
+                    if (item.prepType.includes('نصف السنة')) badgeColor = 'var(--danger)';
+                    if (item.prepType.includes('شفهي')) badgeColor = 'var(--success)';
+
+                    let fileBtnHtml = '';
+                    if (item.fileData) {
+                        fileBtnHtml = `
+                            <div style="margin-top: 12px;">
+                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openFileModal('${item.fileName || 'ملف مرفق'}', '${encodeURIComponent(item.fileData)}')">
+                                    <i class="fas fa-file-alt"></i> عرض الملف المرفق (${item.fileName || 'ملف'})
+                                </button>
+                            </div>
+                        `;
+                    }
+
+                    let teacherControls = '';
+                    if (isTeacherOrAdmin) {
+                        teacherControls = `
+                            <div style="display: flex; gap: 6px; margin-top: 12px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+                                <button class="btn btn-warning" style="padding: 4px 10px; font-size: 0.75rem;" onclick="editPreparation('${item.id}', '${item.prepType}', '${item.textContent.replace(/'/g, "\\'")}')"><i class="fas fa-edit"></i> تعديل</button>
+                                <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="deletePreparation('${item.id}')"><i class="fas fa-trash"></i> حذف</button>
+                            </div>
+                        `;
+                    }
+
+                    html += `
+                        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px; margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                                <span style="background: ${badgeColor}; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 800;">${item.prepType}</span>
+                                <span style="font-size: 0.78rem; color: #64748b;">${item.updatedAt || ''}</span>
+                            </div>
+                            <p style="white-space: pre-line; font-size: 0.98rem; color: #1e293b; line-height: 1.6; font-weight: 600;">${item.textContent}</p>
+                            ${fileBtnHtml}
+                            ${teacherControls}
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html || `<p style="color: #64748b; text-align: center; padding: 20px;">لا توجد تحضيرات أو امتحانات حالياً.</p>`;
+            });
+        }
+
+        function openEditItemModal(type, id, currentTitle) {
+            document.getElementById('editItemType').value = type;
+            document.getElementById('editItemId').value = id;
+            document.getElementById('editItemTitleInput').value = currentTitle;
+            document.getElementById('editItemModal').style.display = 'flex';
+        }
+
+        function saveEditedItem() {
+            const type = document.getElementById('editItemType').value;
+            const id = document.getElementById('editItemId').value;
+            const newTitle = document.getElementById('editItemTitleInput').value.trim();
+            if (!newTitle) { alert('اكتب العنوان الجديد!'); return; }
+
+            let path = '';
+            if (type === 'pdf') path = `contents/${id}`;
+            if (type === 'recording') path = `recordings/${id}`;
+            if (type === 'quiz') path = `quizzes/${id}`;
+            if (type === 'homework') path = `homework/${id}`;
+
+            if (path) {
+                fetch(`${DATABASE_URL}/${path}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ title: newTitle }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => {
+                    alert('تم تعديل العنوان بنجاح!');
+                    document.getElementById('editItemModal').style.display = 'none';
+                    if (type === 'pdf' || type === 'recording') renderRoomLectures();
+                    if (type === 'quiz') renderRoomQuizzes();
+                    if (type === 'homework') renderRoomHomework();
+                });
+            }
+        }
+
+        function sendPaymentNotification(e) {
+            e.preventDefault();
+            const name = document.getElementById('nStudentName').value.trim();
+            const phone = document.getElementById('nPhone').value.trim();
+            const payMethod = document.getElementById('nPayMethod').value;
+            const refNum = document.getElementById('nRefNum').value.trim();
+            const notifId = 'NOTIF_' + Date.now();
+
+            fetch(`${DATABASE_URL}/notifications/${notifId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: notifId, name, phone, payMethod, refNum, status: 'pending', timestamp: Date.now() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert('تم إرسال طلب التحويل بنجاح! انتظر مراجعة الأدمن وإرسال كود التفعيل عبر واتساب.');
+                document.getElementById('nStudentName').value = '';
+                document.getElementById('nPhone').value = '';
+                document.getElementById('nRefNum').value = '';
+            });
+        }
+
+        function listenToNotificationsRealtime() {
+            db.ref('notifications').on('value', snapshot => {
+                const data = snapshot.val();
+                let count = 0;
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const notif = data[k];
+                        if (notif.status === 'pending') {
+                            count++;
+                            html += `
+                                <div class="list-item" style="border-right: 4px solid var(--accent);">
+                                    <div><strong>🔔 طالب: ${notif.name}</strong><br><small>هاتف واتساب: ${notif.phone} | التحويل: ${notif.payMethod} | العملية: ${notif.refNum}</small></div>
+                                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                        <button class="btn btn-whatsapp" style="padding:8px 14px; font-size:0.85rem;" onclick="approveAndSendWhatsApp('${notif.id}', '${notif.name}', '${notif.phone}')">
+                                            <i class="fab fa-whatsapp"></i> قبول وإرسال الكود عبر واتساب
+                                        </button>
+                                        <button class="btn btn-danger" style="padding:8px 12px; font-size:0.8rem;" onclick="deleteItem('notifications', '${notif.id}', listenToNotificationsRealtime)">رفض</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                const topBadge = document.getElementById('topNotifBadge');
+                const sidebarBadge = document.getElementById('sidebarNotifBadge');
+                if (topBadge && sidebarBadge) {
+                    if (count > 0) {
+                        topBadge.innerText = count; topBadge.style.display = 'flex';
+                        sidebarBadge.innerText = count; sidebarBadge.style.display = 'inline-flex';
                     } else {
-                        logoutSystem();
-                        alert('⚠️ انتهت فترة الشهر المجاني التجريبي! يرجى إدخال كود تفعيل جديد للاستمرار.');
-                        showSection('authSection');
-                        return false;
+                        topBadge.style.display = 'none'; sidebarBadge.style.display = 'none';
                     }
                 }
-            }
-            return false;
+                const notifList = document.getElementById('liveNotificationsList');
+                if (notifList) notifList.innerHTML = html || '<p style="text-align:center; color:#64748b;">لا توجد طلبات اشتراك معلقة.</p>';
+            });
         }
 
-        function tryOpenClass(className) {
-            if (currentRole === 'admin' || currentRole === 'teacher' || checkStudentSession()) openClass(className);
-            else { alert('يجب تفعيل الاشتراك أولاً!'); showSection('authSection'); }
+        function approveAndSendWhatsApp(notifId, studentName, studentPhone) {
+            const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
+            
+            fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ code: randomCode, isUsed: true, usedBy: studentName, usedAt: Date.now() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                fetch(`${DATABASE_URL}/notifications/${notifId}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ status: 'approved', generatedCode: randomCode }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => {
+                    let formattedPhone = studentPhone.trim();
+                    if (formattedPhone.startsWith('0')) {
+                        formattedPhone = '964' + formattedPhone.substring(1);
+                    }
+                    
+                    const message = `🎓 *منصة الأستاذ وليد التعليمية - إيصال اشتراك رسمي*\n\n` +
+                                    `أهلاً بك عزيزي الطالب *${studentName}*.\n` +
+                                    `تم تأكيد استلام التحويل المالي وتفعيل اشتراكك الشهري بنجاح.\n\n` +
+                                    `📌 *معلومات حسابك السري:*\n` +
+                                    `• *كود التفعيل:* \`${randomCode}\`\n\n` +
+                                    `⚠️ *تنبيه لحفظ الحقوق:*\n` +
+                                    `هذا الكود مرتبط حصرياً باسمك الثلاثي ورقم هاتفك، ولا يجوز مشاركته مع أي شخص آخر لضمان استمرار اشتراكك وحماية حقوق المنصة.\n\n` +
+                                    `🔗 يرجى الدخول للمنصة والبدء بالدراسة بالتوفيق!`;
+
+                    const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
+                    window.open(whatsappUrl, '_blank');
+                });
+            });
         }
 
         function activateWithVoucher(e) {
             e.preventDefault();
             const name = document.getElementById('vStudentName').value.trim();
             const code = document.getElementById('vCodeInput').value.trim();
+
             fetch(`${DATABASE_URL}/vouchers/${code}.json`).then(res => res.json()).then(voucher => {
-                if (voucher && (!voucher.isUsed || voucher.usedBy === name)) {
-                    if (!voucher.isUsed) {
-                        fetch(`${DATABASE_URL}/vouchers/${code}.json`, { method: 'PATCH', body: JSON.stringify({ isUsed: true, usedBy: name, usedAt: Date.now() }), headers: { 'Content-Type': 'application/json' } });
-                    }
-                    currentStudentName = name;
-                    localStorage.setItem('student_session', JSON.stringify({ id: code, name, isFreeTrial: false, joinedAt: Date.now() }));
-                    document.getElementById('logoutContainer').style.display = 'block';
-                    alert('تم التفعيل بنجاح!');
-                    openClass('الأول المتوسط');
-                } else { alert('كود التفعيل غير صحيح أو مستخدم!'); }
-            });
-        }
-
-        function sendPaymentNotification(e) {
-            e.preventDefault();
-            const notifId = 'NOTIF_' + Date.now();
-            fetch(`${DATABASE_URL}/notifications/${notifId}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({ id: notifId, name: document.getElementById('nStudentName').value.trim(), phone: document.getElementById('nPhone').value.trim(), payMethod: document.getElementById('nPayMethod').value, refNum: document.getElementById('nRefNum').value.trim(), status: 'pending' }),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => alert('تم إرسال الطلب بنجاح!'));
-        }
-
-        function listenToNotificationsRealtime() {
-            db.ref('notifications').on('value', snapshot => {
-                const data = snapshot.val();
-                let count = 0; let html = '';
-                if (data) {
-                    Object.keys(data).forEach(k => {
-                        if (data[k].status === 'pending') {
-                            count++;
-                            html += `<div class="list-item"><div><strong>طالب: ${data[k].name}</strong><br>هاتف: ${data[k].phone}</div><button class="btn btn-whatsapp" onclick="approveAndSendWhatsApp('${data[k].id}', '${data[k].name}', '${data[k].phone}')">قبول وإرسال الكود</button></div>`;
+                if (voucher) {
+                    if (!voucher.isUsed || voucher.usedBy === name) {
+                        if (!voucher.isUsed) {
+                            fetch(`${DATABASE_URL}/vouchers/${code}.json`, {
+                                method: 'PATCH',
+                                body: JSON.stringify({ isUsed: true, usedBy: name, usedAt: Date.now() }),
+                                headers: { 'Content-Type': 'application/json' }
+                            });
                         }
-                    });
+                        currentStudentName = name;
+                        localStorage.setItem('student_session', JSON.stringify({ id: code, name: name, status: 'active' }));
+                        document.getElementById('logoutContainer').style.display = 'block';
+                        alert('تم تسجيل الدخول بنجاح!');
+                        openClass('الأول المتوسط');
+                    } else {
+                        alert('⚠️ عذراً، هذا الكود مستخدم بالفعل من قبل طالب آخر!');
+                    }
+                } else { 
+                    alert('كود التفعيل غير صحيح!'); 
                 }
-                const badge = document.getElementById('topNotifBadge');
-                if (badge) { badge.innerText = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
-                const list = document.getElementById('liveNotificationsList');
-                if (list) list.innerHTML = html || '<p>لا توجد طلبات معلقة.</p>';
-            });
-        }
-
-        function approveAndSendWhatsApp(notifId, studentName, studentPhone) {
-            const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
-            fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, { method: 'PUT', body: JSON.stringify({ code: randomCode, isUsed: true, usedBy: studentName, usedAt: Date.now() }), headers: { 'Content-Type': 'application/json' } }).then(() => {
-                fetch(`${DATABASE_URL}/notifications/${notifId}.json`, { method: 'PATCH', body: JSON.stringify({ status: 'approved' }), headers: { 'Content-Type': 'application/json' } }).then(() => {
-                    let phone = studentPhone.startsWith('0') ? '964' + studentPhone.substring(1) : studentPhone;
-                    window.open(`https://wa.me/${phone}?text=${encodeURIComponent('كود التفعيل الخاص بك: ' + randomCode)}`, '_blank');
-                });
             });
         }
 
         function generateVoucher(e) {
             e.preventDefault();
-            const code = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
-            fetch(`${DATABASE_URL}/vouchers/${code}.json`, { method: 'PUT', body: JSON.stringify({ code, isUsed: false }), headers: { 'Content-Type': 'application/json' } }).then(() => fetchVouchersList());
+            const randomCode = 'WALEED-' + Math.floor(1000 + Math.random() * 9000);
+            fetch(`${DATABASE_URL}/vouchers/${randomCode}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ code: randomCode, isUsed: false, createdAt: Date.now() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert(`تم توليد الكود بنجاح: ${randomCode}`); fetchVouchersList(); });
         }
 
         function fetchVouchersList() {
             fetch(`${DATABASE_URL}/vouchers.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) Object.keys(data).forEach(k => { html += `<div class="list-item">كود: ${data[k].code} ${data[k].isUsed ? '(مستخدم)' : '(جاهز)'}</div>`; });
-                document.getElementById('vouchersList').innerHTML = html || '<p>لا توجد كودات.</p>';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const v = data[k];
+                        html += `<div class="list-item"><div>الكود: <strong>${v.code}</strong> ${v.isUsed ? `(مستخدم: ${v.usedBy})` : '(جاهز للاستخدام)'}</div><button class="btn btn-danger" onclick="deleteItem('vouchers', '${v.code}', fetchVouchersList)">حذف</button></div>`;
+                    });
+                }
+                const vList = document.getElementById('vouchersList');
+                if (vList) vList.innerHTML = html || '<p>لا توجد كودات.</p>';
             });
+        }
+
+        function checkStudentSession() {
+            if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') return true;
+            const session = localStorage.getItem('student_session');
+            if (session) {
+                const student = JSON.parse(session);
+                if (student && student.id && student.name) {
+                    fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
+                        if (voucher && voucher.isUsed && voucher.usedBy === student.name) {
+                            currentStudentName = student.name;
+                            document.getElementById('logoutContainer').style.display = 'block';
+                            return true;
+                        } else {
+                            logoutSystem();
+                        }
+                    }).catch(() => {});
+                }
+            }
+            return false;
+        }
+
+        function tryOpenClass(className) {
+            if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                openClass(className);
+                return;
+            }
+            const session = localStorage.getItem('student_session');
+            if (session) {
+                const student = JSON.parse(session);
+                fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
+                    if (voucher && voucher.isUsed) {
+                        currentStudentName = student.name;
+                        openClass(className);
+                    } else {
+                        logoutSystem();
+                        alert('⚠️ عذراً، انتهى اشتراكك أو تم حذفه. يرجى التفعيل من جديد.');
+                        showSection('authSection');
+                    }
+                });
+            } else {
+                alert('يجب تفعيل الاشتراك أولاً!');
+                showSection('authSection');
+            }
         }
 
         function openClass(className) {
@@ -896,7 +1880,9 @@
             document.getElementById('currentClassName').innerText = className;
             showSection('subjectsSection');
             let html = '';
-            allSubjectsList.forEach(sub => { html += `<div class="sub-card" onclick="openSubjectRooms('${sub.name}')"><i class="${sub.icon}"></i><span>${sub.name}</span></div>`; });
+            allSubjectsList.forEach(sub => {
+                html += `<div class="sub-card" onclick="openSubjectRooms('${sub.name}')"><i class="${sub.icon}"></i><span>${sub.name}</span></div>`;
+            });
             document.getElementById('dynamicSubjectsGrid').innerHTML = html;
         }
 
@@ -910,234 +1896,997 @@
                     Object.keys(data).forEach(k => {
                         const r = data[k];
                         if (r.grade === activeClass && r.subject === subName) {
-                            html += `<div class="sub-card" onclick="openRoomMenu('${r.id}', '${r.title}')"><i class="fas fa-chalkboard-teacher"></i><span>${r.title}</span></div>`;
+                            const isRoomOpen = r.isOpen !== false;
+                            const isFree = r.accessType === 'free' || !r.pin;
+                            html += `
+                                <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin || ''}', ${isRoomOpen}, '${r.accessType || 'free'}', '${r.creator || ''}')">
+                                    <i class="fas ${isFree ? 'fa-lock-open' : 'fa-lock'}" style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; position:absolute; top:10px; left:10px;" title="${isFree ? 'مجانية' : 'خصوصي بررمز'}"></i>
+                                    <i class="fas fa-chalkboard-teacher" style="color:var(--accent);"></i>
+                                    <span><strong>${r.title}</strong><br><small>الأستاذ: ${r.creator || 'مدرس'}</small><br><small style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; font-weight:800;">${isFree ? '🟢 مجانية' : '🔒 محمية بررمز'}</small></span>
+                                </div>
+                            `;
                         }
                     });
                 }
-                document.getElementById('teachersRoomsGrid').innerHTML = html || '<p>لا توجد غرف.</p>';
+                document.getElementById('teachersRoomsGrid').innerHTML = html || '<p style="color:#64748b; grid-column:1/-1; text-align:center;">لا توجد غرف متاحة.</p>';
             });
         }
 
-        function openRoomMenu(roomId, roomTitle) {
-            activeRoomId = roomId; activeRoomTitleStr = roomTitle;
-            document.getElementById('currentRoomMenuTitle').innerText = `غرفة: ${roomTitle}`;
-            showSection('roomMenuSection');
+        function togglePinInput(val) {
+            document.getElementById('pinInputGroup').style.display = (val === 'protected') ? 'block' : 'none';
         }
+
+        function toggleEditPinInput(val) {
+            document.getElementById('editPinInputGroup').style.display = (val === 'protected') ? 'block' : 'none';
+        }
+
+        function promptRoomPin(roomId, roomTitle, roomPin, isOpen, accessType, roomCreator) {
+            const currentTeacherName = loggedTeacherData ? loggedTeacherData.name : '';
+            const isOwnerTeacher = (currentRole === 'teacher' && currentTeacherName === roomCreator);
+            const isAdminOrSup = (currentRole === 'admin' || currentRole === 'supervisor');
+
+            if (isAdminOrSup || isOwnerTeacher) {
+                openRoomMenu(roomId, roomTitle);
+                return;
+            }
+
+            fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`).then(res => res.json()).then(roomData => {
+                if (roomData && roomData.isOpen === false) {
+                    alert('⚠️ عذراً، هذه الغرفة مغلقة حالياً.');
+                    return;
+                }
+
+                if (currentRole === 'teacher' || currentRole === 'supervisor') {
+                    pendingRoomData = { id: roomId, title: roomTitle, pin: roomData.pin || roomPin };
+                    document.getElementById('studentPinInput').value = '';
+                    document.getElementById('pinModal').style.display = 'flex';
+                    return;
+                }
+
+                if (!roomData || roomData.accessType === 'free' || !roomData.pin) {
+                    openRoomMenu(roomId, roomTitle);
+                    return;
+                }
+
+                if (currentStudentName) {
+                    fetch(`${DATABASE_URL}/room_kicked/${roomId}.json`).then(res => res.json()).then(kickedData => {
+                        if (kickedData) {
+                            let isKicked = false;
+                            Object.keys(kickedData).forEach(k => {
+                                if (kickedData[k].studentName === currentStudentName) isKicked = true;
+                            });
+                            if (isKicked) {
+                                document.getElementById('kickedModal').style.display = 'flex';
+                                return;
+                            }
+                        }
+                        pendingRoomData = { id: roomId, title: roomTitle, pin: roomData.pin };
+                        document.getElementById('studentPinInput').value = '';
+                        document.getElementById('pinModal').style.display = 'flex';
+                    });
+                } else {
+                    pendingRoomData = { id: roomId, title: roomTitle, pin: roomData.pin };
+                    document.getElementById('studentPinInput').value = '';
+                    document.getElementById('pinModal').style.display = 'flex';
+                }
+            });
+        }
+
+        function closePinModal() { document.getElementById('pinModal').style.display = 'none'; pendingRoomData = null; }
+
+        function verifyRoomPin() {
+            if (pendingRoomData) {
+                const enteredPin = String(document.getElementById('studentPinInput').value).trim();
+                const correctPin = String(pendingRoomData.pin).trim();
+                
+                if (enteredPin === correctPin || correctPin === "") {
+                    const rId = pendingRoomData.id;
+                    const rTitle = pendingRoomData.title;
+                    
+                    if (currentStudentName) {
+                        const sKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+                        db.ref(`room_permissions/${rId}/${sKey}`).set({ allowed: true, timestamp: Date.now() });
+                    }
+                    
+                    closePinModal();
+                    openRoomMenu(rId, rTitle);
+                } else {
+                    alert('رمز PIN الخاص بالغرفة غير صحيح!');
+                }
+            }
+        }
+
+        function registerStudentPresence(roomId) {
+            const displayName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
+                (loggedTeacherData ? loggedTeacherData.name + ' (أستاذ/مشرف)' : 'الأستاذ (المضيف)') : 
+                (currentStudentName || 'طالب زائر');
+            
+            if (activePresenceRef) {
+                activePresenceRef.remove();
+            }
+
+            const userKey = displayName.replace(/[.#$\/\[\]]/g, '_') + '_' + Date.now();
+            activePresenceRef = db.ref(`active_students/${roomId}/${userKey}`);
+            
+            const userData = {
+                name: displayName,
+                joinedAt: Date.now(),
+                status: 'نشط'
+            };
+
+            activePresenceRef.set(userData);
+            activePresenceRef.onDisconnect().remove();
+        }
+
+        function removeStudentPresence() {
+            if (activePresenceRef) {
+                activePresenceRef.remove();
+                activePresenceRef = null;
+            }
+        }
+
+        function handleCreateCustomRoom(e) {
+            e.preventDefault();
+            const title = document.getElementById('crTitle').value.trim();
+            const grade = document.getElementById('crGrade').value;
+            const subject = document.getElementById('crSubject').value;
+            const accessType = document.getElementById('crAccessType').value;
+            const pin = accessType === 'protected' ? String(document.getElementById('crPin').value).trim() : '';
+            const roomId = 'ROOM_' + Date.now();
+            const creatorName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+
+            fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: roomId, title, grade, subject, accessType, pin, isOpen: true, creator: creatorName }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert('تم إنشاء الغرفة بنجاح!');
+                document.getElementById('crTitle').value = '';
+                document.getElementById('crPin').value = '';
+                loadTeacherRoomsIntoDropdowns();
+                openClass(grade);
+            });
+        }
+
+        function fetchMyRooms() {
+            const creatorName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+            fetch(`${DATABASE_URL}/custom_rooms.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const r = data[k];
+                        if (currentRole === 'admin' || currentRole === 'supervisor' || r.creator === creatorName) {
+                            const isOpen = r.isOpen !== false;
+                            const isFree = r.accessType === 'free' || !r.pin;
+                            html += `
+                                <div class="list-item" style="border-right: 4px solid ${isFree ? 'var(--success)' : 'var(--warning)'};">
+                                    <div><strong>${r.title}</strong><br><small>الصف: ${r.grade} | المادة: ${r.subject} | النوع: ${isFree ? '🟢 مجانية' : '🔒 خصوصي بررمز (' + r.pin + ')'}</small></div>
+                                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                        <button class="btn ${isOpen ? 'btn-danger' : 'btn-success'}" style="padding:6px 12px; font-size:0.8rem;" onclick="toggleRoomLock('${r.id}', ${!isOpen})">${isOpen ? 'قفل الغرفة' : 'فتح الغرفة'}</button>
+                                        <button class="btn btn-warning" style="padding:6px 12px; font-size:0.8rem;" onclick="openEditRoomModal('${r.id}', '${r.title}', '${r.accessType || 'free'}', '${r.pin || ''}', ${isOpen})">تعديل</button>
+                                        <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('custom_rooms', '${r.id}', fetchMyRooms)">حذف</button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                const myRoomsC = document.getElementById('myRoomsListContainer');
+                if (myRoomsC) myRoomsC.innerHTML = html || '<p>لا توجد غرف خاصة بك.</p>';
+            });
+        }
+
+        function toggleRoomLock(roomId, newStatus) {
+            fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify({ isOpen: newStatus }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                alert(newStatus ? '🟢 تم فتح الغرفة بنجاح!' : '🔴 تم قفل الغرفة بنجاح!');
+                fetchMyRooms();
+            });
+        }
+
+        function openEditRoomModal(roomId, title, accessType, pin, isOpen) {
+            document.getElementById('editRoomId').value = roomId;
+            document.getElementById('editRoomTitleInput').value = title;
+            document.getElementById('editRoomAccessType').value = accessType;
+            document.getElementById('editRoomPinInput').value = pin;
+            document.getElementById('editRoomIsOpen').value = isOpen ? "true" : "false";
+            toggleEditPinInput(accessType);
+            document.getElementById('editRoomModal').style.display = 'flex';
+        }
+        function closeEditRoomModal() { document.getElementById('editRoomModal').style.display = 'none'; }
+
+        function saveEditedRoom() {
+            const roomId = document.getElementById('editRoomId').value;
+            const title = document.getElementById('editRoomTitleInput').value.trim();
+            const accessType = document.getElementById('editRoomAccessType').value;
+            const pin = accessType === 'protected' ? String(document.getElementById('editRoomPinInput').value).trim() : '';
+            const isOpen = document.getElementById('editRoomIsOpen').value === "true";
+            
+            fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
+                method: 'PATCH',
+                body: JSON.stringify({ title, accessType, pin, isOpen }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم تحديث إعدادات الغرفة!'); closeEditRoomModal(); fetchMyRooms(); });
+        }
+
+        function openRoomMenu(roomId, roomTitle) {
+            activeRoomId = roomId;
+            activeRoomTitleStr = roomTitle;
+            document.getElementById('currentRoomMenuTitle').innerText = `غرفة: ${roomTitle}`;
+            
+            cleanupActiveSession();
+            showSection('roomMenuSection');
+            
+            if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher' && currentStudentName) {
+                listenToStudentKickStatus(roomId);
+            }
+        }
+
+        function backToRoomMenu() { 
+            cleanupActiveSession(); 
+            showSection('roomMenuSection'); 
+        }
+
+        window.addEventListener('beforeunload', function() {
+            cleanupActiveSession();
+        });
 
         function openRoomSection(paneId) {
             document.getElementById('currentRoomContentTitle').innerText = `غرفة: ${activeRoomTitleStr}`;
             document.getElementById('liveRoomTitleDisplay').innerText = activeRoomTitleStr;
             showSection('lecturesSection');
+            
             document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
             document.getElementById(paneId).classList.add('active');
 
-            if (paneId === 'panePreparation') renderRoomPreparation();
-            if (paneId === 'paneLive') { registerStudentPresence(activeRoomId); setupWirelessAudioControls(); }
-            if (paneId === 'paneChatRoom') openWhatsappChatSection();
-            if (paneId === 'paneLectures') renderRoomLectures();
-            if (paneId === 'paneQuestions') renderRoomQuestions();
+            if (paneId === 'panePreparation') {
+                renderRoomPreparation();
+            }
+
+            if (paneId === 'paneLive') { 
+                registerStudentPresence(activeRoomId);
+                setupWirelessAudioControls(); 
+                renderAllAttendeesList(); 
+            } else {
+                cleanupActiveSession(); 
+            }
+
+            if (paneId === 'paneChatRoom') {
+                openWhatsappChatSection();
+            }
+
+            if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
+            if (paneId === 'paneQuestions') { renderRoomQuestions(); }
             if (paneId === 'paneQuizzes') { renderRoomQuizzes(); renderRoomHomework(); }
-            if (paneId === 'paneGrades') renderRoomGrades();
+            if (paneId === 'paneGrades') { 
+                renderRoomGrades(); 
+                if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                    document.getElementById('teacherGradeAddBox').style.display = 'flex';
+                    renderActiveStudentsManagementForTeacher();
+                } else {
+                    document.getElementById('teacherGradeAddBox').style.display = 'none';
+                }
+            }
         }
 
-        function registerStudentPresence(roomId) {
-            const name = currentStudentName || 'طالب';
-            if (activePresenceRef) activePresenceRef.remove();
-            activePresenceRef = db.ref(`active_students/${roomId}/${name}_${Date.now()}`);
-            activePresenceRef.set({ name, joinedAt: Date.now() });
-            activePresenceRef.onDisconnect().remove();
-        }
-
-        function handleCreateCustomRoom(e) {
-            e.preventDefault();
-            const roomId = 'ROOM_' + Date.now();
-            fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({ id: roomId, title: document.getElementById('crTitle').value.trim(), grade: document.getElementById('crGrade').value, subject: document.getElementById('crSubject').value, creator: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد' }),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => alert('تم إنشاء الغرفة بنجاح!'));
-        }
-
-        function loadTeacherRoomsIntoDropdowns() {
-            fetch(`${DATABASE_URL}/custom_rooms.json`).then(res => res.json()).then(data => {
+        function renderActiveStudentsManagementForTeacher() {
+            db.ref(`active_students/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
                 let html = '';
-                if (data) Object.keys(data).forEach(k => { html += `<option value="${data[k].id}">${data[k].title}</option>`; });
-                const sel = document.getElementById('uniRoomId');
-                if (sel) sel.innerHTML = html || '<option>لا توجد غرف</option>';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const st = data[k];
+                        html += `
+                            <div class="list-item" style="border-right: 4px solid var(--success);">
+                                <div><strong>👤 الشخص: ${st.name}</strong><br><small style="color:var(--success);">🟢 متواجد في الغرفة</small></div>
+                                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                    <button class="btn btn-warning" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherWarnStudent('${st.name}')"><i class="fas fa-exclamation-triangle"></i> تنبيه</button>
+                                    <button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherKickStudent('${k}', '${st.name}')"><i class="fas fa-ban"></i> طرد</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                const activeSList = document.getElementById('activeStudentsLiveManagementList');
+                if (activeSList) activeSList.innerHTML = html || '<p style="color:#64748b;">لا يوجد أشخاص متواجدون الآن في الغرفة.</p>';
             });
         }
 
-        function handleUniversalUpload(e) {
-            e.preventDefault();
-            const roomId = document.getElementById('uniRoomId').value;
-            const type = document.getElementById('uniSectionType').value;
-            const title = document.getElementById('uniTitle').value.trim();
-            if (type === 'lecture_pdf') {
-                const file = document.getElementById('uniFile').files[0];
+        function renderAllAttendeesList() {
+            db.ref(`active_students/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                let html = '';
+                let count = 0;
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        count++;
+                        const st = data[k];
+                        html += `
+                            <div class="attendee-item">
+                                <div class="attendee-user-info">
+                                    <img src="IMG_1507.jpeg" class="attendee-mini-avatar" onerror="this.src='https://via.placeholder.com/35'">
+                                    <span style="color:#fff; font-size:0.85rem; font-weight:800;">${st.name}</span>
+                                </div>
+                                <span style="font-size:0.7rem; color:#10b981; font-weight:700;">متواجد</span>
+                            </div>
+                        `;
+                    });
+                }
+                document.getElementById('attendeesCountNum').innerText = count;
+                const listEl = document.getElementById('allAttendeesScrollList');
+                if (listEl) listEl.innerHTML = html || '<p style="color:#64748b; font-size:0.8rem; text-align:center;">لا يوجد أشخاص في الغرفة حالياً.</p>';
+            });
+        }
+
+        function teacherWarnStudent(studentName) {
+            alert(`⚠️ تم إرسال تنبيه رسمي إلى: ${studentName}`);
+        }
+
+        function teacherKickStudent(studentKey, studentName) {
+            if (confirm(`هل أنت متأكد من طرد ${studentName}؟`)) {
+                db.ref(`active_students/${activeRoomId}/${studentKey}`).remove();
+                
+                const cleanName = studentName.replace(/ \(أستاذ\/مشرف\)/g, '').trim();
+                db.ref(`room_kicked/${activeRoomId}`).push({ studentName: cleanName, kickedAt: Date.now() });
+                
+                db.ref(`wireless_participants/${activeRoomId}`).once('value', snap => {
+                    const parts = snap.val();
+                    if (parts) {
+                        Object.keys(parts).forEach(pk => {
+                            if (parts[pk].name && parts[pk].name.includes(cleanName)) {
+                                db.ref(`wireless_participants/${activeRoomId}/${pk}`).remove();
+                            }
+                        });
+                    }
+                });
+                alert(`تم طرد ${studentName}.`);
+            }
+        }
+
+        function listenToStudentKickStatus(roomId) {
+            if (!currentStudentName) return;
+            db.ref(`room_kicked/${roomId}`).on('child_added', snapshot => {
+                const val = snapshot.val();
+                if (val && val.studentName === currentStudentName) {
+                    cleanupActiveSession();
+                    document.getElementById('kickedModal').style.display = 'flex';
+                }
+            });
+        }
+
+        function requestReentryToRoom() {
+            if (!currentStudentName) return;
+            
+            db.ref(`room_kicked/${activeRoomId}`).once('value', snapshot => {
+                const data = snapshot.val();
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        if (data[k].studentName === currentStudentName) {
+                            db.ref(`room_kicked/${activeRoomId}/${k}`).remove();
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('kickedModal').style.display = 'none';
+            registerStudentPresence(activeRoomId);
+            alert('تم إرسال طلب العودة للأستاذ بنجاح. يمكنك الدخول.');
+        }
+
+        // ==========================================
+        // نظام محادثة واتساب المطورة (WhatsApp Chat Style)
+        // ==========================================
+        function handleWaFileSelected(input) {
+            if (input.files[0]) {
+                const file = input.files[0];
+                selectedWaFileName = file.name;
                 const reader = new FileReader();
-                reader.onload = function(evt) {
-                    const id = 'CONT_' + Date.now();
-                    fetch(`${DATABASE_URL}/contents/${id}.json`, { method: 'PUT', body: JSON.stringify({ id, roomId, title, fileData: evt.target.result }), headers: { 'Content-Type': 'application/json' } }).then(() => alert('تم رفع الملزمة!'));
+                reader.onload = function(e) {
+                    selectedWaFileData = e.target.result;
+                    document.getElementById('waFilePreviewName').innerText = `📎 تم إرفاق: ${file.name} (جاهز للإرسال)`;
                 };
                 reader.readAsDataURL(file);
             }
         }
 
-        function handleSavePreparation(e) {
-            e.preventDefault();
-            const id = 'PREP_' + Date.now();
-            fetch(`${DATABASE_URL}/preparations/${activeRoomId}/${id}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({ id, prepType: document.getElementById('prepTypeSelect').value, textContent: document.getElementById('prepTextContent').value.trim() }),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم الحفظ!'); renderRoomPreparation(); });
-        }
-
-        function renderRoomPreparation() {
-            fetch(`${DATABASE_URL}/preparations/${activeRoomId}.json`).then(res => res.json()).then(data => {
-                let html = '';
-                if (data) Object.keys(data).forEach(k => { html += `<div style="background:#f8fafc; padding:16px; border-radius:12px; margin-bottom:12px;"><strong>${data[k].prepType}</strong><p>${data[k].textContent}</p></div>`; });
-                document.getElementById('studentPrepDisplayContainer').innerHTML = html || '<p>لا توجد تحضيرات.</p>';
-            });
-        }
-
-        function handleWaFileSelected(input) {
-            if (input.files[0]) {
-                selectedWaFileName = input.files[0].name;
-                const reader = new FileReader();
-                reader.onload = e => { selectedWaFileData = e.target.result; document.getElementById('waFilePreviewName').innerText = `📎 ${selectedWaFileName}`; };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
         function openWhatsappChatSection() {
+            const msgContainer = document.getElementById('whatsappMessagesContainer');
+            if (!msgContainer) return;
+
             db.ref(`whatsapp_chats/${activeRoomId}`).on('value', snapshot => {
                 const data = snapshot.val();
                 let html = '';
                 if (data) {
                     Object.keys(data).forEach(k => {
                         const msg = data[k];
-                        const isMe = (msg.sender === (currentStudentName || 'طالب'));
-                        let media = msg.fileData ? `<div style="margin-top:6px;"><button class="btn btn-secondary" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')">عرض المرفق</button></div>` : '';
-                        html += `<div class="wa-bubble ${isMe ? 'outgoing' : 'incoming'}"><div class="wa-sender-name">${msg.sender}</div><div>${msg.text || ''}</div>${media}<div class="wa-time">${msg.time || ''}</div></div>`;
+                        const myName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
+                            (loggedTeacherData ? loggedTeacherData.name + ' (أستاذ)' : 'الأستاذ وليد') : 
+                            (currentStudentName || 'طالب');
+                        
+                        const isMe = (msg.sender === myName);
+                        
+                        let mediaHtml = '';
+                        if (msg.fileData) {
+                            if (msg.fileName && (msg.fileName.endsWith('.jpg') || msg.fileName.endsWith('.png') || msg.fileName.endsWith('.jpeg'))) {
+                                mediaHtml = `<div style="margin-top: 6px;"><img src="${msg.fileData}" style="max-width: 220px; border-radius: 8px; cursor: pointer;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"></div>`;
+                            } else {
+                                mediaHtml = `<div style="margin-top: 6px;"><button class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"><i class="fas fa-file-pdf"></i> عرض الملف (${msg.fileName})</button></div>`;
+                            }
+                        }
+
+                        let actionButtons = '';
+                        if (isMe || currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                            actionButtons = `
+                                <div class="wa-actions">
+                                    ${isMe ? `<button class="edit-btn" onclick="editWaMessage('${msg.id}', '${(msg.text || '').replace(/'/g, "\\'")}')">تعديل</button>` : ''}
+                                    <button class="delete-btn" onclick="deleteWaMessage('${msg.id}')">حذف</button>
+                                </div>
+                            `;
+                        }
+
+                        html += `
+                            <div class="wa-bubble ${isMe ? 'outgoing' : 'incoming'}">
+                                <div class="wa-sender-name">${msg.sender}</div>
+                                <div style="font-size: 0.95rem; word-break: break-word; white-space: pre-line;">${msg.text || ''}</div>
+                                ${mediaHtml}
+                                <div class="wa-time">${msg.time || ''}</div>
+                                ${actionButtons}
+                            </div>
+                        `;
                     });
                 }
-                const box = document.getElementById('whatsappMessagesContainer');
-                box.innerHTML = html || '<p style="text-align:center; color:#6b7280;">لا توجد رسائل.</p>';
-                box.scrollTop = box.scrollHeight;
+                msgContainer.innerHTML = html || `<p style="color: #6b7280; text-align: center; margin: auto;">لا توجد رسائل بعد. ابدأ المحادثة الآن!</p>`;
+                msgContainer.scrollTop = msgContainer.scrollHeight;
             });
         }
 
         function handleSendWhatsappMessage(e) {
             e.preventDefault();
-            const text = document.getElementById('whatsappTextInput').value.trim();
-            if (!text && !selectedWaFileData) return;
-            const id = 'WAMSG_' + Date.now();
-            fetch(`${DATABASE_URL}/whatsapp_chats/${activeRoomId}/${id}.json`, {
-                method: 'PUT',
-                body: JSON.stringify({ id, sender: currentStudentName || 'طالب', text, fileData: selectedWaFileData || '', fileName: selectedWaFileName || '', time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }) }),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => {
-                document.getElementById('whatsappTextInput').value = '';
-                selectedWaFileData = null; selectedWaFileName = '';
-                document.getElementById('waFilePreviewName').innerText = '';
+            const textInput = document.getElementById('whatsappTextInput');
+            const editMsgId = document.getElementById('editChatMsgId').value;
+            const text = textInput.value.trim();
+
+            if (!text && !selectedWaFileData) {
+                alert('اكتب رسالة أو أرفق ملفاً أو صورة!');
+                return;
+            }
+
+            const senderName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
+                (loggedTeacherData ? loggedTeacherData.name + ' (أستاذ)' : 'الأستاذ وليد') : 
+                (currentStudentName || 'طالب');
+
+            if (editMsgId) {
+                // تعديل رسالة موجودة
+                db.ref(`whatsapp_chats/${activeRoomId}/${editMsgId}`).update({
+                    text: text,
+                    editedAt: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+                }).then(() => {
+                    textInput.value = '';
+                    document.getElementById('editChatMsgId').value = '';
+                    selectedWaFileData = null;
+                    selectedWaFileName = '';
+                    document.getElementById('waFilePreviewName').innerText = '';
+                });
+            } else {
+                // إرسال رسالة جديدة
+                const msgId = 'WAMSG_' + Date.now();
+                const messageData = {
+                    id: msgId,
+                    sender: senderName,
+                    text: text,
+                    fileData: selectedWaFileData || '',
+                    fileName: selectedWaFileName || '',
+                    time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+                    timestamp: Date.now()
+                };
+
+                fetch(`${DATABASE_URL}/whatsapp_chats/${activeRoomId}/${msgId}.json`, {
+                    method: 'PUT',
+                    body: JSON.stringify(messageData),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => {
+                    textInput.value = '';
+                    selectedWaFileData = null;
+                    selectedWaFileName = '';
+                    document.getElementById('waFilePreviewName').innerText = '';
+                    document.getElementById('whatsappFileInput').value = '';
+                });
+            }
+        }
+
+        function editWaMessage(msgId, currentText) {
+            document.getElementById('editChatMsgId').value = msgId;
+            document.getElementById('whatsappTextInput').value = currentText;
+            document.getElementById('whatsappTextInput').focus();
+        }
+
+        function deleteWaMessage(msgId) {
+            if (confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
+                fetch(`${DATABASE_URL}/whatsapp_chats/${activeRoomId}/${msgId}.json`, { method: 'DELETE' });
+            }
+        }
+
+        // ==========================================
+        // نظام الاتصال اللاسلكي المباشر والمدمج (Wireless Audio Call)
+        // ==========================================
+
+        function setupWirelessAudioControls() {
+            const ctrlBox = document.getElementById('liveControlButtons');
+            const adminBox = document.getElementById('teacherLiveAdminBox');
+
+            if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                if (adminBox) adminBox.style.display = 'block';
+                if (ctrlBox) ctrlBox.innerHTML = `
+                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="startWirelessAudioSession()"><i class="fas fa-play"></i> بدء الاتصال اللاسلكي</button>
+                    <button class="btn btn-danger" style="padding: 8px 14px; font-size: 0.85rem;" onclick="stopWirelessAudioSession()"><i class="fas fa-stop"></i> إنهاء الاتصال</button>
+                    <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
+                `;
+                listenToWirelessVoiceRequests();
+            } else {
+                if (adminBox) adminBox.style.display = 'none';
+                checkStudentWirelessJoinStatus();
+            }
+            listenToWirelessParticipants();
+            listenToWirelessStatus();
+        }
+
+        function forcePlayAudioStream() {
+            if (remoteAudioEl && remoteAudioEl.srcObject) {
+                remoteAudioEl.play().then(() => {
+                    alert('🟢 تم تشغيل الصوت اللاسلكي بنجاح!');
+                }).catch(() => {
+                    alert('⚠️ يرجى التأكد من أن الأستاذ قام ببدء الاتصال الصوتي أولاً.');
+                });
+            } else {
+                alert('⏳ بانتظار اتصال الأستاذ بالشبكة الصوتية...');
+            }
+        }
+
+        function startWirelessAudioSession() {
+            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
+                localStream = stream;
+                const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+
+                db.ref(`wireless_participants/${activeRoomId}/teacher`).set({
+                    name: tName,
+                    role: 'الأستاذ / المضيف',
+                    isMuted: false,
+                    timestamp: Date.now()
+                }).then(() => {
+                    db.ref(`wireless_status/${activeRoomId}`).set({ active: true, updatedAt: Date.now() });
+                    document.getElementById('voiceRoomStatusText').innerText = "🎙️ الاتصال اللاسلكي الصوتي يعمل الآن بنجاح";
+                    alert('🟢 تم بدء الاتصال اللاسلكي الصوتي بنجاح!');
+                });
+            }).catch(err => {
+                console.error("Mic error:", err);
+                alert('⚠️ تعذر الوصول للميكروفون!');
             });
         }
 
-        function setupWirelessAudioControls() {
-            document.getElementById('liveControlButtons').innerHTML = `<button class="btn btn-success" onclick="startWirelessAudioSession()">بدء الاتصال</button><button class="btn btn-danger" onclick="stopWirelessAudioSession()">إنهاء</button>`;
-            db.ref(`wireless_status/${activeRoomId}/active`).on('value', snapshot => {
-                if (snapshot.val() === true) {
-                    document.getElementById('voiceRoomStatusText').innerText = "🔊 الصوت نشط";
-                    if (!remoteAudioEl) remoteAudioEl = document.getElementById('remoteAudio');
-                    if (localStream && remoteAudioEl) remoteAudioEl.srcObject = localStream;
+        function stopWirelessAudioSession() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            db.ref(`wireless_participants/${activeRoomId}`).remove();
+            db.ref(`wireless_requests/${activeRoomId}`).remove();
+            db.ref(`wireless_status/${activeRoomId}`).set({ active: false });
+            document.getElementById('voiceRoomStatusText').innerText = "الاتصال اللاسلكي متوقف حالياً.";
+            alert('🔴 تم إنهاء الاتصال اللاسلكي.');
+        }
+
+        function toggleWirelessMicrophone() {
+            if (localStream) {
+                isMicMuted = !isMicMuted;
+                localStream.getAudioTracks().forEach(track => { track.enabled = !isMicMuted; });
+                const icon = document.getElementById('micToggleIcon');
+                if (icon) icon.className = isMicMuted ? "fas fa-microphone-slash" : "fas fa-microphone";
+                
+                if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                    db.ref(`wireless_participants/${activeRoomId}/teacher`).update({ isMuted: isMicMuted });
+                } else if (currentStudentName) {
+                    const studentKey = 'student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+                    db.ref(`wireless_participants/${activeRoomId}/${studentKey}`).update({ isMuted: isMicMuted });
+                }
+            } else {
+                alert('الميكروفون غير مفعل.');
+            }
+        }
+
+        function requestWirelessVoiceJoin() {
+            if (!currentStudentName) { alert('يجب تسجيل الدخول كطالب أولاً!'); return; }
+            const reqId = 'WREQ_' + Date.now();
+            db.ref(`wireless_requests/${activeRoomId}/${reqId}`).set({
+                id: reqId,
+                studentName: currentStudentName,
+                status: 'pending',
+                timestamp: Date.now()
+            }).then(() => {
+                alert('تم إرسال طلب التحدث في الاتصال اللاسلكي للأستاذ. بانتظار الموافقة...');
+            });
+        }
+
+        function listenToWirelessVoiceRequests() {
+            db.ref(`wireless_requests/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const req = data[k];
+                        if (req.status === 'pending') {
+                            html += `
+                                <div style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 10px; border-radius: 8px; border-right: 3px solid #f59e0b;">
+                                    <span style="color: #fff; font-size: 0.82rem; font-weight: 800;">${req.studentName}</span>
+                                    <div style="display: flex; gap: 4px;">
+                                        <button class="btn btn-success" style="padding: 4px 8px; font-size: 0.7rem;" onclick="handleWirelessRequest('${req.id}', '${req.studentName}', 'approved')"><i class="fas fa-check"></i></button>
+                                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.7rem;" onclick="handleWirelessRequest('${req.id}', '${req.studentName}', 'rejected')"><i class="fas fa-times"></i></button>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                const reqContainer = document.getElementById('liveRequestsListContainer');
+                if (reqContainer) reqContainer.innerHTML = html || '<p style="color: #94a3b8; font-size: 0.78rem;">لا توجد طلبات معلقة.</p>';
+            });
+        }
+
+        function handleWirelessRequest(reqId, studentName, status) {
+            db.ref(`wireless_requests/${activeRoomId}/${reqId}`).update({ status: status });
+            if (status === 'approved') {
+                const sKey = 'student_' + studentName.replace(/[.#$\/\[\]]/g, '_');
+                db.ref(`wireless_participants/${activeRoomId}/${sKey}`).set({
+                    name: studentName,
+                    role: 'طالب متحدث',
+                    isMuted: false,
+                    timestamp: Date.now()
+                });
+            }
+        }
+
+        function checkStudentWirelessJoinStatus() {
+            const ctrlBox = document.getElementById('liveControlButtons');
+            if (ctrlBox && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
+                ctrlBox.innerHTML = `
+                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-sign-in-alt"></i> طلب التحدث في الاتصال</button>
+                `;
+            }
+
+            db.ref(`wireless_requests/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                if (data && currentStudentName) {
+                    Object.keys(data).forEach(k => {
+                        const req = data[k];
+                        if (req.studentName === currentStudentName && req.status === 'approved') {
+                            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                                localStream = stream;
+                                const sKey = 'student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+                                db.ref(`wireless_participants/${activeRoomId}/${sKey}`).update({ isMuted: false });
+                            }).catch(() => {});
+
+                            if (ctrlBox) {
+                                ctrlBox.innerHTML = `
+                                    <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
+                                `;
+                            }
+                        }
+                    });
                 }
             });
         }
 
-        function startWirelessAudioSession() {
-            navigator.mediaDevices.getUserMedia({ audio: { bitrate: 24000 } }).then(stream => {
-                localStream = stream;
-                db.ref(`wireless_status/${activeRoomId}`).set({ active: true });
-            }).catch(() => alert('تعذر الوصول للميكروفون'));
-        }
-
-        function stopWirelessAudioSession() {
-            if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-            db.ref(`wireless_status/${activeRoomId}`).set({ active: false });
-        }
-
-        function forcePlayAudioStream() { if (remoteAudioEl && remoteAudioEl.srcObject) remoteAudioEl.play().catch(() => {}); }
-
-        function renderRoomLectures() {
-            fetch(`${DATABASE_URL}/contents.json`).then(res => res.json()).then(data => {
-                let html = '';
-                if (data) Object.keys(data).forEach(k => { if (data[k].roomId === activeRoomId) html += `<div class="list-item" onclick="openFileModal('${data[k].title}', '${encodeURIComponent(data[k].fileData)}')">📄 ${data[k].title}</div>`; });
-                document.getElementById('lecturesContainer').innerHTML = html || '<p>لا توجد ملازم.</p>';
+        function listenToWirelessStatus() {
+            db.ref(`wireless_status/${activeRoomId}/active`).on('value', snapshot => {
+                const isActive = snapshot.val() === true;
+                if (isActive) {
+                    document.getElementById('voiceRoomStatusText').innerText = "🔊 الاتصال اللاسلكي الصوتي نشط الآن";
+                    setupAudioReceiverStream();
+                } else {
+                    document.getElementById('voiceRoomStatusText').innerText = "الاتصال اللاسلكي متوقف حالياً.";
+                }
             });
         }
 
-        function openFileModal(title, encodedData) {
-            document.getElementById('modalFileTitle').innerText = title;
-            document.getElementById('modalViewerContainer').innerHTML = `<object data="${decodeURIComponent(encodedData)}" type="application/pdf" width="100%" height="100%"></object>`;
-            document.getElementById('fileViewerModal').style.display = 'flex';
+        function setupAudioReceiverStream() {
+            if (!remoteAudioEl) {
+                remoteAudioEl = document.getElementById('remoteAudio');
+            }
+            if (localStream && remoteAudioEl) {
+                remoteAudioEl.srcObject = localStream;
+            }
         }
+
+        function listenToWirelessParticipants() {
+            db.ref(`wireless_participants/${activeRoomId}`).on('value', snapshot => {
+                renderWirelessParticipantsGrid(snapshot.val());
+            });
+        }
+
+        function renderWirelessParticipantsGrid(participantsData) {
+            const container = document.getElementById('participantsGridContainer');
+            if (!container) return;
+
+            if (!participantsData) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            const isUserAdminOrTeacher = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
+
+            Object.keys(participantsData).forEach(key => {
+                const p = participantsData[key];
+                const muted = p.isMuted;
+                const isTeacherNode = (key === 'teacher');
+
+                html += `
+                    <div class="speaker-bubble">
+                        <div class="speaker-avatar-wrap ${!muted ? 'speaking' : ''}">
+                            <img src="IMG_1507.jpeg" alt="${p.name}" onerror="this.src='https://via.placeholder.com/70'">
+                            <div class="speaker-mic-badge ${!muted ? 'active' : ''}">
+                                <i class="fas ${!muted ? 'fa-microphone' : 'fa-microphone-slash'}"></i>
+                            </div>
+                        </div>
+                        <span class="speaker-name" title="${p.name}">${p.name}</span>
+                        <span class="speaker-role">${p.role}</span>
+                        ${isUserAdminOrTeacher && !isTeacherNode ? `
+                            <div style="display:flex; gap:4px; margin-top:4px;">
+                                <button class="btn btn-warning" style="padding:2px 6px; font-size:0.6rem;" onclick="makeWirelessCoHost('${key}', '${p.name}')" title="ترقية مشرف"><i class="fas fa-star"></i></button>
+                                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.6rem;" onclick="removeWirelessParticipant('${key}')" title="إنزال"><i class="fas fa-user-minus"></i></button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function removeWirelessParticipant(pKey) {
+            db.ref(`wireless_participants/${activeRoomId}/${pKey}`).remove();
+        }
+
+        function makeWirelessCoHost(pKey, studentName) {
+            db.ref(`wireless_participants/${activeRoomId}/${pKey}`).update({ role: 'مشرف مساعد 🌟' });
+            alert(`تم تعيين الطالب ${studentName} مشرفاً مساعداً في الاتصال.`);
+        }
+
+        function backToSubjectsView() { cleanupActiveSession(); showSection('subjectsSection'); }
+        function backToRoomsView() { cleanupActiveSession(); showSection('teachersRoomsSection'); }
 
         function sendStudentQuestion() {
             const text = document.getElementById('studentQuestionInput').value.trim();
-            if (!text) return;
-            fetch(`${DATABASE_URL}/room_questions/${activeRoomId}/Q_${Date.now()}.json`, { method: 'PUT', body: JSON.stringify({ student: currentStudentName || 'طالب', text }), headers: { 'Content-Type': 'application/json' } }).then(() => { document.getElementById('studentQuestionInput').value = ''; renderRoomQuestions(); });
+            if(!text) { alert('اكتب السؤال أولاً!'); return; }
+            const qId = 'Q_' + Date.now();
+            fetch(`${DATABASE_URL}/room_questions/${activeRoomId}/${qId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: qId, student: currentStudentName || 'طالب', text, date: new Date().toLocaleTimeString() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم إرسال السؤال!'); document.getElementById('studentQuestionInput').value = ''; renderRoomQuestions(); });
         }
 
         function renderRoomQuestions() {
             fetch(`${DATABASE_URL}/room_questions/${activeRoomId}.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) Object.keys(data).forEach(k => { html += `<div class="list-item"><strong>${data[k].student}:</strong> ${data[k].text}</div>`; });
-                document.getElementById('questionsListContainer').innerHTML = html || '<p>لا توجد أسئلة.</p>';
+                if(data) { Object.keys(data).forEach(k => { const q = data[k]; html += `<div class="list-item"><div><strong>${q.student}:</strong> ${q.text}<br><small style="color:#64748b;">${q.date}</small></div></div>`; }); }
+                const qListC = document.getElementById('questionsListContainer');
+                if (qListC) qListC.innerHTML = html || '<p style="color:#64748b;">لا توجد أسئلة.</p>';
             });
+        }
+
+        function saveStudentGrade() {
+            const name = document.getElementById('gradeStudentName').value.trim();
+            const val = document.getElementById('gradeStudentVal').value.trim();
+            if(!name || !val) { alert('أدخل الاسم والتقييم!'); return; }
+            const gId = 'G_' + Date.now();
+            fetch(`${DATABASE_URL}/room_grades/${activeRoomId}/${gId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify({ id: gId, name, val }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم حفظ التقييم!'); document.getElementById('gradeStudentName').value = ''; document.getElementById('gradeStudentVal').value = ''; renderRoomGrades(); });
         }
 
         function renderRoomGrades() {
             fetch(`${DATABASE_URL}/room_grades/${activeRoomId}.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) Object.keys(data).forEach(k => { html += `<div class="list-item">طالب: ${data[k].name} - التقييم: ${data[k].val}</div>`; });
-                document.getElementById('studentsGradesList').innerHTML = html || '<p>لا توجد تقييمات.</p>';
+                if(data) { Object.keys(data).forEach(k => { const g = data[k]; html += `<div class="list-item"><div>الطالب: <strong>${g.name}</strong></div><div>التقييم: ${g.val}</div></div>`; }); }
+                const sGradesList = document.getElementById('studentsGradesList');
+                if (sGradesList) sGradesList.innerHTML = html || '<p style="color:#64748b;">لا توجد تقييمات.</p>';
+            });
+        }
+
+        function renderRoomLectures() {
+            const container = document.getElementById('lecturesContainer');
+            if (!container) return;
+            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
+
+            fetch(`${DATABASE_URL}/contents.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const item = data[k];
+                        if (item.roomId === activeRoomId) {
+                            let safeData = encodeURIComponent(item.fileData || (item.chunks ? Object.values(item.chunks).join('') : ''));
+                            html += `
+                                <div class="list-item" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                                    <div style="cursor:pointer; flex:1;" onclick="openFileModal('${item.title}', '${safeData}')">
+                                        <i class="fas fa-file-pdf" style="color:var(--danger);"></i> <strong>${item.title}</strong>
+                                    </div>
+                                    ${isTeacherOrAdmin ? `
+                                        <div style="display:flex; gap:6px;">
+                                            <button class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditItemModal('pdf', '${item.id}', '${item.title}')"><i class="fas fa-edit"></i> تعديل</button>
+                                            <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteItem('contents', '${item.id}', renderRoomLectures)"><i class="fas fa-trash"></i> حذف</button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                
+                fetch(`${DATABASE_URL}/recordings.json`).then(r => r.json()).then(recData => {
+                    let recHtml = '';
+                    if (recData) {
+                        Object.keys(recData).forEach(rk => {
+                            const rec = recData[rk];
+                            if (rec.roomId === activeRoomId) {
+                                recHtml += `
+                                    <div class="list-item" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+                                        <div style="cursor:pointer; flex:1;" onclick="openRecordingModal('${rec.title}', '${rec.url}')">
+                                            <i class="fas fa-film" style="color:var(--accent);"></i> <strong>${rec.title}</strong>
+                                        </div>
+                                        ${isTeacherOrAdmin ? `
+                                            <div style="display:flex; gap:6px;">
+                                                <button class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditItemModal('recording', '${rec.id}', '${rec.title}')"><i class="fas fa-edit"></i> تعديل</button>
+                                                <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteItem('recordings', '${rec.id}', renderRoomLectures)"><i class="fas fa-trash"></i> حذف</button>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `;
+                            }
+                        });
+                    }
+                    const recContainer = document.getElementById('recordingsContainer');
+                    if (recContainer) recContainer.innerHTML = recHtml || `<p style="color:#64748b;">لا توجد محاضرات مسجلة.</p>`;
+                });
+
+                container.innerHTML = html || `<p style="color:#64748b;">لا توجد ملازم.</p>`;
+            });
+        }
+
+        function openFileModal(title, encodedData) {
+            document.getElementById('modalFileTitle').innerText = title;
+            currentPdfScale = 1.0;
+            let wmHtml = ''; for(let i=0; i<12; i++) { wmHtml += `<span>${currentStudentName || 'منصة وليد'}</span>`; }
+            document.getElementById('pdfWatermarkText').innerHTML = wmHtml;
+            updatePdfViewer(encodedData);
+            document.getElementById('fileViewerModal').style.display = 'flex';
+        }
+
+        function updatePdfViewer(encodedData) {
+            const decodedUrl = decodeURIComponent(encodedData);
+            document.getElementById('modalViewerContainer').innerHTML = `<object data="${decodedUrl}#view=FitH&toolbar=0" type="application/pdf" width="${100 * currentPdfScale}%" height="${100 * currentPdfScale}%"></object><div class="watermark-overlay" id="pdfWatermarkText"></div>`;
+        }
+
+        function zoomPdf(delta) {
+            currentPdfScale = Math.max(0.6, Math.min(2.5, currentPdfScale + delta));
+            const obj = document.querySelector('#modalViewerContainer object');
+            if(obj) { obj.style.width = (100 * currentPdfScale) + '%'; obj.style.height = (100 * currentPdfScale) + '%'; }
+        }
+
+        function closeFileModal() { document.getElementById('fileViewerModal').style.display = 'none'; document.getElementById('modalViewerContainer').innerHTML = ''; }
+
+        function openRecordingModal(title, videoUrl) {
+            document.getElementById('modalFileTitle').innerText = title;
+            document.getElementById('modalViewerContainer').innerHTML = `<iframe src="${videoUrl}" width="100%" height="100%" style="border:none;" allowfullscreen></iframe>`;
+            document.getElementById('fileViewerModal').style.display = 'flex';
+        }
+
+        function renderRoomHomework() {
+            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
+            fetch(`${DATABASE_URL}/homework.json`).then(res => res.json()).then(data => {
+                let html = '';
+                if (data) { Object.keys(data).forEach(k => { const hw = data[k]; if (hw.roomId === activeRoomId) { 
+                    html += `
+                        <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                            <div><h5>📌 ${hw.title}</h5></div>
+                            ${isTeacherOrAdmin ? `
+                                <div style="display:flex; gap:6px;">
+                                    <button class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditItemModal('homework', '${hw.id}', '${hw.title}')">تعديل</button>
+                                    <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteItem('homework', '${hw.id}', renderRoomHomework)">حذف</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `; 
+                } }); }
+                const hwContainer = document.getElementById('homeworkContainer');
+                if (hwContainer) hwContainer.innerHTML = html || `<p style="color:#64748b;">لا توجد واجبات.</p>`;
             });
         }
 
         function renderRoomQuizzes() {
+            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
             fetch(`${DATABASE_URL}/quizzes.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) Object.keys(data).forEach(k => { if (data[k].roomId === activeRoomId) html += `<div class="list-item">📝 ${data[k].title}</div>`; });
-                document.getElementById('quizzesContainer').innerHTML = html || '<p>لا توجد اختبارات.</p>';
+                if (data) { Object.keys(data).forEach(k => { const q = data[k]; if (q.roomId === activeRoomId) { 
+                    html += `
+                        <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                            <div><h5>📝 ${q.title}</h5><p>${q.question}</p></div>
+                            ${isTeacherOrAdmin ? `
+                                <div style="display:flex; gap:6px;">
+                                    <button class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditItemModal('quiz', '${q.id}', '${q.title}')">تعديل</button>
+                                    <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteItem('quizzes', '${q.id}', renderRoomQuizzes)">حذف</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `; 
+                } }); }
+                const qContainer = document.getElementById('quizzesContainer');
+                if (qContainer) qContainer.innerHTML = html || `<p style="color:#64748b;">لا توجد اختبارات.</p>`;
             });
         }
 
-        function renderRoomHomework() {
-            fetch(`${DATABASE_URL}/homework.json`).then(res => res.json()).then(data => {
+        function deleteItem(path, id, callback) {
+            fetch(`${DATABASE_URL}/${path}/${id}.json`, { method: 'DELETE' }).then(() => callback());
+        }
+
+        function submitTeacherReport(e) {
+            e.preventDefault();
+            const student = document.getElementById('repStudentName').value.trim();
+            const type = document.getElementById('repType').value;
+            const details = document.getElementById('repDetails').value.trim();
+            fetch(`${DATABASE_URL}/reports.json`, {
+                method: 'POST',
+                body: JSON.stringify({ teacher: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد', student, type, details, date: new Date().toLocaleString() }),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تم إرسال الإنذار!'); document.getElementById('repStudentName').value = ''; document.getElementById('repDetails').value = ''; });
+        }
+
+        function renderScheduleManager() {
+            const schC = document.getElementById('scheduleContainer');
+            if (!schC) return;
+            schC.innerHTML = `
+                <form id="scheduleForm" style="margin-bottom:20px; background:#f8fafc; padding:16px; border-radius:12px; border:1px solid #cbd5e1;">
+                    <div class="form-group"><label>الصف</label><select class="form-control" id="schGrade"><option value="الأول المتوسط">الأول المتوسط</option><option value="السادس الاعدادي">السادس الإعدادي</option></select></div>
+                    <div class="form-group"><label>اليوم</label><select class="form-control" id="schDay"><option value="السبت">السبت</option><option value="الأحد">الأحد</option></select></div>
+                    <div class="form-group"><label>التفاصيل</label><input type="text" class="form-control" id="schDetails" required placeholder="الساعة 5 - رياضيات"></div>
+                    <button type="submit" class="btn btn-success btn-block">إضافة</button>
+                </form>
+                <div id="schList">جاري التحميل...</div>
+            `;
+            document.getElementById('scheduleForm').addEventListener('submit', saveSchedule);
+            fetchSchedules();
+        }
+
+        function saveSchedule(e) {
+            e.preventDefault();
+            const grade = document.getElementById('schGrade').value;
+            const day = document.getElementById('schDay').value;
+            const details = document.getElementById('schDetails').value.trim();
+            const sId = 'SCH_' + Date.now();
+            fetch(`${DATABASE_URL}/schedules/${sId}.json`, {
+                method: 'PUT', body: JSON.stringify({ id: sId, grade, day, details }), headers: { 'Content-Type': 'application/json' }
+            }).then(() => { alert('تمت الإضافة!'); document.getElementById('schDetails').value = ''; fetchSchedules(); });
+        }
+
+        function fetchSchedules() {
+            fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data => {
                 let html = '';
-                if (data) Object.keys(data).forEach(k => { if (data[k].roomId === activeRoomId) html += `<div class="list-item">📌 ${data[k].title}</div>`; });
-                document.getElementById('homeworkContainer').innerHTML = html || '<p>لا توجد واجبات.</p>';
+                if (data) { Object.keys(data).forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
+                const schList = document.getElementById('schList');
+                if (schList) schList.innerHTML = html || '<p>لا توجد حصص.</p>';
             });
         }
 
-        function loadPlatformUsersOverview() {
-            fetch(`${DATABASE_URL}/vouchers.json`).then(res => res.json()).then(data => {
-                let html = '';
-                if (data) Object.keys(data).forEach(k => { if (data[k].isUsed) html += `<div class="list-item">👤 طالب: ${data[k].usedBy}</div>`; });
-                document.getElementById('adminStudentsListContainer').innerHTML = html || '<p>لا توجد اشتراكات.</p>';
+        function fetchAdminReports() {
+            fetch(`${DATABASE_URL}/reports.json`).then(res => res.json()).then(data => {
+                let htmlList = '';
+                if (data) { Object.keys(data).forEach(k => { const r = data[k]; htmlList += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; }); }
+                const adminRList = document.getElementById('adminReportsList');
+                if (adminRList) adminRList.innerHTML = htmlList || '<p>لا توجد تقارير.</p>';
             });
-        }
-
-        function deleteAllStudentsBatch() {
-            if (confirm("حذف جميع الطلاب؟")) { fetch(`${DATABASE_URL}/vouchers.json`, { method: 'DELETE' }).then(() => alert('تم الحذف!')); }
-        }
-
-        function verifyRoomPin() {
-            if (pendingRoomData && document.getElementById('studentPinInput').value.trim() === String(pendingRoomData.pin)) {
-                document.getElementById('pinModal').style.display = 'none';
-                openRoomMenu(pendingRoomData.id, pendingRoomData.title);
-            } else { alert('رمز PIN غير صحيح!'); }
         }
     </script>
 </body>
