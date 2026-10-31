@@ -282,7 +282,13 @@
                     <div id="adminTeachersListContainer"><p style="color: #64748b;">جاري جلب المدرسين...</p></div>
                 </div>
                 <div>
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-user-graduate" style="color:var(--accent);"></i> 2. حقل الطلبة المشتركين (حذف فردي أو متابعة)</h4>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                        <h4 style="color: var(--primary); font-weight: 800; margin: 0;"><i class="fas fa-user-graduate" style="color:var(--accent);"></i> 2. حقل الطلبة المشتركين وتجديد الاشتراكات</h4>
+                        <!-- شريط البحث السريع للطلاب -->
+                        <div style="flex: 1; max-width: 320px;">
+                            <input type="text" class="form-control" id="studentSearchInput" placeholder="🔍 ابحث عن اسم الطالب لتجديد اشتراكه..." onkeyup="filterStudentsList()" style="padding: 8px 12px; font-size: 0.88rem;">
+                        </div>
+                    </div>
                     <div id="adminStudentsListContainer"><p style="color: #64748b;">جاري جلب الطلبة...</p></div>
                 </div>
             </div>
@@ -1237,38 +1243,77 @@
             });
 
             fetch(`${DATABASE_URL}/vouchers.json`).then(res => res.json()).then(vouchersData => {
-                let studentsHtml = '';
-                const now = Date.now();
-                const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
-
-                if (vouchersData) {
-                    Object.keys(vouchersData).forEach(code => {
-                        const v = vouchersData[code];
-                        if (v.isUsed && v.usedBy) {
-                            const usedAt = v.usedAt || now;
-                            const expirationTime = usedAt + thirtyDaysMs;
-                            const diffTime = expirationTime - now;
-                            const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                            const isExpired = daysLeft <= 0;
-
-                            studentsHtml += `
-                                <div class="list-item" style="border-right: 4px solid ${isExpired ? 'var(--danger)' : 'var(--accent)'};">
-                                    <div>
-                                        <strong>👤 الطالب: ${v.usedBy}</strong><br>
-                                        <small>الكود: <code>${v.code}</code></small><br>
-                                        <small style="font-weight:800; color:${isExpired ? 'var(--danger)' : 'var(--success)'};">
-                                            ${isExpired ? '⚠️ انتهى الاشتراك' : `⏳ الأيام المتبقية لنهاية الاشتراك: ${daysLeft} يوم`}
-                                        </small>
-                                    </div>
-                                    <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('vouchers', '${code}', loadPlatformUsersOverview)">حذف الطالب / انهاء اشتراكه</button>
-                                </div>
-                            `;
-                        }
-                    });
-                }
-                const sContainer = document.getElementById('adminStudentsListContainer');
-                if (sContainer) sContainer.innerHTML = studentsHtml || '<p style="color:#64748b;">لا توجد اشتراكات طلاب نشطة حالياً.</p>';
+                window.allPlatformStudentsData = vouchersData || {};
+                renderStudentsList(window.allPlatformStudentsData);
             });
+        }
+
+        // دالة عرض قائمة الطلاب مع تفعيل شريط البحث السريع وتجديد الاشتراك بنقرة واحدة
+        function renderStudentsList(vouchersData) {
+            let studentsHtml = '';
+            const now = Date.now();
+            const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+            const searchTerm = (document.getElementById('studentSearchInput') ? document.getElementById('studentSearchInput').value : '').toLowerCase().trim();
+
+            if (vouchersData) {
+                Object.keys(vouchersData).forEach(code => {
+                    const v = vouchersData[code];
+                    if (v.isUsed && v.usedBy) {
+                        // فلترة البحث حسب اسم الطالب أو الكود
+                        if (searchTerm && !v.usedBy.toLowerCase().includes(searchTerm) && !v.code.toLowerCase().includes(searchTerm)) {
+                            return;
+                        }
+
+                        const usedAt = v.usedAt || now;
+                        const expirationTime = usedAt + thirtyDaysMs;
+                        const diffTime = expirationTime - now;
+                        const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        const isExpired = daysLeft <= 0;
+
+                        studentsHtml += `
+                            <div class="list-item student-row-item" style="border-right: 4px solid ${isExpired ? 'var(--danger)' : 'var(--accent)'};">
+                                <div>
+                                    <strong>👤 الطالب: ${v.usedBy}</strong><br>
+                                    <small>الكود الثابت: <code>${v.code}</code></small><br>
+                                    <small style="font-weight:800; color:${isExpired ? 'var(--danger)' : 'var(--success)'};">
+                                        ${isExpired ? '🔴 انتهى الاشتراك (محظور)' : `🟢 باقي للاشتراك: ${daysLeft} يوم`}
+                                    </small>
+                                </div>
+                                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                    <!-- زر تجديد الاشتراك بنقرة واحدة بنفس المعلومات والكود -->
+                                    <button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="renewStudentSubscription('${code}', '${v.usedBy}')">
+                                        🔄 تجديد 30 يوماً
+                                    </button>
+                                    <button class="btn btn-danger" style="padding:6px 12px; font-size:0.8rem;" onclick="deleteItem('vouchers', '${code}', loadPlatformUsersOverview)">
+                                        حذف الحساب
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+            const sContainer = document.getElementById('adminStudentsListContainer');
+            if (sContainer) sContainer.innerHTML = studentsHtml || '<p style="color:#64748b; text-align:center;">لا توجد اشتراكات طلاب مطابقة للبحث.</p>';
+        }
+
+        function filterStudentsList() {
+            if (window.allPlatformStudentsData) {
+                renderStudentsList(window.allPlatformStudentsData);
+            }
+        }
+
+        function renewStudentSubscription(code, studentName) {
+            if (confirm(`هل تريد تجديد الاشتراك لمدة 30 يوماً إضافية للطالب (${studentName}) بنفس كوده ومعلوماته؟`)) {
+                fetch(`${DATABASE_URL}/vouchers/${code}.json`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ usedAt: Date.now() }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(() => {
+                    alert(`✅ تم تجديد اشتراك الطالب (${studentName}) بنجاح لمدة 30 يوماً إضافية!`);
+                    loadPlatformUsersOverview();
+                });
+            }
         }
 
         function deleteAllStudentsBatch() {
@@ -1716,11 +1761,17 @@
                 const student = JSON.parse(session);
                 if (student && student.id && student.name) {
                     fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
-                        if (voucher && voucher.isUsed && voucher.usedBy === student.name) {
+                        const now = Date.now();
+                        const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+                        const usedAt = voucher.usedAt || now;
+                        const isExpired = (now - usedAt) > thirtyDaysMs;
+
+                        if (voucher && voucher.isUsed && voucher.usedBy === student.name && !isExpired) {
                             currentStudentName = student.name;
                             document.getElementById('logoutContainer').style.display = 'block';
                             return true;
                         } else {
+                            alert('⚠️ انتهى اشتراكك الشهري! يرجى سداد المبلغ والتواصل مع الإدارة لتجديد الاشتراك.');
                             logoutSystem();
                         }
                     }).catch(() => {});
@@ -1738,12 +1789,17 @@
             if (session) {
                 const student = JSON.parse(session);
                 fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
-                    if (voucher && voucher.isUsed) {
+                    const now = Date.now();
+                    const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
+                    const usedAt = voucher.usedAt || now;
+                    const isExpired = (now - usedAt) > thirtyDaysMs;
+
+                    if (voucher && voucher.isUsed && !isExpired) {
                         currentStudentName = student.name;
                         openClass(className);
                     } else {
                         logoutSystem();
-                        alert('⚠️ عذراً، انتهى اشتراكك أو تم حذفه. يرجى التفعيل من جديد.');
+                        alert('⚠️ عذراً، انتهى اشتراكك أو تم حذفه. يرجى تجديد الاشتراك مع الإدارة.');
                         showSection('authSection');
                     }
                 });
@@ -1808,7 +1864,6 @@
                 return;
             }
 
-            // مسح أي طلبات انضمام سابقة أو حالات معلقة للطالب لمنع تداخل البيانات
             if (currentStudentName) {
                 db.ref(`room_access_requests/${roomId}`).orderByChild('studentName').equalTo(currentStudentName).once('value', snapshot => {
                     const val = snapshot.val();
@@ -1905,12 +1960,10 @@
         function listenToStudentApprovalStatus(roomId) {
             if (!currentStudentName) return;
             
-            // إزالة أي مستمع سابق لمنع تراكم الأحداث وطلبات الموافقة الوهمية
             db.ref(`room_access_requests/${roomId}`).off();
             
             db.ref(`room_access_requests/${roomId}`).on('child_added', snapshot => {
                 const req = snapshot.val();
-                // التحقق من أن الطلب حديث وتمت الموافقة عليه فعلياً في اللحظة الحالية
                 const isRecent = req && (Date.now() - (req.timestamp || 0) < 10000);
                 if (req && req.studentName === currentStudentName && req.status === 'approved' && isRecent) {
                     db.ref(`room_access_requests/${roomId}/${req.id}`).remove();
@@ -2497,7 +2550,6 @@
             listenToWirelessStatus();
         }
 
-        // --- نظام البث الصوتي المباشر الجذري والمحسن (Web Audio API Stream Sync) ---
         function startWirelessAudioSession() {
             if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
                 alert('⚠️ عذراً، البث الصوتي مخصص للأستاذ فقط.');
@@ -2531,7 +2583,7 @@
                     }
                 };
 
-                mediaRecorder.start(600); // تحديث فائق السرعة كل 600 ميلي ثانية لتدفق صوتي لا يتقطع
+                mediaRecorder.start(600);
 
                 const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
                 db.ref(`wireless_participants/${activeRoomId}/teacher`).set({
@@ -2604,7 +2656,6 @@
         function listenToWirelessStatus() {
             const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
 
-            // إزالة أي مستمع سابق لمنع التداخل
             db.ref(`approved_speaker/${activeRoomId}`).off();
 
             db.ref(`wireless_status/${activeRoomId}`).on('value', snapshot => {
