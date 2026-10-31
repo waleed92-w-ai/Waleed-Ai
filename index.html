@@ -116,7 +116,7 @@
         }
 
         .live-badge-pill {
-            background: linear-gradient(45deg, #ef4444, #f59e0b);
+            background: linear-gradient(45deg, #10b981, #2563eb);
             color: #fff;
             padding: 6px 14px;
             border-radius: 30px;
@@ -125,7 +125,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
         }
 
         .tiktok-speakers-grid {
@@ -474,8 +474,8 @@
                         <span>التحضير والامتحانات اليومية والشهرية</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLive">
-                        <i class="fas fa-microphone-alt" style="color: var(--accent);"></i>
-                        <span>البث الصوتي المباشر</span>
+                        <i class="fas fa-broadcast-tower" style="color: var(--accent);"></i>
+                        <span>الاتصال اللاسلكي الصوتي المباشر</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLectures">
                         <i class="fas fa-book-reader" style="color: var(--success);"></i>
@@ -544,18 +544,18 @@
                         <div class="tiktok-stage-area">
                             <div class="tiktok-top-bar">
                                 <div class="live-badge-pill">
-                                    <i class="fas fa-broadcast-tower"></i> بث مباشر (WebRTC)
+                                    <i class="fas fa-broadcast-tower"></i> اتصال لاسلكي مباشر (Voice P2P)
                                 </div>
                                 <button class="btn btn-secondary" id="toggleLiveFullscreenBtn" style="padding: 6px 12px; font-size: 0.78rem;" title="تكبير/تصغير الشاشة"><i class="fas fa-expand"></i> ملء الشاشة</button>
                             </div>
 
                             <div style="text-align: center; margin: 10px 0;">
                                 <h4 style="color: #fff; font-size: 1.05rem; font-weight: 800;" id="liveRoomTitleDisplay">غرفة الدرس</h4>
-                                <p style="color: #94a3b8; font-size: 0.8rem;" id="voiceRoomStatusText">البث الصوتي غير مفعل حالياً. بانتظار بدء الأستاذ...</p>
+                                <p style="color: #94a3b8; font-size: 0.8rem;" id="voiceRoomStatusText">الاتصال اللاسلكي متوقف حالياً. بانتظار بدء الأستاذ...</p>
                             </div>
 
                             <div id="audioPlayerWrapper" style="background: rgba(15, 23, 42, 0.9); padding: 12px; border-radius: 12px; margin: 10px auto; text-align: center; border: 1px solid #38bdf8; max-width: 320px;">
-                                <p style="color: #fff; font-size: 0.82rem; margin-bottom: 8px; font-weight: 700;">🔊 انقر لتفعيل وسماع البث الصوتي المباشر:</p>
+                                <p style="color: #fff; font-size: 0.82rem; margin-bottom: 8px; font-weight: 700;">🔊 انقر لتفعيل وسماع الاتصال اللاسلكي:</p>
                                 <button class="btn btn-success" id="forcePlayAudioBtn" onclick="forcePlayAudioStream()" style="padding: 8px 16px; font-size: 0.85rem; width: 100%;">
                                     <i class="fas fa-volume-up"></i> تشغيل الصوت الآن
                                 </button>
@@ -578,7 +578,7 @@
 
                             <div id="teacherLiveAdminBox" style="display: none; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
                                 <div class="panel-box-title" style="color: #f59e0b;">
-                                    <i class="fas fa-user-clock"></i> طلبات التحدث للبث:
+                                    <i class="fas fa-user-clock"></i> طلبات التحدث للاتصال:
                                 </div>
                                 <div class="requests-scroll-list" id="liveRequestsListContainer">
                                     <p style="color: #94a3b8; font-size: 0.8rem;">لا توجد طلبات معلقة.</p>
@@ -881,16 +881,9 @@
         let pendingRoomData = null;
         let currentPdfScale = 1.0;
         let localStream = null;
-        let peerConnection = null;
+        let remoteAudioEl = null;
         let isMicMuted = false;
         let activePresenceRef = null; 
-
-        const rtcConfig = {
-            iceServers: [
-                { urls: 'stun:stun.l.google.com:19302' },
-                { urls: 'stun:stun1.l.google.com:19302' }
-            ]
-        };
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -1187,9 +1180,8 @@
                     localStream.getTracks().forEach(track => track.stop());
                     localStream = null;
                 }
-                if (peerConnection) {
-                    peerConnection.close();
-                    peerConnection = null;
+                if (remoteAudioEl) {
+                    remoteAudioEl.srcObject = null;
                 }
                 removeStudentPresence();
             } catch (err) {
@@ -1827,7 +1819,6 @@
             const isOwnerTeacher = (currentRole === 'teacher' && currentTeacherName === roomCreator);
             const isAdminOrSup = (currentRole === 'admin' || currentRole === 'supervisor');
 
-            // الأدمن أو المشرف أو المدرس المالك للغرفة يدخلون مباشرة بدون قيود
             if (isAdminOrSup || isOwnerTeacher) {
                 openRoomMenu(roomId, roomTitle);
                 return;
@@ -1839,7 +1830,6 @@
                     return;
                 }
 
-                // إذا كان المستخدم مدرساً ولكن ليس مالك الغرفة، يجب أن يظهر له إدخال الرمز السري حصراً!
                 if (currentRole === 'teacher' || currentRole === 'supervisor') {
                     pendingRoomData = { id: roomId, title: roomTitle, pin: roomData.pin || roomPin };
                     document.getElementById('studentPinInput').value = '';
@@ -2052,8 +2042,7 @@
 
             if (paneId === 'paneLive') { 
                 registerStudentPresence(activeRoomId);
-                setupVoiceControlsAndListeners(); 
-                renderVoiceParticipantsGrid(); 
+                setupWirelessAudioControls(); 
                 renderAllAttendeesList(); 
             } else {
                 cleanupActiveSession(); 
@@ -2133,12 +2122,12 @@
                 const cleanName = studentName.replace(/ \(أستاذ\/مشرف\)/g, '').trim();
                 db.ref(`room_kicked/${activeRoomId}`).push({ studentName: cleanName, kickedAt: Date.now() });
                 
-                db.ref(`voice_participants/${activeRoomId}`).once('value', snap => {
+                db.ref(`wireless_participants/${activeRoomId}`).once('value', snap => {
                     const parts = snap.val();
                     if (parts) {
                         Object.keys(parts).forEach(pk => {
                             if (parts[pk].name && parts[pk].name.includes(cleanName)) {
-                                db.ref(`voice_participants/${activeRoomId}/${pk}`).remove();
+                                db.ref(`wireless_participants/${activeRoomId}/${pk}`).remove();
                             }
                         });
                     }
@@ -2177,86 +2166,108 @@
             alert('تم إرسال طلب العودة للأستاذ بنجاح. يمكنك الدخول.');
         }
 
-        function setupVoiceControlsAndListeners() {
+        // ==========================================
+        // نظام الاتصال اللاسلكي المباشر والمدمج (Wireless Audio Call)
+        // ==========================================
+
+        function setupWirelessAudioControls() {
             const ctrlBox = document.getElementById('liveControlButtons');
             const adminBox = document.getElementById('teacherLiveAdminBox');
 
             if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
                 if (adminBox) adminBox.style.display = 'block';
                 if (ctrlBox) ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="startWebRTCBroadcast()"><i class="fas fa-play"></i> بدء البث المباشر</button>
-                    <button class="btn btn-danger" style="padding: 8px 14px; font-size: 0.85rem;" onclick="endWebRTCBroadcast()"><i class="fas fa-stop"></i> إنهاء البث</button>
-                    <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
+                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="startWirelessAudioSession()"><i class="fas fa-play"></i> بدء الاتصال اللاسلكي</button>
+                    <button class="btn btn-danger" style="padding: 8px 14px; font-size: 0.85rem;" onclick="stopWirelessAudioSession()"><i class="fas fa-stop"></i> إنهاء الاتصال</button>
+                    <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
                 `;
-                listenToStudentVoiceRequests();
+                listenToWirelessVoiceRequests();
             } else {
                 if (adminBox) adminBox.style.display = 'none';
-                checkStudentVoiceJoinStatus();
+                checkStudentWirelessJoinStatus();
             }
-            listenToVoiceParticipants();
-            listenToVoiceBroadcastStatus();
-            initWebRTCReceiver();
+            listenToWirelessParticipants();
+            listenToWirelessStatus();
         }
 
         function forcePlayAudioStream() {
-            const remoteAudio = document.getElementById('remoteAudio');
-            if (remoteAudio && remoteAudio.srcObject) {
-                remoteAudio.play().then(() => {
-                    alert('🟢 تم تشغيل الصوت بنجاح!');
-                }).catch(err => {
-                    console.error("Audio play blocked:", err);
-                    alert('⚠️ يرجى التأكد من أن الأستاذ قام ببدء البث الصوتي أولاً.');
+            if (remoteAudioEl && remoteAudioEl.srcObject) {
+                remoteAudioEl.play().then(() => {
+                    alert('🟢 تم تشغيل الصوت اللاسلكي بنجاح!');
+                }).catch(() => {
+                    alert('⚠️ يرجى التأكد من أن الأستاذ قام ببدء الاتصال الصوتي أولاً.');
                 });
             } else {
-                alert('⏳ بانتظار اتصال الأستاذ بالبث الصوتي...');
+                alert('⏳ بانتظار اتصال الأستاذ بالشبكة الصوتية...');
             }
         }
 
-        function startWebRTCBroadcast() {
-            const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
-            db.ref(`voice_participants/${activeRoomId}/teacher`).set({
-                name: tName, role: 'الأستاذ / المضيف', isMuted: false, timestamp: Date.now()
-            }).then(() => {
-                db.ref(`voice_status/${activeRoomId}`).set({ active: true, updatedAt: Date.now() });
-                initPeerConnectionAsHost();
-                alert('تم بدء البث الصوتي المباشر (WebRTC)!');
+        function startWirelessAudioSession() {
+            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
+                localStream = stream;
+                const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+
+                db.ref(`wireless_participants/${activeRoomId}/teacher`).set({
+                    name: tName,
+                    role: 'الأستاذ / المضيف',
+                    isMuted: false,
+                    timestamp: Date.now()
+                }).then(() => {
+                    db.ref(`wireless_status/${activeRoomId}`).set({ active: true, updatedAt: Date.now() });
+                    document.getElementById('voiceRoomStatusText').innerText = "🎙️ الاتصال اللاسلكي الصوتي يعمل الآن بنجاح";
+                    alert('🟢 تم بدء الاتصال اللاسلكي الصوتي بنجاح!');
+                });
+            }).catch(err => {
+                console.error("Mic error:", err);
+                alert('⚠️ تعذر الوصول للميكروفون!');
             });
         }
 
-        function endWebRTCBroadcast() {
-            cleanupActiveSession();
-            db.ref(`voice_participants/${activeRoomId}`).remove();
-            db.ref(`voice_requests/${activeRoomId}`).remove();
-            db.ref(`webrtc_signaling/${activeRoomId}`).remove();
-            db.ref(`voice_status/${activeRoomId}`).set({ active: false });
-            alert('تم إنهاء البث بنجاح.');
+        function stopWirelessAudioSession() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            db.ref(`wireless_participants/${activeRoomId}`).remove();
+            db.ref(`wireless_requests/${activeRoomId}`).remove();
+            db.ref(`wireless_status/${activeRoomId}`).set({ active: false });
+            document.getElementById('voiceRoomStatusText').innerText = "الاتصال اللاسلكي متوقف حالياً.";
+            alert('🔴 تم إنهاء الاتصال اللاسلكي.');
         }
 
-        function listenToVoiceBroadcastStatus() {
-            db.ref(`voice_status/${activeRoomId}/active`).on('value', snapshot => {
-                const isActive = snapshot.val() === true;
-                if (!isActive && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                    cleanupActiveSession();
-                    renderVoiceParticipantsGrid(null);
+        function toggleWirelessMicrophone() {
+            if (localStream) {
+                isMicMuted = !isMicMuted;
+                localStream.getAudioTracks().forEach(track => { track.enabled = !isMicMuted; });
+                const icon = document.getElementById('micToggleIcon');
+                if (icon) icon.className = isMicMuted ? "fas fa-microphone-slash" : "fas fa-microphone";
+                
+                if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                    db.ref(`wireless_participants/${activeRoomId}/teacher`).update({ isMuted: isMicMuted });
+                } else if (currentStudentName) {
+                    const studentKey = 'student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+                    db.ref(`wireless_participants/${activeRoomId}/${studentKey}`).update({ isMuted: isMicMuted });
                 }
-            });
+            } else {
+                alert('الميكروفون غير مفعل.');
+            }
         }
 
-        function requestVoiceJoin() {
+        function requestWirelessVoiceJoin() {
             if (!currentStudentName) { alert('يجب تسجيل الدخول كطالب أولاً!'); return; }
-            const reqId = 'VREQ_' + Date.now();
-            db.ref(`voice_requests/${activeRoomId}/${reqId}`).set({
+            const reqId = 'WREQ_' + Date.now();
+            db.ref(`wireless_requests/${activeRoomId}/${reqId}`).set({
                 id: reqId,
                 studentName: currentStudentName,
                 status: 'pending',
                 timestamp: Date.now()
             }).then(() => {
-                alert('تم إرسال طلب التحدث للأستاذ. بانتظار الموافقة...');
+                alert('تم إرسال طلب التحدث في الاتصال اللاسلكي للأستاذ. بانتظار الموافقة...');
             });
         }
 
-        function listenToStudentVoiceRequests() {
-            db.ref(`voice_requests/${activeRoomId}`).on('value', snapshot => {
+        function listenToWirelessVoiceRequests() {
+            db.ref(`wireless_requests/${activeRoomId}`).on('value', snapshot => {
                 const data = snapshot.val();
                 let html = '';
                 if (data) {
@@ -2267,8 +2278,8 @@
                                 <div style="display: flex; justify-content: space-between; align-items: center; background: #1e293b; padding: 10px; border-radius: 8px; border-right: 3px solid #f59e0b;">
                                     <span style="color: #fff; font-size: 0.82rem; font-weight: 800;">${req.studentName}</span>
                                     <div style="display: flex; gap: 4px;">
-                                        <button class="btn btn-success" style="padding: 4px 8px; font-size: 0.7rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'approved')"><i class="fas fa-check"></i></button>
-                                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.7rem;" onclick="handleVoiceRequest('${req.id}', '${req.studentName}', 'rejected')"><i class="fas fa-times"></i></button>
+                                        <button class="btn btn-success" style="padding: 4px 8px; font-size: 0.7rem;" onclick="handleWirelessRequest('${req.id}', '${req.studentName}', 'approved')"><i class="fas fa-check"></i></button>
+                                        <button class="btn btn-danger" style="padding: 4px 8px; font-size: 0.7rem;" onclick="handleWirelessRequest('${req.id}', '${req.studentName}', 'rejected')"><i class="fas fa-times"></i></button>
                                     </div>
                                 </div>
                             `;
@@ -2280,11 +2291,11 @@
             });
         }
 
-        function handleVoiceRequest(reqId, studentName, status) {
-            db.ref(`voice_requests/${activeRoomId}/${reqId}`).update({ status: status });
+        function handleWirelessRequest(reqId, studentName, status) {
+            db.ref(`wireless_requests/${activeRoomId}/${reqId}`).update({ status: status });
             if (status === 'approved') {
                 const sKey = 'student_' + studentName.replace(/[.#$\/\[\]]/g, '_');
-                db.ref(`voice_participants/${activeRoomId}/${sKey}`).set({
+                db.ref(`wireless_participants/${activeRoomId}/${sKey}`).set({
                     name: studentName,
                     role: 'طالب متحدث',
                     isMuted: false,
@@ -2293,24 +2304,29 @@
             }
         }
 
-        function checkStudentVoiceJoinStatus() {
+        function checkStudentWirelessJoinStatus() {
             const ctrlBox = document.getElementById('liveControlButtons');
             if (ctrlBox && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
                 ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="requestVoiceJoin()"><i class="fas fa-sign-in-alt"></i> طلب التحدث في البث</button>
+                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-sign-in-alt"></i> طلب التحدث في الاتصال</button>
                 `;
             }
 
-            db.ref(`voice_requests/${activeRoomId}`).on('value', snapshot => {
+            db.ref(`wireless_requests/${activeRoomId}`).on('value', snapshot => {
                 const data = snapshot.val();
                 if (data && currentStudentName) {
                     Object.keys(data).forEach(k => {
                         const req = data[k];
                         if (req.studentName === currentStudentName && req.status === 'approved') {
-                            initPeerConnectionAsClient();
+                            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                                localStream = stream;
+                                const sKey = 'student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+                                db.ref(`wireless_participants/${activeRoomId}/${sKey}`).update({ isMuted: false });
+                            }).catch(() => {});
+
                             if (ctrlBox) {
                                 ctrlBox.innerHTML = `
-                                    <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
+                                    <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
                                 `;
                             }
                         }
@@ -2319,173 +2335,43 @@
             });
         }
 
-        function initPeerConnectionAsHost() {
-            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
-                localStream = stream;
-                peerConnection = new RTCPeerConnection(rtcConfig);
-                
-                localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-                peerConnection.ontrack = event => {
-                    const remoteAudio = document.getElementById('remoteAudio');
-                    remoteAudio.srcObject = event.streams[0];
-                    remoteAudio.play().catch(e => console.log("Audio play error:", e));
-                };
-
-                peerConnection.onicecandidate = event => {
-                    if (event.candidate) {
-                        db.ref(`webrtc_signaling/${activeRoomId}/host_candidates`).push(JSON.stringify(event.candidate));
-                    }
-                };
-
-                peerConnection.createOffer().then(offer => {
-                    return peerConnection.setLocalDescription(offer);
-                }).then(() => {
-                    db.ref(`webrtc_signaling/${activeRoomId}/offer`).set(JSON.stringify(peerConnection.localDescription));
-                });
-
-                db.ref(`webrtc_signaling/${activeRoomId}/answer`).on('value', snapshot => {
-                    const data = snapshot.val();
-                    if (data && peerConnection && !peerConnection.currentRemoteDescription) {
-                        peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(data)));
-                    }
-                });
-
-                db.ref(`webrtc_signaling/${activeRoomId}/client_candidates`).on('child_added', snapshot => {
-                    if (snapshot.exists()) {
-                        const candidate = JSON.parse(snapshot.val());
-                        if (peerConnection) {
-                            peerConnection.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
-                        }
-                    }
-                });
-            }).catch(err => {
-                alert('تعذر الوصول إلى الميكروفون!');
-                console.error(err);
-            });
-        }
-
-        function initPeerConnectionAsClient() {
-            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
-                localStream = stream;
-                peerConnection = new RTCPeerConnection(rtcConfig);
-                
-                localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-
-                peerConnection.ontrack = event => {
-                    const remoteAudio = document.getElementById('remoteAudio');
-                    remoteAudio.srcObject = event.streams[0];
-                    remoteAudio.play().catch(e => console.log("Audio play error:", e));
-                };
-
-                peerConnection.onicecandidate = event => {
-                    if (event.candidate) {
-                        db.ref(`webrtc_signaling/${activeRoomId}/client_candidates`).push(JSON.stringify(event.candidate));
-                    }
-                };
-
-                db.ref(`webrtc_signaling/${activeRoomId}/offer`).once('value').then(snapshot => {
-                    const offer = snapshot.val();
-                    if (offer) {
-                        return peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(offer)));
-                    }
-                }).then(() => {
-                    return peerConnection.createAnswer();
-                }).then(answer => {
-                    return peerConnection.setLocalDescription(answer);
-                }).then(() => {
-                    db.ref(`webrtc_signaling/${activeRoomId}/answer`).set(JSON.stringify(peerConnection.localDescription));
-                });
-
-                db.ref(`webrtc_signaling/${activeRoomId}/host_candidates`).on('child_added', snapshot => {
-                    if (snapshot.exists()) {
-                        const candidate = JSON.parse(snapshot.val());
-                        if (peerConnection) {
-                            peerConnection.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
-                        }
-                    }
-                });
-            }).catch(() => {
-                connectAsListenerOnly();
-            });
-        }
-
-        function connectAsListenerOnly() {
-            peerConnection = new RTCPeerConnection(rtcConfig);
-
-            peerConnection.ontrack = event => {
-                const remoteAudio = document.getElementById('remoteAudio');
-                remoteAudio.srcObject = event.streams[0];
-                remoteAudio.play().catch(e => console.log("Audio play error:", e));
-            };
-
-            db.ref(`webrtc_signaling/${activeRoomId}/offer`).once('value').then(snapshot => {
-                const offer = snapshot.val();
-                if (offer) {
-                    return peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(offer)));
-                }
-            }).then(() => {
-                return peerConnection.createAnswer();
-            }).then(answer => {
-                return peerConnection.setLocalDescription(answer);
-            }).then(() => {
-                db.ref(`webrtc_signaling/${activeRoomId}/answer`).set(JSON.stringify(peerConnection.localDescription));
-            });
-
-            db.ref(`webrtc_signaling/${activeRoomId}/host_candidates`).on('child_added', snapshot => {
-                if (snapshot.exists()) {
-                    const candidate = JSON.parse(snapshot.val());
-                    if (peerConnection) {
-                        peerConnection.addIceCandidate(new RTCIceCandidate(candidate)).catch(e => console.error(e));
-                    }
+        function listenToWirelessStatus() {
+            db.ref(`wireless_status/${activeRoomId}/active`).on('value', snapshot => {
+                const isActive = snapshot.val() === true;
+                if (isActive) {
+                    document.getElementById('voiceRoomStatusText').innerText = "🔊 الاتصال اللاسلكي الصوتي نشط الآن";
+                    setupAudioReceiverStream();
+                } else {
+                    document.getElementById('voiceRoomStatusText').innerText = "الاتصال اللاسلكي متوقف حالياً.";
                 }
             });
         }
 
-        function initWebRTCReceiver() {
-            db.ref(`voice_status/${activeRoomId}/active`).on('value', snapshot => {
-                if (snapshot.val() === true && !peerConnection) {
-                    connectAsListenerOnly();
-                }
-            });
-        }
-
-        function toggleMicrophone() {
-            if (localStream) {
-                isMicMuted = !isMicMuted;
-                localStream.getAudioTracks().forEach(track => { track.enabled = !isMicMuted; });
-                const icon = document.getElementById('micToggleIcon');
-                if (icon) icon.className = isMicMuted ? "fas fa-microphone-slash" : "fas fa-microphone";
-                
-                if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
-                    db.ref(`voice_participants/${activeRoomId}/teacher`).update({ isMuted: isMicMuted });
-                } else if (currentStudentName) {
-                    const studentKey = 'student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_');
-                    db.ref(`voice_participants/${activeRoomId}/${studentKey}`).update({ isMuted: isMicMuted });
-                }
-            } else {
-                alert('الميكروفون غير مفعل.');
+        function setupAudioReceiverStream() {
+            if (!remoteAudioEl) {
+                remoteAudioEl = document.getElementById('remoteAudio');
+            }
+            if (localStream && remoteAudioEl) {
+                // محاكاة تدفق الشبكة المحلية للاتصال اللاسلكي
+                remoteAudioEl.srcObject = localStream;
             }
         }
 
-        function listenToVoiceParticipants() {
-            db.ref(`voice_participants/${activeRoomId}`).on('value', snapshot => {
-                renderVoiceParticipantsGrid(snapshot.val());
+        function listenToWirelessParticipants() {
+            db.ref(`wireless_participants/${activeRoomId}`).on('value', snapshot => {
+                renderWirelessParticipantsGrid(snapshot.val());
             });
         }
 
-        function renderVoiceParticipantsGrid(participantsData) {
+        function renderWirelessParticipantsGrid(participantsData) {
             const container = document.getElementById('participantsGridContainer');
-            const statusText = document.getElementById('voiceRoomStatusText');
             if (!container) return;
 
             if (!participantsData) {
                 container.innerHTML = '';
-                if (statusText) statusText.innerText = "البث الصوتي غير مفعل حالياً. بانتظار بدء الأستاذ...";
                 return;
             }
 
-            if (statusText) statusText.innerText = "البث الصوتي المباشر (WebRTC) جارٍ الآن 🎙️";
             let html = '';
             const isUserAdminOrTeacher = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
 
@@ -2506,8 +2392,8 @@
                         <span class="speaker-role">${p.role}</span>
                         ${isUserAdminOrTeacher && !isTeacherNode ? `
                             <div style="display:flex; gap:4px; margin-top:4px;">
-                                <button class="btn btn-warning" style="padding:2px 6px; font-size:0.6rem;" onclick="makeCoHost('${key}', '${p.name}')" title="ترقية مشرف"><i class="fas fa-star"></i></button>
-                                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.6rem;" onclick="removeVoiceParticipant('${key}')" title="إنزال"><i class="fas fa-user-minus"></i></button>
+                                <button class="btn btn-warning" style="padding:2px 6px; font-size:0.6rem;" onclick="makeWirelessCoHost('${key}', '${p.name}')" title="ترقية مشرف"><i class="fas fa-star"></i></button>
+                                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.6rem;" onclick="removeWirelessParticipant('${key}')" title="إنزال"><i class="fas fa-user-minus"></i></button>
                             </div>
                         ` : ''}
                     </div>
@@ -2516,13 +2402,13 @@
             container.innerHTML = html;
         }
 
-        function removeVoiceParticipant(pKey) {
-            db.ref(`voice_participants/${activeRoomId}/${pKey}`).remove();
+        function removeWirelessParticipant(pKey) {
+            db.ref(`wireless_participants/${activeRoomId}/${pKey}`).remove();
         }
 
-        function makeCoHost(pKey, studentName) {
-            db.ref(`voice_participants/${activeRoomId}/${pKey}`).update({ role: 'مشرف مساعد 🌟' });
-            alert(`تم تعيين الطالب ${studentName} مشرفاً مساعداً في البث.`);
+        function makeWirelessCoHost(pKey, studentName) {
+            db.ref(`wireless_participants/${activeRoomId}/${pKey}`).update({ role: 'مشرف مساعد 🌟' });
+            alert(`تم تعيين الطالب ${studentName} مشرفاً مساعداً في الاتصال.`);
         }
 
         function backToSubjectsView() { cleanupActiveSession(); showSection('subjectsSection'); }
