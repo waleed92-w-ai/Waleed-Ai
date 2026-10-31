@@ -369,7 +369,7 @@
                     </div>
                 </div>
 
-                <!-- واجهة المحادثة النصية والصوتية (بدون اتصال وبصمة صوتية كاملة) -->
+                <!-- واجهة المحادثة النصية والصوتية (بصمة اضغط باستمرار وإرسال عند رفع الإصبع) -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
@@ -404,7 +404,8 @@
                                     <i class="fas fa-paperclip"></i>
                                 </button>
                                 
-                                <button type="button" class="btn btn-secondary" id="voiceRecordBtn" onclick="toggleVoiceRecording()" title="تسجيل بصمة صوتية" style="border-radius: 50%; width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: #e9edef; color: #54656f;">
+                                <!-- زر البصمة الصوتية (اضغط باستمرار للتسجيل، ارفع لإرسال البصمة) -->
+                                <button type="button" class="btn btn-secondary" id="voiceRecordBtn" title="اضغط باستمرار للتسجيل وتكلم، وارفع إصبعك للإرسال" style="border-radius: 50%; width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: #e9edef; color: #54656f; touch-action: none;">
                                     <i class="fas fa-microphone" id="voiceMicIcon"></i>
                                 </button>
 
@@ -726,7 +727,7 @@
         let selectedWaFileData = null;
         let selectedWaFileName = "";
         
-        // متغيرات تسجيل البصمة الصوتية
+        // متغيرات تسجيل البصمة الصوتية (اضغط باستمرار وارفع للإرسال)
         let mediaRecorder = null;
         let audioChunks = [];
         let isRecordingVoice = false;
@@ -749,6 +750,7 @@
             listenToNotificationsRealtime();
             requestBrowserNotificationPermission();
             initEventListeners();
+            initVoiceRecorderEvents();
         });
 
         function requestBrowserNotificationPermission() {
@@ -858,53 +860,105 @@
             document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
         }
 
-        // وظائف تسجيل البصمة الصوتية
-        function toggleVoiceRecording() {
+        // نظام تسجيل البصمة الصوتية المطور (اضغط باستمرار للتسجيل، ارفع للإرسال التلقائي)
+        function initVoiceRecorderEvents() {
+            const micBtn = document.getElementById('voiceRecordBtn');
+            if (!micBtn) return;
+
+            // للأجهزة التي تعمل باللمس (الهواتف والأجهزة اللوحية)
+            micBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                startVoiceRecording();
+            }, { passive: false });
+
+            micBtn.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                stopAndSendVoiceRecording();
+            }, { passive: false });
+
+            // لأجهزة الكمبيوتر (الماوس)
+            micBtn.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+                startVoiceRecording();
+            });
+
+            micBtn.addEventListener('mouseup', function(e) {
+                e.preventDefault();
+                stopAndSendVoiceRecording();
+            });
+
+            micBtn.addEventListener('mouseleave', function(e) {
+                if (isRecordingVoice) {
+                    stopAndSendVoiceRecording();
+                }
+            });
+        }
+
+        function startVoiceRecording() {
+            if (isRecordingVoice) return;
+            
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data.size > 0) {
+                        audioChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const base64Audio = e.target.result;
+                        sendVoiceNoteMessage(base64Audio);
+                    };
+                    reader.readAsDataURL(audioBlob);
+                    
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorder.start();
+                isRecordingVoice = true;
+                
+                const micBtn = document.getElementById('voiceRecordBtn');
+                const micIcon = document.getElementById('voiceMicIcon');
+                if (micBtn) {
+                    micBtn.style.background = '#ef4444';
+                    micBtn.style.transform = 'scale(1.1)';
+                }
+                if (micIcon) {
+                    micIcon.style.color = '#fff';
+                    micIcon.className = "fas fa-microphone-slash fa-beat";
+                }
+            }).catch(err => {
+                alert('⚠️ عذراً، لا يمكن الوصول إلى الميكروفون. تأكد من منح الأذن للمتصفح.');
+            });
+        }
+
+        function stopAndSendVoiceRecording() {
+            if (!isRecordingVoice) return;
+            
+            isRecordingVoice = false;
             const micBtn = document.getElementById('voiceRecordBtn');
             const micIcon = document.getElementById('voiceMicIcon');
-
-            if (!isRecordingVoice) {
-                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                    mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];
-                    
-                    mediaRecorder.ondataavailable = event => {
-                        audioChunks.push(event.data);
-                    };
-
-                    mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const base64Audio = e.target.result;
-                            sendVoiceNoteMessage(base64Audio);
-                        };
-                        reader.readAsDataURL(audioBlob);
-                        
-                        // إيقاف الستريم
-                        stream.getTracks().forEach(track => track.stop());
-                    };
-
-                    mediaRecorder.start();
-                    isRecordingVoice = true;
-                    micBtn.style.background = '#ef4444';
-                    micIcon.style.color = '#fff';
-                    micBtn.title = "جارٍ التسجيل... انقر للإيقاف والإرسال";
-                }).catch(err => {
-                    alert('⚠️ عذراً، لا يمكن الوصول إلى الميكروفون.');
-                });
-            } else {
-                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                    mediaRecorder.stop();
-                }
-                isRecordingVoice = false;
+            if (micBtn) {
                 micBtn.style.background = '#e9edef';
+                micBtn.style.transform = 'scale(1)';
+            }
+            if (micIcon) {
                 micIcon.style.color = '#54656f';
-                micBtn.title = "تسجيل بصمة صوتية";
+                micIcon.className = "fas fa-microphone";
+            }
+
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
             }
         }
 
         function sendVoiceNoteMessage(audioBase64) {
+            if (!activeRoomId) return;
             const senderName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
                 (loggedTeacherData ? loggedTeacherData.name + ' (أستاذ)' : 'الأستاذ وليد') : 
                 (currentStudentName || 'طالب');
