@@ -75,10 +75,21 @@
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
 
-        /* شات واتساب الشبيه بتطبيق واتساب مع شريط المكالمة العلوي وتكبير/تصغير خط المحادثة */
-        .whatsapp-whatsapp-style-container { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; background: #efeae2; box-shadow: 0 6px 25px rgba(0,0,0,0.08); position: relative; }
+        /* شات واتساب مع دعم وضع ملء الشاشة وتصغير الاتصال لفقاعة */
+        .whatsapp-whatsapp-style-container { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; background: #efeae2; box-shadow: 0 6px 25px rgba(0,0,0,0.08); position: relative; transition: all 0.3s ease; }
         
-        /* شريط مكالمة واتساب العلوي */
+        /* نمط ملء الشاشة للمحادثة */
+        .whatsapp-whatsapp-style-container.chat-fullscreen-mode {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 99999 !important;
+            border-radius: 0 !important;
+            border: none !important;
+        }
+
         .whatsapp-call-banner { background: #075e54; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); box-shadow: 0 2px 6px rgba(0,0,0,0.2); flex-wrap: wrap; gap: 8px; }
         .call-banner-left { display: flex; align-items: center; gap: 10px; }
         
@@ -93,7 +104,7 @@
             background: #075e54 !important;
             border: 3px solid #25d366 !important;
             box-shadow: 0 10px 30px rgba(7, 94, 84, 0.6) !important;
-            z-index: 99999 !important;
+            z-index: 100000 !important;
             display: none;
             align-items: center;
             justify-content: center;
@@ -104,8 +115,9 @@
         }
         @keyframes pulseBubble { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* صندوق الرسائل في الأسفل مع متغير حجم الخط القابل للتعديل */
-        .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; height: 460px; display: flex; flex-direction: column; overflow: hidden; }
+        .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; flex: 1; height: 460px; display: flex; flex-direction: column; overflow: hidden; }
+        .whatsapp-whatsapp-style-container.chat-fullscreen-mode .whatsapp-chat-box { height: calc(100vh - 110px) !important; }
+
         .whatsapp-messages-scroll { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         
         .wa-bubble { 
@@ -389,7 +401,7 @@
                     </div>
                 </div>
 
-                <!-- محادثة واتساب كاملة + شريط مكالمة علوي مع أزرار تكبير وتصغير خط المحادثة -->
+                <!-- محادثة واتساب كاملة + شريط مكالمة علوي -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     
                     <!-- الفقاعة العائمة للمكالمة عند تصغيرها -->
@@ -400,7 +412,7 @@
 
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
-                        <!-- شريط مكالمة واتساب العلوي (يحتوي أزرار تكبير وتصغير المحادثة) -->
+                        <!-- شريط مكالمة واتساب العلوي (يحتوي أزرار تكبير الشاشة وتصغير الاتصال لفقاعة وتكبير/تصغير خط المحادثة) -->
                         <div class="whatsapp-call-banner" id="whatsappCallBanner">
                             <div class="call-banner-left">
                                 <button class="btn btn-danger" onclick="stopWirelessAudioSession()" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;" title="إنهاء المكالمة">
@@ -410,18 +422,22 @@
                                 <span style="font-size: 0.85rem; font-weight: 800; color: #fff;">- <span id="liveRoomTitleDisplay">مجموعة الدرس</span></span>
                             </div>
                             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                <!-- أزرار تكبير وتصغير المحادثة والخط بدلاً من تكبير الشاشة بالكامل -->
+                                <!-- زر تكبير المحادثة لملء الشاشة -->
+                                <button class="btn btn-secondary" id="chatFullscreenToggleBtn" onclick="toggleChatFullscreen()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تكبير المحادثة لملء الشاشة">
+                                    <i class="fas fa-expand" id="chatFullscreenIcon"></i> تكبير الشاشة
+                                </button>
+                                <!-- زر تصغير الاتصال لفقاعة عائمة -->
+                                <button class="btn btn-secondary" onclick="minimizeCallToBubble()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تصغير الاتصال لفقاعة">
+                                    <i class="fas fa-compress-arrows-alt"></i> تصغير فقاعة
+                                </button>
                                 <button class="btn btn-secondary" onclick="adjustChatFontSize(1)" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تكبير خط المحادثة">
-                                    <i class="fas fa-search-plus"></i> تكبير محادثة
+                                    <i class="fas fa-search-plus"></i> تكبير خط
                                 </button>
                                 <button class="btn btn-secondary" onclick="adjustChatFontSize(-1)" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تصغير خط المحادثة">
-                                    <i class="fas fa-search-minus"></i> تصغير محادثة
+                                    <i class="fas fa-search-minus"></i> تصغير خط
                                 </button>
                                 <button class="btn btn-secondary" onclick="toggleWirelessMicrophone()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="كتم/إلغاء الكتم">
                                     <i class="fas fa-microphone" id="micToggleIcon"></i>
-                                </button>
-                                <button class="btn btn-secondary" onclick="minimizeCallToBubble()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تصغير لفقاعة عائمة">
-                                    <i class="fas fa-compress-arrows-alt"></i> تصغير فقاعة
                                 </button>
                                 <button class="btn btn-success" onclick="forcePlayAudioStream()" style="padding: 4px 8px; font-size: 0.75rem;" title="سماع الصوت">
                                     <i class="fas fa-volume-up"></i> سماع
@@ -764,7 +780,7 @@
         let currentStudentName = "";
         let pendingRoomData = null;
         let currentPdfScale = 1.0;
-        let currentChatFontSizeRem = 0.9; // حجم الخط الافتتباحي للرسائل (rem)
+        let currentChatFontSizeRem = 0.9;
         let localStream = null;
         let remoteAudioEl = null;
         let isMicMuted = false;
@@ -871,7 +887,7 @@
             document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
         }
 
-        /* دوال تكبير وتصغير حجم خط رسائل المحادثة فقط */
+        /* دالة تكبير وتصغير خط رسائل المحادثة */
         function adjustChatFontSize(direction) {
             currentChatFontSizeRem = Math.max(0.7, Math.min(1.5, currentChatFontSizeRem + (direction * 0.1)));
             const container = document.getElementById('whatsappMainContainer');
@@ -880,12 +896,29 @@
             }
         }
 
-        /* دوال تصغير وتكبير شريط المكالمة إلى فقاعة عائمة تماماً كواتساب */
+        /* دالة تكبير محادثة الشات لملء الشاشة بالكامل والعكس */
+        function toggleChatFullscreen() {
+            const container = document.getElementById('whatsappMainContainer');
+            const icon = document.getElementById('chatFullscreenIcon');
+            const btn = document.getElementById('chatFullscreenToggleBtn');
+            
+            container.classList.toggle('chat-fullscreen-mode');
+            if (container.classList.contains('chat-fullscreen-mode')) {
+                icon.className = "fas fa-compress";
+                btn.innerHTML = '<i class="fas fa-compress"></i> تصغير الشاشة';
+            } else {
+                icon.className = "fas fa-expand";
+                btn.innerHTML = '<i class="fas fa-expand"></i> تكبير الشاشة';
+            }
+        }
+
+        /* دالة تصغير شريط المكالمة إلى فقاعة عائمة على الشاشة */
         function minimizeCallToBubble() {
             document.getElementById('whatsappCallBanner').style.display = 'none';
             document.getElementById('whatsappFloatingBubble').style.display = 'flex';
         }
 
+        /* دالة تكبير شريط المكالمة عند الضغط على الفقاعة العائمة */
         function expandCallBanner() {
             document.getElementById('whatsappFloatingBubble').style.display = 'none';
             document.getElementById('whatsappCallBanner').style.display = 'flex';
