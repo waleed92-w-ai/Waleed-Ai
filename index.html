@@ -370,7 +370,7 @@
                     </div>
                 </div>
 
-                <!-- شاشة محادثة الواتساب مع دعم البصمة الصوتية -->
+                <!-- شاشة محادثة الواتساب مع دعم البصمة الصوتية وتشغيلها -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
@@ -405,7 +405,7 @@
                                     <i class="fas fa-paperclip"></i>
                                 </button>
                                 
-                                <!-- زر بصمة الصوت (تسجيل صوتي مثل الواتساب) -->
+                                <!-- زر بصمة الصوت المحسن -->
                                 <button type="button" class="btn btn-secondary" id="voiceRecordBtn" onclick="toggleVoiceRecording()" title="تسجيل بصمة صوتية" style="border-radius: 50%; width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: #e9edef; color: #54656f;">
                                     <i class="fas fa-microphone" id="voiceRecordIcon"></i>
                                 </button>
@@ -728,7 +728,7 @@
         let selectedWaFileData = null;
         let selectedWaFileName = "";
         
-        // متغيرات تسجيل البصمة الصوتية
+        // متغيرات تسجيل البصمة الصوتية المحسنة
         let mediaRecorder = null;
         let audioChunks = [];
         let isRecordingVoice = false;
@@ -2060,30 +2060,49 @@
             }
         }
 
-        // دالة تفعيل تسجيل البصمة الصوتية (مثل نظام الواتساب)
+        // دالة تسجيل البصمة الصوتية المحسنة مع دعم كشف ترميز المتصفح
         function toggleVoiceRecording() {
             const micBtn = document.getElementById('voiceRecordBtn');
             const micIcon = document.getElementById('voiceRecordIcon');
 
             if (!isRecordingVoice) {
-                // بدء التسجيل
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    alert("⚠️ عذراً، متصفحك لا يدعم تسجيل الصوت أو أن الاتصال ليس عبر HTTPS.");
+                    return;
+                }
+
                 navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                    mediaRecorder = new MediaRecorder(stream);
+                    let options = { mimeType: 'audio/webm' };
+                    if (!MediaRecorder.isTypeSupported('audio/webm')) {
+                        if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                            options = { mimeType: 'audio/mp4' };
+                        } else {
+                            options = {}; // افتراضي المتصفح
+                        }
+                    }
+
+                    try {
+                        mediaRecorder = new MediaRecorder(stream, options);
+                    } catch (e) {
+                        mediaRecorder = new MediaRecorder(stream);
+                    }
+
                     audioChunks = [];
 
                     mediaRecorder.ondataavailable = event => {
-                        audioChunks.push(event.data);
+                        if (event.data && event.data.size > 0) {
+                            audioChunks.push(event.data);
+                        }
                     };
 
                     mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
                         const reader = new FileReader();
                         reader.readAsDataURL(audioBlob);
                         reader.onloadend = function() {
                             const base64Audio = reader.result;
                             sendVoiceMessageToChat(base64Audio);
                         };
-                        // إيقاف الستريم
                         stream.getTracks().forEach(track => track.stop());
                     };
 
@@ -2094,10 +2113,9 @@
                     micBtn.style.color = "#fff";
                     document.getElementById('waFilePreviewName').innerText = "🎙️ جاري تسجيل البصمة الصوتية... (اضغط مجدداً للإرسال)";
                 }).catch(err => {
-                    alert("⚠️ تعذر الوصول إلى الميكروفون. يرجى السماح للمتصفح باستخدام الميكروفون.");
+                    alert("⚠️ تعذر الوصول إلى الميكروفون. يرجى التأكد من منح الإذن للمتصفح.");
                 });
             } else {
-                // إيقاف التسجيل وإرساله فوراً
                 if (mediaRecorder && mediaRecorder.state !== "inactive") {
                     mediaRecorder.stop();
                 }
@@ -2151,11 +2169,12 @@
                         
                         let mediaHtml = '';
                         if (msg.voiceData) {
-                            // مشغل الصوت للبصمة بتصميم الواتساب
+                            // مشغل صوت محسن ومضمون التشغيل للبصمة الصوتية
                             mediaHtml = `
                                 <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
-                                    <audio controls style="height: 35px; max-width: 220px;">
+                                    <audio controls preload="metadata" style="height: 38px; max-width: 230px;">
                                         <source src="${msg.voiceData}" type="audio/webm">
+                                        <source src="${msg.voiceData}" type="audio/mp4">
                                         متصفحك لا يدعم تشغيل الصوت
                                     </audio>
                                 </div>
@@ -2259,7 +2278,7 @@
         }
 
         function backToSubjectsView() { showSection('subjectsSection'); }
-        function backToRoomsView() { showSection('teachersRoomsSection'); }
+        function backToRoomsView() { showSection('teachersRoomsSystem') || showSection('teachersRoomsSection'); }
 
         function sendStudentQuestion() {
             const text = document.getElementById('studentQuestionInput').value.trim();
@@ -2455,9 +2474,9 @@
 
         function saveSchedule(e) {
             e.preventDefault();
-            const grade = document.getElementById('schGrade').value;
-            const day = document.getElementById('schDay').value;
-            const details = document.getElementById('schDetails').value.trim();
+            const grade = document.getElementById('schGrade')->value;
+            const day = document.getElementById('schDay')->value;
+            const details = document.getElementById('schDetails')->value.trim();
             const sId = 'SCH_' + Date.now();
             fetch(`${DATABASE_URL}/schedules/${sId}.json`, {
                 method: 'PUT', body: JSON.stringify({ id: sId, grade, day, details }), headers: { 'Content-Type': 'application/json' }
@@ -2476,7 +2495,7 @@
         function fetchAdminReports() {
             fetch(`${DATABASE_URL}/reports.json`).then(res => res.json()).then(data => {
                 let htmlList = '';
-                if (data) { Object.keys(data).forEach(k => { const r = data[k]; htmlList += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; }); }
+                if (data) { Object.keys(data).keys().forEach(k => { const r = data[k]; htmlList += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; }); }
                 const adminRList = document.getElementById('adminReportsList');
                 if (adminRList) adminRList.innerHTML = htmlList || '<p>لا توجد تقارير.</p>';
             });
