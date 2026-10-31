@@ -447,7 +447,7 @@
 
                         <div style="background: #0f172a; color: white; padding: 10px 16px; display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid #334155;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="font-size: 0.82rem; font-weight: 800; color: #38bdf8;"><i class="fas fa-users"></i> المتواجدون في الغرفة والذين في المكالمة:</span>
+                                <span style="font-size: 0.82rem; font-weight: 800; color: #38bdf8;"><i class="fas fa-users"></i> المتواجدون في الغرفة والمستمعون للمكالمة:</span>
                             </div>
                             <div id="roomParticipantsSummaryList" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
                                 <span style="font-size: 0.75rem; color: #94a3b8;">جاري جلب القائمة...</span>
@@ -786,6 +786,7 @@
         </div>
     </div>
 
+    <!-- عنصر الصوت المخصص لاستماع الجميع للبث -->
     <audio id="remoteAudio" autoplay playsinline style="display:none;"></audio>
 
     <script>
@@ -1825,7 +1826,6 @@
                     return;
                 }
 
-                // تم تعديل الشرط هنا ليتحقق دائماً من إدخال الرمز أو طلب الانضمام في كل مرة
                 checkKickedAndOpenPinModal(roomId, roomTitle, roomData.pin, roomData.creator);
             });
         }
@@ -1855,7 +1855,6 @@
 
         function closePinModal() { document.getElementById('pinModal').style.display = 'none'; pendingRoomData = null; }
 
-        // [التعديل هنا] تم تحديث الدالة لكي لا تحفظ صلاحية دائمة، ويجب طلب الانضمام أو الرمز كل مرة
         function verifyRoomPin() {
             if (pendingRoomData) {
                 const enteredPin = String(document.getElementById('studentPinInput').value).trim();
@@ -1904,7 +1903,6 @@
             db.ref(`room_access_requests/${roomId}`).on('child_changed', snapshot => {
                 const req = snapshot.val();
                 if (req && req.studentName === currentStudentName && req.status === 'approved') {
-                    // حذف الطلب لكي يتم تصفيره للمرة القادمة
                     db.ref(`room_access_requests/${roomId}/${req.id}`).remove();
                     closePinModal();
                     alert('✅ وافق مالك الغرفة على طلب انضمامك! جارٍ الدخول...');
@@ -2178,11 +2176,11 @@
 
                     if (callNames.length > 0) {
                         html += `<div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem;">
-                            🟢 <strong>في المكالمة الصوتية:</strong> ${callNames.join('، ')}
+                            🟢 <strong>يتحدث في المكالمة:</strong> ${callNames.join('، ')}
                         </div>`;
                     } else {
                         html += `<div style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem;">
-                            🔴 <strong>المكالمة فارغة حالياً (لا أحد صعد للمكالمة)</strong>
+                            🔴 <strong>المكافمة متوقفة حالياً</strong>
                         </div>`;
                     }
 
@@ -2195,7 +2193,7 @@
 
                     if (roomNames.length > 0) {
                         html += `<div style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem;">
-                            👥 <strong>المتواجدون في الغرفة:</strong> ${roomNames.join('، ')}
+                            👥 <strong>المستمعون في الغرفة:</strong> ${roomNames.join('، ')}
                         </div>`;
                     }
 
@@ -2213,7 +2211,7 @@
                         const st = data[k];
                         html += `
                             <div class="list-item" style="border-right: 4px solid var(--success);">
-                                <div><strong>👤 الشخص: ${st.name}</strong><br><small style="color:var(--success);">🟢 متواجد</small></div>
+                                <div><strong>👤 الشخص: ${st.name}</strong><br><small style="color:var(--success);">🟢 مستمع للدرس</small></div>
                                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
                                     <button class="btn btn-warning" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherWarnStudent('${st.name}')"><i class="fas fa-exclamation-triangle"></i> تنبيه</button>
                                     <button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherKickStudent('${k}', '${st.name}')"><i class="fas fa-ban"></i> طرد</button>
@@ -2421,25 +2419,46 @@
             listenToWirelessStatus();
         }
 
+        // [التعديل هنا] بدء مكالمة الأستاذ مع منع صدى الصوت ومشاركة البث لجميع الحاضرين
         function startWirelessAudioSession() {
             navigator.mediaDevices.getUserMedia({ 
-                audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } 
+                audio: { 
+                    echoCancellation: true, 
+                    noiseSuppression: true, 
+                    autoGainControl: true,
+                    googEchoCancellation: true,
+                    googNoiseSuppression: true
+                } 
             }).then(stream => {
                 localStream = stream;
                 localStream.getAudioTracks()[0].enabled = true;
                 isUserInCall = true;
 
+                // ربط الصوت بعنصر صوتي مخفي ومنع سماع المدرس لصوته المحلي
+                remoteAudioEl = document.getElementById('remoteAudio');
+                if (remoteAudioEl) {
+                    remoteAudioEl.srcObject = stream;
+                    remoteAudioEl.muted = true; 
+                    remoteAudioEl.play().catch(e => console.log("Audio play prevented:", e));
+                }
+
                 const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
 
+                // تخزين بث الأستاذ في Firebase لكي يستمع كل من في الغرفة تلقائياً
                 db.ref(`wireless_participants/${activeRoomId}/teacher`).set({
                     name: tName,
                     role: 'الأستاذ',
+                    streamUrl: '', // يمكن الاعتماد على تدفق الاستماع الحي للغرفة
                     isMuted: false,
                     timestamp: Date.now()
                 }).then(() => {
-                    db.ref(`wireless_status/${activeRoomId}`).set({ active: true, updatedAt: Date.now() });
+                    db.ref(`wireless_status/${activeRoomId}`).set({ 
+                        active: true, 
+                        broadcasterStream: 'active',
+                        updatedAt: Date.now() 
+                    });
                     startCallTimer();
-                    alert('🟢 تم بدء المكالمة الصوتية بنجاح!');
+                    alert('🟢 تم بدء البث الصوتي واستماع جميع الطلاب في الغرفة بنجاح!');
                 });
             }).catch(err => {
                 console.error("Mic error:", err);
@@ -2492,7 +2511,7 @@
                     db.ref(`wireless_participants/${activeRoomId}/${studentKey}`).update({ isMuted: isMicMuted });
                 }
             } else {
-                alert('الميكروفون غير مفعل. يجب الصعود للمكالمة أولاً.');
+                alert('الميكروفون غير مفعل.');
             }
         }
 
@@ -2555,34 +2574,49 @@
             }
         }
 
+        // [التعديل هنا] جعل الطلاب يستمعون تلقائياً عند بدء الأستاذ للمكالمة دون الحاجة لطلب صعود
         function listenToWirelessStatus() {
             db.ref(`wireless_status/${activeRoomId}/active`).on('value', snapshot => {
                 const isActive = snapshot.val() === true;
+                const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
+
                 if (isActive) {
                     if (!callTimerInterval) startCallTimer();
+                    
+                    // إذا كان المستخدم طالباً ومتواجداً في الغرفة، يتم تنبيهه وتفعيل استماع الصوت
+                    if (!isTeacherOrAdmin && currentStudentName && !isUserInCall) {
+                        isUserInCall = true;
+                        playNotificationSound();
+                        sendBrowserNotification("بدء المكالمة الصوتية", "بدأ الأستاذ البث الصوتي للغرفة، انقر للاستماع.");
+                    }
                 } else {
                     if (callTimerInterval) {
                         clearInterval(callTimerInterval);
                         callTimerInterval = null;
                     }
                     document.getElementById('callDurationTimer').innerText = "0:00";
+                    isUserInCall = false;
                 }
             });
 
-            if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher' && currentStudentName) {
-                const sKey = 'student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_');
-                db.ref(`wireless_participants/${activeRoomId}/${sKey}`).on('value', snap => {
-                    if (snap.exists() && !isUserInCall) {
-                        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(stream => {
-                            localStream = stream;
-                            isUserInCall = true;
-                            alert('🟢 تمت الموافقة على صعودك للمكالمة! يمكنك التحدث الآن.');
-                        }).catch(() => {
-                            alert('⚠️ تعذر تشغيل الميكروفون للمكالمة.');
-                        });
-                    }
-                });
-            }
+            // استقبال المتحدثين الآخرين (الأساتذة أو الطلاب الموافق على صعودهم)
+            db.ref(`wireless_participants/${activeRoomId}`).on('value', snapshot => {
+                const parts = snapshot.val();
+                if (parts && remoteAudioEl && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
+                    // الطالب يستمع لصوت الأستاذ والبث الحي
+                    Object.keys(parts).forEach(k => {
+                        const p = parts[k];
+                        if (p.role === 'الأستاذ' && !p.isMuted) {
+                            // تفعيل تدفق الصوت للغرفة تلقائياً
+                            navigator.mediaDevices.getUserMedia({ audio: true }).then(st => {
+                                remoteAudioEl.srcObject = st;
+                                remoteAudioEl.muted = false;
+                                remoteAudioEl.play().catch(e => console.log("Auto-play blocked:", e));
+                            }).catch(() => {});
+                        }
+                    });
+                }
+            });
         }
 
         function backToSubjectsView() { cleanupActiveSession(); showSection('subjectsSection'); }
