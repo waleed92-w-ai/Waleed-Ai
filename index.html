@@ -1808,6 +1808,18 @@
                 return;
             }
 
+            // مسح أي طلبات انضمام سابقة للطالب لهذه الغرفة منعاً لتداخل البيانات القديمة
+            if (currentStudentName) {
+                db.ref(`room_access_requests/${roomId}`).orderByChild('studentName').equalTo(currentStudentName).once('value', snapshot => {
+                    const val = snapshot.val();
+                    if (val) {
+                        Object.keys(val).forEach(reqKey => {
+                            db.ref(`room_access_requests/${roomId}/${reqKey}`).remove();
+                        });
+                    }
+                });
+            }
+
             fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`).then(res => res.json()).then(roomData => {
                 if (roomData && roomData.isOpen === false) {
                     alert('⚠️ عذراً، هذه الغرفة مغلقة حالياً.');
@@ -1893,6 +1905,19 @@
         function listenToStudentApprovalStatus(roomId) {
             if (!currentStudentName) return;
             
+            // إزالة أي مستمع سابق لمنع تراكم الأحداث
+            db.ref(`room_access_requests/${roomId}`).off();
+            
+            db.ref(`room_access_requests/${roomId}`).on('child_added', snapshot => {
+                const req = snapshot.val();
+                if (req && req.studentName === currentStudentName && req.status === 'approved') {
+                    db.ref(`room_access_requests/${roomId}/${req.id}`).remove();
+                    closePinModal();
+                    alert('✅ وافق مالك الغرفة على طلب انضمامك! جارٍ الدخول...');
+                    openRoomMenu(pendingRoomData.id, pendingRoomData.title);
+                }
+            });
+
             db.ref(`room_access_requests/${roomId}`).on('child_changed', snapshot => {
                 const req = snapshot.val();
                 if (req && req.studentName === currentStudentName && req.status === 'approved') {
