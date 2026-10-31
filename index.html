@@ -32,7 +32,7 @@
             --radius: 16px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-user-select: none; user-select: none; pointer-events: auto !important; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-user-select: none; user-select: none; }
         body { background-color: var(--bg); color: var(--text-dark); display: flex; min-height: 100vh; flex-direction: column; }
         header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: white; padding: 15px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 1000; position: relative; }
         .brand-profile { display: flex; align-items: center; gap: 12px; }
@@ -74,11 +74,6 @@
         
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
-
-        /* شريط فحص تفاعلي سفلي ليؤكد لك أن الأزرار تعمل فوراً ولحظياً */
-        #debugTestIndicator { position: fixed; bottom: 15px; left: 15px; background: #0f172a; color: #38bdf8; padding: 8px 16px; border-radius: 30px; font-size: 0.8rem; font-weight: 800; z-index: 99999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid #334155; display: flex; align-items: center; gap: 8px; }
-        #debugTestIndicator span { width: 10px; height: 10px; background: var(--success); border-radius: 50%; display: inline-block; animation: pulseDot 1.5s infinite; }
-        @keyframes pulseDot { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
 
         .tiktok-live-container {
             width: 100%;
@@ -161,10 +156,6 @@
     </style>
 </head>
 <body oncontextmenu="return false;">
-
-    <div id="debugTestIndicator">
-        <span></span> النظام يعمل: <strong id="lastClickedState" style="color:#fff;">جاهز للنقر والاستجابة</strong>
-    </div>
 
     <div id="maintenanceScreen">
         <i class="fas fa-tools"></i>
@@ -774,17 +765,9 @@
             { name: "الأحياء", icon: "fas fa-dna" }
         ];
 
-        function updateStatusText(text) {
-            const indicator = document.getElementById('lastClickedState');
-            if (indicator) indicator.innerText = text;
-        }
-
-        // نظام تفويض الأحداث الشامل المطور خصيصاً لتجاوز عوائق النقر واللمس
         document.addEventListener('click', function(e) {
             const target = e.target.closest('button, .sub-card, .nav-item');
             if (!target) return;
-
-            updateStatusText("تم النقر على: " + (target.innerText.trim() || target.id || 'زر'));
 
             if (target.id === 'adminLockBtn') { openAdminModal(); }
             else if (target.id === 'adminExitBtn' || target.id === 'logoutBtn') { logoutSystem(); }
