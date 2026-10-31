@@ -777,7 +777,7 @@
         let currentPdfScale = 1.0;
         let currentChatFontSizeRem = 0.9;
         let localStream = null;
-        let remoteAudioEl = null;
+        let remoteAudioEl = document.getElementById('remoteAudio');
         let isMicMuted = false;
         let activePresenceRef = null; 
         let selectedWaFileData = null;
@@ -2110,7 +2110,6 @@
 
             const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
             
-            // التحكم الدقيق والصحيح بظهور الأزرار حسب نوع المستخدم
             document.getElementById('teacherStartBroadcastBtn').style.display = isTeacherOrAdmin ? 'inline-flex' : 'none';
             document.getElementById('studentRaiseHandBtn').style.display = (!isTeacherOrAdmin && currentStudentName) ? 'inline-flex' : 'none';
             document.getElementById('teacherMicRequestsPanel').style.display = isTeacherOrAdmin ? 'block' : 'none';
@@ -2367,7 +2366,7 @@
                         if (isMe || currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
                             actionButtons = `
                                 <div class="wa-actions">
-                                    ${isMe ? `<button class="edit-btn" onclick="editWaMessage('${msg.id}', '${(msg.text || '').replace(/'/g, "\\'")}')">تعديل</button>` : ''}
+                                    ${isMe ? `<button class="edit-btn" onclick="editWaMessage('${msg.id}', '${(msg.text || '').replace(/'/g, "\\\'")}')">تعديل</button>` : ''}
                                     <button class="delete-btn" onclick="deleteWaMessage('${msg.id}')">حذف</button>
                                 </div>
                             `;
@@ -2457,6 +2456,7 @@
             listenToWirelessStatus();
         }
 
+        // --- نظام البث الصوتي المباشر المحدث والنهائي (Blob Audio Streaming) ---
         function startWirelessAudioSession() {
             if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
                 alert('⚠️ عذراً، البث الصوتي المباشر مخصص للأستاذ فقط.');
@@ -2474,11 +2474,6 @@
                 isUserInCall = true;
                 isBroadcastingActive = true;
 
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const source = audioCtx.createMediaStreamSource(stream);
-                const destination = audioCtx.createMediaStreamDestination();
-                source.connect(destination);
-
                 mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
                 
                 mediaRecorder.ondataavailable = event => {
@@ -2488,14 +2483,14 @@
                         reader.onloadend = function() {
                             const base64Audio = reader.result;
                             db.ref(`live_audio_broadcast/${activeRoomId}`).set({
-                                audioData: base64Audio,
+                                audioChunk: base64Audio,
                                 timestamp: Date.now()
                             });
                         }
                     }
                 };
 
-                mediaRecorder.start(1000);
+                mediaRecorder.start(800); // إرسال حزم صوتية كل 800 ميلي ثانية لتدفق نقي وفوري
 
                 const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
                 db.ref(`wireless_participants/${activeRoomId}/teacher`).set({
@@ -2504,7 +2499,11 @@
                     isMuted: false,
                     timestamp: Date.now()
                 }).then(() => {
-                    db.ref(`wireless_status/${activeRoomId}`).set({ active: true, updatedAt: Date.now() });
+                    db.ref(`wireless_status/${activeRoomId}`).set({ 
+                        active: true, 
+                        teacherName: tName,
+                        updatedAt: Date.now() 
+                    });
                     startCallTimer();
                     alert('🟢 بدأ البث الصوتي بنجاح تام وبصوت نقي!');
                 });
@@ -2564,14 +2563,20 @@
         function listenToWirelessStatus() {
             const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
 
-            db.ref(`wireless_status/${activeRoomId}/active`).on('value', snapshot => {
-                const isActive = snapshot.val() === true;
-                if (isActive) {
+            db.ref(`wireless_status/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                if (data && data.active) {
                     if (!callTimerInterval) startCallTimer();
                     if (!isTeacherOrAdmin && currentStudentName && !isUserInCall) {
                         isUserInCall = true;
                         playNotificationSound();
-                        sendBrowserNotification("البث الصوتي المباشر يعمل", "الأستاذ يشرح الآن، انقر للاستماع بوضوح.");
+                        sendBrowserNotification("البث الصوتي المباشر يعمل", `${data.teacherName || 'الأستاذ'} يشرح الآن، انقر للاستماع بوضوح.`);
+                    }
+
+                    if (!isTeacherOrAdmin) {
+                        if (remoteAudioEl && remoteAudioEl.paused) {
+                            remoteAudioEl.play().catch(e => console.log("Autoplay waiting for click"));
+                        }
                     }
                 } else {
                     if (callTimerInterval) {
@@ -2586,11 +2591,16 @@
             if (!isTeacherOrAdmin) {
                 db.ref(`live_audio_broadcast/${activeRoomId}`).on('value', snapshot => {
                     const data = snapshot.val();
-                    if (data && data.audioData) {
-                        const audioPlayer = document.getElementById('remoteAudio');
-                        if (audioPlayer) {
-                            audioPlayer.src = data.audioData;
-                            audioPlayer.play().catch(e => console.log("Waiting for user interaction to play audio:", e));
+                    if (data && data.audioChunk) {
+                        try {
+                            const blob = b64toBlob(data.audioChunk, 'audio/webm');
+                            const audioUrl = URL.createObjectURL(blob);
+                            if (remoteAudioEl) {
+                                remoteAudioEl.src = audioUrl;
+                                remoteAudioEl.play().catch(e => console.log(e));
+                            }
+                        } catch (err) {
+                            console.error("Audio playback error:", err);
                         }
                     }
                 });
@@ -2601,11 +2611,6 @@
                         alert('🟢 وافق الأستاذ على مداخلتك الصوتية! سيتم تفعيل ميكروفونك الآن.');
                         navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(micStream => {
                             localStream = micStream;
-                            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                            const source = audioCtx.createMediaStreamSource(micStream);
-                            const destination = audioCtx.createMediaStreamDestination();
-                            source.connect(destination);
-
                             mediaRecorder = new MediaRecorder(micStream, { mimeType: 'audio/webm' });
                             mediaRecorder.ondataavailable = e => {
                                 if (e.data.size > 0) {
@@ -2613,17 +2618,32 @@
                                     reader.readAsDataURL(e.data);
                                     reader.onloadend = function() {
                                         db.ref(`live_audio_broadcast/${activeRoomId}`).set({
-                                            audioData: reader.result,
+                                            audioChunk: reader.result,
                                             timestamp: Date.now()
                                         });
                                     }
                                 }
                             };
-                            mediaRecorder.start(1000);
+                            mediaRecorder.start(800);
                         }).catch(e => alert('تعذر فتح الميكروفون للمداخلة.'));
                     }
                 });
             }
+        }
+
+        function b64toBlob(b64Data, contentType='audio/webm', sliceSize=512) {
+            const byteCharacters = atob(b64Data.split(',')[1] || b64Data);
+            const byteArrays = [];
+            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                const slice = byteCharacters.slice(offset, offset + sliceSize);
+                const byteNumbers = new Array(slice.length);
+                for (let i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+            }
+            return new Blob(byteArrays, {type: contentType});
         }
 
         function backToSubjectsView() { cleanupActiveSession(); showSection('subjectsSection'); }
