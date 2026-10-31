@@ -742,8 +742,9 @@
         </div>
     </div>
 
-    <!-- عنصر الصوت المخصص للبث المباشر -->
+    <!-- عناصر الصوت المخفية لدعم التدفق الحي للجهتين -->
     <audio id="liveBroadcastAudioPlayer" autoplay playsinline style="display:none;"></audio>
+    <audio id="studentMicAudioPlayer" autoplay playsinline style="display:none;"></audio>
 
     <script>
         if ('serviceWorker' in navigator) {
@@ -770,7 +771,6 @@
         let audioChunks = [];
         let isRecordingVoice = false;
 
-        // متغيرات نظام البث الصوتي المباشر التفاعلي (الحل الجذري)
         let isLiveBroadcasting = false;
         let liveStreamObj = null;
         let myParticipantId = 'USER_' + Math.floor(Math.random() * 1000000);
@@ -921,7 +921,6 @@
             }
         }
 
-        // نظام البث الصوتي المباشر التفاعلي (الحل الجذري القائم على تدفق الصوت المستقر)
         function setupGroupCallInterface() {
             const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
             const buttonsContainer = document.getElementById('callActionButtonsContainer');
@@ -948,7 +947,7 @@
             monitorBroadcastStatusRealtime();
         }
 
-        // الأستاذ يبدأ البث الصوتي الحي
+        // الأستاذ يبدأ البث الصوتي الحي مع تفعيل التشغيل التلقائي الإجباري
         function teacherStartLiveBroadcast() {
             if (!isLiveBroadcasting) {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -966,13 +965,11 @@
                     liveStreamObj = stream;
                     isLiveBroadcasting = true;
 
-                    // تشغيل الصوت للأستاذ محلياً (مع كتمه لعدم حدوث صدى)
                     const player = document.getElementById('liveBroadcastAudioPlayer');
                     player.srcObject = stream;
-                    player.muted = true;
-                    player.play().catch(() => {});
+                    player.muted = true; // كتم صوت الأستاذ لديه لمنع الصدى
+                    player.play().catch(e => console.log("Autoplay check:", e));
 
-                    // تسجيل حالة البث في قاعدة البيانات لتحديث كافة الطلاب فوراً
                     db.ref(`room_live_broadcast/${activeRoomId}`).set({
                         status: 'active',
                         broadcasterName: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ',
@@ -993,7 +990,6 @@
             }
         }
 
-        // الأستاذ ينهي البث ويخرج الكل فوراً
         function teacherEndLiveBroadcast() {
             leaveLiveBroadcastRealtime();
             db.ref(`room_live_broadcast/${activeRoomId}`).remove();
@@ -1018,7 +1014,6 @@
             });
         }
 
-        // مراقبة إنهاء الأستاذ للبث ليخرج الطلاب تلقائياً فوراً
         function monitorBroadcastStatusRealtime() {
             db.ref(`room_live_broadcast/${activeRoomId}`).on('value', snap => {
                 const data = snap.val();
@@ -1033,16 +1028,20 @@
                         if (stateLbl) { stateLbl.innerText = "البث مغلق حالياً من قبل الأستاذ"; stateLbl.style.color = "#cbd5e1"; }
                     }
                 } else {
-                    // إذا كان البث مفتوحاً، يمكن للطالب الاستماع
                     if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
                         const stateLbl = document.getElementById('callStateLabel');
                         if (stateLbl) { stateLbl.innerText = "🟢 البث الصوتي يعمل (أنت تستمع الآن)"; stateLbl.style.color = "#34d399"; }
+                        
+                        // تفعيل التشغيل التلقائي الإجباري لسماع الصوت لدى الطالب فوراً عند رصد البث
+                        const player = document.getElementById('liveBroadcastAudioPlayer');
+                        if (player && player.paused) {
+                            player.play().catch(() => {});
+                        }
                     }
                 }
             });
         }
 
-        // الطالب يطلب مداخلة صوتية
         function studentRequestIntervention() {
             if (!currentStudentName) {
                 alert('يجب تسجيل الدخول كطالب أولاً!');
@@ -1095,9 +1094,22 @@
         function startStudentMicTransmission() {
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
 
-            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(stream => {
+            navigator.mediaDevices.getUserMedia({ 
+                audio: { 
+                    echoCancellation: true, 
+                    noiseSuppression: true, 
+                    autoGainControl: true 
+                } 
+            }).then(stream => {
                 liveStreamObj = stream;
                 isLiveBroadcasting = true;
+                
+                // تفعيل سماع الطالب لميكروفونه عند المداخلة للجهتين
+                const player = document.getElementById('studentMicAudioPlayer');
+                player.srcObject = stream;
+                player.muted = false;
+                player.play().catch(() => {});
+
                 registerParticipantInRoom(currentStudentName, false);
             }).catch(() => {
                 alert('⚠️ تعذر تشغيل الميكروفون للطالب.');
@@ -1111,7 +1123,7 @@
             const btn = document.getElementById('studentRequestCallBtn');
             const leaveBtn = document.getElementById('studentLeaveCallBtn');
             if (btn) { btn.style.display = 'inline-flex'; btn.innerText = "طلب مداخلة صوتية"; btn.disabled = false; }
-            if (leaveBtn) leaveBtn.style.display = 'none';
+            if (leaveBtn) { leaveBtn.style.display = 'none'; }
             const stateLbl = document.getElementById('callStateLabel');
             if (stateLbl) stateLbl.innerText = "🟢 البث الصوتي يعمل (أنت تستمع الآن)";
         }
@@ -1135,7 +1147,6 @@
             db.ref(`room_participants/${activeRoomId}/${myParticipantId}`).remove();
         }
 
-        // الاستماع لطلبات المداخلة (للأستاذ)
         function listenToInterventionRequests() {
             const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
             if (!isTeacherOrAdmin) return;
