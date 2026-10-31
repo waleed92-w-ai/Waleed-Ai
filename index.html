@@ -765,6 +765,90 @@
             { name: "الأحياء", icon: "fas fa-dna" }
         ];
 
+        // نظام تفويض الأحداث الشامل (Event Delegation) لضمان استجابة جميع الأزرار قطعياً
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('button, .sub-card, .nav-item');
+            if (!target) return;
+
+            // 1. أزرار القائمة والصفوف
+            if (target.id === 'adminLockBtn') { openAdminModal(); }
+            else if (target.id === 'adminExitBtn' || target.id === 'logoutBtn') { logoutSystem(); }
+            else if (target.id === 'navCreateRoom') { showSection('sectionCreateRoom'); }
+            else if (target.id === 'navManageRooms') { showSection('sectionManageRooms'); }
+            else if (target.id === 'navUniversalUpload') { showSection('sectionUniversalUpload'); }
+            else if (target.id === 'navTeacherReports') { showSection('sectionTeacherReports'); }
+            else if (target.id === 'navNotifications') { showSection('sectionNotifications'); }
+            else if (target.id === 'navPlatformUsers') { showSection('sectionPlatformUsers'); }
+            else if (target.id === 'navVouchers') { showSection('sectionVouchers'); }
+            else if (target.id === 'navScheduleManage') { showSection('sectionScheduleManage'); }
+            else if (target.id === 'navAdminReports') { showSection('sectionAdminReports'); }
+            else if (target.id === 'settingsNavBtn') { showSection('sectionSettings'); }
+            
+            // تبويب التفعيل
+            else if (target.id === 'btnTabCode') { switchAuthTab('code'); }
+            else if (target.id === 'btnTabNotify') { switchAuthTab('notify'); }
+
+            // أزرار الرجوع
+            else if (target.id === 'backToSubjectsBtn') { backToSubjectsView(); }
+            else if (target.id === 'backToRoomsBtn') { backToRoomsView(); }
+            else if (target.id === 'backToRoomMenuBtn') { backToRoomMenu(); }
+
+            // أزرار الحوار Modal
+            else if (target.id === 'closeAdminModalBtn') { closeAdminModal(); }
+            else if (target.id === 'closeEditItemModalBtn') { const el = document.getElementById('editItemModal'); if(el) el.style.display = 'none'; }
+            else if (target.id === 'requestReentryBtn') { requestReentryToRoom(); }
+            else if (target.id === 'toggleModalFullscreenBtn') { toggleFileModalFullscreen(); }
+            else if (target.id === 'zoomInBtn') { zoomPdf(0.1); }
+            else if (target.id === 'zoomOutBtn') { zoomPdf(-0.1); }
+            else if (target.id === 'closeFileModalBtn') { closeFileModal(); }
+            else if (target.id === 'toggleLiveFullscreenBtn') { toggleLiveBoxFullscreen(); }
+            else if (target.id === 'closeEditModalBtn') { closeEditRoomModal(); }
+            else if (target.id === 'closePinModalBtn') { closePinModal(); }
+            else if (target.id === 'verifyPinBtn') { verifyRoomPin(); }
+            
+            // تبويبات الإدارة
+            else if (target.id === 'loginTabAdminBtn') { switchLoginTab('admin'); }
+            else if (target.id === 'loginTabTeacherBtn') { switchLoginTab('teacher'); }
+            else if (target.id === 'loginTabRegisterBtn') { switchLoginTab('registerTeacher'); }
+            else if (target.id === 'verifyAdminBtn') { verifyAdminLogin(); }
+            else if (target.id === 'verifyTeacherBtn') { verifyTeacherLogin(); }
+            else if (target.id === 'registerTeacherBtn') { registerNewTeacher(e); }
+            else if (target.id === 'saveEditedItemBtn') { saveEditedItem(); }
+            else if (target.id === 'saveEditedRoomBtn') { saveEditedRoom(); }
+            else if (target.id === 'sendQuestionBtn') { sendStudentQuestion(); }
+            else if (target.id === 'saveGradeBtn') { saveStudentGrade(); }
+
+            // الفئات والصفوف
+            else if (target.classList.contains('class-nav-btn')) {
+                tryOpenClass(target.getAttribute('data-class'));
+            }
+            else if (target.classList.contains('menu-pane-link')) {
+                openRoomSection(target.getAttribute('data-pane'));
+            }
+        });
+
+        // ربط النماذج (Forms) بشكل مستقل وآمن
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (form.id === 'formVoucherCode') { e.preventDefault(); activateWithVoucher(e); }
+            else if (form.id === 'formNotifyAdmin') { e.preventDefault(); sendPaymentNotification(e); }
+            else if (form.id === 'createRoomForm') { e.preventDefault(); handleCreateCustomRoom(e); }
+            else if (form.id === 'universalUploadForm') { e.preventDefault(); handleUniversalUpload(e); }
+            else if (form.id === 'savePreparationForm') { e.preventDefault(); handleSavePreparation(e); }
+            else if (form.id === 'generateVoucherForm') { e.preventDefault(); generateVoucher(e); }
+            else if (form.id === 'settingsForm') { e.preventDefault(); saveSettings(e); }
+            else if (form.id === 'teacherReportForm') { e.preventDefault(); submitTeacherReport(e); }
+            else if (form.id === 'scheduleForm') { e.preventDefault(); saveSchedule(e); }
+        });
+
+        // مراقبة تغيير الـ Select
+        document.addEventListener('change', function(e) {
+            const el = e.target;
+            if (el.id === 'crAccessType') { togglePinInput(el.value); }
+            else if (el.id === 'editRoomAccessType') { toggleEditPinInput(el.value); }
+            else if (el.id === 'uniSectionType') { handleUniSectionChange(el.value); }
+        });
+
         document.addEventListener('DOMContentLoaded', function() {
             try {
                 loadSettingsData(); 
@@ -772,103 +856,10 @@
                 checkTeacherSessionLive();
                 checkStudentSession(); 
                 listenToNotificationsRealtime();
-                initEventListeners();
             } catch(err) {
                 console.error("Initialization Error:", err);
             }
         });
-
-        function safeAddEvent(id, eventType, handler) {
-            const el = document.getElementById(id);
-            if (el) {
-                el.addEventListener(eventType, handler);
-            }
-        }
-
-        function initEventListeners() {
-            safeAddEvent('adminLockBtn', 'click', openAdminModal);
-            safeAddEvent('adminExitBtn', 'click', logoutSystem);
-            safeAddEvent('logoutBtn', 'click', logoutSystem);
-
-            document.querySelectorAll('.class-nav-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    tryOpenClass(this.getAttribute('data-class'));
-                });
-            });
-
-            safeAddEvent('navCreateRoom', 'click', () => showSection('sectionCreateRoom'));
-            safeAddEvent('navManageRooms', 'click', () => showSection('sectionManageRooms'));
-            safeAddEvent('navUniversalUpload', 'click', () => showSection('sectionUniversalUpload'));
-            safeAddEvent('navTeacherReports', 'click', () => showSection('sectionTeacherReports'));
-
-            safeAddEvent('navNotifications', 'click', () => showSection('sectionNotifications'));
-            safeAddEvent('navPlatformUsers', 'click', () => showSection('sectionPlatformUsers'));
-            safeAddEvent('navVouchers', 'click', () => showSection('sectionVouchers'));
-            safeAddEvent('navScheduleManage', 'click', () => showSection('sectionScheduleManage'));
-            safeAddEvent('navAdminReports', 'click', () => showSection('sectionAdminReports'));
-            safeAddEvent('settingsNavBtn', 'click', () => showSection('sectionSettings'));
-
-            safeAddEvent('btnTabCode', 'click', () => switchAuthTab('code'));
-            safeAddEvent('btnTabNotify', 'click', () => switchAuthTab('notify'));
-
-            safeAddEvent('formVoucherCode', 'submit', activateWithVoucher);
-            safeAddEvent('formNotifyAdmin', 'submit', sendPaymentNotification);
-
-            safeAddEvent('backToSubjectsBtn', 'click', backToSubjectsView);
-            safeAddEvent('backToRoomsBtn', 'click', backToRoomsView);
-            safeAddEvent('backToRoomMenuBtn', 'click', backToRoomMenu);
-
-            document.querySelectorAll('.menu-pane-link').forEach(card => {
-                card.addEventListener('click', function() {
-                    openRoomSection(this.getAttribute('data-pane'));
-                });
-            });
-
-            safeAddEvent('sendQuestionBtn', 'click', sendStudentQuestion);
-            safeAddEvent('saveGradeBtn', 'click', saveStudentGrade);
-
-            safeAddEvent('createRoomForm', 'submit', handleCreateCustomRoom);
-            safeAddEvent('crAccessType', 'change', function() { togglePinInput(this.value); });
-            safeAddEvent('generateVoucherForm', 'submit', generateVoucher);
-            safeAddEvent('settingsForm', 'submit', saveSettings);
-
-            safeAddEvent('universalUploadForm', 'submit', handleUniversalUpload);
-            safeAddEvent('savePreparationForm', 'submit', handleSavePreparation);
-
-            safeAddEvent('requestReentryBtn', 'click', requestReentryToRoom);
-            safeAddEvent('zoomInBtn', 'click', () => zoomPdf(0.1));
-            safeAddEvent('zoomOutBtn', 'click', () => zoomPdf(-0.1));
-            safeAddEvent('closeFileModalBtn', 'click', closeFileModal);
-            
-            safeAddEvent('toggleLiveFullscreenBtn', 'click', toggleLiveBoxFullscreen);
-            safeAddEvent('toggleModalFullscreenBtn', 'click', toggleFileModalFullscreen);
-
-            safeAddEvent('editRoomAccessType', 'change', function() { toggleEditPinInput(this.value); });
-            safeAddEvent('saveEditedRoomBtn', 'click', saveEditedRoom);
-            safeAddEvent('closeEditModalBtn', 'click', closeEditRoomModal);
-
-            safeAddEvent('verifyPinBtn', 'click', verifyRoomPin);
-            safeAddEvent('closePinModalBtn', 'click', closePinModal);
-
-            safeAddEvent('loginTabAdminBtn', 'click', () => switchLoginTab('admin'));
-            safeAddEvent('loginTabTeacherBtn', 'click', () => switchLoginTab('teacher'));
-            safeAddEvent('loginTabRegisterBtn', 'click', () => switchLoginTab('registerTeacher'));
-
-            safeAddEvent('verifyAdminBtn', 'click', verifyAdminLogin);
-            safeAddEvent('verifyTeacherBtn', 'click', verifyTeacherLogin);
-            safeAddEvent('registerTeacherBtn', 'click', registerNewTeacher);
-            safeAddEvent('closeAdminModalBtn', 'click', closeAdminModal);
-            
-            safeAddEvent('saveEditedItemBtn', 'click', saveEditedItem);
-            safeAddEvent('closeEditItemModalBtn', 'click', () => {
-                const el = document.getElementById('editItemModal');
-                if (el) el.style.display = 'none';
-            });
-            
-            safeAddEvent('roomChatMsgInput', 'keypress', function(e) {
-                if (e.key === 'Enter') sendRoomChatMessage();
-            });
-        }
 
         function checkTeacherSessionLive() {
             const session = localStorage.getItem('teacher_session');
@@ -2686,7 +2677,6 @@
                 </form>
                 <div id="schList">جاري التحميل...</div>
             `;
-            safeAddEvent('scheduleForm', 'submit', saveSchedule);
             fetchSchedules();
         }
 
