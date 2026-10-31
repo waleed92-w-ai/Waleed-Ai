@@ -370,7 +370,7 @@
                     </div>
                 </div>
 
-                <!-- شاشة محادثة الواتساب مع دعم البصمة الصوتية وتشغيلها -->
+                <!-- شاشة محادثة الواتساب مع دعم البصمة الصوتية المحسنة -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
@@ -2060,27 +2060,29 @@
             }
         }
 
-        // دالة تسجيل البصمة الصوتية المحسنة مع دعم كشف ترميز المتصفح
+        // دالة تسجيل وبصمة الصوت المحسنة بالكامل (تعمل على كافة المتصفحات والهواتف)
         function toggleVoiceRecording() {
             const micBtn = document.getElementById('voiceRecordBtn');
             const micIcon = document.getElementById('voiceRecordIcon');
 
             if (!isRecordingVoice) {
                 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    alert("⚠️ عذراً، متصفحك لا يدعم تسجيل الصوت أو أن الاتصال ليس عبر HTTPS.");
+                    alert("⚠️ عذراً، متصفحك لا يدعم تسجيل الصوت أو أن الاتصال ليس عبر HTTPS الآمن.");
                     return;
                 }
 
                 navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                    let options = { mimeType: 'audio/webm' };
-                    if (!MediaRecorder.isTypeSupported('audio/webm')) {
-                        if (MediaRecorder.isTypeSupported('audio/mp4')) {
-                            options = { mimeType: 'audio/mp4' };
-                        } else {
-                            options = {}; // افتراضي المتصفح
-                        }
+                    let mimeType = 'audio/webm';
+                    if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                        mimeType = 'audio/mp4';
+                    } else if (MediaRecorder.isTypeSupported('audio/aac')) {
+                        mimeType = 'audio/aac';
+                    } else if (!MediaRecorder.isTypeSupported('audio/webm')) {
+                        mimeType = ''; 
                     }
 
+                    const options = mimeType ? { mimeType: mimeType } : {};
+                    
                     try {
                         mediaRecorder = new MediaRecorder(stream, options);
                     } catch (e) {
@@ -2096,13 +2098,16 @@
                     };
 
                     mediaRecorder.onstop = () => {
-                        const audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+                        const finalMimeType = mediaRecorder.mimeType || 'audio/webm';
+                        const audioBlob = new Blob(audioChunks, { type: finalMimeType });
+                        
                         const reader = new FileReader();
                         reader.readAsDataURL(audioBlob);
                         reader.onloadend = function() {
                             const base64Audio = reader.result;
                             sendVoiceMessageToChat(base64Audio);
                         };
+                        
                         stream.getTracks().forEach(track => track.stop());
                     };
 
@@ -2111,9 +2116,9 @@
                     micIcon.className = "fas fa-stop";
                     micBtn.style.background = "#ea0038";
                     micBtn.style.color = "#fff";
-                    document.getElementById('waFilePreviewName').innerText = "🎙️ جاري تسجيل البصمة الصوتية... (اضغط مجدداً للإرسال)";
+                    document.getElementById('waFilePreviewName').innerText = "🎙️ جاري تسجيل البصمة الصوتية... (اضغط مجدداً للإيقاف والإرسال)";
                 }).catch(err => {
-                    alert("⚠️ تعذر الوصول إلى الميكروفون. يرجى التأكد من منح الإذن للمتصفح.");
+                    alert("⚠️ تعذر الوصول إلى الميكروفون. يرجى التأكد من السماح للمتصفح بالوصول للميكروفون.");
                 });
             } else {
                 if (mediaRecorder && mediaRecorder.state !== "inactive") {
@@ -2169,13 +2174,14 @@
                         
                         let mediaHtml = '';
                         if (msg.voiceData) {
-                            // مشغل صوت محسن ومضمون التشغيل للبصمة الصوتية
+                            // مشغل صوت محسن يضمن سماع البصمة على كروم وسافاري والهواتف
                             mediaHtml = `
                                 <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
-                                    <audio controls preload="metadata" style="height: 38px; max-width: 230px;">
+                                    <audio controls preload="auto" style="height: 38px; max-width: 230px;">
                                         <source src="${msg.voiceData}" type="audio/webm">
                                         <source src="${msg.voiceData}" type="audio/mp4">
-                                        متصفحك لا يدعم تشغيل الصوت
+                                        <source src="${msg.voiceData}" type="audio/aac">
+                                        متصفحك لا يدعم تشغيل البصمة الصوتية
                                     </audio>
                                 </div>
                             `;
