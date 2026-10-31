@@ -341,7 +341,7 @@
                 </div>
 
                 <div class="room-section-pane" id="panePreparation">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-clipboard-list"></i> لوحة التحضير والامتحانات (يومي، شهري، نصف سنة، شفهي)</h4>
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-clipboard-list"></i> لوحة التحضير والامتحانات (يومي، شهري، نصف السنة، شفهي)</h4>
                     
                     <div id="teacherPrepFormBox" style="display:none; background: #f8fafc; padding: 16px; border-radius: 12px; border: 1.5px solid var(--accent); margin-bottom: 25px;">
                         <h5 style="color: var(--accent); margin-bottom: 12px; font-weight: 800;">➕ نشر تحضير أو امتحان جديد (للأستاذ):</h5>
@@ -1808,7 +1808,7 @@
                 return;
             }
 
-            // مسح أي طلبات انضمام سابقة للطالب لهذه الغرفة منعاً لتداخل البيانات القديمة
+            // مسح أي طلبات انضمام سابقة أو حالات معلقة للطالب لمنع تداخل البيانات
             if (currentStudentName) {
                 db.ref(`room_access_requests/${roomId}`).orderByChild('studentName').equalTo(currentStudentName).once('value', snapshot => {
                     const val = snapshot.val();
@@ -1905,12 +1905,14 @@
         function listenToStudentApprovalStatus(roomId) {
             if (!currentStudentName) return;
             
-            // إزالة أي مستمع سابق لمنع تراكم الأحداث
+            // إزالة أي مستمع سابق لمنع تراكم الأحداث وطلبات الموافقة الوهمية
             db.ref(`room_access_requests/${roomId}`).off();
             
             db.ref(`room_access_requests/${roomId}`).on('child_added', snapshot => {
                 const req = snapshot.val();
-                if (req && req.studentName === currentStudentName && req.status === 'approved') {
+                // التحقق من أن الطلب حديث وتمت الموافقة عليه فعلياً في اللحظة الحالية
+                const isRecent = req && (Date.now() - (req.timestamp || 0) < 10000);
+                if (req && req.studentName === currentStudentName && req.status === 'approved' && isRecent) {
                     db.ref(`room_access_requests/${roomId}/${req.id}`).remove();
                     closePinModal();
                     alert('✅ وافق مالك الغرفة على طلب انضمامك! جارٍ الدخول...');
@@ -1992,7 +1994,7 @@
         }
 
         function approveRoomAccessRequest(roomId, studentName, reqId) {
-            db.ref(`room_access_requests/${roomId}/${reqId}`).update({ status: 'approved' });
+            db.ref(`room_access_requests/${roomId}/${reqId}`).update({ status: 'approved', timestamp: Date.now() });
             alert(`✅ تمت الموافقة على دخول الطالب ${studentName} بنجاح!`);
         }
 
@@ -2602,19 +2604,19 @@
         function listenToWirelessStatus() {
             const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
 
+            // إزالة أي مستمع سابق لمنع التداخل
+            db.ref(`approved_speaker/${activeRoomId}`).off();
+
             db.ref(`wireless_status/${activeRoomId}`).on('value', snapshot => {
                 const data = snapshot.val();
                 if (data && data.active) {
                     if (!callTimerInterval) startCallTimer();
                     if (!isTeacherOrAdmin && currentStudentName && !isUserInCall) {
                         isUserInCall = true;
-                        playNotificationSound();
-                        sendBrowserNotification("البث الصوتي المباشر يعمل", `${data.teacherName || 'الأستاذ'} يشرح الآن، انقر للاستماع بوضوح.`);
                     }
-
                     if (!isTeacherOrAdmin) {
                         if (remoteAudioElement && remoteAudioElement.paused) {
-                            remoteAudioElement.play().catch(e => console.log("Autoplay waiting for click"));
+                            remoteAudioElement.play().catch(e => console.log("انتظار تفاعل المستخدم لتشغيل الصوت"));
                         }
                     }
                 } else {
@@ -2639,16 +2641,17 @@
                                 remoteAudioElement.play().catch(e => console.log(e));
                             }
                         } catch (err) {
-                            console.error("Audio playback error:", err);
+                            console.error("خطأ في تشغيل تدفق الصوت:", err);
                         }
                     }
                 });
 
                 db.ref(`approved_speaker/${activeRoomId}`).on('value', snap => {
                     const sp = snap.val();
-                    if (sp && sp.speakerName === currentStudentName) {
+                    const isRecent = sp && (Date.now() - (sp.timestamp || 0) < 5000);
+                    if (sp && sp.speakerName === currentStudentName && isRecent) {
                         alert('🟢 وافق الأستاذ على مداخلتك الصوتية! سيتم تفعيل ميكروفونك الآن.');
-                        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(micStream => {
+                        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(micStream => {
                             localStream = micStream;
                             mediaRecorder = new MediaRecorder(micStream, { mimeType: 'audio/webm' });
                             mediaRecorder.ondataavailable = e => {
@@ -2664,7 +2667,7 @@
                                 }
                             };
                             mediaRecorder.start(600);
-                        }).catch(e => alert('تعذر فتح الميكروفون للمداخلة.'));
+                        }).catch(e => alert('⚠️ تعذر فتح الميكروفون. تأكد من السماح للمتصفح بالوصول للميكروفون.'));
                     }
                 });
             }
