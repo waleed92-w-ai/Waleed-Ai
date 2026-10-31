@@ -411,12 +411,14 @@
                         <div id="startCallBarArea" style="background: #075e54; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; color: white; flex-wrap: wrap; gap: 8px;">
                             <span style="font-size: 0.85rem; font-weight: 800;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> البث الصوتي المباشر الفائق (نقي 100% وبدون صدى)</span>
                             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                                <button class="btn btn-success" id="teacherStartBroadcastBtn" style="padding: 6px 14px; font-size: 0.8rem; display:none;" onclick="startWirelessAudioSession()"><i class="fas fa-broadcast-tower"></i> بدء البث (للأستاذ)</button>
+                                <!-- زر الأستاذ للبث (مخفي تماماً عن الطالب) -->
+                                <button class="btn btn-success" id="teacherStartBroadcastBtn" style="padding: 6px 14px; font-size: 0.8rem; display:none;" onclick="startWirelessAudioSession()"><i class="fas fa-broadcast-tower"></i> بدء البث (لأستاذ المادة)</button>
+                                <!-- زر الطالب لطلب المداخلة (يظهر للطالب فقط) -->
                                 <button class="btn btn-warning" id="studentRaiseHandBtn" style="padding: 6px 14px; font-size: 0.8rem; display:none;" onclick="requestStudentMicAccess()"><i class="fas fa-hand-paper"></i> طلب مداخلة صوتية (رفع اليد)</button>
                             </div>
                         </div>
 
-                        <!-- لوحة طلبات المداخلة الخاصة بالأستاذ -->
+                        <!-- لوحة طلبات المداخلة الخاصة بالأستاذ فقط -->
                         <div id="teacherMicRequestsPanel" style="background: #1e293b; color: white; padding: 10px 16px; display: none; border-bottom: 1px solid #334155;">
                             <div style="font-size: 0.85rem; font-weight: 800; color: #f59e0b; margin-bottom: 6px;"><i class="fas fa-hand-paper"></i> طلبات المداخلة من الطلاب للحديث:</div>
                             <div id="teacherMicRequestsList" style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -2107,6 +2109,8 @@
             document.getElementById(paneId).classList.add('active');
 
             const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
+            
+            // التحكم الدقيق والصحيح بظهور الأزرار حسب نوع المستخدم
             document.getElementById('teacherStartBroadcastBtn').style.display = isTeacherOrAdmin ? 'inline-flex' : 'none';
             document.getElementById('studentRaiseHandBtn').style.display = (!isTeacherOrAdmin && currentStudentName) ? 'inline-flex' : 'none';
             document.getElementById('teacherMicRequestsPanel').style.display = isTeacherOrAdmin ? 'block' : 'none';
@@ -2591,7 +2595,6 @@
                     }
                 });
 
-                // الاستماع لموافقة الأستاذ على المداخلة الصوتية للطالب
                 db.ref(`approved_speaker/${activeRoomId}`).on('value', snap => {
                     const sp = snap.val();
                     if (sp && sp.speakerName === currentStudentName) {
@@ -2821,7 +2824,7 @@
         function saveSchedule(e) {
             e.preventDefault();
             const grade = document.getElementById('schGrade').value;
-            const day = document.getElementById('schDay'	).value;
+            const day = document.getElementById('schDay').value;
             const details = document.getElementById('schDetails').value.trim();
             const sId = 'SCH_' + Date.now();
             fetch(`${DATABASE_URL}/schedules/${sId}.json`, {
