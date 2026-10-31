@@ -19,8 +19,6 @@
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <!-- مكتبة الاتصال المرئي الآمن والمشفر Jitsi Meet API -->
-    <script src="https://8x8.vc/vsc/external_api.js"></script>
 
     <style>
         :root {
@@ -372,7 +370,7 @@
                     </div>
                 </div>
 
-                <!-- قسم البث المباشر المرئي والمشفر (يشبه Google Meet وخيار الكاميرا اختياري) داخل المنصة -->
+                <!-- قسم البث المباشر المرئي والمشفر (يعمل بدون برامج داخل المنصة وبشكل مباشر) -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
@@ -381,7 +379,7 @@
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <i class="fas fa-video" style="font-size: 1.3rem; color: #10b981;"></i>
                                 <div>
-                                    <strong style="font-size: 0.9rem;">غرفة الاتصال المرئي المشفرة داخل المنصة</strong><br>
+                                    <strong style="font-size: 0.9rem;">غرفة الاتصال المرئي المشفرة (داخل المنصة بدون برامج)</strong><br>
                                     <small style="color: #38bdf8;" id="liveRoomTitleDisplay">الكاميرا اختيارية - الصوت والصورة والدردشة بمكان واحد</small>
                                 </div>
                             </div>
@@ -392,8 +390,11 @@
                             </div>
                         </div>
 
-                        <!-- إطار العرض الداخلي لنظام البث المرئي المشفر -->
-                        <div id="jitsiMeetContainer" style="width: 100%; height: 350px; background: #000; position: relative;"></div>
+                        <!-- إطار الاتصال المباشر عبر الويب مباشرة وبدون تحميل أي برنامج -->
+                        <iframe id="jitsiFrameViewer" 
+                                style="width: 100%; height: 350px; background: #000; border: none;" 
+                                allow="camera; microphone; fullscreen; display-capture; autoplay">
+                        </iframe>
 
                         <!-- صندوق المحادثة النصية التفاعلية -->
                         <div class="whatsapp-chat-box">
@@ -727,7 +728,6 @@
         let currentPdfScale = 1.0;
         let selectedWaFileData = null;
         let selectedWaFileName = "";
-        let jitsiApi = null;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -1042,11 +1042,6 @@
             activeSub = "";
             activeRoomId = "";
             activeRoomTitleStr = "";
-            
-            if (jitsiApi) {
-                jitsiApi.dispose();
-                jitsiApi = null;
-            }
 
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
@@ -2014,10 +2009,8 @@
         }
 
         function backToRoomMenu() { 
-            if (jitsiApi) {
-                jitsiApi.dispose();
-                jitsiApi = null;
-            }
+            const iframeEl = document.getElementById('jitsiFrameViewer');
+            if (iframeEl) iframeEl.src = '';
             showSection('roomMenuSection'); 
         }
 
@@ -2036,17 +2029,15 @@
             }
 
             if (paneId === 'paneLiveAndChat') { 
-                const userName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
-                    (loggedTeacherData ? loggedTeacherData.name + ' (أستاذ)' : 'الأستاذ وليد') : 
-                    (currentStudentName || 'طالب');
-                
-                initJitsiMeet(activeRoomId, userName);
+                const roomSafeName = "WaleedPlatform_" + (activeRoomId || 'MainRoom');
+                const iframeEl = document.getElementById('jitsiFrameViewer');
+                if (iframeEl) {
+                    iframeEl.src = `https://meet.jit.si/${roomSafeName}`;
+                }
                 openWhatsappChatSection();
             } else {
-                if (jitsiApi) {
-                    jitsiApi.dispose();
-                    jitsiApi = null;
-                }
+                const iframeEl = document.getElementById('jitsiFrameViewer');
+                if (iframeEl) iframeEl.src = '';
             }
 
             if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
@@ -2059,46 +2050,6 @@
                 } else {
                     document.getElementById('teacherGradeAddBox').style.display = 'none';
                 }
-            }
-        }
-
-        // إعداد وتشغيل نظام الاتصال المرئي المشفر والمدمج (تشبه Google Meet - كاميرا اختيارية)
-        function initJitsiMeet(roomUniqueName, userName) {
-            const domain = "8x8.vc";
-            const options = {
-                roomName: "vsc/WaleedPlatform_" + (roomUniqueName || "MainRoom"),
-                width: "100%",
-                height: "100%",
-                parentNode: document.querySelector('#jitsiMeetContainer'),
-                userInfo: {
-                    displayName: userName || "طالب / أستاذ"
-                },
-                configOverwrite: {
-                    startWithAudioMuted: true,
-                    startWithVideoMuted: true, // الكاميرا اختيارية وتبدأ مغلقة افتراضياً
-                    enableWelcomePage: false,
-                    prejoinPageEnabled: true,  // تفعيل صفحة المعاينة لاختيار الميكروفون/الكاميرا قبل الانضمام
-                },
-                interfaceConfigOverwrite: {
-                    TOOLBAR_BUTTONS: [
-                        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-                        'fodeviceselection', 'hangup', 'chat', 'settings', 'raisehand',
-                        'videoquality', 'tileview'
-                    ],
-                    SHOW_JITSI_WATERMARK: false,
-                    SHOW_WATERMARK_FOR_GUESTS: false,
-                    DEFAULT_BACKGROUND: '#0f172a'
-                }
-            };
-
-            if (jitsiApi) {
-                jitsiApi.dispose();
-            }
-            
-            try {
-                jitsiApi = new JitsiMeetExternalAPI(domain, options);
-            } catch (e) {
-                console.error("Error loading Jitsi Meet:", e);
             }
         }
 
