@@ -75,10 +75,8 @@
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
 
-        /* ========================================== */
-        /* شات واتساب الشبيه بتطبيق واتساب مع شريط المكالمة العلوي وأزرار التكبير */
-        /* ========================================== */
-        .whatsapp-whatsapp-style-container { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; background: #efeae2; box-shadow: 0 6px 25px rgba(0,0,0,0.08); position: relative; transition: transform 0.2s ease; }
+        /* شات واتساب الشبيه بتطبيق واتساب مع شريط المكالمة العلوي وتكبير/تصغير خط المحادثة */
+        .whatsapp-whatsapp-style-container { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; background: #efeae2; box-shadow: 0 6px 25px rgba(0,0,0,0.08); position: relative; }
         
         /* شريط مكالمة واتساب العلوي */
         .whatsapp-call-banner { background: #075e54; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); box-shadow: 0 2px 6px rgba(0,0,0,0.2); flex-wrap: wrap; gap: 8px; }
@@ -106,14 +104,24 @@
         }
         @keyframes pulseBubble { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
-        /* صندوق الرسائل في الأسفل */
+        /* صندوق الرسائل في الأسفل مع متغير حجم الخط القابل للتعديل */
         .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; height: 460px; display: flex; flex-direction: column; overflow: hidden; }
         .whatsapp-messages-scroll { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .wa-bubble { max-width: 75%; padding: 8px 12px 6px 12px; border-radius: 10px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-break: break-word; font-size: 0.9rem; }
+        
+        .wa-bubble { 
+            max-width: 75%; 
+            padding: 8px 12px 6px 12px; 
+            border-radius: 10px; 
+            position: relative; 
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1); 
+            word-break: break-word; 
+            font-size: var(--chat-font-size, 0.9rem) !important; 
+            transition: font-size 0.2s ease;
+        }
         .wa-bubble.incoming { background: #ffffff; color: #111b21; align-self: flex-start; border-top-right-radius: 4px; }
         .wa-bubble.outgoing { background: #d9fdd3; color: #111b21; align-self: flex-end; border-top-left-radius: 4px; }
-        .wa-sender-name { font-size: 0.72rem; font-weight: 900; color: #005c4b; margin-bottom: 2px; }
-        .wa-time { font-size: 0.63rem; color: #667781; text-align: left; margin-top: 2px; float: left; margin-right: 4px; }
+        .wa-sender-name { font-size: calc(var(--chat-font-size, 0.9rem) * 0.8); font-weight: 900; color: #005c4b; margin-bottom: 2px; }
+        .wa-time { font-size: calc(var(--chat-font-size, 0.9rem) * 0.7); color: #667781; text-align: left; margin-top: 2px; float: left; margin-right: 4px; }
         .wa-actions { display: flex; gap: 8px; margin-top: 4px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 3px; justify-content: flex-end; clear: both; }
         .wa-actions button { background: transparent; border: none; cursor: pointer; font-size: 0.73rem; font-weight: 700; padding: 2px 4px; }
         .wa-actions button.edit-btn { color: #005c4b; }
@@ -381,9 +389,7 @@
                     </div>
                 </div>
 
-                <!-- ========================================== -->
-                <!-- محادثة واتساب كاملة + شريط مكالمة علوي مع أزرار التكبير والتصغير -->
-                <!-- ========================================== -->
+                <!-- محادثة واتساب كاملة + شريط مكالمة علوي مع أزرار تكبير وتصغير خط المحادثة -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     
                     <!-- الفقاعة العائمة للمكالمة عند تصغيرها -->
@@ -394,7 +400,7 @@
 
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
-                        <!-- شريط مكالمة واتساب العلوي (يحتوي أزرار التحكم والتكبير/التصغير) -->
+                        <!-- شريط مكالمة واتساب العلوي (يحتوي أزرار تكبير وتصغير المحادثة) -->
                         <div class="whatsapp-call-banner" id="whatsappCallBanner">
                             <div class="call-banner-left">
                                 <button class="btn btn-danger" onclick="stopWirelessAudioSession()" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;" title="إنهاء المكالمة">
@@ -404,11 +410,12 @@
                                 <span style="font-size: 0.85rem; font-weight: 800; color: #fff;">- <span id="liveRoomTitleDisplay">مجموعة الدرس</span></span>
                             </div>
                             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                <button class="btn btn-secondary" onclick="zoomChatContainer(0.1)" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تكبير الشاشة">
-                                    <i class="fas fa-search-plus"></i> تكبير
+                                <!-- أزرار تكبير وتصغير المحادثة والخط بدلاً من تكبير الشاشة بالكامل -->
+                                <button class="btn btn-secondary" onclick="adjustChatFontSize(1)" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تكبير خط المحادثة">
+                                    <i class="fas fa-search-plus"></i> تكبير محادثة
                                 </button>
-                                <button class="btn btn-secondary" onclick="zoomChatContainer(-0.1)" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تصغير الشاشة">
-                                    <i class="fas fa-search-minus"></i> تصغير
+                                <button class="btn btn-secondary" onclick="adjustChatFontSize(-1)" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تصغير خط المحادثة">
+                                    <i class="fas fa-search-minus"></i> تصغير محادثة
                                 </button>
                                 <button class="btn btn-secondary" onclick="toggleWirelessMicrophone()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="كتم/إلغاء الكتم">
                                     <i class="fas fa-microphone" id="micToggleIcon"></i>
@@ -467,7 +474,7 @@
 
                 <div class="room-section-pane" id="paneLectures">
                     <div style="margin-bottom: 25px;">
-                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم المادة (تكبير / تصغير)</h4>
+                        <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-file-pdf"></i> ملازم المادة</h4>
                         <div id="lecturesContainer"><p style="color: #64748b;">جاري التحميل...</p></div>
                     </div>
                     <div>
@@ -757,7 +764,7 @@
         let currentStudentName = "";
         let pendingRoomData = null;
         let currentPdfScale = 1.0;
-        let currentChatZoomScale = 1.0;
+        let currentChatFontSizeRem = 0.9; // حجم الخط الافتتباحي للرسائل (rem)
         let localStream = null;
         let remoteAudioEl = null;
         let isMicMuted = false;
@@ -864,14 +871,12 @@
             document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
         }
 
-        /* دوال تكبير وتصغير واجهة الشات والمكالمة */
-        function zoomChatContainer(delta) {
-            currentChatZoomScale = Math.max(0.75, Math.min(1.5, currentChatZoomScale + delta));
+        /* دوال تكبير وتصغير حجم خط رسائل المحادثة فقط */
+        function adjustChatFontSize(direction) {
+            currentChatFontSizeRem = Math.max(0.7, Math.min(1.5, currentChatFontSizeRem + (direction * 0.1)));
             const container = document.getElementById('whatsappMainContainer');
             if (container) {
-                container.style.transform = `scale(${currentChatZoomScale})`;
-                container.style.transformOrigin = 'top center';
-                container.style.transition = 'transform 0.2s ease';
+                container.style.setProperty('--chat-font-size', currentChatFontSizeRem + 'rem');
             }
         }
 
@@ -2088,7 +2093,7 @@
                         html += `
                             <div class="wa-bubble ${isMe ? 'outgoing' : 'incoming'}">
                                 <div class="wa-sender-name">${msg.sender}</div>
-                                <div style="font-size: 0.9rem; word-break: break-word; white-space: pre-line;">${msg.text || ''}</div>
+                                <div style="word-break: break-word; white-space: pre-line;">${msg.text || ''}</div>
                                 ${mediaHtml}
                                 <div class="wa-time">${msg.time || ''}</div>
                                 ${actionButtons}
