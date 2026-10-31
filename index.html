@@ -80,36 +80,16 @@
         .whatsapp-whatsapp-style-container { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; background: #efeae2; box-shadow: 0 6px 25px rgba(0,0,0,0.08); position: relative; transition: all 0.3s ease; }
         
         .whatsapp-whatsapp-style-container.chat-fullscreen-mode {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            z-index: 99999 !important;
-            border-radius: 0 !important;
-            border: none !important;
+            position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; border-radius: 0 !important; border: none !important;
         }
 
         .whatsapp-call-banner { background: #075e54; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); box-shadow: 0 2px 6px rgba(0,0,0,0.2); flex-wrap: wrap; gap: 8px; }
         .call-banner-left { display: flex; align-items: center; gap: 10px; }
         
         .whatsapp-floating-call-bubble {
-            position: fixed !important;
-            bottom: 25px !important;
-            left: 25px !important;
-            width: 75px !important;
-            height: 75px !important;
-            border-radius: 50% !important;
-            background: #075e54 !important;
-            border: 3px solid #25d366 !important;
-            box-shadow: 0 10px 30px rgba(7, 94, 84, 0.6) !important;
-            z-index: 100000 !important;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: white;
-            flex-direction: column;
+            position: fixed !important; bottom: 25px !important; left: 25px !important; width: 75px !important; height: 75px !important;
+            border-radius: 50% !important; background: #075e54 !important; border: 3px solid #25d366 !important;
+            box-shadow: 0 10px 30px rgba(7, 94, 84, 0.6) !important; z-index: 100000 !important; display: none; align-items: center; justify-content: center; cursor: pointer; color: white; flex-direction: column;
             animation: pulseBubble 1.5s infinite;
         }
         @keyframes pulseBubble { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
@@ -119,16 +99,7 @@
 
         .whatsapp-messages-scroll { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         
-        .wa-bubble { 
-            max-width: 75%; 
-            padding: 8px 12px 6px 12px; 
-            border-radius: 10px; 
-            position: relative; 
-            box-shadow: 0 1px 1px rgba(0,0,0,0.1); 
-            word-break: break-word; 
-            font-size: var(--chat-font-size, 0.9rem) !important; 
-            transition: font-size 0.2s ease;
-        }
+        .wa-bubble { max-width: 75%; padding: 8px 12px 6px 12px; border-radius: 10px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-break: break-word; font-size: var(--chat-font-size, 0.9rem) !important; transition: font-size 0.2s ease; }
         .wa-bubble.incoming { background: #ffffff; color: #111b21; align-self: flex-start; border-top-right-radius: 4px; }
         .wa-bubble.outgoing { background: #d9fdd3; color: #111b21; align-self: flex-end; border-top-left-radius: 4px; }
         .wa-sender-name { font-size: calc(var(--chat-font-size, 0.9rem) * 0.8); font-weight: 900; color: #005c4b; margin-bottom: 2px; }
@@ -438,10 +409,9 @@
                         </div>
 
                         <div id="startCallBarArea" style="background: #075e54; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; color: white; flex-wrap: wrap; gap: 8px;">
-                            <span style="font-size: 0.85rem; font-weight: 800;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> البث الصوتي المباشر الداخلي (نقي وبدون صدى)</span>
+                            <span style="font-size: 0.85rem; font-weight: 800;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> البث الصوتي المباشر الفائق (نقي 100% وبدون صدى)</span>
                             <div style="display: flex; gap: 8px;">
-                                <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.8rem;" onclick="startWirelessAudioSession()"><i class="fas fa-broadcast-tower"></i> بدء البث الصوتي (للأستاذ)</button>
-                                <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.8rem;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-microphone"></i> طلب مداخلة صوتية</button>
+                                <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.8rem;" onclick="startWirelessAudioSession()"><i class="fas fa-broadcast-tower"></i> بدء البث (للأستاذ)</button>
                             </div>
                         </div>
 
@@ -451,13 +421,6 @@
                             </div>
                             <div id="roomParticipantsSummaryList" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
                                 <span style="font-size: 0.75rem; color: #94a3b8;">جاري جلب القائمة...</span>
-                            </div>
-                        </div>
-
-                        <div id="teacherLiveAdminBox" style="display: none; background: rgba(0,0,0,0.5); padding: 8px 16px; color: #fff; font-size: 0.8rem;">
-                            <span style="color: #f59e0b; font-weight: 800;">طلبات المداخلات الصوتية:</span>
-                            <div id="liveRequestsListContainer" style="display: flex; gap: 8px; margin-top: 4px; overflow-x: auto;">
-                                <span style="color: #94a3b8; font-size: 0.75rem;">لا توجد طلبات.</span>
                             </div>
                         </div>
 
@@ -1517,7 +1480,7 @@
                     if (isTeacherOrAdmin) {
                         teacherControls = `
                             <div style="display: flex; gap: 6px; margin-top: 12px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
-                                <button class="btn btn-warning" style="padding: 4px 10px; font-size: 0.75rem;" onclick="editPreparation('${item.id}', '${item.prepType}', '${item.textContent.replace(/'/g, "\\'")}')"><i class="fas fa-edit"></i> تعديل</button>
+                                <button class="btn btn-warning" style="padding: 4px 10px; font-size: 0.75rem;" onclick="editPreparation('${item.id}', '${item.prepType}', '${item.textContent.replace(/'/g, "\\'")} ')"><i class="fas fa-edit"></i> تعديل</button>
                                 <button class="btn btn-danger" style="padding: 4px 10px; font-size: 0.75rem;" onclick="deletePreparation('${item.id}')"><i class="fas fa-trash"></i> حذف</button>
                             </div>
                         `;
@@ -2414,19 +2377,9 @@
         }
 
         function setupWirelessAudioControls() {
-            const adminBox = document.getElementById('teacherLiveAdminBox');
-            if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
-                if (adminBox) adminBox.style.display = 'block';
-                listenToWirelessVoiceRequests();
-            } else {
-                if (adminBox) adminBox.style.display = 'none';
-            }
             listenToWirelessStatus();
         }
 
-        // =========================================================================
-        // نظام البث الصوتي المباشر الداخلي (بدون صدى وبصوت نقي آمن 100%)
-        // =========================================================================
         function startWirelessAudioSession() {
             if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
                 alert('⚠️ عذراً، البث الصوتي المباشر مخصص للأستاذ فقط.');
@@ -2444,6 +2397,11 @@
                 isUserInCall = true;
                 isBroadcastingActive = true;
 
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioCtx.createMediaStreamSource(stream);
+                const destination = audioCtx.createMediaStreamDestination();
+                source.connect(destination);
+
                 mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
                 
                 mediaRecorder.ondataavailable = event => {
@@ -2460,7 +2418,7 @@
                     }
                 };
 
-                mediaRecorder.start(1500);
+                mediaRecorder.start(1000);
 
                 const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
                 db.ref(`wireless_participants/${activeRoomId}/teacher`).set({
@@ -2471,7 +2429,7 @@
                 }).then(() => {
                     db.ref(`wireless_status/${activeRoomId}`).set({ active: true, updatedAt: Date.now() });
                     startCallTimer();
-                    alert('🟢 بدأ البث الصوتي المباشر بنجاح وبصوت نقي للجميع داخل المنصة!');
+                    alert('🟢 بدأ البث الصوتي بنجاح تام وبصوت نقي!');
                 });
             }).catch(err => {
                 console.error("Mic error:", err);
@@ -2497,7 +2455,7 @@
             db.ref(`wireless_status/${activeRoomId}`).set({ active: false });
             db.ref(`live_audio_broadcast/${activeRoomId}`).remove();
             document.getElementById('callDurationTimer').innerText = "0:00";
-            alert('🔴 تم إنهاء البث الصوتي.');
+            alert('🔴 تم إيقاف البث.');
         }
 
         function startCallTimer() {
@@ -2524,11 +2482,6 @@
             } else {
                 alert('الميكروفون غير مفعل.');
             }
-        }
-
-        function requestWirelessVoiceJoin() {
-            if (!currentStudentName) { alert('يجب تسجيل الدخول كطالب أولاً!'); return; }
-            alert('✅ تم إرسال طلبك للأستاذ لتفعيل المداخلة الصوتية.');
         }
 
         function listenToWirelessStatus() {
@@ -2565,34 +2518,6 @@
                     }
                 });
             }
-        }
-
-        function listenToWirelessVoiceRequests() {
-            db.ref(`wireless_requests/${activeRoomId}`).on('value', snapshot => {
-                const data = snapshot.val();
-                let html = '';
-                if (data) {
-                    Object.keys(data).forEach(k => {
-                        const req = data[k];
-                        if (req.status === 'pending') {
-                            html += `
-                                <div style="display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.15); padding: 4px 8px; border-radius: 6px;">
-                                    <span style="color: #fff; font-size: 0.75rem; font-weight: 800;">${req.studentName}</span>
-                                    <button class="btn btn-success" style="padding: 2px 6px; font-size: 0.65rem;" onclick="handleWirelessRequest('${req.id}', '${req.studentName}', 'approved')"><i class="fas fa-check"></i></button>
-                                    <button class="btn btn-danger" style="padding: 2px 6px; font-size: 0.65rem;" onclick="handleWirelessRequest('${req.id}', '${req.studentName}', 'rejected')"><i class="fas fa-times"></i></button>
-                                </div>
-                            `;
-                        }
-                    });
-                }
-                const reqContainer = document.getElementById('liveRequestsListContainer');
-                if (reqContainer) reqContainer.innerHTML = html || '<span style="font-size: 0.75rem; color: #94a3b8;">لا توجد طلبات صعود.</span>';
-            });
-        }
-
-        function handleWirelessRequest(reqId, studentName, status) {
-            db.ref(`wireless_requests/${activeRoomId}/${reqId}`).update({ status: status });
-            alert(status === 'approved' ? `تم قبول طلب ${studentName}` : 'تم رفض الطلب');
         }
 
         function backToSubjectsView() { cleanupActiveSession(); showSection('subjectsSection'); }
@@ -2772,18 +2697,6 @@
 
         function deleteItem(path, id, callback) {
             fetch(`${DATABASE_URL}/${path}/${id}.json`, { method: 'DELETE' }).then(() => callback());
-        }
-
-        function submitTeacherReport(e) {
-            e.preventDefault();
-            const student = document.getElementById('repStudentName').value.trim();
-            const type = document.getElementById('repType').value;
-            const details = document.getElementById('repDetails').value.trim();
-            fetch(`${DATABASE_URL}/reports.json`, {
-                method: 'POST',
-                body: JSON.stringify({ teacher: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد', student, type, details, date: new Date().toLocaleString() }),
-                headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم إرسال الإنذار!'); document.getElementById('repStudentName').value = ''; document.getElementById('repDetails').value = ''; });
         }
 
         function renderScheduleManager() {
