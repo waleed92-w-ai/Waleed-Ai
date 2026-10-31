@@ -305,8 +305,8 @@
                         <span>التحضير والامتحانات اليومية والشهرية</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLiveAndChat">
-                        <i class="fas fa-video" style="color: #25d366;"></i>
-                        <span>البث المباشر والمحادثة</span>
+                        <i class="fas fa-microphone" style="color: #25d366;"></i>
+                        <span>الاتصال الصوتي والمحادثة المباشرة</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLectures">
                         <i class="fas fa-book-reader" style="color: var(--success);"></i>
@@ -370,17 +370,17 @@
                     </div>
                 </div>
 
-                <!-- قسم البث المباشر عبر المتصفح مباشرة وبدون تطبيقات خارجية نهائياً -->
+                <!-- قسم الاتصال الصوتي المباشر عبر المتصفح بدون تطبيقات وخارج شاشة التطبيق -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
                         <!-- شريط التحكم العلوي -->
                         <div style="background: #0f172a; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.15);">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fas fa-video" style="font-size: 1.3rem; color: #10b981;"></i>
+                                <i class="fas fa-microphone" style="font-size: 1.3rem; color: #10b981;"></i>
                                 <div>
-                                    <strong style="font-size: 0.9rem;">غرفة الاتصال المرئي (مباشر داخل المنصة بدون تطبيقات)</strong><br>
-                                    <small style="color: #38bdf8;" id="liveRoomTitleDisplay">الكاميرا والصوت تعمل مباشرة من متصفح الويب</small>
+                                    <strong style="font-size: 0.9rem;">غرفة الاتصال الصوتي المباشر (داخل المتصفح حصراً)</strong><br>
+                                    <small style="color: #38bdf8;" id="liveRoomTitleDisplay">اتصال صوتي فقط بدون برامج خارجية</small>
                                 </div>
                             </div>
                             <div style="display: flex; gap: 8px;">
@@ -390,11 +390,11 @@
                             </div>
                         </div>
 
-                        <!-- إطار الاتصال المباشر عبر الويب حصراً وبدون أي أزرار تحميل تطبيقات -->
+                        <!-- إطار الاتصال الصوتي المباشر (مغلق الكاميرا تلقائياً ومفعل وضع الويب حصراً) -->
                         <div style="width: 100%; height: 350px; background: #000; position: relative;">
                             <iframe id="directNativeFrame" 
                                     style="width: 100%; height: 100%; border: none;" 
-                                    allow="camera; microphone; fullscreen; display-capture; autoplay">
+                                    allow="microphone; fullscreen; autoplay">
                             </iframe>
                         </div>
 
@@ -2034,8 +2034,8 @@
                 const roomSafeName = "WaleedPlatform_" + (activeRoomId || 'MainRoom');
                 const iframeEl = document.getElementById('directNativeFrame');
                 if (iframeEl) {
-                    // رابط مباشر يتخطى أي شاشات ترحيب أو تطبيقات خارجية ويعمل مباشرة بالمتصفح
-                    iframeEl.src = `https://meet.jit.si/${roomSafeName}#config.prejoinPageEnabled=false&config.startWithAudioMuted=false&config.startWithVideoMuted=false&interfaceConfigOverwrite.DISABLE_JOIN_LEAVE_NOTIFICATIONS=true`;
+                    // التعديل الجذري والنهائي: فتح الاتصال صوتي فقط (الكاميرا مغلقة تماماً) ومنع الديب-لينكينغ وشاشات التطبيق الخارجية نهائياً
+                    iframeEl.src = `https://meet.jit.si/${roomSafeName}#config.prejoinPageEnabled=false&config.disableDeepLinking=true&config.startWithAudioMuted=false&config.startWithVideoMuted=true&interfaceConfigOverwrite.TOOLBAR_BUTTONS=['microphone','chat','raisehand','tileview','fullscreen']`;
                 }
                 openWhatsappChatSection();
             } else {
