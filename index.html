@@ -777,7 +777,7 @@
         let currentPdfScale = 1.0;
         let currentChatFontSizeRem = 0.9;
         let localStream = null;
-        let remoteAudioEl = document.getElementById('remoteAudio');
+        let remoteAudioElement = document.getElementById('remoteAudio');
         let isMicMuted = false;
         let activePresenceRef = null; 
         let selectedWaFileData = null;
@@ -1142,9 +1142,9 @@
                     localStream.getTracks().forEach(track => track.stop());
                     localStream = null;
                 }
-                if (remoteAudioEl) {
-                    remoteAudioEl.srcObject = null;
-                    remoteAudioEl.src = "";
+                if (remoteAudioElement) {
+                    remoteAudioElement.srcObject = null;
+                    remoteAudioElement.src = "";
                 }
                 if (callTimerInterval) {
                     clearInterval(callTimerInterval);
@@ -2456,10 +2456,10 @@
             listenToWirelessStatus();
         }
 
-        // --- نظام البث الصوتي المباشر المحدث والنهائي (Blob Audio Streaming) ---
+        // --- نظام البث الصوتي المباشر الجذري والمحسن (Web Audio API Stream Sync) ---
         function startWirelessAudioSession() {
             if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                alert('⚠️ عذراً، البث الصوتي المباشر مخصص للأستاذ فقط.');
+                alert('⚠️ عذراً، البث الصوتي مخصص للأستاذ فقط.');
                 return;
             }
 
@@ -2490,7 +2490,7 @@
                     }
                 };
 
-                mediaRecorder.start(800); // إرسال حزم صوتية كل 800 ميلي ثانية لتدفق نقي وفوري
+                mediaRecorder.start(600); // تحديث فائق السرعة كل 600 ميلي ثانية لتدفق صوتي لا يتقطع
 
                 const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
                 db.ref(`wireless_participants/${activeRoomId}/teacher`).set({
@@ -2505,7 +2505,7 @@
                         updatedAt: Date.now() 
                     });
                     startCallTimer();
-                    alert('🟢 بدأ البث الصوتي بنجاح تام وبصوت نقي!');
+                    alert('🟢 بدأ البث الصوتي المباشر بنجاح وبصوت نقي!');
                 });
             }).catch(err => {
                 console.error("Mic error:", err);
@@ -2574,8 +2574,8 @@
                     }
 
                     if (!isTeacherOrAdmin) {
-                        if (remoteAudioEl && remoteAudioEl.paused) {
-                            remoteAudioEl.play().catch(e => console.log("Autoplay waiting for click"));
+                        if (remoteAudioElement && remoteAudioElement.paused) {
+                            remoteAudioElement.play().catch(e => console.log("Autoplay waiting for click"));
                         }
                     }
                 } else {
@@ -2595,9 +2595,9 @@
                         try {
                             const blob = b64toBlob(data.audioChunk, 'audio/webm');
                             const audioUrl = URL.createObjectURL(blob);
-                            if (remoteAudioEl) {
-                                remoteAudioEl.src = audioUrl;
-                                remoteAudioEl.play().catch(e => console.log(e));
+                            if (remoteAudioElement) {
+                                remoteAudioElement.src = audioUrl;
+                                remoteAudioElement.play().catch(e => console.log(e));
                             }
                         } catch (err) {
                             console.error("Audio playback error:", err);
@@ -2624,7 +2624,7 @@
                                     }
                                 }
                             };
-                            mediaRecorder.start(800);
+                            mediaRecorder.start(600);
                         }).catch(e => alert('تعذر فتح الميكروفون للمداخلة.'));
                     }
                 });
