@@ -83,14 +83,13 @@
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
 
-        .whatsapp-whatsapp-style-container { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; background: #efeae2; box-shadow: 0 6px 25px rgba(0,0,0,0.08); position: relative; transition: all 0.3s ease; }
+        .whatsapp-whatsapp-style-container { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; background: #efeae2; box-shadow: 0 6px 25px rgba(0,0,0,0.08); position: relative; transition: all 0.3s ease; height: 500px; }
         .whatsapp-whatsapp-style-container.chat-fullscreen-mode {
             position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; border-radius: 0 !important; border: none !important;
         }
 
-        .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; flex: 1; height: 260px; display: flex; flex-direction: column; overflow: hidden; }
-        .whatsapp-whatsapp-style-container.chat-fullscreen-mode .whatsapp-chat-box { height: calc(100vh - 420px) !important; }
-
+        .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        
         .whatsapp-messages-scroll { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         .wa-bubble { max-width: 75%; padding: 8px 12px 6px 12px; border-radius: 10px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-break: break-word; font-size: 0.9rem; }
         .wa-bubble.incoming { background: #ffffff; color: #111b21; align-self: flex-start; border-top-right-radius: 4px; }
@@ -101,7 +100,7 @@
         .wa-actions button { background: transparent; border: none; cursor: pointer; font-size: 0.73rem; font-weight: 700; padding: 2px 4px; }
         .wa-actions button.edit-btn { color: #005c4b; }
         .wa-actions button.delete-btn { color: #ea0038; }
-        .whatsapp-input-bar { display: flex; gap: 8px; padding: 8px 12px; background: #f0f2f5; align-items: center; border-top: 1px solid #e9edef; }
+        .whatsapp-input-bar { display: flex; gap: 8px; padding: 10px 12px; background: #f0f2f5; align-items: center; border-top: 1px solid #e9edef; }
 
         #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         #maintenanceScreen i { font-size: 4rem; color: var(--warning); margin-bottom: 20px; animation: bounce 2s infinite; }
@@ -305,8 +304,8 @@
                         <span>التحضير والامتحانات اليومية والشهرية</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLiveAndChat">
-                        <i class="fas fa-microphone" style="color: #25d366;"></i>
-                        <span>بث الاتصال الصوتي والمحادثة</span>
+                        <i class="fas fa-comments" style="color: #25d366;"></i>
+                        <span>محادثة الغرفة والمراسلة</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLectures">
                         <i class="fas fa-book-reader" style="color: var(--success);"></i>
@@ -370,17 +369,17 @@
                     </div>
                 </div>
 
-                <!-- واجهة الاتصال الصوتي المدمجة والنظيفة (بدون تطبيقات خارجية وبدون شاشات ترحيب مزعجة) -->
+                <!-- واجهة المحادثة النصية والصوتية (بدون اتصال وبصمة صوتية كاملة) -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
-                        <!-- شريط التحكم العلوي -->
+                        <!-- شريط التحكم العلوي للمحادثة -->
                         <div style="background: #0f172a; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.15);">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fas fa-microphone-alt" style="font-size: 1.3rem; color: #10b981;"></i>
+                                <i class="fas fa-comments" style="font-size: 1.3rem; color: #25d366;"></i>
                                 <div>
-                                    <strong style="font-size: 0.9rem;">غرفة الاتصال الصوتي المباشر (داخل المنصة حصراً)</strong><br>
-                                    <small style="color: #38bdf8;" id="liveRoomTitleDisplay">بدون تطبيقات خارجية - صوت نقي ومباشر</small>
+                                    <strong style="font-size: 0.9rem;">غرفة المحادثة والمراسلة الفورية</strong><br>
+                                    <small style="color: #38bdf8;" id="liveRoomTitleDisplay">نصوص، صور، ملفات، وبصمات صوتية</small>
                                 </div>
                             </div>
                             <div style="display: flex; gap: 8px;">
@@ -390,20 +389,7 @@
                             </div>
                         </div>
 
-                        <!-- حاوية الاتصال الصوتي النظيف -->
-                        <div style="width: 100%; height: 260px; background: #0f172a; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; color: white;">
-                            <div style="width: 70px; height: 70px; border-radius: 50%; background: rgba(16, 185, 129, 0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border: 2px solid var(--success); animation: pulseBadge 1.5s infinite;">
-                                <i class="fas fa-headset" style="font-size: 2rem; color: var(--success);"></i>
-                            </div>
-                            <h3 style="font-weight: 800; font-size: 1.1rem; margin-bottom: 6px;">قناة البث الصوتي المباشر مفعلة</h3>
-                            <p style="font-size: 0.85rem; color: #94a3b8; max-width: 320px; margin-bottom: 15px;">استمع للأستاذ وتحدث معه مباشرة من خلال تفعيل الميكروفون بالأسفل أو متابعة الدردشة النصية.</p>
-                            <div style="display: flex; gap: 10px;">
-                                <button class="btn btn-success" onclick="toggleAudioMicrophone(this)" id="micToggleBtn"><i class="fas fa-microphone"></i> كتم / فتح الميكروفون</button>
-                            </div>
-                            <iframe id="directNativeFrame" style="display:none;" allow="microphone; autoplay"></iframe>
-                        </div>
-
-                        <!-- صندوق المحادثة النصية التفاعلية -->
+                        <!-- صندوق المحادثة النصية والتفاعلية -->
                         <div class="whatsapp-chat-box">
                             <div class="whatsapp-messages-scroll" id="whatsappMessagesContainer">
                                 <p style="color: #6b7280; text-align: center; margin: auto;">جاري تحميل الرسائل...</p>
@@ -418,6 +404,10 @@
                                     <i class="fas fa-paperclip"></i>
                                 </button>
                                 
+                                <button type="button" class="btn btn-secondary" id="voiceRecordBtn" onclick="toggleVoiceRecording()" title="تسجيل بصمة صوتية" style="border-radius: 50%; width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: #e9edef; color: #54656f;">
+                                    <i class="fas fa-microphone" id="voiceMicIcon"></i>
+                                </button>
+
                                 <button type="submit" class="btn btn-primary" style="border-radius: 50%; width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; background: #005c4b; color: white;" title="إرسال">
                                     <i class="fas fa-paper-plane"></i>
                                 </button>
@@ -735,7 +725,11 @@
         let currentPdfScale = 1.0;
         let selectedWaFileData = null;
         let selectedWaFileName = "";
-        let isMicMuted = false;
+        
+        // متغيرات تسجيل البصمة الصوتية
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecordingVoice = false;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -864,20 +858,74 @@
             document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
         }
 
-        function toggleAudioMicrophone(btn) {
-            isMicMuted = !isMicMuted;
-            const iframe = document.getElementById('directNativeFrame');
-            if (isMicMuted) {
-                btn.innerHTML = '<i class="fas fa-microphone-slash" style="color:var(--danger);"></i> الميكروفون مكتوم';
-                btn.style.background = '#334155';
+        // وظائف تسجيل البصمة الصوتية
+        function toggleVoiceRecording() {
+            const micBtn = document.getElementById('voiceRecordBtn');
+            const micIcon = document.getElementById('voiceMicIcon');
+
+            if (!isRecordingVoice) {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+                    
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const base64Audio = e.target.result;
+                            sendVoiceNoteMessage(base64Audio);
+                        };
+                        reader.readAsDataURL(audioBlob);
+                        
+                        // إيقاف الستريم
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    isRecordingVoice = true;
+                    micBtn.style.background = '#ef4444';
+                    micIcon.style.color = '#fff';
+                    micBtn.title = "جارٍ التسجيل... انقر للإيقاف والإرسال";
+                }).catch(err => {
+                    alert('⚠️ عذراً، لا يمكن الوصول إلى الميكروفون.');
+                });
             } else {
-                btn.innerHTML = '<i class="fas fa-microphone"></i> الميكروفون مَفعل';
-                btn.style.background = 'var(--success)';
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    mediaRecorder.stop();
+                }
+                isRecordingVoice = false;
+                micBtn.style.background = '#e9edef';
+                micIcon.style.color = '#54656f';
+                micBtn.title = "تسجيل بصمة صوتية";
             }
-            if (iframe && iframe.src === '') {
-                const roomSafeName = "WaleedAudio_" + (activeRoomId || 'MainRoom');
-                iframe.src = `https://meet.jit.si/${roomSafeName}#config.prejoinPageEnabled=false&config.disableDeepLinking=true&config.startWithAudioMuted=${isMicMuted}&config.startWithVideoMuted=true&config.hideLobbyButton=true`;
-            }
+        }
+
+        function sendVoiceNoteMessage(audioBase64) {
+            const senderName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
+                (loggedTeacherData ? loggedTeacherData.name + ' (أستاذ)' : 'الأستاذ وليد') : 
+                (currentStudentName || 'طالب');
+
+            const msgId = 'WAMSG_' + Date.now();
+            const messageData = {
+                id: msgId,
+                sender: senderName,
+                text: '🎤 بصمة صوتية',
+                fileData: audioBase64,
+                fileName: 'voice_note.webm',
+                isVoice: true,
+                time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+                timestamp: Date.now()
+            };
+
+            fetch(`${DATABASE_URL}/whatsapp_chats/${activeRoomId}/${msgId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(messageData),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {});
         }
 
         function toggleChatFullscreen() {
@@ -1581,7 +1629,7 @@
                     
                     const message = `🎓 *منصة الأستاذ وليد التعليمية - إيصال اشتراك رسمي*\n\n` +
                                     `أهلاً بك عزيزي الطالب *${studentName}*.\n` +
-                                    `تم تأكيد استلاستلام التحويل المالي وتفعيل اشتراكك الشهري بنجاح.\n\n` +
+                                    `تم تأكيد استلام التحويل المالي وتفعيل اشتراكك الشهري بنجاح.\n\n` +
                                     `📌 *معلومات حسابك السري:*\n` +
                                     `• *كود التفعيل:* \`${randomCode}\`\n\n` +
                                     `⚠️ *تنبيه لحفظ الحقوق:*\n` +
@@ -2033,8 +2081,6 @@
         }
 
         function backToRoomMenu() { 
-            const iframeEl = document.getElementById('directNativeFrame');
-            if (iframeEl) iframeEl.src = '';
             showSection('roomMenuSection'); 
         }
 
@@ -2053,15 +2099,7 @@
             }
 
             if (paneId === 'paneLiveAndChat') { 
-                const roomSafeName = "WaleedAudio_" + (activeRoomId || 'MainRoom');
-                const iframeEl = document.getElementById('directNativeFrame');
-                if (iframeEl) {
-                    iframeEl.src = `https://meet.jit.si/${roomSafeName}#config.prejoinPageEnabled=false&config.disableDeepLinking=true&config.startWithAudioMuted=false&config.startWithVideoMuted=true&config.hideLobbyButton=true`;
-                }
                 openWhatsappChatSection();
-            } else {
-                const iframeEl = document.getElementById('directNativeFrame');
-                if (iframeEl) iframeEl.src = '';
             }
 
             if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
@@ -2108,7 +2146,9 @@
                         
                         let mediaHtml = '';
                         if (msg.fileData) {
-                            if (msg.fileName && (msg.fileName.endsWith('.jpg') || msg.fileName.endsWith('.png') || msg.fileName.endsWith('.jpeg'))) {
+                            if (msg.isVoice) {
+                                mediaHtml = `<div style="margin-top: 6px;"><audio controls src="${msg.fileData}" style="max-width: 240px; height: 36px;"></audio></div>`;
+                            } else if (msg.fileName && (msg.fileName.endsWith('.jpg') || msg.fileName.endsWith('.png') || msg.fileName.endsWith('.jpeg'))) {
                                 mediaHtml = `<div style="margin-top: 6px;"><img src="${msg.fileData}" style="max-width: 200px; border-radius: 8px; cursor: pointer;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"></div>`;
                             } else {
                                 mediaHtml = `<div style="margin-top: 6px;"><button class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"><i class="fas fa-file-pdf"></i> عرض الملف (${msg.fileName})</button></div>`;
@@ -2119,7 +2159,7 @@
                         if (isMe || currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
                             actionButtons = `
                                 <div class="wa-actions">
-                                    ${isMe ? `<button class="edit-btn" onclick="editWaMessage('${msg.id}', '${(msg.text || '').replace(/'/g, "\\\'")}')">تعديل</button>` : ''}
+                                    ${isMe && !msg.isVoice ? `<button class="edit-btn" onclick="editWaMessage('${msg.id}', '${(msg.text || '').replace(/'/g, "\\\'")}')">تعديل</button>` : ''}
                                     <button class="delete-btn" onclick="deleteWaMessage('${msg.id}')">حذف</button>
                                 </div>
                             `;
@@ -2175,6 +2215,7 @@
                     text: text,
                     fileData: selectedWaFileData || '',
                     fileName: selectedWaFileName || '',
+                    isVoice: false,
                     time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
                     timestamp: Date.now()
                 };
