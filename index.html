@@ -477,12 +477,16 @@
                         <i class="fas fa-broadcast-tower" style="color: var(--accent);"></i>
                         <span>الاتصال اللاسلكي الصوتي المباشر</span>
                     </div>
+                    <div class="sub-card menu-pane-link" data-pane="paneChatRoom">
+                        <i class="fas fa-comments" style="color: #38bdf8;"></i>
+                        <span>محادثة الغرفة (نصوص وصور وملفات)</span>
+                    </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLectures">
                         <i class="fas fa-book-reader" style="color: var(--success);"></i>
                         <span>المحاضرات والملازم</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneQuestions">
-                        <i class="fas fa-comments" style="color: var(--warning);"></i>
+                        <i class="fas fa-question" style="color: var(--warning);"></i>
                         <span>الأسئلة والنقاش</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneQuizzes">
@@ -586,6 +590,26 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <div class="room-section-pane" id="paneChatRoom">
+                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-comments"></i> محادثة الغرفة والمناقشة الحية</h4>
+                    
+                    <div id="chatMessagesContainer" style="background: #0f172a; border-radius: 12px; height: 400px; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 15px; border: 1.5px solid #334155;">
+                        <p style="color: #94a3b8; text-align: center; margin: auto;">جاري تحميل المحادثة...</p>
+                    </div>
+
+                    <form id="chatSendForm" style="display: flex; gap: 10px; align-items: center; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1.5px solid #cbd5e1;">
+                        <input type="text" class="form-control" id="chatTextInput" placeholder="اكتب رسالتك هنا..." style="flex: 1; margin: 0;">
+                        
+                        <input type="file" id="chatFileInput" accept="image/*,.pdf" style="display: none;" onchange="handleChatFileSelected(this)">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('chatFileInput').click()" title="إرفاق صورة أو ملف" style="padding: 10px 14px;">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        
+                        <button type="submit" class="btn btn-primary" style="padding: 10px 20px;"><i class="fas fa-paper-plane"></i> إرسال</button>
+                    </form>
+                    <div id="chatFilePreviewName" style="font-size: 0.8rem; color: var(--success); margin-top: 5px; font-weight: 700;"></div>
                 </div>
 
                 <div class="room-section-pane" id="paneLectures">
@@ -884,6 +908,8 @@
         let remoteAudioEl = null;
         let isMicMuted = false;
         let activePresenceRef = null; 
+        let selectedChatFileData = null;
+        let selectedChatFileName = "";
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -953,6 +979,7 @@
 
             document.getElementById('universalUploadForm').addEventListener('submit', handleUniversalUpload);
             document.getElementById('savePreparationForm').addEventListener('submit', handleSavePreparation);
+            document.getElementById('chatSendForm').addEventListener('submit', handleSendChatMessage);
 
             document.getElementById('requestReentryBtn').addEventListener('click', requestReentryToRoom);
             document.getElementById('zoomInBtn').addEventListener('click', () => zoomPdf(0.1));
@@ -2048,6 +2075,10 @@
                 cleanupActiveSession(); 
             }
 
+            if (paneId === 'paneChatRoom') {
+                openChatRoomSection();
+            }
+
             if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
             if (paneId === 'paneQuestions') { renderRoomQuestions(); }
             if (paneId === 'paneQuizzes') { renderRoomQuizzes(); renderRoomHomework(); }
@@ -2164,6 +2195,99 @@
             document.getElementById('kickedModal').style.display = 'none';
             registerStudentPresence(activeRoomId);
             alert('تم إرسال طلب العودة للأستاذ بنجاح. يمكنك الدخول.');
+        }
+
+        // ==========================================
+        // نظام المحادثة الفورية (Chat Room)
+        // ==========================================
+        function handleChatFileSelected(input) {
+            if (input.files[0]) {
+                const file = input.files[0];
+                selectedChatFileName = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedChatFileData = e.target.result;
+                    document.getElementById('chatFilePreviewName').innerText = `📎 تم إرفاق الملف: ${file.name} (جاهز للإرسال)`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function openChatRoomSection() {
+            const msgContainer = document.getElementById('chatMessagesContainer');
+            if (!msgContainer) return;
+
+            db.ref(`room_chats/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                let html = '';
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const msg = data[k];
+                        const myName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
+                            (loggedTeacherData ? loggedTeacherData.name + ' (أستاذ)' : 'الأستاذ وليد') : 
+                            (currentStudentName || 'طالب');
+                        const isMe = (msg.sender === myName);
+                        
+                        let fileRenderHtml = '';
+                        if (msg.fileData) {
+                            if (msg.fileName && (msg.fileName.endsWith('.jpg') || msg.fileName.endsWith('.png') || msg.fileName.endsWith('.jpeg'))) {
+                                fileRenderHtml = `<div style="margin-top: 8px;"><img src="${msg.fileData}" style="max-width: 200px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);"></div>`;
+                            } else {
+                                fileRenderHtml = `<div style="margin-top: 8px;"><button class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"><i class="fas fa-file-pdf"></i> عرض الملف المرفق (${msg.fileName})</button></div>`;
+                            }
+                        }
+
+                        html += `
+                            <div style="background: ${isMe ? '#1e3a8a' : '#1e293b'}; color: #fff; padding: 10px 14px; border-radius: 12px; max-width: 75%; ${isMe ? 'margin-right: auto;' : 'margin-left: auto;'} border: 1px solid rgba(255,255,255,0.08);">
+                                <div style="font-size: 0.75rem; color: #38bdf8; font-weight: 800; margin-bottom: 4px;">${msg.sender}</div>
+                                <div style="font-size: 0.92rem; word-break: break-word;">${msg.text || ''}</div>
+                                ${fileRenderHtml}
+                                <div style="font-size: 0.65rem; color: #94a3b8; text-align: left; margin-top: 4px;">${msg.time || ''}</div>
+                            </div>
+                        `;
+                    });
+                }
+                msgContainer.innerHTML = html || `<p style="color: #94a3b8; text-align: center; margin: auto;">لا توجد رسائل بعد. ابدأ المحادثة الآن!</p>`;
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+            });
+        }
+
+        function handleSendChatMessage(e) {
+            e.preventDefault();
+            const textInput = document.getElementById('chatTextInput');
+            const text = textInput.value.trim();
+
+            if (!text && !selectedChatFileData) {
+                alert('اكتب رسالة أو أرفف ملفاً للإرسال!');
+                return;
+            }
+
+            const senderName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
+                (loggedTeacherData ? loggedTeacherData.name + ' (أستاذ)' : 'الأستاذ وليد') : 
+                (currentStudentName || 'طالب');
+
+            const msgId = 'MSG_' + Date.now();
+            const messageData = {
+                id: msgId,
+                sender: senderName,
+                text: text,
+                fileData: selectedChatFileData || '',
+                fileName: selectedChatFileName || '',
+                time: new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' }),
+                timestamp: Date.now()
+            };
+
+            fetch(`${DATABASE_URL}/room_chats/${activeRoomId}/${msgId}.json`, {
+                method: 'PUT',
+                body: JSON.stringify(messageData),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(() => {
+                textInput.value = '';
+                selectedChatFileData = null;
+                selectedChatFileName = '';
+                document.getElementById('chatFilePreviewName').innerText = '';
+                document.getElementById('chatFileInput').value = '';
+            });
         }
 
         // ==========================================
@@ -2352,7 +2476,6 @@
                 remoteAudioEl = document.getElementById('remoteAudio');
             }
             if (localStream && remoteAudioEl) {
-                // محاكاة تدفق الشبكة المحلية للاتصال اللاسلكي
                 remoteAudioEl.srcObject = localStream;
             }
         }
