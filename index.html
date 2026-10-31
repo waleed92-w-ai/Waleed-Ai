@@ -19,6 +19,8 @@
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- مكتبة الاتصال المرئي الآمن والمشفر Jitsi Meet API -->
+    <script src="https://8x8.vc/vsc/external_api.js"></script>
 
     <style>
         :root {
@@ -89,14 +91,14 @@
         }
 
         .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; flex: 1; height: 260px; display: flex; flex-direction: column; overflow: hidden; }
-        .whatsapp-whatsapp-style-container.chat-fullscreen-mode .whatsapp-chat-box { height: calc(100vh - 350px) !important; }
+        .whatsapp-whatsapp-style-container.chat-fullscreen-mode .whatsapp-chat-box { height: calc(100vh - 450px) !important; }
 
         .whatsapp-messages-scroll { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-        .wa-bubble { max-width: 75%; padding: 8px 12px 6px 12px; border-radius: 10px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-break: break-word; font-size: var(--chat-font-size, 0.9rem) !important; transition: font-size 0.2s ease; }
+        .wa-bubble { max-width: 75%; padding: 8px 12px 6px 12px; border-radius: 10px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-break: break-word; font-size: 0.9rem; }
         .wa-bubble.incoming { background: #ffffff; color: #111b21; align-self: flex-start; border-top-right-radius: 4px; }
         .wa-bubble.outgoing { background: #d9fdd3; color: #111b21; align-self: flex-end; border-top-left-radius: 4px; }
-        .wa-sender-name { font-size: calc(var(--chat-font-size, 0.9rem) * 0.8); font-weight: 900; color: #005c4b; margin-bottom: 2px; }
-        .wa-time { font-size: calc(var(--chat-font-size, 0.9rem) * 0.7); color: #667781; text-align: left; margin-top: 2px; float: left; margin-right: 4px; }
+        .wa-sender-name { font-size: 0.75rem; font-weight: 900; color: #005c4b; margin-bottom: 2px; }
+        .wa-time { font-size: 0.65rem; color: #667781; text-align: left; margin-top: 2px; float: left; margin-right: 4px; }
         .wa-actions { display: flex; gap: 8px; margin-top: 4px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 3px; justify-content: flex-end; clear: both; }
         .wa-actions button { background: transparent; border: none; cursor: pointer; font-size: 0.73rem; font-weight: 700; padding: 2px 4px; }
         .wa-actions button.edit-btn { color: #005c4b; }
@@ -306,7 +308,7 @@
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLiveAndChat">
                         <i class="fas fa-video" style="color: #25d366;"></i>
-                        <span>البث المباشر (Google Meet) والمحادثة</span>
+                        <span>البث المباشر المشفر والمحادثة</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLectures">
                         <i class="fas fa-book-reader" style="color: var(--success);"></i>
@@ -370,30 +372,28 @@
                     </div>
                 </div>
 
-                <!-- قسم البث المباشر (Google Meet) مضمناً ضمنياً داخل المنصة -->
+                <!-- قسم البث المباشر المرئي والمشفر (يشبه Google Meet وخيار الكاميرا اختياري) داخل المنصة -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
                         <!-- شريط التحكم العلوي -->
-                        <div style="background: #075e54; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.15);">
+                        <div style="background: #0f172a; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.15);">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fas fa-video" style="font-size: 1.3rem; color: #25d366;"></i>
+                                <i class="fas fa-video" style="font-size: 1.3rem; color: #10b981;"></i>
                                 <div>
-                                    <strong style="font-size: 0.9rem;">بث Google Meet المباشر داخل المنصة</strong><br>
-                                    <small style="color: #a7f3d0;" id="liveRoomTitleDisplay">يعمل البث والمحادثة النصية في نفس الشاشة دون مغادرة</small>
+                                    <strong style="font-size: 0.9rem;">غرفة الاتصال المرئي المشفرة داخل المنصة</strong><br>
+                                    <small style="color: #38bdf8;" id="liveRoomTitleDisplay">الكاميرا اختيارية - الصوت والصورة والدردشة بمكان واحد</small>
                                 </div>
                             </div>
-                            <div>
+                            <div style="display: flex; gap: 8px;">
                                 <button class="btn btn-secondary" id="chatFullscreenToggleBtn" onclick="toggleChatFullscreen()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;">
                                     <i class="fas fa-expand" id="chatFullscreenIcon"></i> تكبير الشاشة
                                 </button>
                             </div>
                         </div>
 
-                        <!-- إطار العرض الضمني (Iframe) للبث المباشر -->
-                        <div style="width: 100%; height: 320px; background: #000; position: relative;">
-                            <iframe id="meetIframeElement" src="https://meet.google.com/abc-defg-hij" width="100%" height="100%" style="border: none;" allow="camera; microphone; fullscreen; display-capture"></iframe>
-                        </div>
+                        <!-- إطار العرض الداخلي لنظام البث المرئي المشفر -->
+                        <div id="jitsiMeetContainer" style="width: 100%; height: 350px; background: #000; position: relative;"></div>
 
                         <!-- صندوق المحادثة النصية التفاعلية -->
                         <div class="whatsapp-chat-box">
@@ -725,9 +725,9 @@
         let currentStudentName = "";
         let pendingRoomData = null;
         let currentPdfScale = 1.0;
-        let currentChatFontSizeRem = 0.9;
         let selectedWaFileData = null;
         let selectedWaFileName = "";
+        let jitsiApi = null;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -1043,6 +1043,11 @@
             activeRoomId = "";
             activeRoomTitleStr = "";
             
+            if (jitsiApi) {
+                jitsiApi.dispose();
+                jitsiApi = null;
+            }
+
             document.getElementById('adminSidebarSection').style.display = 'none';
             document.getElementById('teacherSidebarSection').style.display = 'none';
             document.getElementById('logoutContainer').style.display = 'none';
@@ -1702,7 +1707,7 @@
                             const isRoomOpen = r.isOpen !== false;
                             const isFree = r.accessType === 'free' || !r.pin;
                             html += `
-                                <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin || ''}', ${isRoomOpen}, '${r.accessType || 'free'}', '${r.creator || ''}', '${r.meetUrl || ''}')">
+                                <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin || ''}', ${isRoomOpen}, '${r.accessType || 'free'}', '${r.creator || ''}')">
                                     <i class="fas ${isFree ? 'fa-lock-open' : 'fa-lock'}" style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; position:absolute; top:10px; left:10px;" title="${isFree ? 'مجانية' : 'خصوصي بررمز'}"></i>
                                     <i class="fas fa-chalkboard-teacher" style="color:var(--accent);"></i>
                                     <span><strong>${r.title}</strong><br><small>الأستاذ: ${r.creator || 'مدرس'}</small><br><small style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; font-weight:800;">${isFree ? '🟢 مجانية' : '🔒 محمية بررمز'}</small></span>
@@ -1723,13 +1728,13 @@
             document.getElementById('editPinInputGroup').style.display = (val === 'protected') ? 'block' : 'none';
         }
 
-        function promptRoomPin(roomId, roomTitle, roomPin, isOpen, accessType, roomCreator, meetUrl) {
+        function promptRoomPin(roomId, roomTitle, roomPin, isOpen, accessType, roomCreator) {
             const currentTeacherName = loggedTeacherData ? loggedTeacherData.name : '';
             const isOwnerTeacher = (currentRole === 'teacher' && currentTeacherName === roomCreator);
             const isAdminOrSup = (currentRole === 'admin' || currentRole === 'supervisor');
 
             if (isAdminOrSup || isOwnerTeacher) {
-                openRoomMenu(roomId, roomTitle, meetUrl);
+                openRoomMenu(roomId, roomTitle);
                 return;
             }
 
@@ -1740,15 +1745,15 @@
                 }
 
                 if (!roomData || roomData.accessType === 'free' || !roomData.pin) {
-                    openRoomMenu(roomId, roomTitle, roomData ? roomData.meetUrl : '');
+                    openRoomMenu(roomId, roomTitle);
                     return;
                 }
 
-                checkKickedAndOpenPinModal(roomId, roomTitle, roomData.pin, roomData.creator, roomData.meetUrl);
+                checkKickedAndOpenPinModal(roomId, roomTitle, roomData.pin, roomData.creator);
             });
         }
 
-        function checkKickedAndOpenPinModal(roomId, roomTitle, roomPin, roomCreator, meetUrl) {
+        function checkKickedAndOpenPinModal(roomId, roomTitle, roomPin, roomCreator) {
             fetch(`${DATABASE_URL}/room_kicked/${roomId}.json`).then(res => res.json()).then(kickedData => {
                 if (kickedData && currentStudentName) {
                     let isKicked = false;
@@ -1756,11 +1761,11 @@
                         if (kickedData[k].studentName === currentStudentName) isKicked = true;
                     });
                     if (isKicked) {
-                        document.getElementById('kickedModal').style.display = 'flex';
+                        alert('⚠️ تم طردك من هذه الغرفة بواسطة الأستاذ.');
                         return;
                     }
                 }
-                pendingRoomData = { id: roomId, title: roomTitle, pin: roomPin, creator: roomCreator, meetUrl: meetUrl };
+                pendingRoomData = { id: roomId, title: roomTitle, pin: roomPin, creator: roomCreator };
                 document.getElementById('studentPinInput').value = '';
                 document.getElementById('accessRequestStatusMsg').style.display = 'none';
                 document.getElementById('pinModal').style.display = 'flex';
@@ -1781,10 +1786,9 @@
                 if (enteredPin === correctPin || correctPin === "") {
                     const rId = pendingRoomData.id;
                     const rTitle = pendingRoomData.title;
-                    const rMeet = pendingRoomData.meetUrl;
                     
                     closePinModal();
-                    openRoomMenu(rId, rTitle, rMeet);
+                    openRoomMenu(rId, rTitle);
                 } else {
                     alert('رمز PIN الخاص بالغرفة غير صحيح!');
                 }
@@ -1828,7 +1832,7 @@
                     db.ref(`room_access_requests/${roomId}/${req.id}`).remove();
                     closePinModal();
                     alert('✅ وافق مالك الغرفة على طلب انضمامك! جارٍ الدخول...');
-                    openRoomMenu(pendingRoomData.id, pendingRoomData.title, pendingRoomData.meetUrl);
+                    openRoomMenu(pendingRoomData.id, pendingRoomData.title);
                 }
             });
 
@@ -1838,7 +1842,7 @@
                     db.ref(`room_access_requests/${roomId}/${req.id}`).remove();
                     closePinModal();
                     alert('✅ وافق مالك الغرفة على طلب انضمامك! جارٍ الدخول...');
-                    openRoomMenu(pendingRoomData.id, pendingRoomData.title, pendingRoomData.meetUrl);
+                    openRoomMenu(pendingRoomData.id, pendingRoomData.title);
                 }
             });
         }
@@ -1922,13 +1926,12 @@
             const subject = document.getElementById('crSubject').value;
             const accessType = document.getElementById('crAccessType').value;
             const pin = accessType === 'protected' ? String(document.getElementById('crPin').value).trim() : '';
-            const meetUrl = prompt("أدخل رابط Google Meet المباشر الخاص بهذه الغرفة (اختياري):", "https://meet.google.com/") || "";
             const roomId = 'ROOM_' + Date.now();
             const creatorName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
 
             fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
                 method: 'PUT',
-                body: JSON.stringify({ id: roomId, title, grade, subject, accessType, pin, meetUrl, isOpen: true, creator: creatorName }),
+                body: JSON.stringify({ id: roomId, title, grade, subject, accessType, pin, isOpen: true, creator: creatorName }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
                 alert('تم إنشاء الغرفة بنجاح!');
@@ -2003,15 +2006,18 @@
             }).then(() => { alert('تم تحديث إعدادات الغرفة!'); closeEditRoomModal(); fetchMyRooms(); });
         }
 
-        function openRoomMenu(roomId, roomTitle, meetUrl) {
+        function openRoomMenu(roomId, roomTitle) {
             activeRoomId = roomId;
             activeRoomTitleStr = roomTitle;
-            window.currentRoomMeetUrl = meetUrl || "https://meet.google.com/";
             document.getElementById('currentRoomMenuTitle').innerText = `غرفة: ${roomTitle}`;
             showSection('roomMenuSection');
         }
 
         function backToRoomMenu() { 
+            if (jitsiApi) {
+                jitsiApi.dispose();
+                jitsiApi = null;
+            }
             showSection('roomMenuSection'); 
         }
 
@@ -2030,11 +2036,17 @@
             }
 
             if (paneId === 'paneLiveAndChat') { 
-                const iframeEl = document.getElementById('meetIframeElement');
-                if (iframeEl && window.currentRoomMeetUrl) {
-                    iframeEl.src = window.currentRoomMeetUrl;
-                }
+                const userName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
+                    (loggedTeacherData ? loggedTeacherData.name + ' (أستاذ)' : 'الأستاذ وليد') : 
+                    (currentStudentName || 'طالب');
+                
+                initJitsiMeet(activeRoomId, userName);
                 openWhatsappChatSection();
+            } else {
+                if (jitsiApi) {
+                    jitsiApi.dispose();
+                    jitsiApi = null;
+                }
             }
 
             if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
@@ -2047,6 +2059,46 @@
                 } else {
                     document.getElementById('teacherGradeAddBox').style.display = 'none';
                 }
+            }
+        }
+
+        // إعداد وتشغيل نظام الاتصال المرئي المشفر والمدمج (تشبه Google Meet - كاميرا اختيارية)
+        function initJitsiMeet(roomUniqueName, userName) {
+            const domain = "8x8.vc";
+            const options = {
+                roomName: "vsc/WaleedPlatform_" + (roomUniqueName || "MainRoom"),
+                width: "100%",
+                height: "100%",
+                parentNode: document.querySelector('#jitsiMeetContainer'),
+                userInfo: {
+                    displayName: userName || "طالب / أستاذ"
+                },
+                configOverwrite: {
+                    startWithAudioMuted: true,
+                    startWithVideoMuted: true, // الكاميرا اختيارية وتبدأ مغلقة افتراضياً
+                    enableWelcomePage: false,
+                    prejoinPageEnabled: true,  // تفعيل صفحة المعاينة لاختيار الميكروفون/الكاميرا قبل الانضمام
+                },
+                interfaceConfigOverwrite: {
+                    TOOLBAR_BUTTONS: [
+                        'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+                        'fodeviceselection', 'hangup', 'chat', 'settings', 'raisehand',
+                        'videoquality', 'tileview'
+                    ],
+                    SHOW_JITSI_WATERMARK: false,
+                    SHOW_WATERMARK_FOR_GUESTS: false,
+                    DEFAULT_BACKGROUND: '#0f172a'
+                }
+            };
+
+            if (jitsiApi) {
+                jitsiApi.dispose();
+            }
+            
+            try {
+                jitsiApi = new JitsiMeetExternalAPI(domain, options);
+            } catch (e) {
+                console.error("Error loading Jitsi Meet:", e);
             }
         }
 
