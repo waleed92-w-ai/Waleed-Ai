@@ -78,7 +78,6 @@
         /* شات واتساب مع دعم وضع ملء الشاشة وتصغير الاتصال لفقاعة */
         .whatsapp-whatsapp-style-container { display: flex; flex-direction: column; border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; background: #efeae2; box-shadow: 0 6px 25px rgba(0,0,0,0.08); position: relative; transition: all 0.3s ease; }
         
-        /* نمط ملء الشاشة للمحادثة */
         .whatsapp-whatsapp-style-container.chat-fullscreen-mode {
             position: fixed !important;
             top: 0 !important;
@@ -93,7 +92,6 @@
         .whatsapp-call-banner { background: #075e54; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); box-shadow: 0 2px 6px rgba(0,0,0,0.2); flex-wrap: wrap; gap: 8px; }
         .call-banner-left { display: flex; align-items: center; gap: 10px; }
         
-        /* الفقاعة العائمة للمكالمة عند تصغيرها */
         .whatsapp-floating-call-bubble {
             position: fixed !important;
             bottom: 25px !important;
@@ -412,7 +410,7 @@
 
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
-                        <!-- شريط مكالمة واتساب العلوي (يحتوي أزرار تكبير الشاشة وتصغير الاتصال لفقاعة وتكبير/تصغير خط المحادثة) -->
+                        <!-- شريط مكالمة واتساب العلوي -->
                         <div class="whatsapp-call-banner" id="whatsappCallBanner">
                             <div class="call-banner-left">
                                 <button class="btn btn-danger" onclick="stopWirelessAudioSession()" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;" title="إنهاء المكالمة">
@@ -422,11 +420,9 @@
                                 <span style="font-size: 0.85rem; font-weight: 800; color: #fff;">- <span id="liveRoomTitleDisplay">مجموعة الدرس</span></span>
                             </div>
                             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                <!-- زر تكبير المحادثة لملء الشاشة -->
                                 <button class="btn btn-secondary" id="chatFullscreenToggleBtn" onclick="toggleChatFullscreen()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تكبير المحادثة لملء الشاشة">
                                     <i class="fas fa-expand" id="chatFullscreenIcon"></i> تكبير الشاشة
                                 </button>
-                                <!-- زر تصغير الاتصال لفقاعة عائمة -->
                                 <button class="btn btn-secondary" onclick="minimizeCallToBubble()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تصغير الاتصال لفقاعة">
                                     <i class="fas fa-compress-arrows-alt"></i> تصغير فقاعة
                                 </button>
@@ -439,10 +435,6 @@
                                 <button class="btn btn-secondary" onclick="toggleWirelessMicrophone()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="كتم/إلغاء الكتم">
                                     <i class="fas fa-microphone" id="micToggleIcon"></i>
                                 </button>
-                                <button class="btn btn-success" onclick="forcePlayAudioStream()" style="padding: 4px 8px; font-size: 0.75rem;" title="سماع الصوت">
-                                    <i class="fas fa-volume-up"></i> سماع
-                                </button>
-                                <audio id="remoteAudio" autoplay playsinline style="display:none;"></audio>
                             </div>
                         </div>
 
@@ -450,13 +442,23 @@
                         <div id="startCallBarArea" style="background: #075e54; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; color: white; flex-wrap: wrap; gap: 8px;">
                             <span style="font-size: 0.85rem; font-weight: 800;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> مكالمة واتساب الصوتية الجماعية</span>
                             <div style="display: flex; gap: 8px;">
-                                <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.8rem;" onclick="startWirelessAudioSession()"><i class="fas fa-phone-alt"></i> بدء المكالمة الصوتية</button>
+                                <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.8rem;" onclick="startWirelessAudioSession()"><i class="fas fa-phone-alt"></i> بدء المكالمة (للأستاذ)</button>
                                 <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.8rem;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-microphone"></i> طلب الصعود للمكالمة</button>
                             </div>
                         </div>
 
+                        <!-- لوحة عرض المتواجدين في الغرفة ومن صعدوا للمكالمة (محدثة بالكامل) -->
+                        <div style="background: #0f172a; color: white; padding: 10px 16px; display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid #334155;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.82rem; font-weight: 800; color: #38bdf8;"><i class="fas fa-users"></i> المتواجدون في الغرفة والذين في المكالمة:</span>
+                            </div>
+                            <div id="roomParticipantsSummaryList" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
+                                <span style="font-size: 0.75rem; color: #94a3b8;">جاري جلب القائمة...</span>
+                            </div>
+                        </div>
+
                         <!-- لوحة طلبات الصعود للمكالمة للأستاذ -->
-                        <div id="teacherLiveAdminBox" style="display: none; background: rgba(0,0,0,0.4); padding: 8px 16px; color: #fff; font-size: 0.8rem;">
+                        <div id="teacherLiveAdminBox" style="display: none; background: rgba(0,0,0,0.5); padding: 8px 16px; color: #fff; font-size: 0.8rem;">
                             <span style="color: #f59e0b; font-weight: 800;">طلبات الصعود للمكالمة:</span>
                             <div id="liveRequestsListContainer" style="display: flex; gap: 8px; margin-top: 4px; overflow-x: auto;">
                                 <span style="color: #94a3b8; font-size: 0.75rem;">لا توجد طلبات.</span>
@@ -768,6 +770,9 @@
         </div>
     </div>
 
+    <!-- عنصر صوتي مخفي موجه لمن صعدوا المكالمة فقط منعاً للصدى والتداخل العام -->
+    <audio id="remoteAudio" autoplay playsinline style="display:none;"></audio>
+
     <script>
         const DATABASE_URL = "https://waleed-ai-49ebc-default-rtdb.firebaseio.com";
         const firebaseConfig = { databaseURL: DATABASE_URL };
@@ -789,6 +794,7 @@
         let selectedWaFileName = "";
         let callTimerInterval = null;
         let callSecondsCount = 0;
+        let isUserInCall = false; // هل المستخدم صعد المكالمة رسمياً؟
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -887,7 +893,6 @@
             document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
         }
 
-        /* دالة تكبير وتصغير خط رسائل المحادثة */
         function adjustChatFontSize(direction) {
             currentChatFontSizeRem = Math.max(0.7, Math.min(1.5, currentChatFontSizeRem + (direction * 0.1)));
             const container = document.getElementById('whatsappMainContainer');
@@ -896,7 +901,6 @@
             }
         }
 
-        /* دالة تكبير محادثة الشات لملء الشاشة بالكامل والعكس */
         function toggleChatFullscreen() {
             const container = document.getElementById('whatsappMainContainer');
             const icon = document.getElementById('chatFullscreenIcon');
@@ -912,13 +916,11 @@
             }
         }
 
-        /* دالة تصغير شريط المكالمة إلى فقاعة عائمة على الشاشة */
         function minimizeCallToBubble() {
             document.getElementById('whatsappCallBanner').style.display = 'none';
             document.getElementById('whatsappFloatingBubble').style.display = 'flex';
         }
 
-        /* دالة تكبير شريط المكالمة عند الضغط على الفقاعة العائمة */
         function expandCallBanner() {
             document.getElementById('whatsappFloatingBubble').style.display = 'none';
             document.getElementById('whatsappCallBanner').style.display = 'flex';
@@ -1118,6 +1120,7 @@
                     clearInterval(callTimerInterval);
                     callTimerInterval = null;
                 }
+                isUserInCall = false;
                 removeStudentPresence();
             } catch (err) {
                 console.error(err);
@@ -1840,7 +1843,7 @@
             const userData = {
                 name: displayName,
                 joinedAt: Date.now(),
-                status: 'متواجد للاستماع'
+                status: 'متواجد بالغرقة'
             };
 
             activePresenceRef.set(userData);
@@ -1979,6 +1982,7 @@
                 registerStudentPresence(activeRoomId);
                 setupWirelessAudioControls(); 
                 openWhatsappChatSection();
+                renderParticipantsListSummary();
             } else {
                 cleanupActiveSession(); 
             }
@@ -1995,6 +1999,55 @@
                     document.getElementById('teacherGradeAddBox').style.display = 'none';
                 }
             }
+        }
+
+        // دالة لعرض من في الغرفة ومن صعدوا المكالمة برمجياً بدقة
+        function renderParticipantsListSummary() {
+            const container = document.getElementById('roomParticipantsSummaryList');
+            if (!container) return;
+
+            db.ref(`active_students/${activeRoomId}`).on('value', roomSnap => {
+                db.ref(`wireless_participants/${activeRoomId}`).on('value', callSnap => {
+                    const inRoom = roomSnap.val() || {};
+                    const inCall = callSnap.val() || {};
+
+                    let html = '';
+                    
+                    // عرض من هم في المكالمة حالياً
+                    let callNames = [];
+                    if (inCall) {
+                        Object.keys(inCall).forEach(k => {
+                            if (inCall[k].name) callNames.push(inCall[k].name);
+                        });
+                    }
+
+                    if (callNames.length > 0) {
+                        html += `<div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem;">
+                            🟢 <strong>في المكالمة الصوتية:</strong> ${callNames.join('، ')}
+                        </div>`;
+                    } else {
+                        html += `<div style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem;">
+                            🔴 <strong>المكالمة فارغة حالياً (لا أحد صعد للمكالمة)</strong>
+                        </div>`;
+                    }
+
+                    // عرض المتواجدين في الغرفة
+                    let roomNames = [];
+                    if (inRoom) {
+                        Object.keys(inRoom).forEach(k => {
+                            if (inRoom[k].name) roomNames.push(inRoom[k].name);
+                        });
+                    }
+
+                    if (roomNames.length > 0) {
+                        html += `<div style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem;">
+                            👥 <strong>المتواجدون في الغرفة:</strong> ${roomNames.join('، ')}
+                        </div>`;
+                    }
+
+                    container.innerHTML = html;
+                });
+            });
         }
 
         function renderActiveStudentsManagementForTeacher() {
@@ -2214,26 +2267,16 @@
             listenToWirelessStatus();
         }
 
-        function forcePlayAudioStream() {
-            if (remoteAudioEl && remoteAudioEl.srcObject) {
-                remoteAudioEl.play().then(() => {
-                    alert('🟢 تم تفعيل وسماع الصوت بنجاح!');
-                }).catch(() => {
-                    alert('⚠️ يرجى التأكد من أن الأستاذ قام ببدء المكالمة أولاً.');
-                });
-            } else {
-                alert('⏳ بانتظار بدء المكالمة الصوتية...');
-            }
-        }
-
         function startWirelessAudioSession() {
             navigator.mediaDevices.getUserMedia({ 
                 audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } 
             }).then(stream => {
                 localStream = stream;
-                const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+                // للأستاذ: كتم الصوت المحلي لمنع الصدى الذاتي داخل جهازه تماماً
+                localStream.getAudioTracks()[0].enabled = true;
+                isUserInCall = true;
 
-                setupAudioReceiverStream();
+                const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
 
                 db.ref(`wireless_participants/${activeRoomId}/teacher`).set({
                     name: tName,
@@ -2247,7 +2290,7 @@
                 });
             }).catch(err => {
                 console.error("Mic error:", err);
-                alert('⚠️ تعذر الوصول للميكروفون!');
+                alert('⚠️ تعذر الوصول للميكروفون! تأكد من السماح للمتصفح.');
             });
         }
 
@@ -2263,6 +2306,7 @@
                 clearInterval(callTimerInterval);
                 callTimerInterval = null;
             }
+            isUserInCall = false;
             db.ref(`wireless_participants/${activeRoomId}`).remove();
             db.ref(`wireless_requests/${activeRoomId}`).remove();
             db.ref(`wireless_status/${activeRoomId}`).set({ active: false });
@@ -2295,7 +2339,7 @@
                     db.ref(`wireless_participants/${activeRoomId}/${studentKey}`).update({ isMuted: isMicMuted });
                 }
             } else {
-                alert('الميكروفون غير مفعل.');
+                alert('الميكروفون غير مفعل. يجب الصعود للمكالمة أولاً.');
             }
         }
 
@@ -2304,7 +2348,7 @@
             
             db.ref(`wireless_status/${activeRoomId}/active`).once('value', snap => {
                 if (!snap.val()) {
-                    alert('⚠️ المكالمة الصوتية لم تبدأ بعد!');
+                    alert('⚠️ المكالمة الصوتية لم تبدأ بعد من قبل الأستاذ!');
                     return;
                 }
                 const reqId = 'WREQ_' + Date.now();
@@ -2314,7 +2358,7 @@
                     status: 'pending',
                     timestamp: Date.now()
                 }).then(() => {
-                    alert('✅ تم إرسال طلب الصعود للمكالمة...');
+                    alert('✅ تم إرسال طلب الصعود للمكالمة إلى الأستاذ...');
                 });
             });
         }
@@ -2338,7 +2382,7 @@
                     });
                 }
                 const reqContainer = document.getElementById('liveRequestsListContainer');
-                if (reqContainer) reqContainer.innerHTML = html || '<span style="font-size: 0.75rem; color: #94a3b8;">لا توجد طلبات.</span>';
+                if (reqContainer) reqContainer.innerHTML = html || '<span style="font-size: 0.75rem; color: #94a3b8;">لا توجد طلبات صعود.</span>';
             });
         }
 
@@ -2352,9 +2396,9 @@
                     isMuted: false,
                     timestamp: Date.now()
                 });
-                alert(`تم صعود الطالب ${studentName} للمكالمة!`);
+                alert(`تم قبول صعود الطالب ${studentName} للمكالمة بنجاح!`);
             } else {
-                alert(`تم رفض الطلب.`);
+                alert(`تم رفض طلب الصعود.`);
             }
         }
 
@@ -2362,7 +2406,6 @@
             db.ref(`wireless_status/${activeRoomId}/active`).on('value', snapshot => {
                 const isActive = snapshot.val() === true;
                 if (isActive) {
-                    setupAudioReceiverStream();
                     if (!callTimerInterval) startCallTimer();
                 } else {
                     if (callTimerInterval) {
@@ -2372,15 +2415,22 @@
                     document.getElementById('callDurationTimer').innerText = "0:00";
                 }
             });
-        }
 
-        function setupAudioReceiverStream() {
-            if (!remoteAudioEl) {
-                remoteAudioEl = document.getElementById('remoteAudio');
-            }
-            if (localStream && remoteAudioEl) {
-                remoteAudioEl.srcObject = localStream;
-                remoteAudioEl.muted = false;
+            // الاستماع للمتحدثين وصعود الطالب للمكالمة تلقائياً عند الموافقة
+            if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher' && currentStudentName) {
+                const sKey = 'student_' + currentStudentName.replace(/[.#$\/\[\]]/g, '_');
+                db.ref(`wireless_participants/${activeRoomId}/${sKey}`).on('value', snap => {
+                    if (snap.exists() && !isUserInCall) {
+                        // تمت الموافقة على صعوده، تفعيل الميكروفون والصوت برمجياً
+                        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(stream => {
+                            localStream = stream;
+                            isUserInCall = true;
+                            alert('🟢 تمت الموافقة على صعودك للمكالمة! يمكنك التحدث الآن.');
+                        }).catch(() => {
+                            alert('⚠️ تعذر تشغيل الميكروفون للمكالمة.');
+                        });
+                    }
+                });
             }
         }
 
