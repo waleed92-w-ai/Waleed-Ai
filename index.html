@@ -370,7 +370,7 @@
                     </div>
                 </div>
 
-                <!-- شاشة محادثة الواتساب مع دعم البصمة الصوتية المحسنة -->
+                <!-- شاشة محادثة الواتساب مع دعم البصمة الصوتية وتشغيلها -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
@@ -728,7 +728,6 @@
         let selectedWaFileData = null;
         let selectedWaFileName = "";
         
-        // متغيرات تسجيل البصمة الصوتية المحسنة
         let mediaRecorder = null;
         let audioChunks = [];
         let isRecordingVoice = false;
@@ -2060,7 +2059,6 @@
             }
         }
 
-        // دالة تسجيل وبصمة الصوت المحسنة بالكامل (تعمل على كافة المتصفحات والهواتف)
         function toggleVoiceRecording() {
             const micBtn = document.getElementById('voiceRecordBtn');
             const micIcon = document.getElementById('voiceRecordIcon');
@@ -2116,7 +2114,7 @@
                     micIcon.className = "fas fa-stop";
                     micBtn.style.background = "#ea0038";
                     micBtn.style.color = "#fff";
-                    document.getElementById('waFilePreviewName').innerText = "🎙️ جاري تسجيل البصمة الصوتية... (اضغط مجدداً للإيقاف والإرسال)";
+                    document.getElementById('waFilePreviewName').innerText = "🎙️ جاري تسجيل البصمة الصوتية... (اضغط مجدداً لإيقاف والإرسال)";
                 }).catch(err => {
                     alert("⚠️ تعذر الوصول إلى الميكروفون. يرجى التأكد من السماح للمتصفح بالوصول للميكروفون.");
                 });
@@ -2174,7 +2172,6 @@
                         
                         let mediaHtml = '';
                         if (msg.voiceData) {
-                            // مشغل صوت محسن يضمن سماع البصمة على كروم وسافاري والهواتف
                             mediaHtml = `
                                 <div style="margin-top: 6px; display: flex; align-items: center; gap: 8px;">
                                     <audio controls preload="auto" style="height: 38px; max-width: 230px;">
@@ -2284,7 +2281,7 @@
         }
 
         function backToSubjectsView() { showSection('subjectsSection'); }
-        function backToRoomsView() { showSection('teachersRoomsSystem') || showSection('teachersRoomsSection'); }
+        function backToRoomsView() { showSection('teachersRoomsSection'); }
 
         function sendStudentQuestion() {
             const text = document.getElementById('studentQuestionInput').value.trim();
@@ -2480,9 +2477,9 @@
 
         function saveSchedule(e) {
             e.preventDefault();
-            const grade = document.getElementById('schGrade')->value;
-            const day = document.getElementById('schDay')->value;
-            const details = document.getElementById('schDetails')->value.trim();
+            const grade = document.getElementById('schGrade').value;
+            const day = document.getElementById('schDay').value;
+            const details = document.getElementById('schDetails').value.trim();
             const sId = 'SCH_' + Date.now();
             fetch(`${DATABASE_URL}/schedules/${sId}.json`, {
                 method: 'PUT', body: JSON.stringify({ id: sId, grade, day, details }), headers: { 'Content-Type': 'application/json' }
@@ -2501,7 +2498,12 @@
         function fetchAdminReports() {
             fetch(`${DATABASE_URL}/reports.json`).then(res => res.json()).then(data => {
                 let htmlList = '';
-                if (data) { Object.keys(data).keys().forEach(k => { const r = data[k]; htmlList += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; }); }
+                if (data) { 
+                    Object.keys(data).forEach(k => { 
+                        const r = data[k]; 
+                        htmlList += `<div class="list-item" style="border-right: 4px solid var(--warning);"><div><strong>الطالب: ${r.student}</strong> <span class="badge" style="background:#fef3c7; color:#d97706;">${r.type}</span><br><small>المدرس: ${r.teacher} | ${r.date}</small><p style="margin-top:6px;">${r.details}</p></div><button class="btn btn-danger" onclick="deleteItem('reports', '${k}', fetchAdminReports)">حذف</button></div>`; 
+                    }); 
+                }
                 const adminRList = document.getElementById('adminReportsList');
                 if (adminRList) adminRList.innerHTML = htmlList || '<p>لا توجد تقارير.</p>';
             });
