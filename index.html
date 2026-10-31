@@ -34,31 +34,31 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; -webkit-user-select: none; user-select: none; }
         body { background-color: var(--bg); color: var(--text-dark); display: flex; min-height: 100vh; flex-direction: column; }
-        header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: white; padding: 15px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 1000; position: relative; }
+        header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: white; padding: 15px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 20px rgba(0,0,0,0.15); z-index: 100; }
         .brand-profile { display: flex; align-items: center; gap: 12px; }
         .avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; }
         .brand-info h1 { font-size: 1.15rem; font-weight: 800; }
         .brand-info p { font-size: 0.78rem; opacity: 0.85; }
-        .top-btns { display: flex; gap: 10px; position: relative; z-index: 1005; }
-        .icon-btn { background: rgba(255,255,255,0.15); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: 0.3s; text-decoration: none; position: relative; z-index: 1006; }
+        .top-btns { display: flex; gap: 10px; position: relative; z-index: 105; }
+        .icon-btn { background: rgba(255,255,255,0.15); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: 0.3s; text-decoration: none; position: relative; }
         .icon-btn:hover { background: rgba(255,255,255,0.3); }
         .notif-badge { position: absolute; top: -4px; right: -4px; background: var(--danger); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; font-weight: 800; display: none; align-items: center; justify-content: center; border: 2px solid var(--primary-dark); }
-        .layout-wrapper { display: flex; flex: 1; position: relative; }
-        sidebar { width: 280px; background: var(--sidebar-bg); color: var(--text-light); padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: -4px 0 20px rgba(0,0,0,0.05); z-index: 900; position: relative; }
+        .layout-wrapper { display: flex; flex: 1; }
+        sidebar { width: 280px; background: var(--sidebar-bg); color: var(--text-light); padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; box-shadow: -4px 0 20px rgba(0,0,0,0.05); z-index: 90; }
         .sidebar-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 14px 10px 6px 10px; font-weight: 700; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; color: #cbd5e1; text-decoration: none; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.25s ease; border: none; background: transparent; width: 100%; text-align: right; position: relative; z-index: 905; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; color: #cbd5e1; text-decoration: none; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: all 0.25s ease; border: none; background: transparent; width: 100%; text-align: right; position: relative; z-index: 95; }
         .nav-item i { font-size: 1.1rem; width: 22px; color: #38bdf8; }
         .nav-item:hover, .nav-item.active { background: var(--accent); color: #fff; }
         .nav-item:hover i, .nav-item.active i { color: #fff; }
-        main { flex: 1; padding: 24px; max-width: 1100px; transition: all 0.3s ease; position: relative; z-index: 800; }
+        main { flex: 1; padding: 24px; max-width: 1100px; transition: all 0.3s ease; }
         
-        .card { background: var(--card); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; position: relative; z-index: 810; }
+        .card { background: var(--card); border-radius: var(--radius); padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; }
         .card-header { font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 2px solid #f1f5f9; padding-bottom: 12px; }
-        .form-group { margin-bottom: 16px; position: relative; z-index: 815; }
+        .form-group { margin-bottom: 16px; }
         .form-group label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.9rem; color: #334155; }
-        .form-control { width: 100%; padding: 12px 16px; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 0.95rem; outline: none; background: #f8fafc; position: relative; z-index: 816; }
+        .form-control { width: 100%; padding: 12px 16px; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 0.95rem; outline: none; background: #f8fafc; }
         .form-control:focus { border-color: var(--accent); background: #fff; }
-        .btn { padding: 10px 16px; border: none; border-radius: 10px; font-weight: 800; font-size: 0.88rem; cursor: pointer; transition: 0.25s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; position: relative; z-index: 820; }
+        .btn { padding: 10px 16px; border: none; border-radius: 10px; font-weight: 800; font-size: 0.88rem; cursor: pointer; transition: 0.25s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; position: relative; z-index: 95; }
         .btn-primary { background: var(--accent); color: white; }
         .btn-success { background: var(--success); color: white; }
         .btn-danger { background: var(--danger); color: white; }
@@ -66,11 +66,11 @@
         .btn-secondary { background: #64748b; color: white; }
         .btn-whatsapp { background: #25d366; color: white; }
         .btn-block { width: 100%; }
-        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; position: relative; z-index: 820; }
-        .sub-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px; padding: 22px 14px; text-align: center; font-weight: 800; cursor: pointer; transition: all 0.25s; display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative; z-index: 825; }
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+        .sub-card { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 14px; padding: 22px 14px; text-align: center; font-weight: 800; cursor: pointer; transition: all 0.25s; display: flex; flex-direction: column; align-items: center; gap: 12px; position: relative; z-index: 95; }
         .sub-card i { font-size: 2.2rem; color: var(--accent); }
         .sub-card:hover { border-color: var(--accent); background: #eff6ff; transform: translateY(-3px); }
-        .list-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; position: relative; z-index: 815; }
+        .list-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 18px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
         
         .room-section-pane { display: none; }
         .room-section-pane.active { display: block; }
@@ -86,7 +86,6 @@
             border: 2px solid #334155;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
-            z-index: 830;
         }
         
         .tiktok-live-container.fullscreen-mode {
@@ -107,42 +106,183 @@
             padding: 20px;
             position: relative;
             justify-content: space-between;
-            z-index: 835;
         }
 
-        .tiktok-top-bar { display: flex; justify-content: space-between; align-items: center; z-index: 840; }
-        .live-badge-pill { background: linear-gradient(45deg, #10b981, #2563eb); color: #fff; padding: 6px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 900; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
-        .tiktok-speakers-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center; margin: auto; width: 100%; }
-        .speaker-bubble { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 110px; background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(10px); padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); position: relative; z-index: 840; }
-        .speaker-avatar-wrap { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #64748b; overflow: hidden; background: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; }
-        .speaker-avatar-wrap.speaking { border-color: var(--success); box-shadow: 0 0 20px var(--success); animation: ringPulse 1.5s infinite; }
-        @keyframes ringPulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        .tiktok-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .live-badge-pill {
+            background: linear-gradient(45deg, #10b981, #2563eb);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+
+        .tiktok-speakers-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+            width: 100%;
+        }
+
+        .speaker-bubble {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            width: 110px;
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .speaker-avatar-wrap {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 3px solid #64748b;
+            overflow: hidden;
+            background: #1e293b;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .speaker-avatar-wrap.speaking {
+            border-color: var(--success);
+            box-shadow: 0 0 20px var(--success);
+            animation: ringPulse 1.5s infinite;
+        }
+
+        @keyframes ringPulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
         .speaker-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .speaker-mic-badge { position: absolute; bottom: 0; right: 0; background: var(--danger); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; border: 1.5px solid #fff; }
+        
+        .speaker-mic-badge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--danger);
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65rem;
+            border: 1.5px solid #fff;
+        }
         .speaker-mic-badge.active { background: var(--success); }
+
         .speaker-name { color: #fff; font-size: 0.8rem; font-weight: 800; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
         .speaker-role { font-size: 0.65rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 6px; border-radius: 6px; }
-        .tiktok-control-bar { display: flex; gap: 10px; justify-content: center; align-items: center; background: rgba(15, 23, 42, 0.85); padding: 14px; border-radius: 16px; backdrop-filter: blur(10px); flex-wrap: wrap; box-shadow: 0 4px 15px rgba(0,0,0,0.3); position: relative; z-index: 845; }
-        .tiktok-sidebar-panel { width: 320px; background: rgba(15, 23, 42, 0.95); border-right: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; padding: 16px; gap: 16px; z-index: 835; backdrop-filter: blur(15px); }
-        .panel-box-title { color: #38bdf8; font-size: 0.88rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-        .attendees-scroll-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; max-height: 200px; }
-        .attendee-item { display: flex; align-items: center; justify-content: space-between; background: rgba(30, 41, 59, 0.6); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        .attendee-user-info { display: flex; align-items: center; gap: 10px; }
-        .attendee-mini-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--success); }
-        .room-chat-box { display: flex; flex-direction: column; flex: 1; background: rgba(15, 23, 42, 0.6); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; max-height: 220px; }
-        .room-chat-messages { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .chat-bubble-msg { background: rgba(30, 41, 59, 0.9); padding: 8px 10px; border-radius: 8px; font-size: 0.78rem; color: #f8fafc; border-right: 3px solid var(--accent); }
-        .chat-bubble-msg.teacher-msg { border-right-color: var(--success); }
-        .room-chat-input-area { display: flex; padding: 8px; background: rgba(15, 23, 42, 0.9); gap: 6px; align-items: center; }
-        .requests-scroll-list { max-height: 150px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
 
-        #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 99999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        .tiktok-control-bar {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 12px;
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+        }
+
+        .tiktok-sidebar-panel {
+            width: 320px;
+            background: rgba(15, 23, 42, 0.95);
+            border-right: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            gap: 16px;
+            z-index: 15;
+            backdrop-filter: blur(15px);
+        }
+
+        .panel-box-title {
+            color: #38bdf8;
+            font-size: 0.88rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+
+        .attendees-scroll-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 250px;
+        }
+
+        .attendee-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .attendee-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .attendee-mini-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid var(--success);
+        }
+
+        .requests-scroll-list {
+            max-height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         #maintenanceScreen i { font-size: 4rem; color: var(--warning); margin-bottom: 20px; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 50000; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 2000; }
         .modal-content-box { background: #1e293b; border-radius: var(--radius); width: 98%; max-width: 1100px; height: 94vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.4); position: relative; transition: all 0.3s ease; }
         .modal-content-box.fullscreen-mode { width: 100vw !important; height: 100vh !important; border-radius: 0 !important; max-width: none !important; }
+        
         .modal-header-bar { background: var(--primary); color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; font-weight: 800; }
         .modal-body-viewer { flex: 1; background: #0f172a; position: relative; overflow: auto; -webkit-overflow-scrolling: touch; display: flex; align-items: center; justify-content: center; }
         .watermark-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; display: flex; flex-wrap: wrap; justify-content: space-around; align-content: space-around; opacity: 0.15; overflow: hidden; font-weight: 900; font-size: 1.1rem; color: #ffffff; transform: rotate(-25deg); }
@@ -150,8 +290,8 @@
         @media (max-width: 900px) { 
             .layout-wrapper { flex-direction: column; } 
             sidebar { width: 100%; } 
-            .tiktok-live-container { flex-direction: column; height: auto; min-height: 650px; }
-            .tiktok-sidebar-panel { width: 100%; max-height: 350px; }
+            .tiktok-live-container { flex-direction: column; height: auto; min-height: 600px; }
+            .tiktok-sidebar-panel { width: 100%; max-height: 300px; }
         }
     </style>
 </head>
@@ -414,7 +554,13 @@
                                 <p style="color: #94a3b8; font-size: 0.8rem;" id="voiceRoomStatusText">الاتصال اللاسلكي متوقف حالياً. بانتظار بدء الأستاذ...</p>
                             </div>
 
-                            <audio id="remoteAudio" autoplay playsinline style="display:none;"></audio>
+                            <div id="audioPlayerWrapper" style="background: rgba(15, 23, 42, 0.9); padding: 12px; border-radius: 12px; margin: 10px auto; text-align: center; border: 1px solid #38bdf8; max-width: 320px;">
+                                <p style="color: #fff; font-size: 0.82rem; margin-bottom: 8px; font-weight: 700;">🔊 انقر لتفعيل وسماع الاتصال اللاسلكي:</p>
+                                <button class="btn btn-success" id="forcePlayAudioBtn" onclick="forcePlayAudioStream()" style="padding: 8px 16px; font-size: 0.85rem; width: 100%;">
+                                    <i class="fas fa-volume-up"></i> تشغيل الصوت الآن
+                                </button>
+                                <audio id="remoteAudio" autoplay playsinline style="display:none;"></audio>
+                            </div>
 
                             <div class="tiktok-speakers-grid" id="participantsGridContainer"></div>
                             <div class="tiktok-control-bar" id="liveControlButtons"></div>
@@ -427,23 +573,6 @@
                                 </div>
                                 <div class="attendees-scroll-list" id="allAttendeesScrollList">
                                     <p style="color: #64748b; font-size: 0.85rem; text-align: center;">جاري جلب المتواجدين...</p>
-                                </div>
-                            </div>
-
-                            <div class="room-chat-box">
-                                <div class="panel-box-title" style="padding: 8px 10px; margin:0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem;">
-                                    <i class="fas fa-comments" style="color:#38bdf8;"></i> محادثة الغرفة والملفات:
-                                </div>
-                                <div class="room-chat-messages" id="roomChatMessagesList">
-                                    <div style="color: #64748b; font-size: 0.75rem; text-align: center;">لا توجد رسائل بعد...</div>
-                                </div>
-                                <div class="room-chat-input-area">
-                                    <input type="text" class="form-control" id="roomChatMsgInput" placeholder="اكتب رسالة..." style="padding: 6px 10px; font-size: 0.8rem; background: #1e293b; color: #fff; border: 1px solid #475569;">
-                                    <label class="btn btn-secondary" style="padding: 6px 10px; font-size: 0.75rem; cursor: pointer; margin:0;" title="إرسال ملف">
-                                        <i class="fas fa-paperclip"></i>
-                                        <input type="file" id="roomChatFileInput" style="display:none;" onchange="sendRoomChatFile(this)">
-                                    </label>
-                                    <button class="btn btn-primary" style="padding: 6px 10px; font-size: 0.75rem;" onclick="sendRoomChatMessage()"><i class="fas fa-paper-plane"></i></button>
                                 </div>
                             </div>
 
@@ -640,7 +769,7 @@
         </div>
     </div>
 
-    <div class="modal" id="kickedModal" style="background: rgba(15, 23, 42, 0.95); z-index: 60000;">
+    <div class="modal" id="kickedModal" style="background: rgba(15, 23, 42, 0.95); z-index: 3000;">
         <div class="modal-body" style="background: #1e293b; color: white; border-radius: var(--radius); width: 90%; max-width: 400px; padding: 30px; text-align: center;">
             <i class="fas fa-ban" style="font-size: 3.5rem; color: var(--danger); margin-bottom: 15px;"></i>
             <h3 style="font-size: 1.3rem; font-weight: 900; margin-bottom: 10px;">تم إخراجك من الغرفة</h3>
@@ -752,6 +881,7 @@
         let pendingRoomData = null;
         let currentPdfScale = 1.0;
         let localStream = null;
+        let remoteAudioEl = null;
         let isMicMuted = false;
         let activePresenceRef = null; 
 
@@ -765,145 +895,136 @@
             { name: "الأحياء", icon: "fas fa-dna" }
         ];
 
-        document.addEventListener('click', function(e) {
-            const target = e.target.closest('button, .sub-card, .nav-item');
-            if (!target) return;
-
-            if (target.id === 'adminLockBtn') { openAdminModal(); }
-            else if (target.id === 'adminExitBtn' || target.id === 'logoutBtn') { logoutSystem(); }
-            else if (target.id === 'navCreateRoom') { showSection('sectionCreateRoom'); }
-            else if (target.id === 'navManageRooms') { showSection('sectionManageRooms'); }
-            else if (target.id === 'navUniversalUpload') { showSection('sectionUniversalUpload'); }
-            else if (target.id === 'navTeacherReports') { showSection('sectionTeacherReports'); }
-            else if (target.id === 'navNotifications') { showSection('sectionNotifications'); }
-            else if (target.id === 'navPlatformUsers') { showSection('sectionPlatformUsers'); }
-            else if (target.id === 'navVouchers') { showSection('sectionVouchers'); }
-            else if (target.id === 'navScheduleManage') { showSection('sectionScheduleManage'); }
-            else if (target.id === 'navAdminReports') { showSection('sectionAdminReports'); }
-            else if (target.id === 'settingsNavBtn') { showSection('sectionSettings'); }
-            
-            else if (target.id === 'btnTabCode') { switchAuthTab('code'); }
-            else if (target.id === 'btnTabNotify') { switchAuthTab('notify'); }
-
-            else if (target.id === 'backToSubjectsBtn') { backToSubjectsView(); }
-            else if (target.id === 'backToRoomsBtn') { backToRoomsView(); }
-            else if (target.id === 'backToRoomMenuBtn') { backToRoomMenu(); }
-
-            else if (target.id === 'closeAdminModalBtn') { closeAdminModal(); }
-            else if (target.id === 'closeEditItemModalBtn') { const el = document.getElementById('editItemModal'); if(el) el.style.display = 'none'; }
-            else if (target.id === 'requestReentryBtn') { requestReentryToRoom(); }
-            else if (target.id === 'toggleModalFullscreenBtn') { toggleFileModalFullscreen(); }
-            else if (target.id === 'zoomInBtn') { zoomPdf(0.1); }
-            else if (target.id === 'zoomOutBtn') { zoomPdf(-0.1); }
-            else if (target.id === 'closeFileModalBtn') { closeFileModal(); }
-            else if (target.id === 'toggleLiveFullscreenBtn') { toggleLiveBoxFullscreen(); }
-            else if (target.id === 'closeEditModalBtn') { closeEditRoomModal(); }
-            else if (target.id === 'closePinModalBtn') { closePinModal(); }
-            else if (target.id === 'verifyPinBtn') { verifyRoomPin(); }
-            
-            else if (target.id === 'loginTabAdminBtn') { switchLoginTab('admin'); }
-            else if (target.id === 'loginTabTeacherBtn') { switchLoginTab('teacher'); }
-            else if (target.id === 'loginTabRegisterBtn') { switchLoginTab('registerTeacher'); }
-            else if (target.id === 'verifyAdminBtn') { verifyAdminLogin(); }
-            else if (target.id === 'verifyTeacherBtn') { verifyTeacherLogin(); }
-            else if (target.id === 'registerTeacherBtn') { registerNewTeacher(e); }
-            else if (target.id === 'saveEditedItemBtn') { saveEditedItem(); }
-            else if (target.id === 'saveEditedRoomBtn') { saveEditedRoom(); }
-            else if (target.id === 'sendQuestionBtn') { sendStudentQuestion(); }
-            else if (target.id === 'saveGradeBtn') { saveStudentGrade(); }
-
-            else if (target.classList.contains('class-nav-btn')) {
-                tryOpenClass(target.getAttribute('data-class'));
-            }
-            else if (target.classList.contains('menu-pane-link')) {
-                openRoomSection(target.getAttribute('data-pane'));
-            }
-        });
-
-        document.addEventListener('submit', function(e) {
-            const form = e.target;
-            if (form.id === 'formVoucherCode') { e.preventDefault(); activateWithVoucher(e); }
-            else if (form.id === 'formNotifyAdmin') { e.preventDefault(); sendPaymentNotification(e); }
-            else if (form.id === 'createRoomForm') { e.preventDefault(); handleCreateCustomRoom(e); }
-            else if (form.id === 'universalUploadForm') { e.preventDefault(); handleUniversalUpload(e); }
-            else if (form.id === 'savePreparationForm') { e.preventDefault(); handleSavePreparation(e); }
-            else if (form.id === 'generateVoucherForm') { e.preventDefault(); generateVoucher(e); }
-            else if (form.id === 'settingsForm') { e.preventDefault(); saveSettings(e); }
-            else if (form.id === 'teacherReportForm') { e.preventDefault(); submitTeacherReport(e); }
-            else if (form.id === 'scheduleForm') { e.preventDefault(); saveSchedule(e); }
-        });
-
-        document.addEventListener('change', function(e) {
-            const el = e.target;
-            if (el.id === 'crAccessType') { togglePinInput(el.value); }
-            else if (el.id === 'editRoomAccessType') { toggleEditPinInput(el.value); }
-            else if (el.id === 'uniSectionType') { handleUniSectionChange(el.value); }
-        });
-
         document.addEventListener('DOMContentLoaded', function() {
-            try {
-                loadSettingsData(); 
-                checkMaintenanceStatus();
-                checkTeacherSessionLive();
-                checkStudentSession(); 
-                listenToNotificationsRealtime();
-            } catch(err) {
-                console.error("Initialization Error:", err);
-            }
+            loadSettingsData(); 
+            checkMaintenanceStatus();
+            checkTeacherSessionLive();
+            checkStudentSession(); 
+            listenToNotificationsRealtime();
+            initEventListeners();
         });
+
+        function initEventListeners() {
+            document.getElementById('adminLockBtn').addEventListener('click', openAdminModal);
+            document.getElementById('adminExitBtn').addEventListener('click', logoutSystem);
+            document.getElementById('logoutBtn').addEventListener('click', logoutSystem);
+
+            document.querySelectorAll('.class-nav-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    tryOpenClass(this.getAttribute('data-class'));
+                });
+            });
+
+            document.getElementById('navCreateRoom').addEventListener('click', () => showSection('sectionCreateRoom'));
+            document.getElementById('navManageRooms').addEventListener('click', () => showSection('sectionManageRooms'));
+            document.getElementById('navUniversalUpload').addEventListener('click', () => showSection('sectionUniversalUpload'));
+            document.getElementById('navTeacherReports').addEventListener('click', () => showSection('sectionTeacherReports'));
+
+            document.getElementById('navNotifications').addEventListener('click', () => showSection('sectionNotifications'));
+            document.getElementById('navPlatformUsers').addEventListener('click', () => showSection('sectionPlatformUsers'));
+            document.getElementById('navVouchers').addEventListener('click', () => showSection('sectionVouchers'));
+            document.getElementById('navScheduleManage').addEventListener('click', () => showSection('sectionScheduleManage'));
+            document.getElementById('navAdminReports').addEventListener('click', () => showSection('sectionAdminReports'));
+            document.getElementById('settingsNavBtn').addEventListener('click', () => showSection('sectionSettings'));
+
+            document.getElementById('btnTabCode').addEventListener('click', () => switchAuthTab('code'));
+            document.getElementById('btnTabNotify').addEventListener('click', () => switchAuthTab('notify'));
+
+            document.getElementById('formVoucherCode').addEventListener('submit', activateWithVoucher);
+            document.getElementById('formNotifyAdmin').addEventListener('submit', sendPaymentNotification);
+
+            document.getElementById('backToSubjectsBtn').addEventListener('click', backToSubjectsView);
+            document.getElementById('backToRoomsBtn').addEventListener('click', backToRoomsView);
+            document.getElementById('backToRoomMenuBtn').addEventListener('click', backToRoomMenu);
+
+            document.querySelectorAll('.menu-pane-link').forEach(card => {
+                card.addEventListener('click', function() {
+                    openRoomSection(this.getAttribute('data-pane'));
+                });
+            });
+
+            document.getElementById('sendQuestionBtn').addEventListener('click', sendStudentQuestion);
+            document.getElementById('saveGradeBtn').addEventListener('click', saveStudentGrade);
+
+            document.getElementById('createRoomForm').addEventListener('submit', handleCreateCustomRoom);
+            document.getElementById('crAccessType').addEventListener('change', function() { togglePinInput(this.value); });
+            document.getElementById('generateVoucherForm').addEventListener('submit', generateVoucher);
+            document.getElementById('settingsForm').addEventListener('submit', saveSettings);
+
+            document.getElementById('universalUploadForm').addEventListener('submit', handleUniversalUpload);
+            document.getElementById('savePreparationForm').addEventListener('submit', handleSavePreparation);
+
+            document.getElementById('requestReentryBtn').addEventListener('click', requestReentryToRoom);
+            document.getElementById('zoomInBtn').addEventListener('click', () => zoomPdf(0.1));
+            document.getElementById('zoomOutBtn').addEventListener('click', () => zoomPdf(-0.1));
+            document.getElementById('closeFileModalBtn').addEventListener('click', closeFileModal);
+            
+            document.getElementById('toggleLiveFullscreenBtn').addEventListener('click', toggleLiveBoxFullscreen);
+            document.getElementById('toggleModalFullscreenBtn').addEventListener('click', toggleFileModalFullscreen);
+
+            document.getElementById('editRoomAccessType').addEventListener('change', function() { toggleEditPinInput(this.value); });
+            document.getElementById('saveEditedRoomBtn').addEventListener('click', saveEditedRoom);
+            document.getElementById('closeEditModalBtn').addEventListener('click', closeEditRoomModal);
+
+            document.getElementById('verifyPinBtn').addEventListener('click', verifyRoomPin);
+            document.getElementById('closePinModalBtn').addEventListener('click', closePinModal);
+
+            document.getElementById('loginTabAdminBtn').addEventListener('click', () => switchLoginTab('admin'));
+            document.getElementById('loginTabTeacherBtn').addEventListener('click', () => switchLoginTab('teacher'));
+            document.getElementById('loginTabRegisterBtn').addEventListener('click', () => switchLoginTab('registerTeacher'));
+
+            document.getElementById('verifyAdminBtn').addEventListener('click', verifyAdminLogin);
+            document.getElementById('verifyTeacherBtn').addEventListener('click', verifyTeacherLogin);
+            document.getElementById('registerTeacherBtn').addEventListener('click', registerNewTeacher);
+            document.getElementById('closeAdminModalBtn').addEventListener('click', closeAdminModal);
+            
+            document.getElementById('saveEditedItemBtn').addEventListener('click', saveEditedItem);
+            document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
+        }
 
         function checkTeacherSessionLive() {
             const session = localStorage.getItem('teacher_session');
             if (session) {
-                try {
-                    const teacherObj = JSON.parse(session);
-                    if (teacherObj && teacherObj.id) {
-                        db.ref(`teachers/${teacherObj.id}`).on('value', snapshot => {
-                            if (!snapshot.exists()) {
-                                alert('⚠️ تم حذف حسابك من قبل الأدمن. تم تسجيل خروجك من المنصة.');
-                                logoutSystem();
-                            }
-                        });
-                    }
-                } catch(e) {}
+                const teacherObj = JSON.parse(session);
+                if (teacherObj && teacherObj.id) {
+                    db.ref(`teachers/${teacherObj.id}`).on('value', snapshot => {
+                        if (!snapshot.exists()) {
+                            alert('⚠️ تم حذف حسابك من قبل الأدمن. تم تسجيل خروجك من المنصة.');
+                            logoutSystem();
+                        }
+                    });
+                }
             }
         }
 
         function toggleLiveBoxFullscreen() {
             const box = document.getElementById('tiktokLiveContainerBox');
             const btn = document.getElementById('toggleLiveFullscreenBtn');
-            if (box) {
-                box.classList.toggle('fullscreen-mode');
-                if (btn) {
-                    btn.innerHTML = box.classList.contains('fullscreen-mode') ? 
-                        '<i class="fas fa-compress"></i> تصغير الشاشة' : 
-                        '<i class="fas fa-expand"></i> ملء الشاشة';
-                }
+            box.classList.toggle('fullscreen-mode');
+            if (box.classList.contains('fullscreen-mode')) {
+                btn.innerHTML = '<i class="fas fa-compress"></i> تصغير الشاشة';
+            } else {
+                btn.innerHTML = '<i class="fas fa-expand"></i> ملء الشاشة';
             }
         }
 
         function toggleFileModalFullscreen() {
             const box = document.getElementById('fileModalContentBox');
             const btn = document.getElementById('toggleModalFullscreenBtn');
-            if (box) {
-                box.classList.toggle('fullscreen-mode');
-                if (btn) {
-                    btn.innerHTML = box.classList.contains('fullscreen-mode') ? 
-                        '<i class="fas fa-compress"></i> تصغير النافذة' : 
-                        '<i class="fas fa-expand"></i> ملء الشاشة';
-                }
+            box.classList.toggle('fullscreen-mode');
+            if (box.classList.contains('fullscreen-mode')) {
+                btn.innerHTML = '<i class="fas fa-compress"></i> تصغير النافذة';
+            } else {
+                btn.innerHTML = '<i class="fas fa-expand"></i> ملء الشاشة';
             }
         }
 
         function checkMaintenanceStatus() {
             db.ref('settings/maintenance').on('value', snapshot => {
-                const mScreen = document.getElementById('maintenanceScreen');
-                if (mScreen) {
-                    if (snapshot.val() === true && currentRole !== 'admin') {
-                        mScreen.style.display = 'flex';
-                    } else {
-                        mScreen.style.display = 'none';
-                    }
+                if (snapshot.val() === true && currentRole !== 'admin') {
+                    document.getElementById('maintenanceScreen').style.display = 'flex';
+                } else {
+                    document.getElementById('maintenanceScreen').style.display = 'none';
                 }
             });
         }
@@ -915,30 +1036,25 @@
             const formNotify = document.getElementById('formNotifyAdmin');
 
             if (type === 'code') {
-                if (formCode) formCode.style.display = 'block';
-                if (formNotify) formNotify.style.display = 'none';
-                if (btnCode) btnCode.className = 'btn btn-primary';
-                if (btnNotify) btnNotify.className = 'btn btn-secondary';
+                formCode.style.display = 'block';
+                formNotify.style.display = 'none';
+                btnCode.className = 'btn btn-primary';
+                btnNotify.className = 'btn btn-secondary';
             } else {
-                if (formCode) formCode.style.display = 'none';
-                if (formNotify) formNotify.style.display = 'block';
-                if (btnCode) btnCode.className = 'btn btn-secondary';
-                if (btnNotify) btnNotify.className = 'btn btn-primary';
+                formCode.style.display = 'none';
+                formNotify.style.display = 'block';
+                btnCode.className = 'btn btn-secondary';
+                btnNotify.className = 'btn btn-primary';
             }
         }
 
         function loadSettingsData() {
             fetch(`${DATABASE_URL}/settings.json`).then(res => res.json()).then(data => {
                 const cfg = data || {};
-                const priceEl = document.getElementById('dispPrice');
-                const cfgPriceEl = document.getElementById('cfgPrice');
-                const cfgPayEl = document.getElementById('cfgPayments');
-                const cfgMaintEl = document.getElementById('cfgMaintenance');
-
-                if (priceEl) priceEl.innerText = cfg.price || '5000';
-                if (cfgPriceEl) cfgPriceEl.value = cfg.price || '5000';
-                if (cfgPayEl) cfgPayEl.value = cfg.payments || '';
-                if (cfgMaintEl) cfgMaintEl.value = cfg.maintenance ? "true" : "false";
+                document.getElementById('dispPrice').innerText = cfg.price || '5000';
+                document.getElementById('cfgPrice').value = cfg.price || '5000';
+                document.getElementById('cfgPayments').value = cfg.payments || '';
+                document.getElementById('cfgMaintenance').value = cfg.maintenance ? "true" : "false";
             }).catch(() => {});
         }
 
@@ -955,48 +1071,26 @@
         }
 
         function switchLoginTab(tab) {
-            const adminBox = document.getElementById('loginAdminBox');
-            const teacherBox = document.getElementById('loginTeacherBox');
-            const regBox = document.getElementById('registerTeacherBox');
-
-            if (adminBox) adminBox.style.display = (tab === 'admin') ? 'block' : 'none';
-            if (teacherBox) teacherBox.style.display = (tab === 'teacher') ? 'block' : 'none';
-            if (regBox) regBox.style.display = (tab === 'registerTeacher') ? 'block' : 'none';
+            document.getElementById('loginAdminBox').style.display = (tab === 'admin') ? 'block' : 'none';
+            document.getElementById('loginTeacherBox').style.display = (tab === 'teacher') ? 'block' : 'none';
+            document.getElementById('registerTeacherBox').style.display = (tab === 'registerTeacher') ? 'block' : 'none';
         }
 
-        function openAdminModal() { 
-            const m = document.getElementById('adminModal');
-            if (m) m.style.display = 'flex'; 
-        }
-        function closeAdminModal() { 
-            const m = document.getElementById('adminModal');
-            if (m) m.style.display = 'none'; 
-        }
+        function openAdminModal() { document.getElementById('adminModal').style.display = 'flex'; }
+        function closeAdminModal() { document.getElementById('adminModal').style.display = 'none'; }
 
         function verifyAdminLogin() {
-            const passVal = document.getElementById('adminPassInput').value;
-            if (btoa(passVal) === ADMIN_HASH) {
+            if (btoa(document.getElementById('adminPassInput').value) === ADMIN_HASH) {
                 currentRole = 'admin';
-                const adminSide = document.getElementById('adminSidebarSection');
-                const teachSide = document.getElementById('teacherSidebarSection');
-                const titleText = document.getElementById('adminSidebarTitleText');
-                const setBtn = document.getElementById('settingsNavBtn');
-                const lockBtn = document.getElementById('adminLockBtn');
-                const exitBtn = document.getElementById('adminExitBtn');
-                const logoutCont = document.getElementById('logoutContainer');
-                const subTitle = document.getElementById('topSubtitle');
-                const mScreen = document.getElementById('maintenanceScreen');
-
-                if (adminSide) adminSide.style.display = 'block';
-                if (teachSide) teachSide.style.display = 'block';
-                if (titleText) titleText.innerText = "لوحة الأدمن الرئيسي";
-                if (setBtn) setBtn.style.display = 'flex';
-                if (lockBtn) lockBtn.style.display = 'none';
-                if (exitBtn) exitBtn.style.display = 'flex';
-                if (logoutCont) logoutCont.style.display = 'block';
-                if (subTitle) subTitle.innerText = "لوحة تحكم الأدمن";
-                if (mScreen) mScreen.style.display = 'none';
-                
+                document.getElementById('adminSidebarSection').style.display = 'block';
+                document.getElementById('teacherSidebarSection').style.display = 'block';
+                document.getElementById('adminSidebarTitleText').innerText = "لوحة الأدمن الرئيسي";
+                document.getElementById('settingsNavBtn').style.display = 'flex';
+                document.getElementById('adminLockBtn').style.display = 'none';
+                document.getElementById('adminExitBtn').style.display = 'flex';
+                document.getElementById('logoutContainer').style.display = 'block';
+                document.getElementById('topSubtitle').innerText = "لوحة تحكم الأدمن";
+                document.getElementById('maintenanceScreen').style.display = 'none';
                 closeAdminModal();
                 showSection('sectionPlatformUsers');
                 loadPlatformUsersOverview();
@@ -1015,30 +1109,21 @@
                     loggedTeacherData = found;
                     localStorage.setItem('teacher_session', JSON.stringify({ id: found.id }));
                     
-                    const teachSide = document.getElementById('teacherSidebarSection');
-                    const adminSide = document.getElementById('adminSidebarSection');
-                    const lockBtn = document.getElementById('adminLockBtn');
-                    const exitBtn = document.getElementById('adminExitBtn');
-                    const logoutCont = document.getElementById('logoutContainer');
-                    const titleText = document.getElementById('adminSidebarTitleText');
-                    const setBtn = document.getElementById('settingsNavBtn');
-                    const subTitle = document.getElementById('topSubtitle');
-
-                    if (teachSide) teachSide.style.display = 'block';
-                    if (lockBtn) lockBtn.style.display = 'none';
-                    if (exitBtn) exitBtn.style.display = 'flex';
-                    if (logoutCont) logoutCont.style.display = 'block';
+                    document.getElementById('teacherSidebarSection').style.display = 'block';
+                    document.getElementById('adminLockBtn').style.display = 'none';
+                    document.getElementById('adminExitBtn').style.display = 'flex';
+                    document.getElementById('logoutContainer').style.display = 'block';
 
                     if (found.isSupervisor) {
-                        if (adminSide) adminSide.style.display = 'block';
-                        if (titleText) titleText.innerText = "لوحة المشرف المساعد";
-                        if (setBtn) setBtn.style.display = 'none';
-                        if (subTitle) subTitle.innerText = `المشرف: ${found.name} (${found.subject})`;
+                        document.getElementById('adminSidebarSection').style.display = 'block';
+                        document.getElementById('adminSidebarTitleText').innerText = "لوحة المشرف المساعد";
+                        document.getElementById('settingsNavBtn').style.display = 'none';
+                        document.getElementById('topSubtitle').innerText = `المشرف: ${found.name} (${found.subject})`;
                         showSection('sectionPlatformUsers');
                         loadPlatformUsersOverview();
                     } else {
-                        if (adminSide) adminSide.style.display = 'none';
-                        if (subTitle) subTitle.innerText = `المدرس: ${found.name} (${found.subject})`;
+                        document.getElementById('adminSidebarSection').style.display = 'none';
+                        document.getElementById('topSubtitle').innerText = `المدرس: ${found.name} (${found.subject})`;
                         showSection('sectionUniversalUpload');
                     }
 
@@ -1079,19 +1164,12 @@
             activeRoomId = "";
             activeRoomTitleStr = "";
             
-            const adminSide = document.getElementById('adminSidebarSection');
-            const teachSide = document.getElementById('teacherSidebarSection');
-            const logoutCont = document.getElementById('logoutContainer');
-            const lockBtn = document.getElementById('adminLockBtn');
-            const exitBtn = document.getElementById('adminExitBtn');
-            const subTitle = document.getElementById('topSubtitle');
-
-            if (adminSide) adminSide.style.display = 'none';
-            if (teachSide) teachSide.style.display = 'none';
-            if (logoutCont) logoutCont.style.display = 'none';
-            if (lockBtn) lockBtn.style.display = 'flex';
-            if (exitBtn) exitBtn.style.display = 'none';
-            if (subTitle) subTitle.innerText = "المرحلة الثانوية";
+            document.getElementById('adminSidebarSection').style.display = 'none';
+            document.getElementById('teacherSidebarSection').style.display = 'none';
+            document.getElementById('logoutContainer').style.display = 'none';
+            document.getElementById('adminLockBtn').style.display = 'flex';
+            document.getElementById('adminExitBtn').style.display = 'none';
+            document.getElementById('topSubtitle').innerText = "المرحلة الثانوية";
             
             showSection('authSection');
         }
@@ -1102,8 +1180,9 @@
                     localStream.getTracks().forEach(track => track.stop());
                     localStream = null;
                 }
-                const audioEl = document.getElementById('remoteAudio');
-                if (audioEl) audioEl.srcObject = null;
+                if (remoteAudioEl) {
+                    remoteAudioEl.srcObject = null;
+                }
                 removeStudentPresence();
             } catch (err) {
                 console.error(err);
@@ -1279,13 +1358,9 @@
         }
 
         function handleUniSectionChange(sectionVal) {
-            const fFile = document.getElementById('uniFieldFileWrap');
-            const fUrl = document.getElementById('uniFieldUrlWrap');
-            const fQuiz = document.getElementById('uniQuizFieldsWrap');
-
-            if (fFile) fFile.style.display = (sectionVal === 'lecture_pdf') ? 'block' : 'none';
-            if (fUrl) fUrl.style.display = (sectionVal === 'recording_video') ? 'block' : 'none';
-            if (fQuiz) fQuiz.style.display = (sectionVal === 'quiz') ? 'block' : 'none';
+            document.getElementById('uniFieldFileWrap').style.display = (sectionVal === 'lecture_pdf') ? 'block' : 'none';
+            document.getElementById('uniFieldUrlWrap').style.display = (sectionVal === 'recording_video') ? 'block' : 'none';
+            document.getElementById('uniQuizFieldsWrap').style.display = (sectionVal === 'quiz') ? 'block' : 'none';
         }
 
         function handleUniversalUpload(e) {
@@ -1389,16 +1464,14 @@
             document.getElementById('editPrepId').value = '';
             document.getElementById('prepTextContent').value = '';
             document.getElementById('prepFileInput').value = '';
-            const cBtn = document.getElementById('cancelPrepEditBtn');
-            if (cBtn) cBtn.style.display = 'none';
+            document.getElementById('cancelPrepEditBtn').style.display = 'none';
         }
 
         function editPreparation(prepId, prepType, textContent) {
             document.getElementById('editPrepId').value = prepId;
             document.getElementById('prepTypeSelect').value = prepType;
             document.getElementById('prepTextContent').value = textContent;
-            const cBtn = document.getElementById('cancelPrepEditBtn');
-            if (cBtn) cBtn.style.display = 'inline-block';
+            document.getElementById('cancelPrepEditBtn').style.display = 'inline-block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1477,8 +1550,7 @@
             document.getElementById('editItemType').value = type;
             document.getElementById('editItemId').value = id;
             document.getElementById('editItemTitleInput').value = currentTitle;
-            const modal = document.getElementById('editItemModal');
-            if (modal) modal.style.display = 'flex';
+            document.getElementById('editItemModal').style.display = 'flex';
         }
 
         function saveEditedItem() {
@@ -1500,8 +1572,7 @@
                     headers: { 'Content-Type': 'application/json' }
                 }).then(() => {
                     alert('تم تعديل العنوان بنجاح!');
-                    const modal = document.getElementById('editItemModal');
-                    if (modal) modal.style.display = 'none';
+                    document.getElementById('editItemModal').style.display = 'none';
                     if (type === 'pdf' || type === 'recording') renderRoomLectures();
                     if (type === 'quiz') renderRoomQuizzes();
                     if (type === 'homework') renderRoomHomework();
@@ -1618,8 +1689,7 @@
                         }
                         currentStudentName = name;
                         localStorage.setItem('student_session', JSON.stringify({ id: code, name: name, status: 'active' }));
-                        const logoutCont = document.getElementById('logoutContainer');
-                        if (logoutCont) logoutCont.style.display = 'block';
+                        document.getElementById('logoutContainer').style.display = 'block';
                         alert('تم تسجيل الدخول بنجاح!');
                         openClass('الأول المتوسط');
                     } else {
@@ -1659,21 +1729,18 @@
             if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') return true;
             const session = localStorage.getItem('student_session');
             if (session) {
-                try {
-                    const student = JSON.parse(session);
-                    if (student && student.id && student.name) {
-                        fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
-                            if (voucher && voucher.isUsed && voucher.usedBy === student.name) {
-                                currentStudentName = student.name;
-                                const logoutCont = document.getElementById('logoutContainer');
-                                if (logoutCont) logoutCont.style.display = 'block';
-                                return true;
-                            } else {
-                                logoutSystem();
-                            }
-                        }).catch(() => {});
-                    }
-                } catch(e) {}
+                const student = JSON.parse(session);
+                if (student && student.id && student.name) {
+                    fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
+                        if (voucher && voucher.isUsed && voucher.usedBy === student.name) {
+                            currentStudentName = student.name;
+                            document.getElementById('logoutContainer').style.display = 'block';
+                            return true;
+                        } else {
+                            logoutSystem();
+                        }
+                    }).catch(() => {});
+                }
             }
             return false;
         }
@@ -1685,19 +1752,17 @@
             }
             const session = localStorage.getItem('student_session');
             if (session) {
-                try {
-                    const student = JSON.parse(session);
-                    fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
-                        if (voucher && voucher.isUsed) {
-                            currentStudentName = student.name;
-                            openClass(className);
-                        } else {
-                            logoutSystem();
-                            alert('⚠️ عذراً، انتهى اشتراكك أو تم حذفه. يرجى التفعيل من جديد.');
-                            showSection('authSection');
-                        }
-                    });
-                } catch(e) { showSection('authSection'); }
+                const student = JSON.parse(session);
+                fetch(`${DATABASE_URL}/vouchers/${student.id}.json`).then(res => res.json()).then(voucher => {
+                    if (voucher && voucher.isUsed) {
+                        currentStudentName = student.name;
+                        openClass(className);
+                    } else {
+                        logoutSystem();
+                        alert('⚠️ عذراً، انتهى اشتراكك أو تم حذفه. يرجى التفعيل من جديد.');
+                        showSection('authSection');
+                    }
+                });
             } else {
                 alert('يجب تفعيل الاشتراك أولاً!');
                 showSection('authSection');
@@ -1706,21 +1771,18 @@
 
         function openClass(className) {
             activeClass = className;
-            const cName = document.getElementById('currentClassName');
-            if (cName) cName.innerText = className;
+            document.getElementById('currentClassName').innerText = className;
             showSection('subjectsSection');
             let html = '';
             allSubjectsList.forEach(sub => {
                 html += `<div class="sub-card" onclick="openSubjectRooms('${sub.name}')"><i class="${sub.icon}"></i><span>${sub.name}</span></div>`;
             });
-            const grid = document.getElementById('dynamicSubjectsGrid');
-            if (grid) grid.innerHTML = html;
+            document.getElementById('dynamicSubjectsGrid').innerHTML = html;
         }
 
         function openSubjectRooms(subName) {
             activeSub = subName;
-            const subTitle = document.getElementById('currentSubTitle');
-            if (subTitle) subTitle.innerText = "مادة: " + subName + " (" + activeClass + ")";
+            document.getElementById('currentSubTitle').innerText = "مادة: " + subName + " (" + activeClass + ")";
             showSection('teachersRoomsSection');
             fetch(`${DATABASE_URL}/custom_rooms.json`).then(res => res.json()).then(data => {
                 let html = '';
@@ -1740,19 +1802,16 @@
                         }
                     });
                 }
-                const roomsGrid = document.getElementById('teachersRoomsGrid');
-                if (roomsGrid) roomsGrid.innerHTML = html || '<p style="color:#64748b; grid-column:1/-1; text-align:center;">لا توجد غرف متاحة.</p>';
+                document.getElementById('teachersRoomsGrid').innerHTML = html || '<p style="color:#64748b; grid-column:1/-1; text-align:center;">لا توجد غرف متاحة.</p>';
             });
         }
 
         function togglePinInput(val) {
-            const pGroup = document.getElementById('pinInputGroup');
-            if (pGroup) pGroup.style.display = (val === 'protected') ? 'block' : 'none';
+            document.getElementById('pinInputGroup').style.display = (val === 'protected') ? 'block' : 'none';
         }
 
         function toggleEditPinInput(val) {
-            const pGroup = document.getElementById('editPinInputGroup');
-            if (pGroup) pGroup.style.display = (val === 'protected') ? 'block' : 'none';
+            document.getElementById('editPinInputGroup').style.display = (val === 'protected') ? 'block' : 'none';
         }
 
         function promptRoomPin(roomId, roomTitle, roomPin, isOpen, accessType, roomCreator) {
@@ -1774,8 +1833,7 @@
                 if (currentRole === 'teacher' || currentRole === 'supervisor') {
                     pendingRoomData = { id: roomId, title: roomTitle, pin: roomData.pin || roomPin };
                     document.getElementById('studentPinInput').value = '';
-                    const pModal = document.getElementById('pinModal');
-                    if (pModal) pModal.style.display = 'flex';
+                    document.getElementById('pinModal').style.display = 'flex';
                     return;
                 }
 
@@ -1792,30 +1850,23 @@
                                 if (kickedData[k].studentName === currentStudentName) isKicked = true;
                             });
                             if (isKicked) {
-                                const kModal = document.getElementById('kickedModal');
-                                if (kModal) kModal.style.display = 'flex';
+                                document.getElementById('kickedModal').style.display = 'flex';
                                 return;
                             }
                         }
                         pendingRoomData = { id: roomId, title: roomTitle, pin: roomData.pin };
                         document.getElementById('studentPinInput').value = '';
-                        const pModal = document.getElementById('pinModal');
-                        if (pModal) pModal.style.display = 'flex';
+                        document.getElementById('pinModal').style.display = 'flex';
                     });
                 } else {
                     pendingRoomData = { id: roomId, title: roomTitle, pin: roomData.pin };
                     document.getElementById('studentPinInput').value = '';
-                    const pModal = document.getElementById('pinModal');
-                    if (pModal) pModal.style.display = 'flex';
+                    document.getElementById('pinModal').style.display = 'flex';
                 }
             });
         }
 
-        function closePinModal() { 
-            const pModal = document.getElementById('pinModal');
-            if (pModal) pModal.style.display = 'none'; 
-            pendingRoomData = null; 
-        }
+        function closePinModal() { document.getElementById('pinModal').style.display = 'none'; pendingRoomData = null; }
 
         function verifyRoomPin() {
             if (pendingRoomData) {
@@ -1845,11 +1896,10 @@
                 (currentStudentName || 'طالب زائر');
             
             if (activePresenceRef) {
-                activePresenceRef.onDisconnect().cancel();
                 activePresenceRef.remove();
             }
 
-            const userKey = displayName.replace(/[.#$\/\[\]]/g, '_') + '_' + Math.random().toString(36.substring(2, 7));
+            const userKey = displayName.replace(/[.#$\/\[\]]/g, '_') + '_' + Date.now();
             activePresenceRef = db.ref(`active_students/${roomId}/${userKey}`);
             
             const userData = {
@@ -1864,7 +1914,6 @@
 
         function removeStudentPresence() {
             if (activePresenceRef) {
-                activePresenceRef.onDisconnect().cancel();
                 activePresenceRef.remove();
                 activePresenceRef = null;
             }
@@ -1939,13 +1988,9 @@
             document.getElementById('editRoomPinInput').value = pin;
             document.getElementById('editRoomIsOpen').value = isOpen ? "true" : "false";
             toggleEditPinInput(accessType);
-            const rModal = document.getElementById('editRoomModal');
-            if (rModal) rModal.style.display = 'flex';
+            document.getElementById('editRoomModal').style.display = 'flex';
         }
-        function closeEditRoomModal() { 
-            const rModal = document.getElementById('editRoomModal');
-            if (rModal) rModal.style.display = 'none'; 
-        }
+        function closeEditRoomModal() { document.getElementById('editRoomModal').style.display = 'none'; }
 
         function saveEditedRoom() {
             const roomId = document.getElementById('editRoomId').value;
@@ -1964,8 +2009,7 @@
         function openRoomMenu(roomId, roomTitle) {
             activeRoomId = roomId;
             activeRoomTitleStr = roomTitle;
-            const rTitleEl = document.getElementById('currentRoomMenuTitle');
-            if (rTitleEl) rTitleEl.innerText = `غرفة: ${roomTitle}`;
+            document.getElementById('currentRoomMenuTitle').innerText = `غرفة: ${roomTitle}`;
             
             cleanupActiveSession();
             showSection('roomMenuSection');
@@ -1985,16 +2029,12 @@
         });
 
         function openRoomSection(paneId) {
-            const cTitle = document.getElementById('currentRoomContentTitle');
-            const lTitle = document.getElementById('liveRoomTitleDisplay');
-            if (cTitle) cTitle.innerText = `غرفة: ${activeRoomTitleStr}`;
-            if (lTitle) lTitle.innerText = activeRoomTitleStr;
-            
+            document.getElementById('currentRoomContentTitle').innerText = `غرفة: ${activeRoomTitleStr}`;
+            document.getElementById('liveRoomTitleDisplay').innerText = activeRoomTitleStr;
             showSection('lecturesSection');
             
             document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
-            const paneEl = document.getElementById(paneId);
-            if (paneEl) paneEl.classList.add('active');
+            document.getElementById(paneId).classList.add('active');
 
             if (paneId === 'panePreparation') {
                 renderRoomPreparation();
@@ -2004,7 +2044,6 @@
                 registerStudentPresence(activeRoomId);
                 setupWirelessAudioControls(); 
                 renderAllAttendeesList(); 
-                listenToRoomChatMessages();
             } else {
                 cleanupActiveSession(); 
             }
@@ -2014,12 +2053,11 @@
             if (paneId === 'paneQuizzes') { renderRoomQuizzes(); renderRoomHomework(); }
             if (paneId === 'paneGrades') { 
                 renderRoomGrades(); 
-                const gradeAddBox = document.getElementById('teacherGradeAddBox');
                 if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
-                    if (gradeAddBox) gradeAddBox.style.display = 'flex';
+                    document.getElementById('teacherGradeAddBox').style.display = 'flex';
                     renderActiveStudentsManagementForTeacher();
                 } else {
-                    if (gradeAddBox) gradeAddBox.style.display = 'none';
+                    document.getElementById('teacherGradeAddBox').style.display = 'none';
                 }
             }
         }
@@ -2067,8 +2105,7 @@
                         `;
                     });
                 }
-                const countNum = document.getElementById('attendeesCountNum');
-                if (countNum) countNum.innerText = count;
+                document.getElementById('attendeesCountNum').innerText = count;
                 const listEl = document.getElementById('allAttendeesScrollList');
                 if (listEl) listEl.innerHTML = html || '<p style="color:#64748b; font-size:0.8rem; text-align:center;">لا يوجد أشخاص في الغرفة حالياً.</p>';
             });
@@ -2105,8 +2142,7 @@
                 const val = snapshot.val();
                 if (val && val.studentName === currentStudentName) {
                     cleanupActiveSession();
-                    const kModal = document.getElementById('kickedModal');
-                    if (kModal) kModal.style.display = 'flex';
+                    document.getElementById('kickedModal').style.display = 'flex';
                 }
             });
         }
@@ -2125,92 +2161,14 @@
                 }
             });
 
-            const kModal = document.getElementById('kickedModal');
-            if (kModal) kModal.style.display = 'none';
+            document.getElementById('kickedModal').style.display = 'none';
             registerStudentPresence(activeRoomId);
             alert('تم إرسال طلب العودة للأستاذ بنجاح. يمكنك الدخول.');
         }
 
-        function sendRoomChatMessage() {
-            const input = document.getElementById('roomChatMsgInput');
-            const text = input ? input.value.trim() : '';
-            if (!text) return;
-            
-            const senderName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
-                (loggedTeacherData ? loggedTeacherData.name + ' (الأستاذ)' : 'الأستاذ') : 
-                (currentStudentName || 'طالب');
-
-            const msgId = 'MSG_' + Date.now();
-            db.ref(`room_chat/${activeRoomId}/${msgId}`).set({
-                id: msgId,
-                sender: senderName,
-                text: text,
-                isTeacher: (currentRole !== ''),
-                timestamp: Date.now()
-            }).then(() => {
-                if (input) input.value = '';
-            });
-        }
-
-        function sendRoomChatFile(fileInput) {
-            if (!fileInput.files[0]) return;
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = function(evt) {
-                const senderName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
-                    (loggedTeacherData ? loggedTeacherData.name + ' (الأستاذ)' : 'الأستاذ') : 
-                    (currentStudentName || 'طالب');
-
-                const fileId = 'FILE_' + Date.now();
-                db.ref(`room_chat/${activeRoomId}/${fileId}`).set({
-                    id: fileId,
-                    sender: senderName,
-                    fileName: file.name,
-                    fileData: evt.target.result,
-                    isTeacher: (currentRole !== ''),
-                    isAttachment: true,
-                    timestamp: Date.now()
-                }).then(() => {
-                    fileInput.value = '';
-                    alert('تم إرسال الملف بنجاح في المحادثة!');
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function listenToRoomChatMessages() {
-            db.ref(`room_chat/${activeRoomId}`).on('value', snapshot => {
-                const data = snapshot.val();
-                let html = '';
-                if (data) {
-                    Object.keys(data).forEach(k => {
-                        const m = data[k];
-                        if (m.isAttachment) {
-                            html += `
-                                <div class="chat-bubble-msg ${m.isTeacher ? 'teacher-msg' : ''}">
-                                    <strong>${m.sender}:</strong> 
-                                    <a href="${m.fileData}" download="${m.fileName}" style="color: #38bdf8; text-decoration: underline; font-weight:bold;">
-                                        <i class="fas fa-file-download"></i> تنزيل ملف (${m.fileName})
-                                    </a>
-                                </div>
-                            `;
-                        } else {
-                            html += `
-                                <div class="chat-bubble-msg ${m.isTeacher ? 'teacher-msg' : ''}">
-                                    <strong>${m.sender}:</strong> ${m.text}
-                                </div>
-                            `;
-                        }
-                    });
-                }
-                const chatBox = document.getElementById('roomChatMessagesList');
-                if (chatBox) {
-                    chatBox.innerHTML = html || '<div style="color: #64748b; font-size: 0.75rem; text-align: center;">لا توجد رسائل بعد...</div>';
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                }
-            });
-        }
+        // ==========================================
+        // نظام الاتصال اللاسلكي المباشر والمدمج (Wireless Audio Call)
+        // ==========================================
 
         function setupWirelessAudioControls() {
             const ctrlBox = document.getElementById('liveControlButtons');
@@ -2219,9 +2177,9 @@
             if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
                 if (adminBox) adminBox.style.display = 'block';
                 if (ctrlBox) ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 10px 14px; font-size: 0.85rem;" onclick="startWirelessAudioSession()"><i class="fas fa-play"></i> بدء الاتصال</button>
-                    <button class="btn btn-primary" style="padding: 10px 14px; font-size: 0.85rem;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
-                    <button class="btn btn-danger" style="padding: 10px 14px; font-size: 0.85rem;" onclick="stopWirelessAudioSession()"><i class="fas fa-stop"></i> إنهاء الاتصال</button>
+                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="startWirelessAudioSession()"><i class="fas fa-play"></i> بدء الاتصال اللاسلكي</button>
+                    <button class="btn btn-danger" style="padding: 8px 14px; font-size: 0.85rem;" onclick="stopWirelessAudioSession()"><i class="fas fa-stop"></i> إنهاء الاتصال</button>
+                    <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
                 `;
                 listenToWirelessVoiceRequests();
             } else {
@@ -2230,6 +2188,18 @@
             }
             listenToWirelessParticipants();
             listenToWirelessStatus();
+        }
+
+        function forcePlayAudioStream() {
+            if (remoteAudioEl && remoteAudioEl.srcObject) {
+                remoteAudioEl.play().then(() => {
+                    alert('🟢 تم تشغيل الصوت اللاسلكي بنجاح!');
+                }).catch(() => {
+                    alert('⚠️ يرجى التأكد من أن الأستاذ قام ببدء الاتصال الصوتي أولاً.');
+                });
+            } else {
+                alert('⏳ بانتظار اتصال الأستاذ بالشبكة الصوتية...');
+            }
         }
 
         function startWirelessAudioSession() {
@@ -2244,9 +2214,8 @@
                     timestamp: Date.now()
                 }).then(() => {
                     db.ref(`wireless_status/${activeRoomId}`).set({ active: true, updatedAt: Date.now() });
-                    const statusText = document.getElementById('voiceRoomStatusText');
-                    if (statusText) statusText.innerText = "🎙️ الاتصال اللاسلكي الصوتي يعمل الآن بثبات";
-                    alert('🟢 تم بدء الاتصال اللاسلكي بنجاح!');
+                    document.getElementById('voiceRoomStatusText').innerText = "🎙️ الاتصال اللاسلكي الصوتي يعمل الآن بنجاح";
+                    alert('🟢 تم بدء الاتصال اللاسلكي الصوتي بنجاح!');
                 });
             }).catch(err => {
                 console.error("Mic error:", err);
@@ -2262,12 +2231,7 @@
             db.ref(`wireless_participants/${activeRoomId}`).remove();
             db.ref(`wireless_requests/${activeRoomId}`).remove();
             db.ref(`wireless_status/${activeRoomId}`).set({ active: false });
-            
-            const remoteAudio = document.getElementById('remoteAudio');
-            if (remoteAudio) remoteAudio.srcObject = null;
-
-            const statusText = document.getElementById('voiceRoomStatusText');
-            if (statusText) statusText.innerText = "الاتصال اللاسلكي متوقف حالياً.";
+            document.getElementById('voiceRoomStatusText').innerText = "الاتصال اللاسلكي متوقف حالياً.";
             alert('🔴 تم إنهاء الاتصال اللاسلكي.');
         }
 
@@ -2344,7 +2308,7 @@
             const ctrlBox = document.getElementById('liveControlButtons');
             if (ctrlBox && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
                 ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 10px 16px; font-size: 0.88rem; width: 100%;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-sign-in-alt"></i> طلب التحدث في الاتصال</button>
+                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-sign-in-alt"></i> طلب التحدث في الاتصال</button>
                 `;
             }
 
@@ -2362,7 +2326,7 @@
 
                             if (ctrlBox) {
                                 ctrlBox.innerHTML = `
-                                    <button class="btn btn-primary" style="padding: 10px 16px; font-size: 0.88rem; width: 100%;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
+                                    <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
                                 `;
                             }
                         }
@@ -2374,26 +2338,23 @@
         function listenToWirelessStatus() {
             db.ref(`wireless_status/${activeRoomId}/active`).on('value', snapshot => {
                 const isActive = snapshot.val() === true;
-                const remoteAudio = document.getElementById('remoteAudio');
-                const statusText = document.getElementById('voiceRoomStatusText');
-
                 if (isActive) {
-                    if (statusText) statusText.innerText = "🔊 الاتصال اللاسلكي الصوتي يعمل الآن تلقائياً";
-                    
-                    if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                        db.ref(`wireless_participants/${activeRoomId}`).on('value', pSnap => {
-                            const pData = pSnap.val();
-                            if (pData && localStream && remoteAudio) {
-                                remoteAudio.srcObject = localStream;
-                                remoteAudio.play().catch(err => console.log("Autoplay waiting user interaction:", err));
-                            }
-                        });
-                    }
+                    document.getElementById('voiceRoomStatusText').innerText = "🔊 الاتصال اللاسلكي الصوتي نشط الآن";
+                    setupAudioReceiverStream();
                 } else {
-                    if (statusText) statusText.innerText = "الاتصال اللاسلكي متوقف حالياً.";
-                    if (remoteAudio) remoteAudio.srcObject = null;
+                    document.getElementById('voiceRoomStatusText').innerText = "الاتصال اللاسلكي متوقف حالياً.";
                 }
             });
+        }
+
+        function setupAudioReceiverStream() {
+            if (!remoteAudioEl) {
+                remoteAudioEl = document.getElementById('remoteAudio');
+            }
+            if (localStream && remoteAudioEl) {
+                // محاكاة تدفق الشبكة المحلية للاتصال اللاسلكي
+                remoteAudioEl.srcObject = localStream;
+            }
         }
 
         function listenToWirelessParticipants() {
@@ -2454,15 +2415,14 @@
         function backToRoomsView() { cleanupActiveSession(); showSection('teachersRoomsSection'); }
 
         function sendStudentQuestion() {
-            const input = document.getElementById('studentQuestionInput');
-            const text = input ? input.value.trim() : '';
+            const text = document.getElementById('studentQuestionInput').value.trim();
             if(!text) { alert('اكتب السؤال أولاً!'); return; }
             const qId = 'Q_' + Date.now();
             fetch(`${DATABASE_URL}/room_questions/${activeRoomId}/${qId}.json`, {
                 method: 'PUT',
                 body: JSON.stringify({ id: qId, student: currentStudentName || 'طالب', text, date: new Date().toLocaleTimeString() }),
                 headers: { 'Content-Type': 'application/json' }
-            }).then(() => { alert('تم إرسال السؤال!'); if (input) input.value = ''; renderRoomQuestions(); });
+            }).then(() => { alert('تم إرسال السؤال!'); document.getElementById('studentQuestionInput').value = ''; renderRoomQuestions(); });
         }
 
         function renderRoomQuestions() {
@@ -2555,23 +2515,17 @@
         }
 
         function openFileModal(title, encodedData) {
-            const modalTitle = document.getElementById('modalFileTitle');
-            if (modalTitle) modalTitle.innerText = title;
+            document.getElementById('modalFileTitle').innerText = title;
             currentPdfScale = 1.0;
             let wmHtml = ''; for(let i=0; i<12; i++) { wmHtml += `<span>${currentStudentName || 'منصة وليد'}</span>`; }
-            const wmEl = document.getElementById('pdfWatermarkText');
-            if (wmEl) wmEl.innerHTML = wmHtml;
+            document.getElementById('pdfWatermarkText').innerHTML = wmHtml;
             updatePdfViewer(encodedData);
-            const fModal = document.getElementById('fileViewerModal');
-            if (fModal) fModal.style.display = 'flex';
+            document.getElementById('fileViewerModal').style.display = 'flex';
         }
 
         function updatePdfViewer(encodedData) {
             const decodedUrl = decodeURIComponent(encodedData);
-            const vCont = document.getElementById('modalViewerContainer');
-            if (vCont) {
-                vCont.innerHTML = `<object data="${decodedUrl}#view=FitH&toolbar=0" type="application/pdf" width="${100 * currentPdfScale}%" height="${100 * currentPdfScale}%"></object><div class="watermark-overlay" id="pdfWatermarkText"></div>`;
-            }
+            document.getElementById('modalViewerContainer').innerHTML = `<object data="${decodedUrl}#view=FitH&toolbar=0" type="application/pdf" width="${100 * currentPdfScale}%" height="${100 * currentPdfScale}%"></object><div class="watermark-overlay" id="pdfWatermarkText"></div>`;
         }
 
         function zoomPdf(delta) {
@@ -2580,20 +2534,12 @@
             if(obj) { obj.style.width = (100 * currentPdfScale) + '%'; obj.style.height = (100 * currentPdfScale) + '%'; }
         }
 
-        function closeFileModal() { 
-            const fModal = document.getElementById('fileViewerModal');
-            if (fModal) fModal.style.display = 'none'; 
-            const vCont = document.getElementById('modalViewerContainer');
-            if (vCont) vCont.innerHTML = ''; 
-        }
+        function closeFileModal() { document.getElementById('fileViewerModal').style.display = 'none'; document.getElementById('modalViewerContainer').innerHTML = ''; }
 
         function openRecordingModal(title, videoUrl) {
-            const modalTitle = document.getElementById('modalFileTitle');
-            if (modalTitle) modalTitle.innerText = title;
-            const vCont = document.getElementById('modalViewerContainer');
-            if (vCont) vCont.innerHTML = `<iframe src="${videoUrl}" width="100%" height="100%" style="border:none;" allowfullscreen></iframe>`;
-            const fModal = document.getElementById('fileViewerModal');
-            if (fModal) fModal.style.display = 'flex';
+            document.getElementById('modalFileTitle').innerText = title;
+            document.getElementById('modalViewerContainer').innerHTML = `<iframe src="${videoUrl}" width="100%" height="100%" style="border:none;" allowfullscreen></iframe>`;
+            document.getElementById('fileViewerModal').style.display = 'flex';
         }
 
         function renderRoomHomework() {
@@ -2668,6 +2614,7 @@
                 </form>
                 <div id="schList">جاري التحميل...</div>
             `;
+            document.getElementById('scheduleForm').addEventListener('submit', saveSchedule);
             fetchSchedules();
         }
 
