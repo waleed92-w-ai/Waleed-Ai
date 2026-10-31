@@ -782,7 +782,7 @@
                 <div class="form-group"><label>كلمة المرور</label><input type="password" class="form-control" id="regTPass"></div>
                 <button class="btn btn-warning btn-block" id="registerTeacherBtn">تسجيل طلب الانضمام</button>
             </div>
-            <button class="btn btn-danger btn-block" id="closeAdminModalBtn" style="margin-top: 12px; background: transparent; color: #64748b;">إلغاء</button>
+            <button class="btn btn-danger btn-block" id="closeAdminModalBtn" style="margin-top: 12px; background: transparent; color: #64748b;">إغلاق</button>
         </div>
     </div>
 
@@ -1825,18 +1825,8 @@
                     return;
                 }
 
-                if (currentStudentName) {
-                    const sKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
-                    fetch(`${DATABASE_URL}/room_permissions/${roomId}/${sKey}/allowed.json`).then(r => r.json()).then(isAllowed => {
-                        if (isAllowed === true) {
-                            openRoomMenu(roomId, roomTitle);
-                            return;
-                        }
-                        checkKickedAndOpenPinModal(roomId, roomTitle, roomData.pin, roomData.creator);
-                    });
-                } else {
-                    checkKickedAndOpenPinModal(roomId, roomTitle, roomData.pin, roomData.creator);
-                }
+                // تم تعديل الشرط هنا ليتحقق دائماً من إدخال الرمز أو طلب الانضمام في كل مرة
+                checkKickedAndOpenPinModal(roomId, roomTitle, roomData.pin, roomData.creator);
             });
         }
 
@@ -1865,6 +1855,7 @@
 
         function closePinModal() { document.getElementById('pinModal').style.display = 'none'; pendingRoomData = null; }
 
+        // [التعديل هنا] تم تحديث الدالة لكي لا تحفظ صلاحية دائمة، ويجب طلب الانضمام أو الرمز كل مرة
         function verifyRoomPin() {
             if (pendingRoomData) {
                 const enteredPin = String(document.getElementById('studentPinInput').value).trim();
@@ -1873,11 +1864,6 @@
                 if (enteredPin === correctPin || correctPin === "") {
                     const rId = pendingRoomData.id;
                     const rTitle = pendingRoomData.title;
-                    
-                    if (currentStudentName) {
-                        const sKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
-                        db.ref(`room_permissions/${rId}/${sKey}`).set({ allowed: true, timestamp: Date.now() });
-                    }
                     
                     closePinModal();
                     openRoomMenu(rId, rTitle);
@@ -1914,10 +1900,12 @@
 
         function listenToStudentApprovalStatus(roomId) {
             if (!currentStudentName) return;
-            const sKey = currentStudentName.replace(/[.#$\/\[\]]/g, '_');
             
-            db.ref(`room_permissions/${roomId}/${sKey}/allowed`).on('value', snapshot => {
-                if (snapshot.val() === true) {
+            db.ref(`room_access_requests/${roomId}`).on('child_changed', snapshot => {
+                const req = snapshot.val();
+                if (req && req.studentName === currentStudentName && req.status === 'approved') {
+                    // حذف الطلب لكي يتم تصفيره للمرة القادمة
+                    db.ref(`room_access_requests/${roomId}/${req.id}`).remove();
                     closePinModal();
                     alert('✅ وافق مالك الغرفة على طلب انضمامك! جارٍ الدخول...');
                     openRoomMenu(pendingRoomData.id, pendingRoomData.title);
@@ -1988,8 +1976,6 @@
         }
 
         function approveRoomAccessRequest(roomId, studentName, reqId) {
-            const sKey = studentName.replace(/[.#$\/\[\]]/g, '_');
-            db.ref(`room_permissions/${roomId}/${sKey}`).set({ allowed: true, timestamp: Date.now() });
             db.ref(`room_access_requests/${roomId}/${reqId}`).update({ status: 'approved' });
             alert(`✅ تمت الموافقة على دخول الطالب ${studentName} بنجاح!`);
         }
