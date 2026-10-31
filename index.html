@@ -660,12 +660,12 @@
                     </div>
                     <div class="form-group"><label>نوع الوصول للغرفة</label>
                         <select class="form-control" id="crAccessType">
-                            <option value="free">🟢 مجانية بالكامل (يستطيع أي طالب أو مدرس الدخول مباشرة)</option>
-                            <option value="protected">🔒 خاصة / دروس خصوصية (تتطلب رمز PIN سري)</option>
+                            <option value="free">🟢 مجانية (يمكن لأي شخص الدخول مباشرة بدون رمز)</option>
+                            <option value="protected">🔒 خاصة / مغلقة (تتطلب رمز PIN سري للدخول)</option>
                         </select>
                     </div>
                     <div class="form-group" id="pinInputGroup" style="display: none;">
-                        <label>رمز الدخول السري (PIN) للخصوصي</label>
+                        <label>رمز الدخول السري (PIN)</label>
                         <input type="text" class="form-control" id="crPin" placeholder="مثال: 1234">
                     </div>
                     <button type="submit" class="btn btn-success btn-block">إنشاء الغرفة ونشرها</button>
@@ -822,10 +822,10 @@
 
     <div class="modal" id="pinModal">
         <div class="modal-body" style="background: white; border-radius: var(--radius); width: 90%; max-width: 380px; padding: 24px; text-align: center;">
-            <div class="card-header" style="justify-content: center;"><i class="fas fa-lock" style="color:var(--danger);"></i> غرفة غير مسجلة باسمك / محمية</div>
-            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #334155;">هذه الغرفة خاصة بالأستاذ المالك. أدخل رمز الدخول (PIN) للدخول:</p>
+            <div class="card-header" style="justify-content: center;"><i class="fas fa-lock" style="color:var(--danger);"></i> غرفة خاصة بمدرس آخر</div>
+            <p style="margin-bottom: 15px; font-size: 0.9rem; color: #334155;">هذه الغرفة ليست ملكاً لحسابك. أدخل رمز الدخول (PIN) الخاص بالأستاذ للدخول:</p>
             <div class="form-group"><input type="text" class="form-control" id="studentPinInput" placeholder="PIN" style="text-align: center; font-size: 1.2rem; font-weight: 800;"></div>
-            <button class="btn btn-success btn-block" id="verifyPinBtn">دخول</button>
+            <button class="btn btn-success btn-block" id="verifyPinBtn">دخول الغرفة</button>
             <button class="btn btn-danger btn-block" id="closePinModalBtn" style="margin-top: 10px; background: transparent; color: #64748b;">إلغاء</button>
         </div>
     </div>
@@ -1827,6 +1827,7 @@
             const isOwnerTeacher = (currentRole === 'teacher' && currentTeacherName === roomCreator);
             const isAdminOrSup = (currentRole === 'admin' || currentRole === 'supervisor');
 
+            // الأدمن أو المشرف أو المدرس المالك للغرفة يدخلون مباشرة بدون قيود
             if (isAdminOrSup || isOwnerTeacher) {
                 openRoomMenu(roomId, roomTitle);
                 return;
@@ -1838,7 +1839,8 @@
                     return;
                 }
 
-                if (currentRole === 'teacher') {
+                // إذا كان المستخدم مدرساً ولكن ليس مالك الغرفة، يجب أن يظهر له إدخال الرمز السري حصراً!
+                if (currentRole === 'teacher' || currentRole === 'supervisor') {
                     pendingRoomData = { id: roomId, title: roomTitle, pin: roomData.pin || roomPin };
                     document.getElementById('studentPinInput').value = '';
                     document.getElementById('pinModal').style.display = 'flex';
