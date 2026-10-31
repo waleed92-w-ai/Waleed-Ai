@@ -370,7 +370,7 @@
                     </div>
                 </div>
 
-                <!-- قسم البث المباشر المرئي والمشفر (يعمل بدون برامج داخل المنصة وبشكل مباشر) -->
+                <!-- قسم البث المباشر المرئي والمشفر (يعمل مباشرة وبدون برامج داخل المنصة وبدون شاشة ترحيب) -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
@@ -390,7 +390,7 @@
                             </div>
                         </div>
 
-                        <!-- إطار الاتصال المباشر عبر الويب مباشرة وبدون تحميل أي برنامج -->
+                        <!-- إطار الاتصال المباشر عبر الويب مباشرة وبدون أي أزرار خارجية -->
                         <iframe id="jitsiFrameViewer" 
                                 style="width: 100%; height: 350px; background: #000; border: none;" 
                                 allow="camera; microphone; fullscreen; display-capture; autoplay">
@@ -2032,7 +2032,8 @@
                 const roomSafeName = "WaleedPlatform_" + (activeRoomId || 'MainRoom');
                 const iframeEl = document.getElementById('jitsiFrameViewer');
                 if (iframeEl) {
-                    iframeEl.src = `https://meet.jit.si/${roomSafeName}`;
+                    // التعديل الهام هنا لتخطي شاشة الترحيب وتفعيل الاتصال مباشرة
+                    iframeEl.src = `https://meet.jit.si/${roomSafeName}#config.prejoinPageEnabled=false&config.startWithAudioMuted=false&config.startWithVideoMuted=false`;
                 }
                 openWhatsappChatSection();
             } else {
