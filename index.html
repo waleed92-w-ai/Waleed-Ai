@@ -410,8 +410,17 @@
 
                         <div id="startCallBarArea" style="background: #075e54; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; color: white; flex-wrap: wrap; gap: 8px;">
                             <span style="font-size: 0.85rem; font-weight: 800;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> البث الصوتي المباشر الفائق (نقي 100% وبدون صدى)</span>
-                            <div style="display: flex; gap: 8px;">
-                                <button class="btn btn-success" style="padding: 6px 14px; font-size: 0.8rem;" onclick="startWirelessAudioSession()"><i class="fas fa-broadcast-tower"></i> بدء البث (للأستاذ)</button>
+                            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                                <button class="btn btn-success" id="teacherStartBroadcastBtn" style="padding: 6px 14px; font-size: 0.8rem; display:none;" onclick="startWirelessAudioSession()"><i class="fas fa-broadcast-tower"></i> بدء البث (للأستاذ)</button>
+                                <button class="btn btn-warning" id="studentRaiseHandBtn" style="padding: 6px 14px; font-size: 0.8rem; display:none;" onclick="requestStudentMicAccess()"><i class="fas fa-hand-paper"></i> طلب مداخلة صوتية (رفع اليد)</button>
+                            </div>
+                        </div>
+
+                        <!-- لوحة طلبات المداخلة الخاصة بالأستاذ -->
+                        <div id="teacherMicRequestsPanel" style="background: #1e293b; color: white; padding: 10px 16px; display: none; border-bottom: 1px solid #334155;">
+                            <div style="font-size: 0.85rem; font-weight: 800; color: #f59e0b; margin-bottom: 6px;"><i class="fas fa-hand-paper"></i> طلبات المداخلة من الطلاب للحديث:</div>
+                            <div id="teacherMicRequestsList" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <span style="font-size: 0.75rem; color: #94a3b8;">لا توجد طلبات مداخلة حالياً.</span>
                             </div>
                         </div>
 
@@ -2097,6 +2106,11 @@
             document.querySelectorAll('.room-section-pane').forEach(el => el.classList.remove('active'));
             document.getElementById(paneId).classList.add('active');
 
+            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
+            document.getElementById('teacherStartBroadcastBtn').style.display = isTeacherOrAdmin ? 'inline-flex' : 'none';
+            document.getElementById('studentRaiseHandBtn').style.display = (!isTeacherOrAdmin && currentStudentName) ? 'inline-flex' : 'none';
+            document.getElementById('teacherMicRequestsPanel').style.display = isTeacherOrAdmin ? 'block' : 'none';
+
             if (paneId === 'panePreparation') {
                 renderRoomPreparation();
             }
@@ -2106,6 +2120,9 @@
                 setupWirelessAudioControls(); 
                 openWhatsappChatSection();
                 renderParticipantsListSummary();
+                if (isTeacherOrAdmin) {
+                    listenToStudentMicRequests();
+                }
             } else {
                 cleanupActiveSession(); 
             }
@@ -2115,13 +2132,69 @@
             if (paneId === 'paneQuizzes') { renderRoomQuizzes(); renderRoomHomework(); }
             if (paneId === 'paneGrades') { 
                 renderRoomGrades(); 
-                if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
+                if (isTeacherOrAdmin) {
                     document.getElementById('teacherGradeAddBox').style.display = 'flex';
                     renderActiveStudentsManagementForTeacher();
                 } else {
                     document.getElementById('teacherGradeAddBox').style.display = 'none';
                 }
             }
+        }
+
+        function requestStudentMicAccess() {
+            if (!currentStudentName) {
+                alert('يجب تسجيل الدخول كطالب أولاً!');
+                return;
+            }
+            const reqId = 'MICREQ_' + Date.now();
+            db.ref(`mic_requests/${activeRoomId}/${reqId}`).set({
+                id: reqId,
+                studentName: currentStudentName,
+                timestamp: Date.now()
+            }).then(() => {
+                alert('✋ تم إرسال طلب المداخلة الصوتية إلى الأستاذ بنجاح. انتظر الموافقة للبدء بالحديث.');
+            });
+        }
+
+        function listenToStudentMicRequests() {
+            db.ref(`mic_requests/${activeRoomId}`).on('value', snapshot => {
+                const data = snapshot.val();
+                let html = '';
+                let count = 0;
+                if (data) {
+                    Object.keys(data).forEach(k => {
+                        const req = data[k];
+                        count++;
+                        html += `
+                            <div style="background: #0f172a; border: 1px solid #f59e0b; padding: 6px 12px; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 0.8rem; font-weight: 800;">🗣️ ${req.studentName}</span>
+                                <button class="btn btn-success" style="padding: 2px 8px; font-size: 0.7rem;" onclick="approveStudentMic('${req.id}', '${req.studentName}')">قبول المداخلة ✅</button>
+                                <button class="btn btn-danger" style="padding: 2px 8px; font-size: 0.7rem;" onclick="rejectStudentMic('${req.id}')">رفض ❌</button>
+                            </div>
+                        `;
+                    });
+                }
+                const container = document.getElementById('teacherMicRequestsList');
+                if (container) {
+                    container.innerHTML = html || '<span style="font-size: 0.75rem; color: #94a3b8;">لا توجد طلبات مداخلة حالياً.</span>';
+                }
+                if (count > 0) {
+                    playNotificationSound();
+                }
+            });
+        }
+
+        function approveStudentMic(reqId, studentName) {
+            db.ref(`mic_requests/${activeRoomId}/${reqId}`).remove();
+            db.ref(`approved_speaker/${activeRoomId}`).set({
+                speakerName: studentName,
+                timestamp: Date.now()
+            });
+            alert(`✅ تمت الموافقة على مداخلة الطالب ${studentName}. يمكنه التحدث الآن.`);
+        }
+
+        function rejectStudentMic(reqId) {
+            db.ref(`mic_requests/${activeRoomId}/${reqId}`).remove();
         }
 
         function renderParticipantsListSummary() {
@@ -2517,6 +2590,36 @@
                         }
                     }
                 });
+
+                // الاستماع لموافقة الأستاذ على المداخلة الصوتية للطالب
+                db.ref(`approved_speaker/${activeRoomId}`).on('value', snap => {
+                    const sp = snap.val();
+                    if (sp && sp.speakerName === currentStudentName) {
+                        alert('🟢 وافق الأستاذ على مداخلتك الصوتية! سيتم تفعيل ميكروفونك الآن.');
+                        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(micStream => {
+                            localStream = micStream;
+                            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                            const source = audioCtx.createMediaStreamSource(micStream);
+                            const destination = audioCtx.createMediaStreamDestination();
+                            source.connect(destination);
+
+                            mediaRecorder = new MediaRecorder(micStream, { mimeType: 'audio/webm' });
+                            mediaRecorder.ondataavailable = e => {
+                                if (e.data.size > 0) {
+                                    const reader = new FileReader();
+                                    reader.readAsDataURL(e.data);
+                                    reader.onloadend = function() {
+                                        db.ref(`live_audio_broadcast/${activeRoomId}`).set({
+                                            audioData: reader.result,
+                                            timestamp: Date.now()
+                                        });
+                                    }
+                                }
+                            };
+                            mediaRecorder.start(1000);
+                        }).catch(e => alert('تعذر فتح الميكروفون للمداخلة.'));
+                    }
+                });
             }
         }
 
@@ -2718,7 +2821,7 @@
         function saveSchedule(e) {
             e.preventDefault();
             const grade = document.getElementById('schGrade').value;
-            const day = document.getElementById('schDay').value;
+            const day = document.getElementById('schDay'	).value;
             const details = document.getElementById('schDetails').value.trim();
             const sId = 'SCH_' + Date.now();
             fetch(`${DATABASE_URL}/schedules/${sId}.json`, {
