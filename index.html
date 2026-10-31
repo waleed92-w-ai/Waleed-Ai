@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة الأستاذ وليد التعليمية - المرحلة الثانوية</title>
 
-    <!-- إعدادات تطبيق الويب المستقل (PWA) للعمل كبرنامج اتصال حقيقي -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#1e3a8a">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -88,19 +87,8 @@
             position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; border-radius: 0 !important; border: none !important;
         }
 
-        .whatsapp-call-banner { background: #075e54; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.15); box-shadow: 0 2px 6px rgba(0,0,0,0.2); flex-wrap: wrap; gap: 8px; }
-        .call-banner-left { display: flex; align-items: center; gap: 10px; }
-        
-        .whatsapp-floating-call-bubble {
-            position: fixed !important; bottom: 25px !important; left: 25px !important; width: 75px !important; height: 75px !important;
-            border-radius: 50% !important; background: #075e54 !important; border: 3px solid #25d366 !important;
-            box-shadow: 0 10px 30px rgba(7, 94, 84, 0.6) !important; z-index: 100000 !important; display: none; align-items: center; justify-content: center; cursor: pointer; color: white; flex-direction: column;
-            animation: pulseBubble 1.5s infinite;
-        }
-        @keyframes pulseBubble { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; flex: 1; height: 460px; display: flex; flex-direction: column; overflow: hidden; }
-        .whatsapp-whatsapp-style-container.chat-fullscreen-mode .whatsapp-chat-box { height: calc(100vh - 110px) !important; }
+        .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; flex: 1; height: 260px; display: flex; flex-direction: column; overflow: hidden; }
+        .whatsapp-whatsapp-style-container.chat-fullscreen-mode .whatsapp-chat-box { height: calc(100vh - 350px) !important; }
 
         .whatsapp-messages-scroll { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
         
@@ -284,7 +272,6 @@
                 <div>
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
                         <h4 style="color: var(--primary); font-weight: 800; margin: 0;"><i class="fas fa-user-graduate" style="color:var(--accent);"></i> 2. حقل الطلبة المشتركين وتجديد الاشتراكات</h4>
-                        <!-- شريط البحث السريع للطلاب -->
                         <div style="flex: 1; max-width: 320px;">
                             <input type="text" class="form-control" id="studentSearchInput" placeholder="🔍 ابحث عن اسم الطالب لتجديد اشتراكه..." onkeyup="filterStudentsList()" style="padding: 8px 12px; font-size: 0.88rem;">
                         </div>
@@ -318,8 +305,8 @@
                         <span>التحضير والامتحانات اليومية والشهرية</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLiveAndChat">
-                        <i class="fab fa-whatsapp" style="color: #25d366;"></i>
-                        <span>محادثة واتساب وبث صوتي مباشر آمن</span>
+                        <i class="fas fa-video" style="color: #25d366;"></i>
+                        <span>البث المباشر (Google Meet) والمحادثة</span>
                     </div>
                     <div class="sub-card menu-pane-link" data-pane="paneLectures">
                         <i class="fas fa-book-reader" style="color: var(--success);"></i>
@@ -383,69 +370,33 @@
                     </div>
                 </div>
 
+                <!-- قسم البث المباشر (Google Meet) مضمناً ضمنياً داخل المنصة -->
                 <div class="room-section-pane" id="paneLiveAndChat">
-                    
-                    <div class="whatsapp-floating-call-bubble" id="whatsappFloatingBubble" onclick="expandCallBanner()" title="انقر لتكبير شريط المكالمة">
-                        <i class="fas fa-phone-alt" style="font-size: 1.5rem; animation: pulse 1s infinite;"></i>
-                        <span style="font-size: 0.55rem; font-weight: 800; margin-top: 2px;">بث جاري</span>
-                    </div>
-
                     <div class="whatsapp-whatsapp-style-container" id="whatsappMainContainer">
                         
-                        <div class="whatsapp-call-banner" id="whatsappCallBanner">
-                            <div class="call-banner-left">
-                                <button class="btn btn-danger" onclick="stopWirelessAudioSession()" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;" title="إنهاء البث">
-                                    <i class="fas fa-phone-slash"></i>
-                                </button>
-                                <span id="callDurationTimer" style="font-size: 0.85rem; font-weight: 800; color: #a7f3d0;">0:00</span>
-                                <span style="font-size: 0.85rem; font-weight: 800; color: #fff;">- <span id="liveRoomTitleDisplay">مجموعة الدرس</span></span>
+                        <!-- شريط التحكم العلوي -->
+                        <div style="background: #075e54; color: white; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.15);">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <i class="fas fa-video" style="font-size: 1.3rem; color: #25d366;"></i>
+                                <div>
+                                    <strong style="font-size: 0.9rem;">بث Google Meet المباشر داخل المنصة</strong><br>
+                                    <small style="color: #a7f3d0;" id="liveRoomTitleDisplay">يعمل البث والمحادثة النصية في نفس الشاشة دون مغادرة</small>
+                                </div>
                             </div>
-                            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                                <button class="btn btn-secondary" id="chatFullscreenToggleBtn" onclick="toggleChatFullscreen()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تكبير المحادثة لملء الشاشة">
+                            <div>
+                                <button class="btn btn-secondary" id="chatFullscreenToggleBtn" onclick="toggleChatFullscreen()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;">
                                     <i class="fas fa-expand" id="chatFullscreenIcon"></i> تكبير الشاشة
                                 </button>
-                                <button class="btn btn-secondary" onclick="minimizeCallToBubble()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تصغير الاتصال لفقاعة">
-                                    <i class="fas fa-compress-arrows-alt"></i> تصغير فقاعة
-                                </button>
-                                <button class="btn btn-secondary" onclick="adjustChatFontSize(1)" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تكبير خط المحادثة">
-                                    <i class="fas fa-search-plus"></i> تكبير خط
-                                </button>
-                                <button class="btn btn-secondary" onclick="adjustChatFontSize(-1)" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="تصغير خط المحادثة">
-                                    <i class="fas fa-search-minus"></i> تصغير خط
-                                </button>
-                                <button class="btn btn-secondary" onclick="toggleWirelessMicrophone()" style="padding: 4px 8px; font-size: 0.75rem; background: rgba(255,255,255,0.2); color: #fff;" title="كتم/إلغاء الكتم">
-                                    <i class="fas fa-microphone" id="micToggleIcon"></i>
-                                </button>
                             </div>
                         </div>
 
-                        <div id="startCallBarArea" style="background: #075e54; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; color: white; flex-wrap: wrap; gap: 8px;">
-                            <span style="font-size: 0.85rem; font-weight: 800;"><i class="fab fa-whatsapp" style="color:#25d366;"></i> البث الصوتي المباشر الفائق (نقي 100% وبدون صدى)</span>
-                            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                                <!-- زر الأستاذ للبث (مخفي تماماً عن الطالب) -->
-                                <button class="btn btn-success" id="teacherStartBroadcastBtn" style="padding: 6px 14px; font-size: 0.8rem; display:none;" onclick="startWirelessAudioSession()"><i class="fas fa-broadcast-tower"></i> بدء البث (لأستاذ المادة)</button>
-                                <!-- زر الطالب لطلب المداخلة (يظهر للطالب فقط) -->
-                                <button class="btn btn-warning" id="studentRaiseHandBtn" style="padding: 6px 14px; font-size: 0.8rem; display:none;" onclick="requestStudentMicAccess()"><i class="fas fa-hand-paper"></i> طلب مداخلة صوتية (رفع اليد)</button>
-                            </div>
+                        <!-- إطار العرض الضمني (Iframe) للبث المباشر -->
+                        <div style="width: 100%; height: 320px; background: #000; position: relative;">
+                            <!-- استبدل الرابط أدناه برابط Google Meet الثخاص بغرفتك أو درّسك -->
+                            <iframe id="meetIframeElement" src="https://meet.google.com/abc-defg-hij" width="100%" height="100%" style="border: none;" allow="camera; microphone; fullscreen; display-capture"></iframe>
                         </div>
 
-                        <!-- لوحة طلبات المداخلة الخاصة بالأستاذ فقط -->
-                        <div id="teacherMicRequestsPanel" style="background: #1e293b; color: white; padding: 10px 16px; display: none; border-bottom: 1px solid #334155;">
-                            <div style="font-size: 0.85rem; font-weight: 800; color: #f59e0b; margin-bottom: 6px;"><i class="fas fa-hand-paper"></i> طلبات المداخلة من الطلاب للحديث:</div>
-                            <div id="teacherMicRequestsList" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                <span style="font-size: 0.75rem; color: #94a3b8;">لا توجد طلبات مداخلة حالياً.</span>
-                            </div>
-                        </div>
-
-                        <div style="background: #0f172a; color: white; padding: 10px 16px; display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid #334155;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <span style="font-size: 0.82rem; font-weight: 800; color: #38bdf8;"><i class="fas fa-users"></i> المتواجدون في الغرفة والمستمعون:</span>
-                            </div>
-                            <div id="roomParticipantsSummaryList" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;">
-                                <span style="font-size: 0.75rem; color: #94a3b8;">جاري جلب القائمة...</span>
-                            </div>
-                        </div>
-
+                        <!-- صندوق المحادثة النصية التفاعلية -->
                         <div class="whatsapp-chat-box">
                             <div class="whatsapp-messages-scroll" id="whatsappMessagesContainer">
                                 <p style="color: #6b7280; text-align: center; margin: auto;">جاري تحميل الرسائل...</p>
@@ -500,11 +451,6 @@
                 </div>
 
                 <div class="room-section-pane" id="paneGrades">
-                    <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-users" style="color:var(--accent);"></i> إدارة المتواجدين الآن في الغرفة (طرد / تنبيه)</h4>
-                    <div id="activeStudentsLiveManagementList" style="margin-bottom: 20px;">
-                        <p style="color: #64748b;">جاري جلب المتواجدين في الغرفة...</p>
-                    </div>
-
                     <h4 style="color: var(--primary); font-weight: 800; margin-bottom: 12px;"><i class="fas fa-star" style="color:var(--warning);"></i> سجل التقييمات والدرجات</h4>
                     <div style="margin-bottom: 15px; display: flex; gap: 10px; display:none;" id="teacherGradeAddBox">
                         <input type="text" class="form-control" id="gradeStudentName" placeholder="اسم الطالب">
@@ -651,15 +597,6 @@
         </div>
     </div>
 
-    <div class="modal" id="kickedModal" style="background: rgba(15, 23, 42, 0.95); z-index: 3000;">
-        <div class="modal-body" style="background: #1e293b; color: white; border-radius: var(--radius); width: 90%; max-width: 400px; padding: 30px; text-align: center;">
-            <i class="fas fa-ban" style="font-size: 3.5rem; color: var(--danger); margin-bottom: 15px;"></i>
-            <h3 style="font-size: 1.3rem; font-weight: 900; margin-bottom: 10px;">تم إخراجك من الغرفة</h3>
-            <p id="kickedReasonText" style="color: #94a3b8; font-size: 0.95rem; margin-bottom: 20px;">قام الأستاذ أو المشرف بطردك من هذه الغرفة مؤقتاً.</p>
-            <button class="btn btn-success btn-block" id="requestReentryBtn"><i class="fas fa-redo"></i> طلب العودة والدخول (بموافقة الأستاذ)</button>
-        </div>
-    </div>
-
     <div class="modal" id="fileViewerModal">
         <div class="modal-content-box" id="fileModalContentBox">
             <div class="modal-header-bar">
@@ -771,16 +708,10 @@
         </div>
     </div>
 
-    <!-- عنصر الصوت الداخلي للاستماع للبث المباشر -->
-    <audio id="remoteAudio" autoplay playsinline style="display:none;"></audio>
-
     <script>
-        // تفعيل الـ Service Worker لضمان استقرار التطبيق المستقل في الخلفية
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
-                    .then(reg => console.log('تم تفعيل نظام الاتصال المستقل بنجاح', reg))
-                    .catch(err => console.log('خطأ في تفعيل النظام', err));
+                navigator.serviceWorker.register('sw.js').catch(() => {});
             });
         }
 
@@ -796,17 +727,8 @@
         let pendingRoomData = null;
         let currentPdfScale = 1.0;
         let currentChatFontSizeRem = 0.9;
-        let localStream = null;
-        let remoteAudioElement = document.getElementById('remoteAudio');
-        let isMicMuted = false;
-        let activePresenceRef = null; 
         let selectedWaFileData = null;
         let selectedWaFileName = "";
-        let callTimerInterval = null;
-        let callSecondsCount = 0;
-        let isUserInCall = false;
-        let mediaRecorder = null;
-        let isBroadcastingActive = false;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -914,7 +836,6 @@
             document.getElementById('zoomInBtn').addEventListener('click', () => zoomPdf(0.1));
             document.getElementById('zoomOutBtn').addEventListener('click', () => zoomPdf(-0.1));
             document.getElementById('closeFileModalBtn').addEventListener('click', closeFileModal);
-            
             document.getElementById('toggleModalFullscreenBtn').addEventListener('click', toggleFileModalFullscreen);
 
             document.getElementById('editRoomAccessType').addEventListener('change', function() { toggleEditPinInput(this.value); });
@@ -937,14 +858,6 @@
             document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
         }
 
-        function adjustChatFontSize(direction) {
-            currentChatFontSizeRem = Math.max(0.7, Math.min(1.5, currentChatFontSizeRem + (direction * 0.1)));
-            const container = document.getElementById('whatsappMainContainer');
-            if (container) {
-                container.style.setProperty('--chat-font-size', currentChatFontSizeRem + 'rem');
-            }
-        }
-
         function toggleChatFullscreen() {
             const container = document.getElementById('whatsappMainContainer');
             const icon = document.getElementById('chatFullscreenIcon');
@@ -958,16 +871,6 @@
                 icon.className = "fas fa-expand";
                 btn.innerHTML = '<i class="fas fa-expand"></i> تكبير الشاشة';
             }
-        }
-
-        function minimizeCallToBubble() {
-            document.getElementById('whatsappCallBanner').style.display = 'none';
-            document.getElementById('whatsappFloatingBubble').style.display = 'flex';
-        }
-
-        function expandCallBanner() {
-            document.getElementById('whatsappFloatingBubble').style.display = 'none';
-            document.getElementById('whatsappCallBanner').style.display = 'flex';
         }
 
         function checkTeacherSessionLive() {
@@ -1131,7 +1034,6 @@
         }
 
         function logoutSystem() {
-            cleanupActiveSession();
             localStorage.removeItem('student_session');
             localStorage.removeItem('teacher_session');
             currentRole = '';
@@ -1152,36 +1054,7 @@
             showSection('authSection');
         }
 
-        function cleanupActiveSession() {
-            try {
-                isBroadcastingActive = false;
-                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                    mediaRecorder.stop();
-                }
-                if (localStream) {
-                    localStream.getTracks().forEach(track => track.stop());
-                    localStream = null;
-                }
-                if (remoteAudioElement) {
-                    remoteAudioElement.srcObject = null;
-                    remoteAudioElement.src = "";
-                }
-                if (callTimerInterval) {
-                    clearInterval(callTimerInterval);
-                    callTimerInterval = null;
-                }
-                isUserInCall = false;
-                removeStudentPresence();
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
         function showSection(sectionId) {
-            if (sectionId !== 'roomMenuSection' && sectionId !== 'lecturesSection') {
-                cleanupActiveSession();
-            }
-
             ['authSection', 'subjectsSection', 'teachersRoomsSection', 'roomMenuSection', 'lecturesSection', 'sectionCreateRoom', 'sectionManageRooms', 'sectionNotifications', 'sectionPlatformUsers', 'sectionVouchers', 'sectionScheduleManage', 'sectionAdminReports', 'sectionSettings', 'sectionUniversalUpload', 'sectionTeacherReports'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = (id === sectionId) ? 'block' : 'none';
@@ -1248,7 +1121,6 @@
             });
         }
 
-        // دالة عرض قائمة الطلاب مع تفعيل شريط البحث السريع وتجديد الاشتراك بنقرة واحدة
         function renderStudentsList(vouchersData) {
             let studentsHtml = '';
             const now = Date.now();
@@ -1259,7 +1131,6 @@
                 Object.keys(vouchersData).forEach(code => {
                     const v = vouchersData[code];
                     if (v.isUsed && v.usedBy) {
-                        // فلترة البحث حسب اسم الطالب أو الكود
                         if (searchTerm && !v.usedBy.toLowerCase().includes(searchTerm) && !v.code.toLowerCase().includes(searchTerm)) {
                             return;
                         }
@@ -1280,7 +1151,6 @@
                                     </small>
                                 </div>
                                 <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                                    <!-- زر تجديد الاشتراك بنقرة واحدة بنفس المعلومات والكود -->
                                     <button class="btn btn-success" style="padding:6px 12px; font-size:0.8rem;" onclick="renewStudentSubscription('${code}', '${v.usedBy}')">
                                         🔄 تجديد 30 يوماً
                                     </button>
@@ -1833,7 +1703,7 @@
                             const isRoomOpen = r.isOpen !== false;
                             const isFree = r.accessType === 'free' || !r.pin;
                             html += `
-                                <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin || ''}', ${isRoomOpen}, '${r.accessType || 'free'}', '${r.creator || ''}')">
+                                <div class="sub-card" onclick="promptRoomPin('${r.id}', '${r.title}', '${r.pin || ''}', ${isRoomOpen}, '${r.accessType || 'free'}', '${r.creator || ''}', '${r.meetUrl || ''}')">
                                     <i class="fas ${isFree ? 'fa-lock-open' : 'fa-lock'}" style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; position:absolute; top:10px; left:10px;" title="${isFree ? 'مجانية' : 'خصوصي بررمز'}"></i>
                                     <i class="fas fa-chalkboard-teacher" style="color:var(--accent);"></i>
                                     <span><strong>${r.title}</strong><br><small>الأستاذ: ${r.creator || 'مدرس'}</small><br><small style="color:${isFree ? 'var(--success)' : 'var(--warning)'}; font-weight:800;">${isFree ? '🟢 مجانية' : '🔒 محمية بررمز'}</small></span>
@@ -1854,25 +1724,14 @@
             document.getElementById('editPinInputGroup').style.display = (val === 'protected') ? 'block' : 'none';
         }
 
-        function promptRoomPin(roomId, roomTitle, roomPin, isOpen, accessType, roomCreator) {
+        function promptRoomPin(roomId, roomTitle, roomPin, isOpen, accessType, roomCreator, meetUrl) {
             const currentTeacherName = loggedTeacherData ? loggedTeacherData.name : '';
             const isOwnerTeacher = (currentRole === 'teacher' && currentTeacherName === roomCreator);
             const isAdminOrSup = (currentRole === 'admin' || currentRole === 'supervisor');
 
             if (isAdminOrSup || isOwnerTeacher) {
-                openRoomMenu(roomId, roomTitle);
+                openRoomMenu(roomId, roomTitle, meetUrl);
                 return;
-            }
-
-            if (currentStudentName) {
-                db.ref(`room_access_requests/${roomId}`).orderByChild('studentName').equalTo(currentStudentName).once('value', snapshot => {
-                    const val = snapshot.val();
-                    if (val) {
-                        Object.keys(val).forEach(reqKey => {
-                            db.ref(`room_access_requests/${roomId}/${reqKey}`).remove();
-                        });
-                    }
-                });
             }
 
             fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`).then(res => res.json()).then(roomData => {
@@ -1882,15 +1741,15 @@
                 }
 
                 if (!roomData || roomData.accessType === 'free' || !roomData.pin) {
-                    openRoomMenu(roomId, roomTitle);
+                    openRoomMenu(roomId, roomTitle, roomData ? roomData.meetUrl : '');
                     return;
                 }
 
-                checkKickedAndOpenPinModal(roomId, roomTitle, roomData.pin, roomData.creator);
+                checkKickedAndOpenPinModal(roomId, roomTitle, roomData.pin, roomData.creator, roomData.meetUrl);
             });
         }
 
-        function checkKickedAndOpenPinModal(roomId, roomTitle, roomPin, roomCreator) {
+        function checkKickedAndOpenPinModal(roomId, roomTitle, roomPin, roomCreator, meetUrl) {
             fetch(`${DATABASE_URL}/room_kicked/${roomId}.json`).then(res => res.json()).then(kickedData => {
                 if (kickedData && currentStudentName) {
                     let isKicked = false;
@@ -1902,7 +1761,7 @@
                         return;
                     }
                 }
-                pendingRoomData = { id: roomId, title: roomTitle, pin: roomPin, creator: roomCreator };
+                pendingRoomData = { id: roomId, title: roomTitle, pin: roomPin, creator: roomCreator, meetUrl: meetUrl };
                 document.getElementById('studentPinInput').value = '';
                 document.getElementById('accessRequestStatusMsg').style.display = 'none';
                 document.getElementById('pinModal').style.display = 'flex';
@@ -1923,9 +1782,10 @@
                 if (enteredPin === correctPin || correctPin === "") {
                     const rId = pendingRoomData.id;
                     const rTitle = pendingRoomData.title;
+                    const rMeet = pendingRoomData.meetUrl;
                     
                     closePinModal();
-                    openRoomMenu(rId, rTitle);
+                    openRoomMenu(rId, rTitle, rMeet);
                 } else {
                     alert('رمز PIN الخاص بالغرفة غير صحيح!');
                 }
@@ -1969,7 +1829,7 @@
                     db.ref(`room_access_requests/${roomId}/${req.id}`).remove();
                     closePinModal();
                     alert('✅ وافق مالك الغرفة على طلب انضمامك! جارٍ الدخول...');
-                    openRoomMenu(pendingRoomData.id, pendingRoomData.title);
+                    openRoomMenu(pendingRoomData.id, pendingRoomData.title, pendingRoomData.meetUrl);
                 }
             });
 
@@ -1979,7 +1839,7 @@
                     db.ref(`room_access_requests/${roomId}/${req.id}`).remove();
                     closePinModal();
                     alert('✅ وافق مالك الغرفة على طلب انضمامك! جارٍ الدخول...');
-                    openRoomMenu(pendingRoomData.id, pendingRoomData.title);
+                    openRoomMenu(pendingRoomData.id, pendingRoomData.title, pendingRoomData.meetUrl);
                 }
             });
         }
@@ -2056,35 +1916,6 @@
             alert('تم رفض الطلب.');
         }
 
-        function registerStudentPresence(roomId) {
-            const displayName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
-                (loggedTeacherData ? loggedTeacherData.name + ' (أستاذ/مشرف)' : 'الأستاذ (المضيف)') : 
-                (currentStudentName || 'طالب زائر');
-            
-            if (activePresenceRef) {
-                activePresenceRef.remove();
-            }
-
-            const userKey = displayName.replace(/[.#$\/\[\]]/g, '_') + '_' + Date.now();
-            activePresenceRef = db.ref(`active_students/${roomId}/${userKey}`);
-            
-            const userData = {
-                name: displayName,
-                joinedAt: Date.now(),
-                status: 'متواجد بالغرقة'
-            };
-
-            activePresenceRef.set(userData);
-            activePresenceRef.onDisconnect().remove();
-        }
-
-        function removeStudentPresence() {
-            if (activePresenceRef) {
-                activePresenceRef.remove();
-                activePresenceRef = null;
-            }
-        }
-
         function handleCreateCustomRoom(e) {
             e.preventDefault();
             const title = document.getElementById('crTitle').value.trim();
@@ -2092,12 +1923,13 @@
             const subject = document.getElementById('crSubject').value;
             const accessType = document.getElementById('crAccessType').value;
             const pin = accessType === 'protected' ? String(document.getElementById('crPin').value).trim() : '';
+            const meetUrl = prompt("أدخل رابط Google Meet المباشر الخاص بهذه الغرفة (اختياري):", "https://meet.google.com/") || "";
             const roomId = 'ROOM_' + Date.now();
             const creatorName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
 
             fetch(`${DATABASE_URL}/custom_rooms/${roomId}.json`, {
                 method: 'PUT',
-                body: JSON.stringify({ id: roomId, title, grade, subject, accessType, pin, isOpen: true, creator: creatorName }),
+                body: JSON.stringify({ id: roomId, title, grade, subject, accessType, pin, meetUrl, isOpen: true, creator: creatorName }),
                 headers: { 'Content-Type': 'application/json' }
             }).then(() => {
                 alert('تم إنشاء الغرفة بنجاح!');
@@ -2120,7 +1952,7 @@
                             const isFree = r.accessType === 'free' || !r.pin;
                             html += `
                                 <div class="list-item" style="border-right: 4px solid ${isFree ? 'var(--success)' : 'var(--warning)'};">
-                                    <div><strong>${r.title}</strong><br><small>الصف: ${r.grade} | المادة: ${r.subject} | النوع: ${isFree ? '🟢 مجانية' : '🔒 خصوصي بررمز (' + r.pin + ')'}</small></div>
+                                    <div><strong>${r.title}</strong><br><small>الصف: ${r.grade} | المادة: ${r.subject} | النوع: ${isFree ? '🟢 مجانية' : '🔒 خصوصي بررمز'}</small></div>
                                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
                                         <button class="btn ${isOpen ? 'btn-danger' : 'btn-success'}" style="padding:6px 12px; font-size:0.8rem;" onclick="toggleRoomLock('${r.id}', ${!isOpen})">${isOpen ? 'قفل الغرفة' : 'فتح الغرفة'}</button>
                                         <button class="btn btn-warning" style="padding:6px 12px; font-size:0.8rem;" onclick="openEditRoomModal('${r.id}', '${r.title}', '${r.accessType || 'free'}', '${r.pin || ''}', ${isOpen})">تعديل</button>
@@ -2172,27 +2004,17 @@
             }).then(() => { alert('تم تحديث إعدادات الغرفة!'); closeEditRoomModal(); fetchMyRooms(); });
         }
 
-        function openRoomMenu(roomId, roomTitle) {
+        function openRoomMenu(roomId, roomTitle, meetUrl) {
             activeRoomId = roomId;
             activeRoomTitleStr = roomTitle;
+            window.currentRoomMeetUrl = meetUrl || "https://meet.google.com/";
             document.getElementById('currentRoomMenuTitle').innerText = `غرفة: ${roomTitle}`;
-            
-            cleanupActiveSession();
             showSection('roomMenuSection');
-            
-            if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher' && currentStudentName) {
-                listenToStudentKickStatus(roomId);
-            }
         }
 
         function backToRoomMenu() { 
-            cleanupActiveSession(); 
             showSection('roomMenuSection'); 
         }
-
-        window.addEventListener('beforeunload', function() {
-            cleanupActiveSession();
-        });
 
         function openRoomSection(paneId) {
             document.getElementById('currentRoomContentTitle').innerText = `غرفة: ${activeRoomTitleStr}`;
@@ -2204,24 +2026,16 @@
 
             const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
             
-            document.getElementById('teacherStartBroadcastBtn').style.display = isTeacherOrAdmin ? 'inline-flex' : 'none';
-            document.getElementById('studentRaiseHandBtn').style.display = (!isTeacherOrAdmin && currentStudentName) ? 'inline-flex' : 'none';
-            document.getElementById('teacherMicRequestsPanel').style.display = isTeacherOrAdmin ? 'block' : 'none';
-
             if (paneId === 'panePreparation') {
                 renderRoomPreparation();
             }
 
             if (paneId === 'paneLiveAndChat') { 
-                registerStudentPresence(activeRoomId);
-                setupWirelessAudioControls(); 
-                openWhatsappChatSection();
-                renderParticipantsListSummary();
-                if (isTeacherOrAdmin) {
-                    listenToStudentMicRequests();
+                const iframeEl = document.getElementById('meetIframeElement');
+                if (iframeEl && window.currentRoomMeetUrl) {
+                    iframeEl.src = window.currentRoomMeetUrl;
                 }
-            } else {
-                cleanupActiveSession(); 
+                openWhatsappChatSection();
             }
 
             if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
@@ -2231,191 +2045,10 @@
                 renderRoomGrades(); 
                 if (isTeacherOrAdmin) {
                     document.getElementById('teacherGradeAddBox').style.display = 'flex';
-                    renderActiveStudentsManagementForTeacher();
                 } else {
                     document.getElementById('teacherGradeAddBox').style.display = 'none';
                 }
             }
-        }
-
-        function requestStudentMicAccess() {
-            if (!currentStudentName) {
-                alert('يجب تسجيل الدخول كطالب أولاً!');
-                return;
-            }
-            const reqId = 'MICREQ_' + Date.now();
-            db.ref(`mic_requests/${activeRoomId}/${reqId}`).set({
-                id: reqId,
-                studentName: currentStudentName,
-                timestamp: Date.now()
-            }).then(() => {
-                alert('✋ تم إرسال طلب المداخلة الصوتية إلى الأستاذ بنجاح. انتظر الموافقة للبدء بالحديث.');
-            });
-        }
-
-        function listenToStudentMicRequests() {
-            db.ref(`mic_requests/${activeRoomId}`).on('value', snapshot => {
-                const data = snapshot.val();
-                let html = '';
-                let count = 0;
-                if (data) {
-                    Object.keys(data).forEach(k => {
-                        const req = data[k];
-                        count++;
-                        html += `
-                            <div style="background: #0f172a; border: 1px solid #f59e0b; padding: 6px 12px; border-radius: 8px; display: flex; align-items: center; gap: 8px;">
-                                <span style="font-size: 0.8rem; font-weight: 800;">🗣️ ${req.studentName}</span>
-                                <button class="btn btn-success" style="padding: 2px 8px; font-size: 0.7rem;" onclick="approveStudentMic('${req.id}', '${req.studentName}')">قبول المداخلة ✅</button>
-                                <button class="btn btn-danger" style="padding: 2px 8px; font-size: 0.7rem;" onclick="rejectStudentMic('${req.id}')">رفض ❌</button>
-                            </div>
-                        `;
-                    });
-                }
-                const container = document.getElementById('teacherMicRequestsList');
-                if (container) {
-                    container.innerHTML = html || '<span style="font-size: 0.75rem; color: #94a3b8;">لا توجد طلبات مداخلة حالياً.</span>';
-                }
-                if (count > 0) {
-                    playNotificationSound();
-                }
-            });
-        }
-
-        function approveStudentMic(reqId, studentName) {
-            db.ref(`mic_requests/${activeRoomId}/${reqId}`).remove();
-            db.ref(`approved_speaker/${activeRoomId}`).set({
-                speakerName: studentName,
-                timestamp: Date.now()
-            });
-            alert(`✅ تمت الموافقة على مداخلة الطالب ${studentName}. يمكنه التحدث الآن.`);
-        }
-
-        function rejectStudentMic(reqId) {
-            db.ref(`mic_requests/${activeRoomId}/${reqId}`).remove();
-        }
-
-        function renderParticipantsListSummary() {
-            const container = document.getElementById('roomParticipantsSummaryList');
-            if (!container) return;
-
-            db.ref(`active_students/${activeRoomId}`).on('value', roomSnap => {
-                db.ref(`wireless_participants/${activeRoomId}`).on('value', callSnap => {
-                    const inRoom = roomSnap.val() || {};
-                    const inCall = callSnap.val() || {};
-
-                    let html = '';
-                    
-                    let callNames = [];
-                    if (inCall) {
-                        Object.keys(inCall).forEach(k => {
-                            if (inCall[k].name) callNames.push(inCall[k].name);
-                        });
-                    }
-
-                    if (callNames.length > 0) {
-                        html += `<div style="background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem;">
-                            🟢 <strong>البث الحي يعمل بواسطة:</strong> ${callNames.join('، ')}
-                        </div>`;
-                    } else {
-                        html += `<div style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem;">
-                            🔴 <strong>البث متوقف حالياً</strong>
-                        </div>`;
-                    }
-
-                    let roomNames = [];
-                    if (inRoom) {
-                        Object.keys(inRoom).forEach(k => {
-                            if (inRoom[k].name) roomNames.push(inRoom[k].name);
-                        });
-                    }
-
-                    if (roomNames.length > 0) {
-                        html += `<div style="background: rgba(56, 189, 248, 0.15); border: 1px solid #38bdf8; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem;">
-                            👥 <strong>المستمعون في الغرفة:</strong> ${roomNames.join('، ')}
-                        </div>`;
-                    }
-
-                    container.innerHTML = html;
-                });
-            });
-        }
-
-        function renderActiveStudentsManagementForTeacher() {
-            db.ref(`active_students/${activeRoomId}`).on('value', snapshot => {
-                const data = snapshot.val();
-                let html = '';
-                if (data) {
-                    Object.keys(data).forEach(k => {
-                        const st = data[k];
-                        html += `
-                            <div class="list-item" style="border-right: 4px solid var(--success);">
-                                <div><strong>👤 الشخص: ${st.name}</strong><br><small style="color:var(--success);">🟢 مستمع للدرس</small></div>
-                                <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                                    <button class="btn btn-warning" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherWarnStudent('${st.name}')"><i class="fas fa-exclamation-triangle"></i> تنبيه</button>
-                                    <button class="btn btn-danger" style="padding:4px 10px; font-size:0.75rem;" onclick="teacherKickStudent('${k}', '${st.name}')"><i class="fas fa-ban"></i> طرد</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
-                const activeSList = document.getElementById('activeStudentsLiveManagementList');
-                if (activeSList) activeSList.innerHTML = html || '<p style="color:#64748b;">لا يوجد أشخاص متواجدون الآن في الغرفة.</p>';
-            });
-        }
-
-        function teacherWarnStudent(studentName) {
-            alert(`⚠️ تم إرسال تنبيه رسمي إلى: ${studentName}`);
-        }
-
-        function teacherKickStudent(studentKey, studentName) {
-            if (confirm(`هل أنت متأكد من طرد ${studentName}؟`)) {
-                db.ref(`active_students/${activeRoomId}/${studentKey}`).remove();
-                
-                const cleanName = studentName.replace(/ \(أستاذ\/مشرف\)/g, '').trim();
-                db.ref(`room_kicked/${activeRoomId}`).push({ studentName: cleanName, kickedAt: Date.now() });
-                
-                db.ref(`wireless_participants/${activeRoomId}`).once('value', snap => {
-                    const parts = snap.val();
-                    if (parts) {
-                        Object.keys(parts).forEach(pk => {
-                            if (parts[pk].name && parts[pk].name.includes(cleanName)) {
-                                db.ref(`wireless_participants/${activeRoomId}/${pk}`).remove();
-                            }
-                        });
-                    }
-                });
-                alert(`تم طرد ${studentName}.`);
-            }
-        }
-
-        function listenToStudentKickStatus(roomId) {
-            if (!currentStudentName) return;
-            db.ref(`room_kicked/${roomId}`).on('child_added', snapshot => {
-                const val = snapshot.val();
-                if (val && val.studentName === currentStudentName) {
-                    cleanupActiveSession();
-                    document.getElementById('kickedModal').style.display = 'flex';
-                }
-            });
-        }
-
-        function requestReentryToRoom() {
-            if (!currentStudentName) return;
-            
-            db.ref(`room_kicked/${activeRoomId}`).once('value', snapshot => {
-                const data = snapshot.val();
-                if (data) {
-                    Object.keys(data).forEach(k => {
-                        if (data[k].studentName === currentStudentName) {
-                            db.ref(`room_kicked/${activeRoomId}/${k}`).remove();
-                        }
-                    });
-                }
-            });
-
-            document.getElementById('kickedModal').style.display = 'none';
-            registerStudentPresence(activeRoomId);
-            alert('تم إرسال طلب العودة للأستاذ بنجاح. يمكنك الدخول.');
         }
 
         function handleWaFileSelected(input) {
@@ -2477,7 +2110,7 @@
                         `;
                     });
                 }
-                msgContainer.innerHTML = html || `<p style="color: #6b7280; text-align: center; margin: auto;">لا توجد رسائل بعد. ابدأ المراسلة والبث الصوتي في نفس الوقت!</p>`;
+                msgContainer.innerHTML = html || `<p style="color: #6b7280; text-align: center; margin: auto;">لا توجد رسائل بعد. ابدأ المراسلة والمتابعة في نفس الشاشة!</p>`;
                 msgContainer.scrollTop = msgContainer.scrollHeight;
             });
         }
@@ -2546,201 +2179,8 @@
             }
         }
 
-        function setupWirelessAudioControls() {
-            listenToWirelessStatus();
-        }
-
-        function startWirelessAudioSession() {
-            if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                alert('⚠️ عذراً، البث الصوتي مخصص للأستاذ فقط.');
-                return;
-            }
-
-            navigator.mediaDevices.getUserMedia({ 
-                audio: { 
-                    echoCancellation: true, 
-                    noiseSuppression: true, 
-                    autoGainControl: true 
-                } 
-            }).then(stream => {
-                localStream = stream;
-                isUserInCall = true;
-                isBroadcastingActive = true;
-
-                mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-                
-                mediaRecorder.ondataavailable = event => {
-                    if (event.data.size > 0 && isBroadcastingActive) {
-                        const reader = new FileReader();
-                        reader.readAsDataURL(event.data);
-                        reader.onloadend = function() {
-                            const base64Audio = reader.result;
-                            db.ref(`live_audio_broadcast/${activeRoomId}`).set({
-                                audioChunk: base64Audio,
-                                timestamp: Date.now()
-                            });
-                        }
-                    }
-                };
-
-                mediaRecorder.start(600);
-
-                const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
-                db.ref(`wireless_participants/${activeRoomId}/teacher`).set({
-                    name: tName,
-                    role: 'الأستاذ',
-                    isMuted: false,
-                    timestamp: Date.now()
-                }).then(() => {
-                    db.ref(`wireless_status/${activeRoomId}`).set({ 
-                        active: true, 
-                        teacherName: tName,
-                        updatedAt: Date.now() 
-                    });
-                    startCallTimer();
-                    alert('🟢 بدأ البث الصوتي المباشر بنجاح وبصوت نقي!');
-                });
-            }).catch(err => {
-                console.error("Mic error:", err);
-                alert('⚠️ تعذر الوصول للميكروفون. تأكد من إعطاء الصلاحية للمتصفح.');
-            });
-        }
-
-        function stopWirelessAudioSession() {
-            isBroadcastingActive = false;
-            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-                mediaRecorder.stop();
-            }
-            if (localStream) {
-                localStream.getTracks().forEach(track => track.stop());
-                localStream = null;
-            }
-            if (callTimerInterval) {
-                clearInterval(callTimerInterval);
-                callTimerInterval = null;
-            }
-            isUserInCall = false;
-            db.ref(`wireless_participants/${activeRoomId}`).remove();
-            db.ref(`wireless_status/${activeRoomId}`).set({ active: false });
-            db.ref(`live_audio_broadcast/${activeRoomId}`).remove();
-            document.getElementById('callDurationTimer').innerText = "0:00";
-            alert('🔴 تم إيقاف البث.');
-        }
-
-        function startCallTimer() {
-            callSecondsCount = 0;
-            if (callTimerInterval) clearInterval(callTimerInterval);
-            callTimerInterval = setInterval(() => {
-                callSecondsCount++;
-                let mins = Math.floor(callSecondsCount / 60);
-                let secs = callSecondsCount % 60;
-                document.getElementById('callDurationTimer').innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-            }, 1000);
-        }
-
-        function toggleWirelessMicrophone() {
-            if (localStream) {
-                isMicMuted = !isMicMuted;
-                localStream.getAudioTracks().forEach(track => { track.enabled = !isMicMuted; });
-                const icon = document.getElementById('micToggleIcon');
-                if (icon) icon.className = isMicMuted ? "fas fa-microphone-slash" : "fas fa-microphone";
-                
-                if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
-                    db.ref(`wireless_participants/${activeRoomId}/teacher`).update({ isMuted: isMicMuted });
-                }
-            } else {
-                alert('الميكروفون غير مفعل.');
-            }
-        }
-
-        function listenToWirelessStatus() {
-            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
-
-            db.ref(`approved_speaker/${activeRoomId}`).off();
-
-            db.ref(`wireless_status/${activeRoomId}`).on('value', snapshot => {
-                const data = snapshot.val();
-                if (data && data.active) {
-                    if (!callTimerInterval) startCallTimer();
-                    if (!isTeacherOrAdmin && currentStudentName && !isUserInCall) {
-                        isUserInCall = true;
-                    }
-                    if (!isTeacherOrAdmin) {
-                        if (remoteAudioElement && remoteAudioElement.paused) {
-                            remoteAudioElement.play().catch(e => console.log("انتظار تفاعل المستخدم لتشغيل الصوت"));
-                        }
-                    }
-                } else {
-                    if (callTimerInterval) {
-                        clearInterval(callTimerInterval);
-                        callTimerInterval = null;
-                    }
-                    document.getElementById('callDurationTimer').innerText = "0:00";
-                    isUserInCall = false;
-                }
-            });
-
-            if (!isTeacherOrAdmin) {
-                db.ref(`live_audio_broadcast/${activeRoomId}`).on('value', snapshot => {
-                    const data = snapshot.val();
-                    if (data && data.audioChunk) {
-                        try {
-                            const blob = b64toBlob(data.audioChunk, 'audio/webm');
-                            const audioUrl = URL.createObjectURL(blob);
-                            if (remoteAudioElement) {
-                                remoteAudioElement.src = audioUrl;
-                                remoteAudioElement.play().catch(e => console.log(e));
-                            }
-                        } catch (err) {
-                            console.error("خطأ في تشغيل تدفق الصوت:", err);
-                        }
-                    }
-                });
-
-                db.ref(`approved_speaker/${activeRoomId}`).on('value', snap => {
-                    const sp = snap.val();
-                    const isRecent = sp && (Date.now() - (sp.timestamp || 0) < 5000);
-                    if (sp && sp.speakerName === currentStudentName && isRecent) {
-                        alert('🟢 وافق الأستاذ على مداخلتك الصوتية! سيتم تفعيل ميكروفونك الآن.');
-                        navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(micStream => {
-                            localStream = micStream;
-                            mediaRecorder = new MediaRecorder(micStream, { mimeType: 'audio/webm' });
-                            mediaRecorder.ondataavailable = e => {
-                                if (e.data.size > 0) {
-                                    const reader = new FileReader();
-                                    reader.readAsDataURL(e.data);
-                                    reader.onloadend = function() {
-                                        db.ref(`live_audio_broadcast/${activeRoomId}`).set({
-                                            audioChunk: reader.result,
-                                            timestamp: Date.now()
-                                        });
-                                    }
-                                }
-                            };
-                            mediaRecorder.start(600);
-                        }).catch(e => alert('⚠️ تعذر فتح الميكروفون. تأكد من السماح للمتصفح بالوصول للميكروفون.'));
-                    }
-                });
-            }
-        }
-
-        function b64toBlob(b64Data, contentType='audio/webm', sliceSize=512) {
-            const byteCharacters = atob(b64Data.split(',')[1] || b64Data);
-            const byteArrays = [];
-            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-                const slice = byteCharacters.slice(offset, offset + sliceSize);
-                const byteNumbers = new Array(slice.length);
-                for (let i = 0; i < slice.length; i++) {
-                    byteNumbers[i] = slice.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNumbers);
-                byteArrays.push(byteArray);
-            }
-            return new Blob(byteArrays, {type: contentType});
-        }
-
-        function backToSubjectsView() { cleanupActiveSession(); showSection('subjectsSection'); }
-        function backToRoomsView() { cleanupActiveSession(); showSection('teachersRoomsSection'); }
+        function backToSubjectsView() { showSection('subjectsSection'); }
+        function backToRoomsView() { showSection('teachersRoomsSection'); }
 
         function sendStudentQuestion() {
             const text = document.getElementById('studentQuestionInput').value.trim();
