@@ -76,64 +76,14 @@
         .room-section-pane.active { display: block; }
 
         /* ========================================== */
-        /* تصميم شات واتساب الاحترافي (WhatsApp Authentic) */
+        /* تصميم شات واتساب الاحترافي */
         /* ========================================== */
-        .whatsapp-wrapper {
-            display: flex;
-            flex-direction: column;
-            border-radius: 18px;
-            border: 1px solid #cbd5e1;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-            background: #efeae2;
-            transition: all 0.3s ease;
-        }
-        .whatsapp-wrapper.fullscreen-mode {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            z-index: 99999 !important;
-            border-radius: 0 !important;
-            border: none !important;
-        }
-        .whatsapp-chat-header {
-            background: #005c4b;
-            color: white;
-            padding: 12px 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-weight: 800;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .whatsapp-chat-box {
-            background-color: #efeae2;
-            background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px);
-            background-size: 16px 16px;
-            height: 520px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .whatsapp-messages-scroll {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .wa-bubble {
-            max-width: 75%;
-            padding: 8px 12px 6px 12px;
-            border-radius: 10px;
-            position: relative;
-            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-            word-break: break-word;
-            font-size: 0.93rem;
-        }
+        .whatsapp-wrapper { display: flex; flex-direction: column; border-radius: 18px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.08); background: #efeae2; transition: all 0.3s ease; }
+        .whatsapp-wrapper.fullscreen-mode { position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; border-radius: 0 !important; border: none !important; }
+        .whatsapp-chat-header { background: #005c4b; color: white; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; font-weight: 800; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .whatsapp-chat-box { background-color: #efeae2; background-image: radial-gradient(#d1d7db 0.8px, transparent 0.8px); background-size: 16px 16px; height: 520px; display: flex; flex-direction: column; overflow: hidden; }
+        .whatsapp-messages-scroll { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .wa-bubble { max-width: 75%; padding: 8px 12px 6px 12px; border-radius: 10px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); word-break: break-word; font-size: 0.93rem; }
         .wa-bubble.incoming { background: #ffffff; color: #111b21; align-self: flex-start; border-top-right-radius: 4px; }
         .wa-bubble.outgoing { background: #d9fdd3; color: #111b21; align-self: flex-end; border-top-left-radius: 4px; }
         .wa-sender-name { font-size: 0.72rem; font-weight: 900; color: #005c4b; margin-bottom: 2px; }
@@ -142,53 +92,53 @@
         .wa-actions button { background: transparent; border: none; cursor: pointer; font-size: 0.73rem; font-weight: 700; padding: 2px 4px; }
         .wa-actions button.edit-btn { color: #005c4b; }
         .wa-actions button.delete-btn { color: #ea0038; }
+        .whatsapp-input-bar { display: flex; gap: 8px; padding: 10px 16px; background: #f0f2f5; align-items: center; border-top: 1px solid #e9edef; }
 
-        .whatsapp-input-bar {
-            display: flex;
-            gap: 8px;
-            padding: 10px 16px;
-            background: #f0f2f5;
-            align-items: center;
-            border-top: 1px solid #e9edef;
-        }
-
-        /* غرفة الاتصال اللاسلكي المباشر (WhatsApp Audio Group Style) */
-        .tiktok-live-container {
+        /* ========================================== */
+        /* غرفة الاتصال اللاسلكي المباشر المطورة (احترافية ومرتبة) */
+        /* ========================================== */
+        .voice-group-container {
             width: 100%;
-            height: 600px;
             background: linear-gradient(135deg, #090d16, #111827);
             border-radius: 20px;
             display: flex;
+            flex-direction: column;
             position: relative;
             overflow: hidden;
             border: 2px solid #334155;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
         }
-        .tiktok-live-container.fullscreen-mode {
+        .voice-group-container.fullscreen-mode {
             position: fixed !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; z-index: 99999 !important; border-radius: 0 !important; border: none !important;
         }
-        .tiktok-stage-area { flex: 1; display: flex; flex-direction: column; padding: 20px; position: relative; justify-content: space-between; }
-        .tiktok-top-bar { display: flex; justify-content: space-between; align-items: center; z-index: 10; }
-        .live-badge-pill { background: linear-gradient(45deg, #10b981, #2563eb); color: #fff; padding: 6px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 900; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
-        .tiktok-speakers-grid { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; align-items: center; margin: auto; width: 100%; }
-        .speaker-bubble { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 110px; background: rgba(30, 41, 59, 0.75); backdrop-filter: blur(10px); padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); }
-        .speaker-avatar-wrap { width: 70px; height: 70px; border-radius: 50%; border: 3px solid #64748b; overflow: hidden; background: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; }
-        .speaker-avatar-wrap.speaking { border-color: var(--success); box-shadow: 0 0 20px var(--success); animation: ringPulse 1.5s infinite; }
-        @keyframes ringPulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        .vg-header { background: rgba(15, 23, 42, 0.9); padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(10px); }
+        .vg-title-area { display: flex; align-items: center; gap: 12px; }
+        .vg-live-pill { background: linear-gradient(45deg, #10b981, #2563eb); color: #fff; padding: 6px 14px; border-radius: 30px; font-size: 0.8rem; font-weight: 900; display: flex; align-items: center; gap: 6px; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
+        
+        .vg-body-grid { display: grid; grid-template-columns: 1fr 320px; min-height: 500px; }
+        @media(max-width: 900px) { .vg-body-grid { grid-template-columns: 1fr; } }
+
+        .vg-stage { padding: 24px; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; position: relative; }
+        .speakers-grid-box { display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; align-items: center; margin: auto; width: 100%; }
+        
+        .speaker-card { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 120px; background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(10px); padding: 16px 12px; border-radius: 18px; border: 1.5px solid rgba(255,255,255,0.1); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .speaker-avatar-wrap { width: 75px; height: 75px; border-radius: 50%; border: 3px solid #64748b; overflow: hidden; background: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; }
+        .speaker-avatar-wrap.speaking { border-color: var(--success); box-shadow: 0 0 22px var(--success); animation: ringPulse 1.5s infinite; }
+        @keyframes ringPulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1.03); box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
         .speaker-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .speaker-mic-badge { position: absolute; bottom: 0; right: 0; background: var(--danger); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; border: 1.5px solid #fff; }
+        .speaker-mic-badge { position: absolute; bottom: 0; right: 0; background: var(--danger); color: #fff; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; border: 2px solid #fff; }
         .speaker-mic-badge.active { background: var(--success); }
-        .speaker-name { color: #fff; font-size: 0.8rem; font-weight: 800; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
-        .speaker-role { font-size: 0.65rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 6px; border-radius: 6px; }
-        .tiktok-control-bar { display: flex; gap: 10px; justify-content: center; align-items: center; background: rgba(15, 23, 42, 0.8); padding: 12px; border-radius: 14px; backdrop-filter: blur(10px); flex-wrap: wrap; }
-        .tiktok-sidebar-panel { width: 320px; background: rgba(15, 23, 42, 0.95); border-right: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; padding: 16px; gap: 16px; z-index: 15; backdrop-filter: blur(15px); }
-        .panel-box-title { color: #38bdf8; font-size: 0.88rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
-        .attendees-scroll-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; max-height: 250px; }
-        .attendee-item { display: flex; align-items: center; justify-content: space-between; background: rgba(30, 41, 59, 0.6); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        .attendee-user-info { display: flex; align-items: center; gap: 10px; }
-        .attendee-mini-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--success); }
-        .requests-scroll-list { max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+        .speaker-name { color: #fff; font-size: 0.85rem; font-weight: 800; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; }
+        .speaker-role { font-size: 0.68rem; color: #38bdf8; font-weight: 700; background: rgba(56, 189, 248, 0.15); padding: 2px 8px; border-radius: 6px; }
+
+        .vg-controls-bar { display: flex; gap: 12px; justify-content: center; align-items: center; background: rgba(15, 23, 42, 0.85); padding: 14px; border-radius: 16px; backdrop-filter: blur(10px); flex-wrap: wrap; border: 1px solid rgba(255,255,255,0.08); }
+        
+        .vg-sidebar { background: rgba(15, 23, 42, 0.95); border-right: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; padding: 18px; gap: 18px; backdrop-filter: blur(15px); }
+        .vg-panel-title { color: #38bdf8; font-size: 0.9rem; font-weight: 800; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+        .vg-list-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; max-height: 220px; }
+        .vg-attendee-row { display: flex; align-items: center; justify-content: space-between; background: rgba(30, 41, 59, 0.6); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .vg-mini-av { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--success); }
 
         #maintenanceScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; color: white; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         #maintenanceScreen i { font-size: 4rem; color: var(--warning); margin-bottom: 20px; animation: bounce 2s infinite; }
@@ -204,8 +154,6 @@
         @media (max-width: 900px) { 
             .layout-wrapper { flex-direction: column; } 
             sidebar { width: 100%; } 
-            .tiktok-live-container { flex-direction: column; height: auto; min-height: 600px; }
-            .tiktok-sidebar-panel { width: 100%; max-height: 300px; }
         }
     </style>
 </head>
@@ -457,49 +405,62 @@
                     </div>
                 </div>
 
+                <!-- ========================================== -->
+                <!-- واجهة الاتصال اللاسلكي المباشر المطورة (Voice Group) -->
+                <!-- ========================================== -->
                 <div class="room-section-pane" id="paneLive">
-                    <div class="tiktok-live-container" id="tiktokLiveContainerBox">
-                        <div class="tiktok-stage-area">
-                            <div class="tiktok-top-bar">
-                                <div class="live-badge-pill">
+                    <div class="voice-group-container" id="voiceContainerBox">
+                        <div class="vg-header">
+                            <div class="vg-title-area">
+                                <div class="vg-live-pill">
                                     <i class="fas fa-broadcast-tower"></i> اتصال لاسلكي مباشر (Voice Group)
                                 </div>
+                                <span style="color: #94a3b8; font-size: 0.85rem;" id="liveRoomTitleDisplay">غرفة الدرس</span>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
                                 <button class="btn btn-secondary" id="toggleLiveFullscreenBtn" style="padding: 6px 12px; font-size: 0.78rem;" title="تكبير/تصغير الشاشة"><i class="fas fa-expand"></i> ملء الشاشة</button>
                             </div>
-
-                            <div style="text-align: center; margin: 10px 0;">
-                                <h4 style="color: #fff; font-size: 1.05rem; font-weight: 800;" id="liveRoomTitleDisplay">غرفة الدرس</h4>
-                                <p style="color: #94a3b8; font-size: 0.8rem;" id="voiceRoomStatusText">الاتصال اللاسلكي متوقف حالياً. بانتظار بدء الأستاذ...</p>
-                            </div>
-
-                            <div id="audioPlayerWrapper" style="background: rgba(15, 23, 42, 0.9); padding: 12px; border-radius: 12px; margin: 10px auto; text-align: center; border: 1px solid #38bdf8; max-width: 320px;">
-                                <p style="color: #fff; font-size: 0.82rem; margin-bottom: 8px; font-weight: 700;">🔊 انقر لتفعيل وسماع الاتصال اللاسلكي:</p>
-                                <button class="btn btn-success" id="forcePlayAudioBtn" onclick="forcePlayAudioStream()" style="padding: 8px 16px; font-size: 0.85rem; width: 100%;">
-                                    <i class="fas fa-volume-up"></i> تفعيل الصوت وسماع الغرفة
-                                </button>
-                                <audio id="remoteAudio" autoplay playsinline style="display:none;"></audio>
-                            </div>
-
-                            <div class="tiktok-speakers-grid" id="participantsGridContainer"></div>
-                            <div class="tiktok-control-bar" id="liveControlButtons"></div>
                         </div>
 
-                        <div class="tiktok-sidebar-panel">
-                            <div>
-                                <div class="panel-box-title">
-                                    <i class="fas fa-users" style="color:#10b981;"></i> متواجدون في الغرفة الاستماع (<span id="attendeesCountNum">0</span>)
+                        <div class="vg-body-grid">
+                            <div class="vg-stage">
+                                <div style="text-align: center; margin-bottom: 10px;">
+                                    <p style="color: #38bdf8; font-size: 0.9rem; font-weight: 700;" id="voiceRoomStatusText">الاتصال اللاسلكي متوقف حالياً. بانتظار بدء الأستاذ...</p>
+                                    <div style="margin-top: 10px; background: rgba(15, 23, 42, 0.9); padding: 10px; border-radius: 10px; display: inline-block; border: 1px solid #10b981;">
+                                        <p style="color: #fff; font-size: 0.8rem; margin-bottom: 6px;">🔊 لتفعيل وسماع الصوت بوضوح تام:</p>
+                                        <button class="btn btn-success" onclick="forcePlayAudioStream()" style="padding: 6px 14px; font-size: 0.8rem;">
+                                            <i class="fas fa-volume-up"></i> تفعيل وسماع الغرفة الآن
+                                        </button>
+                                        <audio id="remoteAudio" autoplay playsinline style="display:none;"></audio>
+                                    </div>
                                 </div>
-                                <div class="attendees-scroll-list" id="allAttendeesScrollList">
-                                    <p style="color: #64748b; font-size: 0.85rem; text-align: center;">جاري جلب المتواجدين...</p>
+
+                                <div class="speakers-grid-box" id="participantsGridContainer">
+                                    <!-- يتم تعبئة المتحدثين ديناميكياً -->
+                                </div>
+
+                                <div class="vg-controls-bar" id="liveControlButtons">
+                                    <!-- أزرار التحكم تظهر حسب الصلاحية -->
                                 </div>
                             </div>
 
-                            <div id="teacherLiveAdminBox" style="display: none; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
-                                <div class="panel-box-title" style="color: #f59e0b;">
-                                    <i class="fas fa-user-clock"></i> طلبات الصعود للاتصال الصوتي:
+                            <div class="vg-sidebar">
+                                <div>
+                                    <div class="vg-panel-title">
+                                        <i class="fas fa-users" style="color:#10b981;"></i> متواجدون في الاستماع (<span id="attendeesCountNum">0</span>)
+                                    </div>
+                                    <div class="vg-list-scroll" id="allAttendeesScrollList">
+                                        <p style="color: #64748b; font-size: 0.85rem; text-align: center;">جاري جلب المتواجدين...</p>
+                                    </div>
                                 </div>
-                                <div class="requests-scroll-list" id="liveRequestsListContainer">
-                                    <p style="color: #94a3b8; font-size: 0.8rem;">لا توجد طلبات معلقة.</p>
+
+                                <div id="teacherLiveAdminBox" style="display: none; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
+                                    <div class="vg-panel-title" style="color: #f59e0b;">
+                                        <i class="fas fa-user-clock"></i> طلبات الصعود للصوت:
+                                    </div>
+                                    <div class="vg-list-scroll" id="liveRequestsListContainer" style="max-height: 150px;">
+                                        <p style="color: #94a3b8; font-size: 0.8rem;">لا توجد طلبات معلقة.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -961,7 +922,7 @@
         }
 
         function toggleLiveBoxFullscreen() {
-            const box = document.getElementById('tiktokLiveContainerBox');
+            const box = document.getElementById('voiceContainerBox');
             const btn = document.getElementById('toggleLiveFullscreenBtn');
             box.classList.toggle('fullscreen-mode');
             if (box.classList.contains('fullscreen-mode')) {
@@ -2062,9 +2023,9 @@
                         count++;
                         const st = data[k];
                         html += `
-                            <div class="attendee-item">
-                                <div class="attendee-user-info">
-                                    <img src="IMG_1507.jpeg" class="attendee-mini-avatar" onerror="this.src='https://via.placeholder.com/35'">
+                            <div class="vg-attendee-row">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="IMG_1507.jpeg" class="vg-mini-av" onerror="this.src='https://via.placeholder.com/35'">
                                     <span style="color:#fff; font-size:0.85rem; font-weight:800;">${st.name}</span>
                                 </div>
                                 <span style="font-size:0.7rem; color:#10b981; font-weight:700;">يستمع</span>
@@ -2134,7 +2095,7 @@
         }
 
         // ==========================================
-        // نظام محادثة واتساب المطورة (WhatsApp Chat Style)
+        // نظام محادثة واتساب المطورة
         // ==========================================
         function handleWaFileSelected(input) {
             if (input.files[0]) {
@@ -2265,7 +2226,7 @@
         }
 
         // ==========================================
-        // نظام الاتصال اللاسلكي المباشر والمدمج (WhatsApp Voice Group Style)
+        // إصلاح وحل مشكلة الاتصال اللاسلكي الصوتي المباشر (Voice Group Fix)
         // ==========================================
 
         function setupWirelessAudioControls() {
@@ -2275,9 +2236,9 @@
             if (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') {
                 if (adminBox) adminBox.style.display = 'block';
                 if (ctrlBox) ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="startWirelessAudioSession()"><i class="fas fa-play"></i> بدء الاتصال اللاسلكي</button>
-                    <button class="btn btn-danger" style="padding: 8px 14px; font-size: 0.85rem;" onclick="stopWirelessAudioSession()"><i class="fas fa-stop"></i> إنهاء الاتصال</button>
-                    <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
+                    <button class="btn btn-success" style="padding: 10px 18px; font-size: 0.9rem;" onclick="startWirelessAudioSession()"><i class="fas fa-play"></i> بدء الاتصال الصوتي</button>
+                    <button class="btn btn-danger" style="padding: 10px 18px; font-size: 0.9rem;" onclick="stopWirelessAudioSession()"><i class="fas fa-stop"></i> إنهاء الاتصال</button>
+                    <button class="btn btn-primary" style="padding: 10px 18px; font-size: 0.9rem;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
                 `;
                 listenToWirelessVoiceRequests();
             } else {
@@ -2291,19 +2252,28 @@
         function forcePlayAudioStream() {
             if (remoteAudioEl && remoteAudioEl.srcObject) {
                 remoteAudioEl.play().then(() => {
-                    alert('🟢 تم تشغيل الصوت اللاسلكي بنجاح!');
+                    alert('🟢 تم تفعيل وسماع الصوت بنجاح!');
                 }).catch(() => {
                     alert('⚠️ يرجى التأكد من أن الأستاذ قام ببدء الاتصال الصوتي أولاً.');
                 });
             } else {
-                alert('⏳ بانتظار اتصال الأستاذ بالشبكة الصوتية...');
+                alert('⏳ بانتظار اتصال الأستاذ بالشبكة الصوتية وبث الصوت...');
             }
         }
 
         function startWirelessAudioSession() {
-            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(stream => {
+            navigator.mediaDevices.getUserMedia({ 
+                audio: { 
+                    echoCancellation: true, 
+                    noiseSuppression: true, 
+                    autoGainControl: true 
+                } 
+            }).then(stream => {
                 localStream = stream;
                 const tName = loggedTeacherData ? loggedTeacherData.name : 'الأستاذ وليد';
+
+                // ربط البث الصوتي بمدخل ومخرج البث المشترك لكي يسمعه الطلاب
+                setupAudioReceiverStream();
 
                 db.ref(`wireless_participants/${activeRoomId}/teacher`).set({
                     name: tName,
@@ -2312,12 +2282,12 @@
                     timestamp: Date.now()
                 }).then(() => {
                     db.ref(`wireless_status/${activeRoomId}`).set({ active: true, updatedAt: Date.now() });
-                    document.getElementById('voiceRoomStatusText').innerText = "🎙️ الاتصال اللاسلكي الصوتي يعمل الآن بنجاح";
-                    alert('🟢 تم بدء الاتصال اللاسلكي الصوتي بنجاح!');
+                    document.getElementById('voiceRoomStatusText').innerText = "🎙️ الاتصال الصوتي يعمل الآن ويتم بثه للجميع بنجاح";
+                    alert('🟢 تم بدء البث الصوتي بنجاح وصوته مسموع للطلاب!');
                 });
             }).catch(err => {
                 console.error("Mic error:", err);
-                alert('⚠️ تعذر الوصول للميكروفون!');
+                alert('⚠️ تعذر الوصول للميكروفون! يرجى السماح للمتصفح بالوصول للميكروفون.');
             });
         }
 
@@ -2326,11 +2296,14 @@
                 localStream.getTracks().forEach(track => track.stop());
                 localStream = null;
             }
+            if (remoteAudioEl) {
+                remoteAudioEl.srcObject = null;
+            }
             db.ref(`wireless_participants/${activeRoomId}`).remove();
             db.ref(`wireless_requests/${activeRoomId}`).remove();
             db.ref(`wireless_status/${activeRoomId}`).set({ active: false });
             document.getElementById('voiceRoomStatusText').innerText = "الاتصال اللاسلكي متوقف حالياً.";
-            alert('🔴 تم إنهاء الاتصال اللاسلكي.');
+            alert('🔴 تم إنهاء الاتصال اللاسلكي وإغلاق البث.');
         }
 
         function toggleWirelessMicrophone() {
@@ -2366,7 +2339,7 @@
                     status: 'pending',
                     timestamp: Date.now()
                 }).then(() => {
-                    alert('✅ تم إرسال طلب الصعود للاتصال للأستاذ. انتظر الموافقة...');
+                    alert('✅ تم إرسال طلب الصعود للاتصال الصوتي للأستاذ. انتظر الموافقة...');
                 });
             });
         }
@@ -2406,7 +2379,7 @@
                     isMuted: false,
                     timestamp: Date.now()
                 });
-                alert(`تم قبول الطالب ${studentName} وصعوده للاتصال بنجاح!`);
+                alert(`تم قبول الطالب ${studentName} وصعوده للاتصال الصوتي بنجاح!`);
             } else {
                 alert(`تم رفض طلب الطالب ${studentName}.`);
             }
@@ -2416,7 +2389,7 @@
             const ctrlBox = document.getElementById('liveControlButtons');
             if (ctrlBox && currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
                 ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-microphone"></i> طلب الصعود للاتصال الصوتي</button>
+                    <button class="btn btn-success" style="padding: 10px 18px; font-size: 0.9rem;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-microphone"></i> طلب الصعود للاتصال الصوتي</button>
                 `;
             }
 
@@ -2427,13 +2400,14 @@
                         if (!localStream) {
                             navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(stream => {
                                 localStream = stream;
+                                setupAudioReceiverStream();
                                 if (ctrlBox) {
                                     ctrlBox.innerHTML = `
-                                        <button class="btn btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
-                                        <button class="btn btn-danger" style="padding: 8px 14px; font-size: 0.85rem;" onclick="leaveWirelessVoice()"><i class="fas fa-phone-slash"></i> مغادرة الاتصال</button>
+                                        <button class="btn btn-primary" style="padding: 10px 18px; font-size: 0.9rem;" onclick="toggleWirelessMicrophone()"><i class="fas fa-microphone" id="micToggleIcon"></i> كتم / إلغاء الكتم</button>
+                                        <button class="btn btn-danger" style="padding: 10px 18px; font-size: 0.9rem;" onclick="leaveWirelessVoice()"><i class="fas fa-phone-slash"></i> مغادرة الاتصال</button>
                                     `;
                                 }
-                                alert('🎙️ وافق الأستاذ على صعودك للاتصال! يمكنك التحدث الآن.');
+                                alert('🎙️ وافق الأستاذ على صعودك للاتصال! يمكنك التحدث الآن وسماع الآخرين.');
                             }).catch(() => {
                                 alert('⚠️ تعذر الوصول للميكروفون الخاص بك.');
                             });
@@ -2444,7 +2418,7 @@
                             localStream = null;
                             if (ctrlBox) {
                                 ctrlBox.innerHTML = `
-                                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-microphone"></i> طلب الصعود للاتصال الصوتي</button>
+                                    <button class="btn btn-success" style="padding: 10px 18px; font-size: 0.9rem;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-microphone"></i> طلب الصعود للاتصال الصوتي</button>
                                 `;
                             }
                             alert('ℹ️ تم إنزالك من الاتصال الصوتي بواسطة الأستاذ (أصبحت في وضع الاستماع).');
@@ -2466,7 +2440,7 @@
             const ctrlBox = document.getElementById('liveControlButtons');
             if (ctrlBox) {
                 ctrlBox.innerHTML = `
-                    <button class="btn btn-success" style="padding: 8px 14px; font-size: 0.85rem;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-microphone"></i> طلب الصعود للاتصال الصوتي</button>
+                    <button class="btn btn-success" style="padding: 10px 18px; font-size: 0.9rem;" onclick="requestWirelessVoiceJoin()"><i class="fas fa-microphone"></i> طلب الصعود للاتصال الصوتي</button>
                 `;
             }
             alert('تم مغادرة الاتصال الصوتي.');
@@ -2476,7 +2450,7 @@
             db.ref(`wireless_status/${activeRoomId}/active`).on('value', snapshot => {
                 const isActive = snapshot.val() === true;
                 if (isActive) {
-                    document.getElementById('voiceRoomStatusText').innerText = "🔊 الاتصال اللاسلكي الصوتي نشط الآن (اضغط زر تشغيل الصوت أدناه للاستماع)";
+                    document.getElementById('voiceRoomStatusText').innerText = "🔊 الاتصال الصوتي نشط الآن (انقر زر تفعيل وسماع الغرفة للاستماع للأستاذ)";
                     setupAudioReceiverStream();
                 } else {
                     document.getElementById('voiceRoomStatusText').innerText = "الاتصال اللاسلكي متوقف حالياً من قبل الأستاذ.";
@@ -2489,7 +2463,9 @@
                 remoteAudioEl = document.getElementById('remoteAudio');
             }
             if (localStream && remoteAudioEl) {
+                // إصلاح توجيه الصوت للأجهزة ليتم بثه واستماعه من قبل الجميع دون تداخل محلي
                 remoteAudioEl.srcObject = localStream;
+                remoteAudioEl.muted = false; // السماح بسماع الصوت بوضوح
             }
         }
 
@@ -2504,7 +2480,7 @@
             if (!container) return;
 
             if (!participantsData) {
-                container.innerHTML = '<p style="color:#94a3b8; font-size:0.85rem; text-align:center; grid-column:1/-1;">لا يوجد متحدثون صاعدون حالياً (الجميع في وضع الاستماع).</p>';
+                container.innerHTML = '<p style="color:#94a3b8; font-size:0.85rem; text-align:center; grid-column:1/-1;">لا يوجد متحدثون صاعدون حالياً (الجميع في وضع الاستماع الصوتي).</p>';
                 return;
             }
 
@@ -2517,9 +2493,9 @@
                 const isTeacherNode = (key === 'teacher');
 
                 html += `
-                    <div class="speaker-bubble">
+                    <div class="speaker-card">
                         <div class="speaker-avatar-wrap ${!muted ? 'speaking' : ''}">
-                            <img src="IMG_1507.jpeg" alt="${p.name}" onerror="this.src='https://via.placeholder.com/70'">
+                            <img src="IMG_1507.jpeg" alt="${p.name}" onerror="this.src='https://via.placeholder.com/75'">
                             <div class="speaker-mic-badge ${!muted ? 'active' : ''}">
                                 <i class="fas ${!muted ? 'fa-microphone' : 'fa-microphone-slash'}"></i>
                             </div>
