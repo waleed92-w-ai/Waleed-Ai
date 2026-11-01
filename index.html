@@ -915,7 +915,6 @@
 
             const roomName = 'ROOM_' + activeRoomId;
             
-            // جلب رمز الوصول (Access Token) من الخلفية (Backend) الخاصة بك
             fetch(`/api/twilio/token?identity=${encodeURIComponent(identityName)}&room=${encodeURIComponent(roomName)}`)
                 .then(res => res.json())
                 .then(data => {
@@ -927,7 +926,6 @@
 
                     Twilio.Video.connect(token, { audio: true, video: true }).then(room => {
                         twilioActiveRoom = room;
-                        console.log(`✅ تم الاتصال بنجاح بغرفة Twilio: ${room.name}`);
 
                         document.getElementById('startTwilioCallBtn').style.display = 'none';
                         document.getElementById('endTwilioCallBtn').style.display = 'inline-flex';
@@ -938,7 +936,6 @@
                         const container = document.getElementById('twilioRemoteMediaContainer');
                         container.innerHTML = '';
 
-                        // عرض مسارات المشاركين الحاليين
                         room.participants.forEach(participant => {
                             registerTwilioParticipant(participant, container);
                         });
@@ -952,13 +949,11 @@
                         });
 
                     }, error => {
-                        console.error(`خطأ في اتصال Twilio: ${error.message}`);
                         alert('⚠️ تعذر الانضمام لغرفة الاتصال: ' + error.message);
                     });
                 })
                 .catch(() => {
-                    // وضع بديل تجريبي في حال عدم ربط السيرفر بعد
-                    alert('⚠️ ملاحظة: يتطلب تشغيل Twilio وجود سيرفر Backend يولد الـ Token. (تأكد من إعداد مسار /api/twilio/token)');
+                    alert('⚠️ ملاحظة: يتطلب تشغيل Twilio وجود سيرفر Backend يولد الـ Token.');
                 });
         }
 
@@ -1006,7 +1001,6 @@
                 container.innerHTML = '<span style="font-size: 0.8rem; color: #94a3b8; margin: auto;">اضغط على انضمام للاتصال والبدء مع المشاركين.</span>';
             }
         }
-        // --- نهاية دوام Twilio ---
 
         function checkTeacherSessionLive() {
             const session = localStorage.getItem('teacher_session');
