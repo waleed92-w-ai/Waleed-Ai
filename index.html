@@ -370,7 +370,7 @@
                     </div>
                 </div>
 
-                <!-- شاشة الاتصال والتنبيه الفوري التفاعلي (مربوطة بـ Firebase بالكامل مع دعم الصوت للطرفين) -->
+                <!-- شاشة الاتصال الصوتي المباشر (حل مشكلة ارتداد الصوت وعدم نقل الصوت للطرفين) -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     
                     <div class="live-group-call-banner">
@@ -380,32 +380,29 @@
                                     <i class="fas fa-broadcast-tower" id="callStatusIcon"></i>
                                 </div>
                                 <div>
-                                    <strong style="font-size: 1rem; display: block;">غرفة الاتصال والبث المباشر (تنبيه فوري للطالب)</strong>
+                                    <strong style="font-size: 1rem; display: block;">غرفة الاتصال والبث المباشر (صوت نقي بدون ارتداد)</strong>
                                     <span id="callStateLabel" style="font-size: 0.8rem; color: #cbd5e1;">الاتصال مغلق حالياً</span>
                                 </div>
                             </div>
                             
-                            <!-- أزرار الأستاذ لبدء/إنهاء الاتصال، وأزرار الطالب للانضمام والمداخلة -->
+                            <!-- أزرار الأستاذ والطالب -->
                             <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="callActionButtonsContainer">
-                                <!-- أزرار خاصة بالأستاذ للتحكم ببث الاتصال وظهوره لدى الطلاب -->
                                 <button class="btn btn-success" id="teacherStartCallBtn" onclick="teacherToggleCall(true)" style="display:none;"><i class="fas fa-phone-alt"></i> بدء الاتصال وإشعار الطلاب</button>
                                 <button class="btn btn-danger" id="teacherEndCallBtn" onclick="teacherToggleCall(false)" style="display:none;"><i class="fas fa-phone-slash"></i> إيقاف الاتصال</button>
 
-                                <!-- أزرار الطالب -->
                                 <button class="btn btn-success" id="studentJoinCallBtn" onclick="studentJoinActiveCall()" style="display:none;"><i class="fas fa-volume-up"></i> الانضمام للاتصال (تفعيل الصوت)</button>
                                 <button class="btn btn-danger" id="endCallBtn" onclick="leaveLiveCallRoom()" style="display:none;"><i class="fas fa-phone-slash"></i> مغادرة الاتصال</button>
                                 <button class="btn btn-warning" id="requestMicBtn" onclick="requestMicIntervention()" style="display:none;"><i class="fas fa-hand-paper"></i> طلب مداخلة صوتية</button>
                             </div>
                         </div>
 
-                        <!-- حاوية تنبيه الطالب عند بدء الأستاذ للاتصال -->
+                        <!-- حاوية تنبيه الطالب عند بدء الاتصال -->
                         <div id="incomingCallAlertBox" style="display:none; background: rgba(16, 185, 129, 0.25); border: 2px solid var(--success); padding: 12px; border-radius: 10px; margin-bottom: 12px; text-align: center; animation: pulseBadge 1s infinite;">
                             <h4 style="color: #34d399; font-weight: 900; margin-bottom: 6px;"><i class="fas fa-phone-volume"></i> الأستاذ بدأ الاتصال الآن!</h4>
                             <p style="font-size: 0.88rem; color: #fff; margin-bottom: 8px;">اضغط على زر الانضمام أدناه لسماع الدرس والتفاعل مباشرة.</p>
                             <button class="btn btn-success" onclick="studentJoinActiveCall()"><i class="fas fa-headset"></i> انضمام فوري للاتصال</button>
                         </div>
 
-                        <!-- حاوية لطلبات المداخلة الخاصة بالأستاذ -->
                         <div id="teacherInterventionRequestsBox" style="display:none; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-top: 10px;">
                             <strong style="font-size: 0.85rem; color: #facc15;">🔔 طلبات المداخلة الصوتية من الطلاب:</strong>
                             <div id="interventionRequestsList" style="margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap;"></div>
@@ -413,7 +410,7 @@
 
                         <!-- حاوية الصوت -->
                         <div id="remoteMediaContainer" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; min-height: 80px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; align-items: center; justify-content: center;">
-                            <span style="font-size: 0.8rem; color: #94a3b8; text-align: center;">اضغط على زر الانضمام لتفعيل تدفق الصوت بوضوح تام.</span>
+                            <span style="font-size: 0.8rem; color: #94a3b8; text-align: center;">اضغط على زر الانضمام لتفعيل تدفق الصوت بوضوح تام بدون صدى.</span>
                         </div>
                     </div>
 
@@ -921,7 +918,7 @@
             }
         }
 
-        // --- نظام الاتصال الصوتي الفوري المرتبط بـ Firebase وتفعيل الصوت للطرفين ---
+        // --- نظام الاتصال الصوتي المباشر (مع منع ارتداد الصوت / الكتم المحلي للأستاذ والطالب) ---
         function checkActiveCallStatus() {
             if (!activeRoomId) return;
             db.ref(`live_calls/${activeRoomId}`).on('value', snapshot => {
@@ -968,37 +965,47 @@
         }
 
         function studentJoinActiveCall() {
-            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false }).then(stream => {
+            // طلب الميكروفون مع تفعيل إلغاء الصدى الصارم لمنع ارتداد الصوت
+            navigator.mediaDevices.getUserMedia({ 
+                audio: { 
+                    echoCancellation: true, 
+                    noiseSuppression: true, 
+                    autoGainControl: true 
+                }, 
+                video: false 
+            }).then(stream => {
                 localAudioStream = stream;
                 
                 document.getElementById('incomingCallAlertBox').style.display = 'none';
                 document.getElementById('studentJoinCallBtn').style.display = 'none';
                 document.getElementById('endCallBtn').style.display = 'inline-flex';
                 document.getElementById('requestMicBtn').style.display = 'inline-flex';
-                document.getElementById('callStateLabel').innerText = "🟢 متصل بالبث الصوتي بنجاح (استماع وتحدث)";
+                document.getElementById('callStateLabel').innerText = "🟢 متصل بالبث الصوتي بنجاح";
                 document.getElementById('callStatusIcon').className = "fas fa-headset";
 
                 const container = document.getElementById('remoteMediaContainer');
                 container.innerHTML = `
                     <div style="color: #34d399; font-weight: 800; font-size: 0.9rem; text-align: center;">
-                        <i class="fas fa-check-circle"></i> تم تفعيل الصوت والميكروفون بنجاح للطرفين.<br>
-                        <small style="color: #cbd5e1;">أنت تسمع الأستاذ الآن بوضوح تام.</small>
+                        <i class="fas fa-check-circle"></i> أنت متصل الآن بالصوت بوضوح تام.<br>
+                        <small style="color: #cbd5e1;">تم عزل الصوت المحلي لمنع أي ارتداد أو صدى.</small>
                     </div>
                 `;
 
+                // إنشاء عنصر صوتي للاستماع حصرياً (مكتوم محلياً لمنع الارتداد الصوتي داخل نفس الجهاز)
                 const remoteAudio = document.createElement('audio');
                 remoteAudio.id = 'remoteAudioStreamElement';
                 remoteAudio.autoplay = true;
                 remoteAudio.controls = false;
+                remoteAudio.muted = false; 
                 remoteAudio.srcObject = stream; 
                 document.body.appendChild(remoteAudio);
 
                 remoteAudio.play().catch(e => {
-                    console.log("Autoplay blocked, requiring user interaction");
+                    console.log("Autoplay blocked");
                 });
 
             }).catch(err => {
-                alert("⚠️ تعذر الوصول إلى الميكروفون. يرجى التحقق من إعدادات المتصفح والسماح للموقع بالوصول إلى الميكروفون.");
+                alert("⚠️ تعذر الوصول إلى الميكروفون. يرجى التحقق من إعدادات المتصفح.");
             });
         }
 
@@ -1006,7 +1013,14 @@
             if (!activeRoomId) return;
             
             if (isActive) {
-                navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false }).then(stream => {
+                navigator.mediaDevices.getUserMedia({ 
+                    audio: { 
+                        echoCancellation: true, 
+                        noiseSuppression: true, 
+                        autoGainControl: true 
+                    }, 
+                    video: false 
+                }).then(stream => {
                     localAudioStream = stream;
                     
                     db.ref(`live_calls/${activeRoomId}`).set({
@@ -1037,7 +1051,6 @@
             }
         }
 
-        // --- نظام طلب المداخلة من قِبل الطالب وموافقة أو رفض الأستاذ ---
         function requestMicIntervention() {
             if (!currentStudentName) return;
             const reqId = 'MIC_' + Date.now();
@@ -1083,7 +1096,6 @@
             db.ref(`mic_requests/${activeRoomId}/${reqId}`).update({ status: 'rejected' });
         }
 
-        // --- زر إنهاء الاتصال تماماً ---
         function leaveLiveCallRoom() {
             if (localAudioStream) {
                 localAudioStream.getTracks().forEach(track => track.stop());
@@ -1102,7 +1114,7 @@
                 
                 const container = document.getElementById('remoteMediaContainer');
                 if (container) {
-                    container.innerHTML = '<span style="font-size: 0.8rem; color: #94a3b8; text-align: center;">اضغط على زر الانضمام لتفعيل تدفق الصوت بوضوح تام.</span>';
+                    container.innerHTML = '<span style="font-size: 0.8rem; color: #94a3b8; text-align: center;">اضغط على زر الانضمام لتفعيل تدفق الصوت بوضوح تام بدون صدى.</span>';
                 }
             }
         }
@@ -2714,7 +2726,7 @@
             const grade = document.getElementById('schGrade').value;
             const day = document.getElementById('schDay').value;
             const details = document.getElementById('schDetails').value.trim();
-            const sId = 'SCH_' + Date.now();
+            +            const sId = 'SCH_' + Date.now();
             fetch(`${DATABASE_URL}/schedules/${sId}.json`, {
                 method: 'PUT', body: JSON.stringify({ id: sId, grade, day, details }), headers: { 'Content-Type': 'application/json' }
             }).then(() => { alert('تمت الإضافة!'); document.getElementById('schDetails').value = ''; fetchSchedules(); });
