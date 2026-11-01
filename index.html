@@ -2586,7 +2586,6 @@
             let wmHtml = ''; for(let i=0; i<12; i++) { wmHtml += `<span>${currentStudentName || 'منصة الطالب المتفوق'}</span>`; }
             document.getElementById('pdfWatermarkText').innerHTML = wmHtml;
             
-            // التحقق من وجود الملف في الذاكرة الدائمة، أو تخزينه مرة واحدة فقط واستخدامه أبدياً
             if (!persistentFileCache[fileId]) {
                 try {
                     persistentFileCache[fileId] = decodeURIComponent(encodedData);
@@ -2609,7 +2608,11 @@
             if(obj) { obj.style.width = (100 * currentPdfScale) + '%'; obj.style.height = (100 * currentPdfScale) + '%'; }
         }
 
-        function closeFileModal() { document.getElementById('fileViewerModal').style.display = 'none'; document.getElementById('modalViewerContainer').innerHTML = ''; }
+        function closeFileModal() { 
+            document.getElementById('fileViewerModal').style.display = 'none'; 
+            // تفريغ محتوى العرض تماماً لمنع تجمد العنصر عند إعادة الفتح
+            document.getElementById('modalViewerContainer').innerHTML = '<div class="watermark-overlay" id="pdfWatermarkText"></div>'; 
+        }
 
         function openRecordingModal(title, videoUrl) {
             document.getElementById('modalFileTitle').innerText = title;
