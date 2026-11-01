@@ -370,7 +370,7 @@
                     </div>
                 </div>
 
-                <!-- شاشة الاتصال والتنبيه الفوري التفاعلي (مربوطة بـ Firebase بالكامل) -->
+                <!-- شاشة الاتصال والتنبيه الفوري التفاعلي (مربوطة بـ Firebase بالكامل مع دعم الصوت للطرفين) -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     
                     <div class="live-group-call-banner">
@@ -921,7 +921,7 @@
             }
         }
 
-        // --- نظام الاتصال الصوتي الفوري والمرتبط بـ Firebase (يظهر للطالب فوراً) ---
+        // --- نظام الاتصال الصوتي الفوري المرتبط بـ Firebase وتفعيل الصوت للطرفين ---
         function checkActiveCallStatus() {
             if (!activeRoomId) return;
             db.ref(`live_calls/${activeRoomId}`).on('value', snapshot => {
@@ -946,7 +946,6 @@
                     if (endBtn) endBtn.style.display = 'none';
 
                     if (callData && callData.active === true) {
-                        // الاتصال فعال - تنبيه الطالب فوراً
                         if (alertBox) alertBox.style.display = 'block';
                         if (studentJoinBtn) studentJoinBtn.style.display = 'inline-flex';
                         if (stateLabel) {
@@ -968,57 +967,74 @@
             });
         }
 
-        function teacherToggleCall(isActive) {
-            if (!activeRoomId) return;
-            db.ref(`live_calls/${activeRoomId}`).set({
-                active: isActive,
-                teacherName: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ',
-                timestamp: Date.now()
-            }).then(() => {
-                if (isActive) {
-                    alert('🔴 تم بدء الاتصال وبث الإشعار لجميع الطلاب في الغرفة بنجاح!');
-                    document.getElementById('callStateLabel').innerText = "🟢 البث مباشر ونشط للطلاب";
-                    document.getElementById('callStateLabel').style.color = "#34d399";
-                    document.getElementById('teacherInterventionRequestsBox').style.display = 'block';
-                    listenToStudentMicRequests();
-                } else {
-                    alert('⚫ تم إيقاف الاتصال.');
-                    document.getElementById('callStateLabel').innerText = "الاتصال مغلق حالياً";
-                    document.getElementById('callStateLabel').style.color = "#cbd5e1";
-                    document.getElementById('teacherInterventionRequestsBox').style.display = 'none';
-                }
-            });
-        }
-
         function studentJoinActiveCall() {
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false }).then(stream => {
                 localAudioStream = stream;
                 
                 document.getElementById('incomingCallAlertBox').style.display = 'none';
                 document.getElementById('studentJoinCallBtn').style.display = 'none';
                 document.getElementById('endCallBtn').style.display = 'inline-flex';
                 document.getElementById('requestMicBtn').style.display = 'inline-flex';
-                document.getElementById('callStateLabel').innerText = "🟢 متصل بالبث الصوتي بنجاح (استماع نشط)";
+                document.getElementById('callStateLabel').innerText = "🟢 متصل بالبث الصوتي بنجاح (استماع وتحدث)";
                 document.getElementById('callStatusIcon').className = "fas fa-headset";
 
                 const container = document.getElementById('remoteMediaContainer');
                 container.innerHTML = `
                     <div style="color: #34d399; font-weight: 800; font-size: 0.9rem; text-align: center;">
-                        <i class="fas fa-check-circle"></i> أنت متصل الآن بالصوت والصورة التفاعلية.<br>
-                        <small style="color: #cbd5e1;">تم تفعيل السماعات والميكروفون بنجاح.</small>
+                        <i class="fas fa-check-circle"></i> تم تفعيل الصوت والميكروفون بنجاح للطرفين.<br>
+                        <small style="color: #cbd5e1;">أنت تسمع الأستاذ الآن بوضوح تام.</small>
                     </div>
                 `;
 
-                // تشغيل صوت تجريبي لضمان عمل المخرج الصوتي بدون كتم
-                const audioEl = document.createElement('audio');
-                audioEl.srcObject = stream;
-                audioEl.autoplay = true;
-                audioEl.muted = true; // كتم الصوت المحلي لمنع الصدى
-                document.body.appendChild(audioEl);
+                const remoteAudio = document.createElement('audio');
+                remoteAudio.id = 'remoteAudioStreamElement';
+                remoteAudio.autoplay = true;
+                remoteAudio.controls = false;
+                remoteAudio.srcObject = stream; 
+                document.body.appendChild(remoteAudio);
+
+                remoteAudio.play().catch(e => {
+                    console.log("Autoplay blocked, requiring user interaction");
+                });
 
             }).catch(err => {
-                alert("⚠️ تعذر تفعيل الميكروفون. يرجى السماح للمتصفح بالوصول إلى الميكروفون من إعدادات الآيفون أو المتصفح.");
+                alert("⚠️ تعذر الوصول إلى الميكروفون. يرجى التحقق من إعدادات المتصفح والسماح للموقع بالوصول إلى الميكروفون.");
             });
+        }
+
+        function teacherToggleCall(isActive) {
+            if (!activeRoomId) return;
+            
+            if (isActive) {
+                navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false }).then(stream => {
+                    localAudioStream = stream;
+                    
+                    db.ref(`live_calls/${activeRoomId}`).set({
+                        active: true,
+                        teacherName: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ',
+                        timestamp: Date.now()
+                    }).then(() => {
+                        alert('🔴 تم بدء الاتصال وبث الصوت وإشعار جميع الطلاب في الغرفة بنجاح!');
+                        document.getElementById('callStateLabel').innerText = "🟢 البث الصوتي مباشر ونشط للطلاب";
+                        document.getElementById('callStateLabel').style.color = "#34d399";
+                        document.getElementById('teacherInterventionRequestsBox').style.display = 'block';
+                        listenToStudentMicRequests();
+                    });
+                }).catch(err => {
+                    alert("⚠️ يرجى السماح للمتصفح بالوصول إلى الميكروفون لبدء البث.");
+                });
+            } else {
+                if (localAudioStream) {
+                    localAudioStream.getTracks().forEach(track => track.stop());
+                    localAudioStream = null;
+                }
+                db.ref(`live_calls/${activeRoomId}`).set({ active: false }).then(() => {
+                    alert('⚫ تم إيقاف الاتصال.');
+                    document.getElementById('callStateLabel').innerText = "الاتصال مغلق حالياً";
+                    document.getElementById('callStateLabel').style.color = "#cbd5e1";
+                    document.getElementById('teacherInterventionRequestsBox').style.display = 'none';
+                });
+            }
         }
 
         // --- نظام طلب المداخلة من قِبل الطالب وموافقة أو رفض الأستاذ ---
