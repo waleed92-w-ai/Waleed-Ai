@@ -1586,7 +1586,7 @@
                         fileBtnHtml = `
                             <div style="margin-top: 12px;">
                                 <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openFileModal('${item.fileName || 'ملف مرفق'}', '${encodeURIComponent(item.fileData)}')">
-                                    <i class="fas fa-file-alt"></i> عرض الملف المرفق (${item.fileName || 'ملف'})
+                                    <i class="fas fa-eye"></i> زر عرض الملف (${item.fileName || 'ملف'})
                                 </button>
                             </div>
                         `;
@@ -2360,7 +2360,7 @@
                             if (msg.fileName && (msg.fileName.endsWith('.jpg') || msg.fileName.endsWith('.png') || msg.fileName.endsWith('.jpeg'))) {
                                 mediaHtml = `<div style="margin-top: 6px;"><img src="${msg.fileData}" style="max-width: 220px; border-radius: 8px; cursor: pointer;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"></div>`;
                             } else {
-                                mediaHtml = `<div style="margin-top: 6px;"><button class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"><i class="fas fa-file-pdf"></i> عرض الملف (${msg.fileName})</button></div>`;
+                                mediaHtml = `<div style="margin-top: 6px;"><button class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"><i class="fas fa-eye"></i> زر عرض الملف (${msg.fileName})</button></div>`;
                             }
                         }
 
@@ -2514,16 +2514,19 @@
                         if (item.roomId === activeRoomId) {
                             let safeData = encodeURIComponent(item.fileData || (item.chunks ? Object.values(item.chunks).join('') : ''));
                             html += `
-                                <div id="lecture_item_${item.id}" class="list-item" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-                                    <div style="cursor:pointer; flex:1;" onclick="openFileModal('${item.title}', '${safeData}')">
+                                <div id="lecture_item_${item.id}" class="list-item" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                                    <div style="flex:1; min-width: 200px;">
                                         <i class="fas fa-file-pdf" style="color:var(--danger);"></i> <strong>${item.title}</strong>
                                     </div>
-                                    ${isTeacherOrAdmin ? `
-                                        <div style="display:flex; gap:6px;">
-                                            <button class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditItemModal('pdf', '${item.id}', '${item.title}')"><i class="fas fa-edit"></i> تعديل</button>
-                                            <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteLectureItem('${item.id}', 'contents', 'lecture_item_')"><i class="fas fa-trash"></i> حذف</button>
-                                        </div>
-                                    ` : ''}
+                                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                        <button class="btn btn-primary" style="padding:6px 14px; font-size:0.82rem;" onclick="openFileModal('${item.title}', '${safeData}')">
+                                            <i class="fas fa-eye"></i> زر عرض الملزمة
+                                        </button>
+                                        ${isTeacherOrAdmin ? `
+                                            <button class="btn btn-warning" style="padding:6px 10px; font-size:0.75rem;" onclick="openEditItemModal('pdf', '${item.id}', '${item.title}')"><i class="fas fa-edit"></i> تعديل</button>
+                                            <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteLectureItem('${item.id}', 'contents', 'lecture_item_')"><i class="fas fa-trash"></i> حذف</button>
+                                        ` : ''}
+                                    </div>
                                 </div>
                             `;
                         }
@@ -2537,16 +2540,19 @@
                             const rec = recData[rk];
                             if (rec.roomId === activeRoomId) {
                                 recHtml += `
-                                    <div id="recording_item_${rec.id}" class="list-item" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-                                        <div style="cursor:pointer; flex:1;" onclick="openRecordingModal('${rec.title}', '${rec.url}')">
+                                    <div id="recording_item_${rec.id}" class="list-item" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                                        <div style="flex:1; min-width: 200px;">
                                             <i class="fas fa-film" style="color:var(--accent);"></i> <strong>${rec.title}</strong>
                                         </div>
-                                        ${isTeacherOrAdmin ? `
-                                            <div style="display:flex; gap:6px;">
-                                                <button class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;" onclick="openEditItemModal('recording', '${rec.id}', '${rec.title}')"><i class="fas fa-edit"></i> تعديل</button>
-                                                <button class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;" onclick="deleteLectureItem('${rec.id}', 'recordings', 'recording_item_')"><i class="fas fa-trash"></i> حذف</button>
-                                            </div>
-                                        ` : ''}
+                                        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                                            <button class="btn btn-primary" style="padding:6px 14px; font-size:0.82rem;" onclick="openRecordingModal('${rec.title}', '${rec.url}')">
+                                                <i class="fas fa-play-circle"></i> زر عرض الفيديو
+                                            </button>
+                                            ${isTeacherOrAdmin ? `
+                                                <button class="btn btn-warning" style="padding:6px 10px; font-size:0.75rem;" onclick="openEditItemModal('recording', '${rec.id}', '${rec.title}')"><i class="fas fa-edit"></i> تعديل</button>
+                                                <button class="btn btn-danger" style="padding:6px 10px; font-size:0.75rem;" onclick="deleteLectureItem('${rec.id}', 'recordings', 'recording_item_')"><i class="fas fa-trash"></i> حذف</button>
+                                            ` : ''}
+                                        </div>
                                     </div>
                                 `;
                             }
