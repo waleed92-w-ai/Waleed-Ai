@@ -1364,7 +1364,6 @@
             document.getElementById('uniQuizFieldsWrap').style.display = (sectionVal === 'quiz') ? 'block' : 'none';
         }
 
-        // --- نظام الرفع السريع البرقي والمحسن للملفات الكبيرة مع شريط تقدم "تم الرفع بنجاح" ---
         function handleUniversalUpload(e) {
             e.preventDefault();
             const roomId = document.getElementById('uniRoomId').value;
@@ -1381,7 +1380,7 @@
             progressBarBox.style.display = 'block';
             submitBtn.disabled = true;
             progressFill.style.width = '30%';
-            progressText.innerText = 'جاري معضغط ورفع الملف الضخم بسرعة فائقة...';
+            progressText.innerText = 'جاري معالجة ورفع الملف الضخم بسرعة فائقة...';
 
             if (sectionType === 'lecture_pdf') {
                 const fileInput = document.getElementById('uniFile');
@@ -1409,7 +1408,6 @@
                     const base64Data = evt.target.result;
                     const chunks = {};
                     
-                    // تقسيم الملف إلى شرائح لتحقيق أقصى سرعة في القراءة والكتابة
                     for (let i = 0; i < base64Data.length; i += 1024 * 1024) { 
                         chunks['part_' + Math.floor(i / (1024 * 1024))] = base64Data.substring(i, i + (1024 * 1024)); 
                     }
@@ -2695,12 +2693,12 @@
         }
 
         function fetchSchedules() {
-            fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data =>.then(data => {
+            fetch(`${DATABASE_URL}/schedules.json`).then(res => res.json()).then(data => {
                 let html = '';
                 if (data) { Object.keys(data).forEach(k => { const s = data[k]; html += `<div class="list-item"><div><strong>${s.grade}</strong> | ${s.day} : ${s.details}</div><button class="btn btn-danger" onclick="deleteItem('schedules', '${s.id}', fetchSchedules)">حذف</button></div>`; }); }
                 const schList = document.getElementById('schList');
                 if (schList) schList.innerHTML = html || '<p>لا توجد حصص.</p>';
-            }).catch(() => {}));
+            }).catch(() => {});
         }
 
         function fetchAdminReports() {
