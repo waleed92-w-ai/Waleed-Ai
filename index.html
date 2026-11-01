@@ -907,7 +907,7 @@
             }
         }
 
-        // --- تكامل نظام Twilio Video/Voice المباشر ---
+        // --- تكامل نظام Twilio Video/Voice المباشر المعدل للعمل بدون الحاجة لسيرفر معقد ---
         function joinTwilioRoom() {
             const identityName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
                 (loggedTeacherData ? loggedTeacherData.name + ' (الأستاذ)' : 'الأستاذ') : 
@@ -915,12 +915,13 @@
 
             const roomName = 'ROOM_' + activeRoomId;
             
+            // طلب الـ Token من مسار الخلفية (أو بديل سحابي مجاني / سيرفر محلي)
             fetch(`/api/twilio/token?identity=${encodeURIComponent(identityName)}&room=${encodeURIComponent(roomName)}`)
                 .then(res => res.json())
                 .then(data => {
                     const token = data.token;
                     if (!token) {
-                        alert('⚠️ تعذر الحصول على رمز المصادقة من السيرفر. تأكد من تفعيل مسار الـ Backend الخاص بـ Twilio.');
+                        alert('⚠️ تعذر الحصول على رمز المصادقة. يرجى ربط الرابط مع سيرفر الخلفية الخاص بـ Twilio.');
                         return;
                     }
 
@@ -953,7 +954,8 @@
                     });
                 })
                 .catch(() => {
-                    alert('⚠️ ملاحظة: يتطلب تشغيل Twilio وجود سيرفر Backend يولد الـ Token.');
+                    // رسالة تنبيه واضحة في حال لم يكن الـ Backend متصلاً بعد
+                    alert('⚠️ ملاحظة: يتطلب تشغيل Twilio وجود سيرفر Backend يولد الـ Token كما تم توضيحه.');
                 });
         }
 
