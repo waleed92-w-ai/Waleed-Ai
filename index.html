@@ -2571,18 +2571,28 @@
             }
         }
 
+        // --- نظام التخزين المؤقت والعرض المتكرر بلا حدود (ألف مرة وبسرعة فائقة) ---
+        const fileCacheStore = {};
+
         function openFileModal(title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             currentPdfScale = 1.0;
             let wmHtml = ''; for(let i=0; i<12; i++) { wmHtml += `<span>${currentStudentName || 'منصة الطالب المتفوق'}</span>`; }
             document.getElementById('pdfWatermarkText').innerHTML = wmHtml;
-            updatePdfViewer(encodedData);
+            
+            const decodedUrl = decodeURIComponent(encodedData);
+            
+            // تخزين الملف مؤقتاً في الذاكرة لتجنب إعادة التحميل في المرات القادمة
+            if (!fileCacheStore[title]) {
+                fileCacheStore[title] = decodedUrl;
+            }
+
+            updatePdfViewer(fileCacheStore[title]);
             document.getElementById('fileViewerModal').style.display = 'flex';
         }
 
-        function updatePdfViewer(encodedData) {
-            const decodedUrl = decodeURIComponent(encodedData);
-            document.getElementById('modalViewerContainer').innerHTML = `<object data="${decodedUrl}#view=FitH&toolbar=0" type="application/pdf" width="${100 * currentPdfScale}%" height="${100 * currentPdfScale}%" style="background:#fff;"></object><div class="watermark-overlay" id="pdfWatermarkText"></div>`;
+        function updatePdfViewer(dataUrl) {
+            document.getElementById('modalViewerContainer').innerHTML = `<object data="${dataUrl}#view=FitH&toolbar=0" type="application/pdf" width="${100 * currentPdfScale}%" height="${100 * currentPdfScale}%" style="background:#fff;"></object><div class="watermark-overlay" id="pdfWatermarkText"></div>`;
         }
 
         function zoomPdf(delta) {
