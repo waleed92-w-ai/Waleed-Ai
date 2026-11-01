@@ -370,7 +370,7 @@
                     </div>
                 </div>
 
-                <!-- شاشة البث الصوتي والمرئي الافتراضية بدون أخطاء السيرفر الخارجي -->
+                <!-- شاشة البث الصوتي والمرئي الافتراضية المدمجة تماماً -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     
                     <div class="live-group-call-banner">
@@ -401,7 +401,7 @@
                             <div id="interventionRequestsList" style="margin-top: 6px; display: flex; gap: 6px; flex-wrap: wrap;"></div>
                         </div>
 
-                        <!-- حاوية عرض تدفق الصوت والفيديو -->
+                        <!-- حاوية عرض الصوت والصورة -->
                         <div id="remoteMediaContainer" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; min-height: 120px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px;">
                             <span style="font-size: 0.8rem; color: #94a3b8; margin: auto;">اضغط على انضمام للاتصال والبدء مع المشاركين.</span>
                         </div>
@@ -910,7 +910,7 @@
             }
         }
 
-        // --- نظام الاتصال الصوتي والمرئي الافتراضي والآمن (بدون سيرفر خارجي وبدون أخطاء) ---
+        // --- نظام الاتصال الصوتي والمرئي الافتراضي المحلي (بدون أخطاء نهائياً) ---
         function joinLiveCallRoom() {
             const isTeacher = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
             
@@ -933,7 +933,7 @@
             container.innerHTML = `<div style="color: #34d399; font-weight: 800; font-size: 0.9rem; margin: auto;"><i class="fas fa-check-circle"></i> تم الاتصال بالغرفة الصوتية التفاعلية بنجاح على الآيفون والويب.</div>`;
         }
 
-        // --- نظام طلب المداخلة من قبل الطالب وموافقة الأستاذ ---
+        // --- نظام طلب المداخلة من قِبل الطالب وموافقة أو رفض الأستاذ ---
         function requestMicIntervention() {
             if (!currentStudentName) return;
             const reqId = 'MIC_' + Date.now();
@@ -979,7 +979,7 @@
             db.ref(`mic_requests/${activeRoomId}/${reqId}`).update({ status: 'rejected' });
         }
 
-        // --- وظيفة إنهاء الاتصال تماماً ---
+        // --- زر إنهاء الاتصال تماماً ---
         function leaveLiveCallRoom() {
             db.ref(`mic_requests/${activeRoomId}`).remove();
 
