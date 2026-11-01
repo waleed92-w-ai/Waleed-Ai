@@ -1584,9 +1584,9 @@
                     let fileBtnHtml = '';
                     if (item.fileData) {
                         fileBtnHtml = `
-                            <div style="margin-top: 12px;">
-                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openFileModal('${item.fileName || 'ملف مرفق'}', '${encodeURIComponent(item.fileData)}')">
-                                    <i class="fas fa-eye"></i> زر عرض الملف (${item.fileName || 'ملف'})
+                            <div style="margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="openFileModal('${item.id}', '${item.fileName || 'ملف مرفق'}', '${encodeURIComponent(item.fileData)}')">
+                                    <i class="fas fa-eye"></i> عرض الملف (${item.fileName || 'ملف'})
                                 </button>
                             </div>
                         `;
@@ -2358,9 +2358,9 @@
                             `;
                         } else if (msg.fileData) {
                             if (msg.fileName && (msg.fileName.endsWith('.jpg') || msg.fileName.endsWith('.png') || msg.fileName.endsWith('.jpeg'))) {
-                                mediaHtml = `<div style="margin-top: 6px;"><img src="${msg.fileData}" style="max-width: 220px; border-radius: 8px; cursor: pointer;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"></div>`;
+                                mediaHtml = `<div style="margin-top: 6px;"><img src="${msg.fileData}" style="max-width: 220px; border-radius: 8px; cursor: pointer;" onclick="openFileModal('wa_${msg.id}', '${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"></div>`;
                             } else {
-                                mediaHtml = `<div style="margin-top: 6px;"><button class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;" onclick="openFileModal('${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"><i class="fas fa-eye"></i> زر عرض الملف (${msg.fileName})</button></div>`;
+                                mediaHtml = `<div style="margin-top: 6px;"><button class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;" onclick="openFileModal('wa_${msg.id}', '${msg.fileName}', '${encodeURIComponent(msg.fileData)}')"><i class="fas fa-eye"></i> عرض الملف (${msg.fileName})</button></div>`;
                             }
                         }
 
@@ -2519,8 +2519,8 @@
                                         <i class="fas fa-file-pdf" style="color:var(--danger);"></i> <strong>${item.title}</strong>
                                     </div>
                                     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                                        <button class="btn btn-primary" style="padding:6px 14px; font-size:0.82rem;" onclick="openFileModal('${item.title}', '${safeData}')">
-                                            <i class="fas fa-eye"></i> زر عرض الملزمة
+                                        <button class="btn btn-primary" style="padding:6px 14px; font-size:0.82rem;" onclick="openFileModal('${item.id}', '${item.title}', '${safeData}')">
+                                            <i class="fas fa-eye"></i> عرض
                                         </button>
                                         ${isTeacherOrAdmin ? `
                                             <button class="btn btn-warning" style="padding:6px 10px; font-size:0.75rem;" onclick="openEditItemModal('pdf', '${item.id}', '${item.title}')"><i class="fas fa-edit"></i> تعديل</button>
@@ -2546,7 +2546,7 @@
                                         </div>
                                         <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                                             <button class="btn btn-primary" style="padding:6px 14px; font-size:0.82rem;" onclick="openRecordingModal('${rec.title}', '${rec.url}')">
-                                                <i class="fas fa-play-circle"></i> زر عرض الفيديو
+                                                <i class="fas fa-play-circle"></i> عرض
                                             </button>
                                             ${isTeacherOrAdmin ? `
                                                 <button class="btn btn-warning" style="padding:6px 10px; font-size:0.75rem;" onclick="openEditItemModal('recording', '${rec.id}', '${rec.title}')"><i class="fas fa-edit"></i> تعديل</button>
@@ -2577,23 +2577,25 @@
             }
         }
 
-        // --- نظام التخزين المؤقت والعرض المتكرر بلا حدود (ألف مرة وبسرعة فائقة) ---
-        const fileCacheStore = {};
+        // --- نظام التخزين المؤقت المستقر والمستمر بلا حدود (يعمل لعدد غير محدود من المرات) ---
+        const persistentFileCache = {};
 
-        function openFileModal(title, encodedData) {
+        function openFileModal(fileId, title, encodedData) {
             document.getElementById('modalFileTitle').innerText = title;
             currentPdfScale = 1.0;
             let wmHtml = ''; for(let i=0; i<12; i++) { wmHtml += `<span>${currentStudentName || 'منصة الطالب المتفوق'}</span>`; }
             document.getElementById('pdfWatermarkText').innerHTML = wmHtml;
             
-            const decodedUrl = decodeURIComponent(encodedData);
-            
-            // تخزين الملف مؤقتاً في الذاكرة لتجنب إعادة التحميل في المرات القادمة
-            if (!fileCacheStore[title]) {
-                fileCacheStore[title] = decodedUrl;
+            // التحقق من وجود الملف في الذاكرة الدائمة، أو تخزينه مرة واحدة فقط واستخدامه أبدياً
+            if (!persistentFileCache[fileId]) {
+                try {
+                    persistentFileCache[fileId] = decodeURIComponent(encodedData);
+                } catch (e) {
+                    persistentFileCache[fileId] = encodedData;
+                }
             }
 
-            updatePdfViewer(fileCacheStore[title]);
+            updatePdfViewer(persistentFileCache[fileId]);
             document.getElementById('fileViewerModal').style.display = 'flex';
         }
 
