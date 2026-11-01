@@ -17,8 +17,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <!-- Twilio Video SDK -->
+    <script src="//sdk.twilio.com/js/video/releases/2.27.0/twilio-video.min.js"></script>
 
     <style>
         :root {
@@ -64,7 +68,6 @@
         .form-group label { display: block; margin-bottom: 6px; font-weight: 700; font-size: 0.9rem; color: #334155; }
         .form-control { width: 100%; padding: 12px 16px; border: 1.5px solid #cbd5e1; border-radius: 12px; font-size: 0.95rem; outline: none; background: #f8fafc; }
         .form-control:focus { border-color: var(--accent); background: #fff; }
-        input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px #f8fafc inset !important; -webkit-text-fill-color: var(--text-dark) !important; }
 
         .btn { padding: 10px 16px; border: none; border-radius: 10px; font-weight: 800; font-size: 0.88rem; cursor: pointer; transition: 0.25s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; position: relative; z-index: 95; }
         .btn-primary { background: var(--accent); color: white; }
@@ -99,8 +102,6 @@
         .wa-time { font-size: 0.68rem; color: #667781; text-align: left; margin-top: 3px; float: left; margin-right: 6px; }
         .wa-actions { display: flex; gap: 8px; margin-top: 6px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 4px; justify-content: flex-end; clear: both; }
         .wa-actions button { background: transparent; border: none; cursor: pointer; font-size: 0.75rem; font-weight: 700; padding: 2px 6px; }
-        .wa-actions button.edit-btn { color: #005c4b; }
-        .wa-actions button.delete-btn { color: #ea0038; }
         .whatsapp-input-bar { display: flex; gap: 10px; padding: 12px 16px; background: #f0f2f5; align-items: center; border-top: 1px solid #e9edef; }
 
         .live-group-call-banner { background: linear-gradient(135deg, #0f172a, #1e3a8a); color: white; padding: 16px 20px; border-radius: 14px; margin-bottom: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 1.5px solid rgba(56, 189, 248, 0.4); }
@@ -372,7 +373,7 @@
                     </div>
                 </div>
 
-                <!-- شاشة البث الصوتي المباشر التفاعلي (الحل الجذري المضمون) -->
+                <!-- شاشة البث الصوتي والمرئي عبر Twilio -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     
                     <div class="live-group-call-banner">
@@ -382,31 +383,21 @@
                                     <i class="fas fa-broadcast-tower" id="callStatusIcon"></i>
                                 </div>
                                 <div>
-                                    <strong style="font-size: 1rem; display: block;">غرفة البث الصوتي المباشر التفاعلي</strong>
-                                    <span id="callStateLabel" style="font-size: 0.8rem; color: #cbd5e1;">البث الصوتي مغلق حالياً</span>
+                                    <strong style="font-size: 1rem; display: block;">غرفة الاتصال والبث المباشر (Twilio Cloud)</strong>
+                                    <span id="callStateLabel" style="font-size: 0.8rem; color: #cbd5e1;">الاتصال مغلق حالياً</span>
                                 </div>
                             </div>
                             
-                            <!-- أزرار الأستاذ والطلاب -->
+                            <!-- أزرار الانضمام والتحكم بـ Twilio -->
                             <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="callActionButtonsContainer">
-                                <!-- يتم توليدها تلقائياً -->
+                                <button class="btn btn-success" id="startTwilioCallBtn" onclick="joinTwilioRoom()"><i class="fas fa-video"></i> انضمام للبث الصوتي والمرئي</button>
+                                <button class="btn btn-danger" id="endTwilioCallBtn" onclick="leaveTwilioRoom()" style="display:none;"><i class="fas fa-phone-slash"></i> مغادرة الاتصال</button>
                             </div>
                         </div>
 
-                        <!-- طلبات الانضمام للبث الصوتي (تظهر للأستاذ) -->
-                        <div id="teacherCallRequestsBox" style="display:none; background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 10px; margin-top: 10px; border: 1px dashed rgba(56, 189, 248, 0.3);">
-                            <strong style="font-size: 0.85rem; color: #38bdf8; display: block; margin-bottom: 8px;"><i class="fas fa-user-clock"></i> طلبات المداخلة الصوتية من الطلبة:</strong>
-                            <div id="teacherCallRequestsList" style="display: flex; flex-direction: column; gap: 6px;">
-                                <span style="font-size: 0.8rem; color: #94a3b8;">لا توجد طلبات مداخلة حالياً.</span>
-                            </div>
-                        </div>
-
-                        <!-- المتواجدون في الغرفة الصوتية -->
-                        <div style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
-                            <strong style="font-size: 0.82rem; color: #cbd5e1; display: block; margin-bottom: 6px;"><i class="fas fa-users" style="color:var(--success);"></i> المتواجدون في الغرفة الصوتية (<span id="activeParticipantsCount">0</span>):</strong>
-                            <div id="activeParticipantsList" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                                <span style="font-size: 0.78rem; color: #94a3b8;">لا أحد متواجد حالياً.</span>
-                            </div>
+                        <!-- حاوية عرض تدفق الصوت والفيديو لـ Twilio -->
+                        <div id="twilioRemoteMediaContainer" style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; min-height: 120px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px;">
+                            <span style="font-size: 0.8rem; color: #94a3b8; margin: auto;">اضغط على انضمام للاتصال والبدء مع المشاركين.</span>
                         </div>
                     </div>
 
@@ -742,10 +733,6 @@
         </div>
     </div>
 
-    <!-- عناصر الصوت المخفية لدعم التدفق الحي للجهتين -->
-    <audio id="liveBroadcastAudioPlayer" autoplay playsinline style="display:none;"></audio>
-    <audio id="studentMicAudioPlayer" autoplay playsinline style="display:none;"></audio>
-
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -771,9 +758,8 @@
         let audioChunks = [];
         let isRecordingVoice = false;
 
-        let isLiveBroadcasting = false;
-        let liveStreamObj = null;
-        let myParticipantId = 'USER_' + Math.floor(Math.random() * 1000000);
+        // متغيرات نظام Twilio
+        let twilioActiveRoom = null;
 
         const allSubjectsList = [
             { name: "الحاسوب", icon: "fas fa-laptop-code" },
@@ -902,7 +888,7 @@
             document.getElementById('closeEditItemModalBtn').addEventListener('click', () => document.getElementById('editItemModal').style.display = 'none');
             
             window.addEventListener('beforeunload', () => {
-                leaveLiveBroadcastRealtime();
+                leaveTwilioRoom();
             });
         }
 
@@ -921,297 +907,106 @@
             }
         }
 
-        function setupGroupCallInterface() {
-            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
-            const buttonsContainer = document.getElementById('callActionButtonsContainer');
-            const requestsBox = document.getElementById('teacherCallRequestsBox');
+        // --- تكامل نظام Twilio Video/Voice المباشر ---
+        function joinTwilioRoom() {
+            const identityName = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher') ? 
+                (loggedTeacherData ? loggedTeacherData.name + ' (الأستاذ)' : 'الأستاذ') : 
+                (currentStudentName || 'طالب');
 
-            if (isTeacherOrAdmin) {
-                requestsBox.style.display = 'block';
-                buttonsContainer.innerHTML = `
-                    <button class="btn btn-success" id="teacherStartCallBtn" onclick="teacherStartLiveBroadcast()"><i class="fas fa-broadcast-tower"></i> فتح البث الصوتي</button>
-                    <button class="btn btn-danger" id="teacherEndCallBtn" onclick="teacherEndLiveBroadcast()" style="display:none;"><i class="fas fa-phone-slash"></i> إغلاق الغرفة وإخراج الكل</button>
-                `;
-                checkTeacherBroadcastState();
-            } else {
-                requestsBox.style.display = 'none';
-                buttonsContainer.innerHTML = `
-                    <button class="btn btn-primary" id="studentRequestCallBtn" onclick="studentRequestIntervention()"><i class="fas fa-hand-paper"></i> طلب مداخلة صوتية</button>
-                    <button class="btn btn-danger" id="studentLeaveCallBtn" onclick="studentLeaveIntervention()" style="display:none;"><i class="fas fa-phone-slash"></i> مغادرة المداخلة</button>
-                `;
-                checkStudentInterventionState();
-            }
+            const roomName = 'ROOM_' + activeRoomId;
+            
+            // جلب رمز الوصول (Access Token) من الخلفية (Backend) الخاصة بك
+            fetch(`/api/twilio/token?identity=${encodeURIComponent(identityName)}&room=${encodeURIComponent(roomName)}`)
+                .then(res => res.json())
+                .then(data => {
+                    const token = data.token;
+                    if (!token) {
+                        alert('⚠️ تعذر الحصول على رمز المصادقة من السيرفر. تأكد من تفعيل مسار الـ Backend الخاص بـ Twilio.');
+                        return;
+                    }
 
-            listenToRoomActiveParticipants();
-            listenToInterventionRequests();
-            monitorBroadcastStatusRealtime();
-        }
+                    Twilio.Video.connect(token, { audio: true, video: true }).then(room => {
+                        twilioActiveRoom = room;
+                        console.log(`✅ تم الاتصال بنجاح بغرفة Twilio: ${room.name}`);
 
-        // الأستاذ يبدأ البث الصوتي الحي مع تفعيل التشغيل التلقائي الإجباري
-        function teacherStartLiveBroadcast() {
-            if (!isLiveBroadcasting) {
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                    alert("⚠️ عذراً، متصفحك لا يدعم البث الصوتي المباشر.");
-                    return;
-                }
-
-                navigator.mediaDevices.getUserMedia({ 
-                    audio: { 
-                        echoCancellation: true, 
-                        noiseSuppression: true, 
-                        autoGainControl: true 
-                    } 
-                }).then(stream => {
-                    liveStreamObj = stream;
-                    isLiveBroadcasting = true;
-
-                    const player = document.getElementById('liveBroadcastAudioPlayer');
-                    player.srcObject = stream;
-                    player.muted = true; // كتم صوت الأستاذ لديه لمنع الصدى
-                    player.play().catch(e => console.log("Autoplay check:", e));
-
-                    db.ref(`room_live_broadcast/${activeRoomId}`).set({
-                        status: 'active',
-                        broadcasterName: loggedTeacherData ? loggedTeacherData.name : 'الأستاذ',
-                        timestamp: Date.now()
-                    }).then(() => {
-                        const myName = loggedTeacherData ? loggedTeacherData.name + ' (الأستاذ)' : 'الأستاذ';
-                        registerParticipantInRoom(myName, true);
-
-                        document.getElementById('teacherStartCallBtn').style.display = 'none';
-                        document.getElementById('teacherEndCallBtn').style.display = 'inline-flex';
-                        document.getElementById('callStateLabel').innerText = "🟢 البث الصوتي المباشر يعمل ويستمع إليه الجميع";
+                        document.getElementById('startTwilioCallBtn').style.display = 'none';
+                        document.getElementById('endTwilioCallBtn').style.display = 'inline-flex';
+                        document.getElementById('callStateLabel').innerText = "🟢 متصل الآن بالبث عبر Twilio";
                         document.getElementById('callStateLabel').style.color = "#34d399";
-                        document.getElementById('callStatusIcon').className = "fas fa-microphone";
+                        document.getElementById('callStatusIcon').className = "fas fa-video";
+
+                        const container = document.getElementById('twilioRemoteMediaContainer');
+                        container.innerHTML = '';
+
+                        // عرض مسارات المشاركين الحاليين
+                        room.participants.forEach(participant => {
+                            registerTwilioParticipant(participant, container);
+                        });
+
+                        room.on('participantConnected', participant => {
+                            registerTwilioParticipant(participant, container);
+                        });
+
+                        room.on('participantDisconnected', participant => {
+                            removeTwilioParticipant(participant);
+                        });
+
+                    }, error => {
+                        console.error(`خطأ في اتصال Twilio: ${error.message}`);
+                        alert('⚠️ تعذر الانضمام لغرفة الاتصال: ' + error.message);
                     });
-                }).catch(err => {
-                    alert("⚠️ تعذر الوصول إلى الميكروفون. يرجى السماح للمتصفح بالوصول للميكروفون من إعدادات القفل (🔒).");
+                })
+                .catch(() => {
+                    // وضع بديل تجريبي في حال عدم ربط السيرفر بعد
+                    alert('⚠️ ملاحظة: يتطلب تشغيل Twilio وجود سيرفر Backend يولد الـ Token. (تأكد من إعداد مسار /api/twilio/token)');
                 });
-            }
         }
 
-        function teacherEndLiveBroadcast() {
-            leaveLiveBroadcastRealtime();
-            db.ref(`room_live_broadcast/${activeRoomId}`).remove();
-            db.ref(`intervention_requests/${activeRoomId}`).remove();
-            db.ref(`room_participants/${activeRoomId}`).remove();
+        function registerTwilioParticipant(participant, container) {
+            participant.tracks.forEach(publication => {
+                if (publication.isSubscribed) {
+                    attachTwilioTrack(publication.track, container);
+                }
+            });
+            participant.on('trackSubscribed', track => {
+                attachTwilioTrack(track, container);
+            });
+        }
 
-            document.getElementById('teacherStartCallBtn').style.display = 'inline-flex';
-            document.getElementById('teacherEndCallBtn').style.display = 'none';
-            document.getElementById('callStateLabel').innerText = "البث الصوتي مغلق حالياً";
+        function attachTwilioTrack(track, container) {
+            const element = track.attach();
+            element.style.maxWidth = "200px";
+            element.style.borderRadius = "8px";
+            container.appendChild(element);
+        }
+
+        function removeTwilioParticipant(participant) {
+            participant.tracks.forEach(publication => {
+                if (publication.track) {
+                    const detachedElements = publication.track.detach();
+                    detachedElements.forEach(element => element.remove());
+                }
+            });
+        }
+
+        function leaveTwilioRoom() {
+            if (twilioActiveRoom) {
+                twilioActiveRoom.disconnect();
+                twilioActiveRoom = null;
+            }
+
+            document.getElementById('startTwilioCallBtn').style.display = 'inline-flex';
+            document.getElementById('endTwilioCallBtn').style.display = 'none';
+            document.getElementById('callStateLabel').innerText = "الاتصال مغلق حالياً";
             document.getElementById('callStateLabel').style.color = "#cbd5e1";
             document.getElementById('callStatusIcon').className = "fas fa-broadcast-tower";
-        }
-
-        function checkTeacherBroadcastState() {
-            db.ref(`room_live_broadcast/${activeRoomId}`).on('value', snapshot => {
-                const data = snapshot.val();
-                if (!data || data.status !== 'active') {
-                    if (isLiveBroadcasting) {
-                        leaveLiveBroadcastRealtime();
-                    }
-                }
-            });
-        }
-
-        function monitorBroadcastStatusRealtime() {
-            db.ref(`room_live_broadcast/${activeRoomId}`).on('value', snap => {
-                const data = snap.val();
-                if (!data || data.status !== 'active') {
-                    if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                        leaveLiveBroadcastRealtime();
-                        const btn = document.getElementById('studentRequestCallBtn');
-                        const leaveBtn = document.getElementById('studentLeaveCallBtn');
-                        if (btn) { btn.style.display = 'inline-flex'; btn.innerText = "طلب مداخلة صوتية"; btn.disabled = false; }
-                        if (leaveBtn) { leaveBtn.style.display = 'none'; }
-                        const stateLbl = document.getElementById('callStateLabel');
-                        if (stateLbl) { stateLbl.innerText = "البث مغلق حالياً من قبل الأستاذ"; stateLbl.style.color = "#cbd5e1"; }
-                    }
-                } else {
-                    if (currentRole !== 'admin' && currentRole !== 'supervisor' && currentRole !== 'teacher') {
-                        const stateLbl = document.getElementById('callStateLabel');
-                        if (stateLbl) { stateLbl.innerText = "🟢 البث الصوتي يعمل (أنت تستمع الآن)"; stateLbl.style.color = "#34d399"; }
-                        
-                        // تفعيل التشغيل التلقائي الإجباري لسماع الصوت لدى الطالب فوراً عند رصد البث
-                        const player = document.getElementById('liveBroadcastAudioPlayer');
-                        if (player && player.paused) {
-                            player.play().catch(() => {});
-                        }
-                    }
-                }
-            });
-        }
-
-        function studentRequestIntervention() {
-            if (!currentStudentName) {
-                alert('يجب تسجيل الدخول كطالب أولاً!');
-                return;
+            
+            const container = document.getElementById('twilioRemoteMediaContainer');
+            if (container) {
+                container.innerHTML = '<span style="font-size: 0.8rem; color: #94a3b8; margin: auto;">اضغط على انضمام للاتصال والبدء مع المشاركين.</span>';
             }
-
-            db.ref(`room_live_broadcast/${activeRoomId}`).once('value', snap => {
-                if (!snap.exists() || snap.val().status !== 'active') {
-                    alert('⚠️ البث الصوتي غير مفتوح حالياً من قبل الأستاذ.');
-                    return;
-                }
-
-                const reqId = myParticipantId;
-                db.ref(`intervention_requests/${activeRoomId}/${reqId}`).set({
-                    id: reqId,
-                    studentName: currentStudentName,
-                    status: 'pending',
-                    timestamp: Date.now()
-                }).then(() => {
-                    alert('📤 تم إرسال طلب المداخلة إلى الأستاذ. انتظر الموافقة...');
-                    document.getElementById('studentRequestCallBtn').innerText = "⏳ بانتظار موافقة الأستاذ...";
-                    document.getElementById('studentRequestCallBtn').disabled = true;
-                });
-            });
         }
-
-        function checkStudentInterventionState() {
-            db.ref(`intervention_requests/${activeRoomId}/${myParticipantId}`).on('value', snap => {
-                const req = snap.val();
-                const btn = document.getElementById('studentRequestCallBtn');
-                const leaveBtn = document.getElementById('studentLeaveCallBtn');
-
-                if (req && req.status === 'approved') {
-                    startStudentMicTransmission();
-                    if (btn) btn.style.display = 'none';
-                    if (leaveBtn) leaveBtn.style.display = 'inline-flex';
-                    const stateLbl = document.getElementById('callStateLabel');
-                    if (stateLbl) {
-                        stateLbl.innerText = "🟢 أنت الآن متحدث في البث والجميع يسمعك";
-                        stateLbl.style.color = "#34d399";
-                    }
-                } else if (req && req.status === 'rejected') {
-                    alert('❌ تم رفض طلب المداخلة الصوتية من قبل الأستاذ.');
-                    if (btn) { btn.innerText = "طلب مداخلة صوتية"; btn.disabled = false; }
-                    db.ref(`intervention_requests/${activeRoomId}/${myParticipantId}`).remove();
-                }
-            });
-        }
-
-        function startStudentMicTransmission() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
-
-            navigator.mediaDevices.getUserMedia({ 
-                audio: { 
-                    echoCancellation: true, 
-                    noiseSuppression: true, 
-                    autoGainControl: true 
-                } 
-            }).then(stream => {
-                liveStreamObj = stream;
-                isLiveBroadcasting = true;
-                
-                // تفعيل سماع الطالب لميكروفونه عند المداخلة للجهتين
-                const player = document.getElementById('studentMicAudioPlayer');
-                player.srcObject = stream;
-                player.muted = false;
-                player.play().catch(() => {});
-
-                registerParticipantInRoom(currentStudentName, false);
-            }).catch(() => {
-                alert('⚠️ تعذر تشغيل الميكروفون للطالب.');
-            });
-        }
-
-        function studentLeaveIntervention() {
-            leaveLiveBroadcastRealtime();
-            db.ref(`intervention_requests/${activeRoomId}/${myParticipantId}`).remove();
-
-            const btn = document.getElementById('studentRequestCallBtn');
-            const leaveBtn = document.getElementById('studentLeaveCallBtn');
-            if (btn) { btn.style.display = 'inline-flex'; btn.innerText = "طلب مداخلة صوتية"; btn.disabled = false; }
-            if (leaveBtn) { leaveBtn.style.display = 'none'; }
-            const stateLbl = document.getElementById('callStateLabel');
-            if (stateLbl) stateLbl.innerText = "🟢 البث الصوتي يعمل (أنت تستمع الآن)";
-        }
-
-        function registerParticipantInRoom(name, isTeacher) {
-            db.ref(`room_participants/${activeRoomId}/${myParticipantId}`).set({
-                id: myParticipantId,
-                name: name,
-                isTeacher: isTeacher,
-                joinedAt: Date.now()
-            });
-            db.ref(`room_participants/${activeRoomId}/${myParticipantId}`).onDisconnect().remove();
-        }
-
-        function leaveLiveBroadcastRealtime() {
-            if (liveStreamObj) {
-                liveStreamObj.getTracks().forEach(track => track.stop());
-                liveStreamObj = null;
-            }
-            isLiveBroadcasting = false;
-            db.ref(`room_participants/${activeRoomId}/${myParticipantId}`).remove();
-        }
-
-        function listenToInterventionRequests() {
-            const isTeacherOrAdmin = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
-            if (!isTeacherOrAdmin) return;
-
-            db.ref(`intervention_requests/${activeRoomId}`).on('value', snap => {
-                const reqs = snap.val();
-                let html = '';
-
-                if (reqs) {
-                    Object.keys(reqs).forEach(k => {
-                        const r = reqs[k];
-                        if (r.status === 'pending') {
-                            html += `
-                                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.07); padding: 6px 10px; border-radius: 8px;">
-                                    <span style="font-size: 0.85rem; color: #fff;">👤 ${r.studentName}</span>
-                                    <div style="display: flex; gap: 6px;">
-                                        <button class="btn btn-success" style="padding: 3px 8px; font-size: 0.72rem;" onclick="approveIntervention('${r.id}')">قبول ✅</button>
-                                        <button class="btn btn-danger" style="padding: 3px 8px; font-size: 0.72rem;" onclick="rejectIntervention('${r.id}')">رفض ❌</button>
-                                    </div>
-                                </div>
-                            `;
-                        }
-                    });
-                }
-
-                const reqListEl = document.getElementById('teacherCallRequestsList');
-                if (reqListEl) {
-                    reqListEl.innerHTML = html || '<span style="font-size: 0.8rem; color: #94a3b8;">لا توجد طلبات مداخلة حالياً.</span>';
-                }
-            });
-        }
-
-        function approveIntervention(reqId) {
-            db.ref(`intervention_requests/${activeRoomId}/${reqId}`).update({ status: 'approved' });
-        }
-
-        function rejectIntervention(reqId) {
-            db.ref(`intervention_requests/${activeRoomId}/${reqId}`).update({ status: 'rejected' });
-        }
-
-        function listenToRoomActiveParticipants() {
-            db.ref(`room_participants/${activeRoomId}`).on('value', snap => {
-                const parts = snap.val();
-                let html = '';
-                let count = 0;
-
-                if (parts) {
-                    Object.keys(parts).forEach(k => {
-                        const p = parts[k];
-                        count++;
-                        let badgeStyle = p.isTeacher ? 'background: var(--warning); color: #000;' : 'background: var(--accent); color: #fff;';
-                        html += `
-                            <span style="font-size: 0.78rem; padding: 4px 10px; border-radius: 20px; font-weight: 800; ${badgeStyle}">
-                                ${p.isTeacher ? '👨‍🏫 ' : 'STUDENT: '} ${p.name}
-                            </span>
-                        `;
-                    });
-                }
-
-                const countEl = document.getElementById('activeParticipantsCount');
-                const listEl = document.getElementById('activeParticipantsList');
-                if (countEl) countEl.innerText = count;
-                if (listEl) listEl.innerHTML = html || '<span style="font-size: 0.78rem; color: #94a3b8;">لا أحد متواجد حالياً.</span>';
-            });
-        }
+        // --- نهاية دوام Twilio ---
 
         function checkTeacherSessionLive() {
             const session = localStorage.getItem('teacher_session');
@@ -1375,7 +1170,7 @@
         }
 
         function logoutSystem() {
-            leaveLiveBroadcastRealtime();
+            leaveTwilioRoom();
             localStorage.removeItem('student_session');
             localStorage.removeItem('teacher_session');
             currentRole = '';
@@ -2371,7 +2166,6 @@
 
             if (paneId === 'paneLiveAndChat') { 
                 openWhatsappChatSection();
-                setupGroupCallInterface();
             }
 
             if (paneId === 'paneLectures') { renderRoomLectures(); renderRoomRecordings(); }
