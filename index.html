@@ -370,7 +370,7 @@
                     </div>
                 </div>
 
-                <!-- شاشة الاتصال والتنبيه الفوري التفاعلي -->
+                <!-- شاشة الاتصال والتنبيه الفوري التفاعلي (محدثة لمنع تعليق الصوت) -->
                 <div class="room-section-pane" id="paneLiveAndChat">
                     
                     <div class="live-group-call-banner">
@@ -915,7 +915,7 @@
             }
         }
 
-        // --- نظام الاتصال الصوتي الفوري المرتبط بـ Firebase وتفعيل الصوت للطرفين ---
+        // --- نظام الاتصال الصوتي الفوري المرتبط بـ Firebase وتحديث الصوت لمنع التعليق ---
         function checkActiveCallStatus() {
             if (!activeRoomId) return;
             db.ref(`live_calls/${activeRoomId}`).on('value', snapshot => {
@@ -967,7 +967,14 @@
                 return;
             }
 
-            navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false }).then(stream => {
+            navigator.mediaDevices.getUserMedia({ 
+                audio: { 
+                    echoCancellation: true, 
+                    noiseSuppression: true,
+                    autoGainControl: true
+                }, 
+                video: false 
+            }).then(stream => {
                 localAudioStream = stream;
                 
                 document.getElementById('incomingCallAlertBox').style.display = 'none';
@@ -980,10 +987,13 @@
                 const container = document.getElementById('remoteMediaContainer');
                 container.innerHTML = `
                     <div style="color: #34d399; font-weight: 800; font-size: 0.9rem; text-align: center;">
-                        <i class="fas fa-check-circle"></i> تم تفعيل الصوت والميكروفون بنجاح للطرفين.<br>
-                        <small style="color: #cbd5e1;">أنت تسمع الأستاذ الآن بوضوح تام.</small>
+                        <i class="fas fa-check-circle"></i> تم تفعيل الصوت والميكروفون بنجاح.<br>
+                        <small style="color: #cbd5e1;">تم توجيه البث لتجنب سماع صوتك في جهازك.</small>
                     </div>
                 `;
+
+                const oldAudio = document.getElementById('remoteAudioStreamElement');
+                if (oldAudio) oldAudio.remove();
 
                 const remoteAudio = document.createElement('audio');
                 remoteAudio.id = 'remoteAudioStreamElement';
@@ -1087,12 +1097,22 @@
             db.ref(`mic_requests/${activeRoomId}/${reqId}`).update({ status: 'rejected' });
         }
 
-        // --- زر إنهاء الاتصال تماماً ---
+        // --- زر إنهاء الاتصال تماماً وإغلاق المسارات الصوتية لعدم التعليق ---
         function leaveLiveCallRoom() {
             if (localAudioStream) {
-                localAudioStream.getTracks().forEach(track => track.stop());
+                localAudioStream.getTracks().forEach(track => {
+                    track.stop();
+                });
                 localAudioStream = null;
             }
+
+            const remoteAudio = document.getElementById('remoteAudioStreamElement');
+            if (remoteAudio) {
+                remoteAudio.pause();
+                remoteAudio.srcObject = null;
+                remoteAudio.remove();
+            }
+
             db.ref(`mic_requests/${activeRoomId}`).remove();
 
             const isTeacher = (currentRole === 'admin' || currentRole === 'supervisor' || currentRole === 'teacher');
@@ -1100,7 +1120,7 @@
                 document.getElementById('studentJoinCallBtn').style.display = 'inline-flex';
                 document.getElementById('endCallBtn').style.display = 'none';
                 document.getElementById('requestMicBtn').style.display = 'none';
-                document.getElementById('callStateLabel').innerText = "تم إنهاء الاتصال من طرفك";
+                document.getElementById('callStateLabel').innerText = "تم إنهاء الاتصال من طرفك وانقطع الصوت";
                 document.getElementById('callStateLabel').style.color = "#cbd5e1";
                 document.getElementById('callStatusIcon').className = "fas fa-broadcast-tower";
                 
